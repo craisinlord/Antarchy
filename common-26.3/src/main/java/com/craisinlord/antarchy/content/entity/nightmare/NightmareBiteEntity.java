@@ -37,9 +37,9 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
     private static final EntityDataAccessor<Boolean> PHASE_TWO = SynchedEntityData.defineId(NightmareBiteEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> TELEGRAPH_ONLY = SynchedEntityData.defineId(NightmareBiteEntity.class, EntityDataSerializers.BOOLEAN);
     private static final RawAnimation BITE_ANIM = RawAnimation.begin().thenPlay("bite");
-    private static final int LIFETIME_TICKS = 12;
-    private static final int SOUND_TICK = 7;
-    private static final int DAMAGE_TICK = 8;
+    private static final int LIFETIME_TICKS = 30;
+    private static final int SOUND_TICK = 9;
+    private static final int DAMAGE_TICK = 10;
     private static final double START_SIDE_OFFSET = 1.35D;
     private static final double START_BACK_OFFSET = 1.4D;
     private static final double END_SIDE_OFFSET = 0.15D;

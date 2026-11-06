@@ -10,6 +10,8 @@ out vec4 fragColor;
 
 void main() {
     vec4 color = vertexColor * ColorModulator;
-    color.a *= 1.0 - linear_fog_value(vertexDistance, 0.0, FogCloudsEnd);
+    float fogFade = linear_fog_value(vertexDistance, ModelOffset.x, ModelOffset.y);
+    color.rgb = mix(color.rgb, FogColor.rgb, fogFade);
+    color.a *= 1.0 - linear_fog_value(vertexDistance, 0.0, ModelOffset.y);
     fragColor = color;
 }

@@ -165,8 +165,8 @@
             "type": "minecraft:enchant_with_levels",
             "levels": {
               "type": "minecraft:uniform",
-              "min": 15,
-              "max": 30
+              "min": 15.0,
+              "max": 30.0
             },
             "options": "#minecraft:on_random_loot"
           },
@@ -445,6 +445,27 @@
         {
           "type": "minecraft:item",
           "name": "antos:antroid_phone"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.35
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:faded_memory",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 2
+            }
+          }
         }
       ]
     }

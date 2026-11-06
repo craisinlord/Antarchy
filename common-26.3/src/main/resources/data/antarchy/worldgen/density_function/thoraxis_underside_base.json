@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:add",
+  "left": {
+    "type": "minecraft:gradient",
+    "axis": "y",
+    "from_coordinate": -256,
+    "to_coordinate": -1,
+    "from_value": -7.1368,
+    "to_value": 1.05
+  },
+  "right": {
+    "type": "minecraft:mul",
+    "left": 0.032105,
+    "right": "antarchy:thoraxis_underside_mountains"
+  }
+}

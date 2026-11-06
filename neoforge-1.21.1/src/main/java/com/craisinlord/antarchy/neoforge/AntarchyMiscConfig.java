@@ -10,7 +10,10 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_GRASS_WIND_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_WIND_SOUNDS_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_WIND_LINES_ENABLED;
     private static final ModConfigSpec.IntValue     PRIMORDIAL_GRASS_DRAW_DISTANCE;
+    private static final ModConfigSpec.BooleanValue PRIMORDIAL_GRASS_DYNAMIC;
+    private static final ModConfigSpec.IntValue     PRIMORDIAL_GRASS_QUALITY;
     private static final ModConfigSpec.BooleanValue ELYTHIA_SOFT_CLOUDS_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_DREAM_SHADOWS_ENABLED;
     private static final ModConfigSpec.DoubleValue  ELYTHIA_DREAM_SHADOWS_STRENGTH;
@@ -40,6 +43,7 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue THROWBACK_AFTERIMAGES;
 
     private static final ModConfigSpec.DoubleValue  DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue  GIANT_LILY_PAD_LAUNCH_DISTANCE;
 
     private static final ModConfigSpec.BooleanValue ICHOR_WITHER_ENABLED;
 
@@ -102,8 +106,15 @@ public final class AntarchyMiscConfig {
                 .comment("Whether Elythia uses its denser atmospheric fog. Client-side visual only.")
                 .define("fogEnabled", true);
         ELYTHIA_GRASS_WIND_ENABLED = b.define("grassWindEnabled", true);
-        PRIMORDIAL_GRASS_DRAW_DISTANCE = b.defineInRange("grassDrawDistance", 192, 32, 512);
+        PRIMORDIAL_GRASS_DRAW_DISTANCE = b.defineInRange("grassDrawDistance", 96, 32, 512);
+        PRIMORDIAL_GRASS_DYNAMIC = b
+                .comment("Animated grass drawn by its own renderer. Off draws it as an ordinary static block. Also in Video Settings.")
+                .define("grassDynamic", true);
+        PRIMORDIAL_GRASS_QUALITY = b
+                .comment("Animated grass detail: 0 low, 1 medium, 2 high. Also in Video Settings.")
+                .defineInRange("grassQuality", 1, 0, 2);
         ELYTHIA_WIND_SOUNDS_ENABLED = b.define("windSoundsEnabled", true);
+        ELYTHIA_WIND_LINES_ENABLED = b.define("windLinesEnabled", true);
         ELYTHIA_GROUND_MIST_ENABLED = b
                 .comment("Whether low ground mist drifts over Elythia meadows in the mornings. Client-side visual only.")
                 .define("groundMistEnabled", true);
@@ -192,6 +203,10 @@ public final class AntarchyMiscConfig {
         b.pop();
         b.pop();
 
+
+        b.push("giantLilyPad");
+        GIANT_LILY_PAD_LAUNCH_DISTANCE = b.comment("Roughly how many blocks a Giant Lily Pad launches players and everything else on it when a player jumps from it.").defineInRange("giantLilyPadLaunchDistance", 4.0D, 0.0D, 32.0D);
+        b.pop();
 
         b.push("dreamSand");
         DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER = b.comment("Multiplier applied to dream sand's falling-block gravity, i.e. how slowly it falls as a block.").defineInRange("fallingBlockGravityMultiplier", 0.4D, 0.0D, 16.0D);
@@ -296,7 +311,15 @@ public final class AntarchyMiscConfig {
     static boolean elythiaFogEnabled()                   { return ELYTHIA_FOG_ENABLED.get(); }
     static boolean elythiaGrassWindEnabled() { return ELYTHIA_GRASS_WIND_ENABLED.get(); }
     static boolean elythiaWindSoundsEnabled() { return ELYTHIA_WIND_SOUNDS_ENABLED.get(); }
+    static boolean elythiaWindLinesEnabled() { return ELYTHIA_WIND_LINES_ENABLED.get(); }
     static int primordialGrassDrawDistance() { return PRIMORDIAL_GRASS_DRAW_DISTANCE.get(); }
+    static boolean primordialGrassDynamic() { return PRIMORDIAL_GRASS_DYNAMIC.get(); }
+    static int primordialGrassQuality() { return PRIMORDIAL_GRASS_QUALITY.get(); }
+    static void savePrimordialGrass(boolean dynamic, int quality) {
+        PRIMORDIAL_GRASS_DYNAMIC.set(dynamic);
+        PRIMORDIAL_GRASS_QUALITY.set(quality);
+        SPEC.save();
+    }
     static boolean elythiaGroundMistEnabled()            { return ELYTHIA_GROUND_MIST_ENABLED.get(); }
     static boolean elythiaSoftCloudsEnabled()            { return ELYTHIA_SOFT_CLOUDS_ENABLED.get(); }
     static boolean elythiaDreamShadowsEnabled()          { return ELYTHIA_DREAM_SHADOWS_ENABLED.get(); }
@@ -327,6 +350,7 @@ public final class AntarchyMiscConfig {
     static boolean throwbackAfterimages()                { return THROWBACK_AFTERIMAGES.get(); }
 
     static double  dreamSandFallingBlockGravityMultiplier() { return DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER.get(); }
+    static double  giantLilyPadLaunchDistance() { return GIANT_LILY_PAD_LAUNCH_DISTANCE.get(); }
 
     static boolean ichorWitherEnabled()                  { return ICHOR_WITHER_ENABLED.get(); }
 

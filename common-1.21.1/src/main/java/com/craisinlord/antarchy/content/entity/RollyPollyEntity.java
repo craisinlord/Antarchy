@@ -574,7 +574,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         @Override
         protected boolean isValidTarget(LevelReader level, BlockPos pos) {
             BlockState state = level.getBlockState(pos);
-            return state.getBlock() instanceof CropBlock crop && !crop.isMaxAge(state);
+            return state.getBlock() instanceof CropBlock crop && crop.isValidBonemealTarget(level, pos, state);
         }
 
         @Override
@@ -626,7 +626,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         private void fertilize() {
             if (RollyPollyEntity.this.level() instanceof ServerLevel serverLevel) {
                 BlockState state = serverLevel.getBlockState(this.blockPos);
-                if (state.getBlock() instanceof CropBlock crop && !crop.isMaxAge(state)) {
+                if (state.getBlock() instanceof CropBlock crop && crop.isValidBonemealTarget(serverLevel, this.blockPos, state)) {
                     crop.performBonemeal(serverLevel, RollyPollyEntity.this.random, this.blockPos, state);
                     serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, this.blockPos, 15);
                 }

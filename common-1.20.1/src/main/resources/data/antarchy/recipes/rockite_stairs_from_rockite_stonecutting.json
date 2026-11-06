@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:rockite"
+  },
+  "result": "antarchy:rockite_stairs",
+  "count": 1
+}

@@ -64,6 +64,10 @@ public final class PrimordialGrassWind {
         return 1.0D - smooth((age - 54.0D) / 82.0D);
     }
 
+    public static float gustLoudness(double gust) {
+        return 0.03F + 0.75F * (float) Math.pow(Math.clamp(gust, 0.0D, 1.0D), 1.6D);
+    }
+
     public static double flexibility(double height) {
         double h = Math.clamp(height, 0.0D, 1.0D);
         return (1.7D * (1.0D - Math.exp(-h * 9.0D)) + 3.3D * Math.pow(h, 1.9D))

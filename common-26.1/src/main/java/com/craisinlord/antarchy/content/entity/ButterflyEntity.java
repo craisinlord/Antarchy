@@ -403,6 +403,13 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity, 
     }
 
     @Override
+    protected void dropFromLootTable(ServerLevel level, DamageSource damageSource, boolean causedByPlayer) {
+        if (!this.isGlimmerEcho()) {
+            super.dropFromLootTable(level, damageSource, causedByPlayer);
+        }
+    }
+
+    @Override
     protected int getBaseExperienceReward(ServerLevel level) {
         return this.isGlimmerEcho() ? 0 : super.getBaseExperienceReward(level);
     }
@@ -580,6 +587,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity, 
         private static final float HOVER_POS_OFFSET = 0.45F;
         private static final double SEARCH_RADIUS = 5.0D;
         private static final int FLOWER_SEARCH_INTERVAL = 40;
+        private static final int FLOWER_REPATH_INTERVAL = 10;
 
         private final Predicate<BlockState> validFlowerPredicate = ButterflyEntity.this::isValidPollinationBlock;
         @Nullable
@@ -589,6 +597,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity, 
         @Nullable
         private BlockPos lastSearchResult;
         private int ticksSinceLastSearch = FLOWER_SEARCH_INTERVAL;
+        private int nextFlowerRepathTick;
 
         private ButterflyPollinateGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE));
@@ -644,6 +653,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity, 
             this.successfulPollinatingTicks = 0;
             this.totalPollinatingTicks = 0;
             ButterflyEntity.this.setPollinating(false);
+            this.nextFlowerRepathTick = ButterflyEntity.this.tickCount + FLOWER_REPATH_INTERVAL;
             this.moveTowardFlowerCenter();
         }
 
@@ -671,7 +681,10 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity, 
             if (ButterflyEntity.this.position().distanceTo(flowerHoverPos) > 1.1D) {
                 ButterflyEntity.this.setPollinating(false);
                 this.hoverPos = flowerHoverPos;
-                this.moveTowardFlowerCenter();
+                if (ButterflyEntity.this.getNavigation().isDone() && ButterflyEntity.this.tickCount >= this.nextFlowerRepathTick) {
+                    this.nextFlowerRepathTick = ButterflyEntity.this.tickCount + FLOWER_REPATH_INTERVAL;
+                    this.moveTowardFlowerCenter();
+                }
                 return;
             }
 
@@ -770,7 +783,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity, 
 
         @Override
         protected boolean canButterflyUse() {
-            if (!ButterflyEntity.this.hasNectar() || ButterflyEntity.this.cropsGrownSincePollination >= MAX_CROPS_GROWN_PER_POLLINATION) {
+            if (ButterflyEntity.this.isGlimmerEcho() || !ButterflyEntity.this.hasNectar() || ButterflyEntity.this.cropsGrownSincePollination >= MAX_CROPS_GROWN_PER_POLLINATION) {
                 return false;
             }
 

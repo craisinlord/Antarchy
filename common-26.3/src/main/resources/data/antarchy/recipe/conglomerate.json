@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "#antarchy:conglomerate_base",
+    "#antarchy:conglomerate_base",
+    "#antarchy:conglomerate_accent",
+    "#antarchy:conglomerate_accent"
+  ],
+  "result": {
+    "id": "antarchy:conglomerate",
+    "count": 4
+  }
+}

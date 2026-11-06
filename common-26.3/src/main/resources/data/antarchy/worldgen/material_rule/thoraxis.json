@@ -71,10 +71,10 @@
           {
             "type": "minecraft:condition",
             "if_true": {
-              "type": "minecraft:biome",
-              "biome_is": [
-                "antarchy:dream_peaks"
-              ]
+              "type": "minecraft:noise_threshold",
+              "noise": "antarchy:thoraxis_peaks_mask",
+              "min_threshold": 0.22,
+              "max_threshold": 1.7976931348623157e+308
             },
             "then_run": {
               "type": "minecraft:sequence",
@@ -497,55 +497,131 @@
     {
       "type": "minecraft:condition",
       "if_true": {
-        "type": "minecraft:biome",
-        "biome_is": [
-          "antarchy:nadir_forest"
-        ]
+        "type": "minecraft:stone_depth",
+        "add_surface_depth": false,
+        "offset": 0,
+        "secondary_depth_range": 0,
+        "surface_type": "ceiling"
       },
       "then_run": {
-        "type": "minecraft:sequence",
-        "sequence": [
-          {
-            "type": "minecraft:condition",
-            "if_true": {
-              "type": "minecraft:stone_depth",
-              "add_surface_depth": false,
-              "offset": 0,
-              "secondary_depth_range": 0,
-              "surface_type": "ceiling"
-            },
-            "then_run": {
-              "type": "minecraft:block",
-              "result_state": {
-                "id": "antarchy:nadir_nyxium",
-                "properties": {
-                  "vertical_direction": "down"
-                }
-              }
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:biome",
+          "biome_is": [
+            "antarchy:nadir_forest"
+          ]
+        },
+        "then_run": {
+          "type": "minecraft:block",
+          "result_state": {
+            "id": "antarchy:nadir_nyxium",
+            "properties": {
+              "vertical_direction": "down"
             }
           }
-        ]
+        }
       }
     },
     {
       "type": "minecraft:condition",
       "if_true": {
-        "type": "minecraft:biome",
-        "biome_is": [
-          "antarchy:dream_dunes"
-        ]
+        "type": "minecraft:stone_depth",
+        "add_surface_depth": true,
+        "offset": 0,
+        "secondary_depth_range": 0,
+        "surface_type": "floor"
       },
       "then_run": {
-        "type": "minecraft:sequence",
-        "sequence": [
-          {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:biome",
+          "biome_is": [
+            "antarchy:dream_dunes"
+          ]
+        },
+        "then_run": {
+          "type": "minecraft:sequence",
+          "sequence": [
+            {
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:noise_threshold",
+                "max_threshold": 1.7976931348623157e+308,
+                "min_threshold": 0.0,
+                "noise": "minecraft:nether_state_selector"
+              },
+              "then_run": {
+                "type": "minecraft:block",
+                "result_state": "antarchy:dream_sand"
+              }
+            },
+            {
+              "type": "minecraft:block",
+              "result_state": "antarchy:dream_sandstone"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:stone_depth",
+        "add_surface_depth": false,
+        "offset": 0,
+        "secondary_depth_range": 0,
+        "surface_type": "floor"
+      },
+      "then_run": {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:biome",
+          "biome_is": [
+            "antarchy:dream_dunes"
+          ]
+        },
+        "then_run": {
+          "type": "minecraft:block",
+          "result_state": "antarchy:dream_sandstone"
+        }
+      }
+    },
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:not",
+        "invert": {
+          "type": "minecraft:y_above",
+          "add_stone_depth": false,
+          "anchor": {
+            "absolute": 120
+          },
+          "surface_depth_multiplier": 0
+        }
+      },
+      "then_run": {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:noise_threshold",
+          "noise": "antarchy:thoraxis_regime_a",
+          "min_threshold": 0.0,
+          "max_threshold": 1.7976931348623157e+308
+        },
+        "then_run": {
+          "type": "minecraft:condition",
+          "if_true": {
+            "type": "minecraft:noise_threshold",
+            "noise": "antarchy:thoraxis_regime_b",
+            "min_threshold": -0.04,
+            "max_threshold": 1.7976931348623157e+308
+          },
+          "then_run": {
             "type": "minecraft:condition",
             "if_true": {
-              "type": "minecraft:stone_depth",
-              "add_surface_depth": true,
-              "offset": 0,
-              "secondary_depth_range": 0,
-              "surface_type": "floor"
+              "type": "minecraft:biome",
+              "biome_is": [
+                "antarchy:vortex_expanse"
+              ]
             },
             "then_run": {
               "type": "minecraft:sequence",
@@ -553,93 +629,48 @@
                 {
                   "type": "minecraft:condition",
                   "if_true": {
-                    "type": "minecraft:noise_threshold",
-                    "max_threshold": 1.7976931348623157e+308,
-                    "min_threshold": 0.0,
-                    "noise": "minecraft:nether_state_selector"
+                    "type": "minecraft:stone_depth",
+                    "add_surface_depth": false,
+                    "offset": 0,
+                    "secondary_depth_range": 0,
+                    "surface_type": "floor"
                   },
                   "then_run": {
                     "type": "minecraft:block",
-                    "result_state": "antarchy:dream_sand"
+                    "result_state": {
+                      "id": "antarchy:verdant_nyxium",
+                      "properties": {
+                        "vertical_direction": "up"
+                      }
+                    }
                   }
                 },
                 {
                   "type": "minecraft:block",
-                  "result_state": "antarchy:dream_sandstone"
+                  "result_state": "antarchy:typhonite"
                 }
               ]
             }
-          },
-          {
-            "type": "minecraft:condition",
-            "if_true": {
-              "type": "minecraft:stone_depth",
-              "add_surface_depth": false,
-              "offset": 0,
-              "secondary_depth_range": 0,
-              "surface_type": "floor"
-            },
-            "then_run": {
-              "type": "minecraft:block",
-              "result_state": "antarchy:dream_sandstone"
-            }
           }
-        ]
+        }
       }
     },
     {
       "type": "minecraft:condition",
       "if_true": {
-        "type": "minecraft:biome",
-        "biome_is": [
-          "antarchy:vortex_expanse"
-        ]
-      },
-      "then_run": {
-        "type": "minecraft:sequence",
-        "sequence": [
-          {
-            "type": "minecraft:condition",
-            "if_true": {
-              "type": "minecraft:stone_depth",
-              "add_surface_depth": false,
-              "offset": 0,
-              "secondary_depth_range": 0,
-              "surface_type": "floor"
-            },
-            "then_run": {
-              "type": "minecraft:block",
-              "result_state": {
-                "id": "antarchy:verdant_nyxium",
-                "properties": {
-                  "vertical_direction": "up"
-                }
-              }
-            }
-          },
-          {
-            "type": "minecraft:block",
-            "result_state": "antarchy:typhonite"
-          }
-        ]
-      }
-    },
-    {
-      "type": "minecraft:condition",
-      "if_true": {
-        "type": "minecraft:biome",
-        "biome_is": [
-          "antarchy:umbral_hills"
-        ]
+        "type": "minecraft:stone_depth",
+        "add_surface_depth": true,
+        "offset": 0,
+        "secondary_depth_range": 0,
+        "surface_type": "floor"
       },
       "then_run": {
         "type": "minecraft:condition",
         "if_true": {
-          "type": "minecraft:stone_depth",
-          "add_surface_depth": true,
-          "offset": 0,
-          "secondary_depth_range": 0,
-          "surface_type": "floor"
+          "type": "minecraft:biome",
+          "biome_is": [
+            "antarchy:umbral_hills"
+          ]
         },
         "then_run": {
           "type": "minecraft:block",

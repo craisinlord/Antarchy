@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
+import net.minecraft.server.level.ServerLevel;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
@@ -15,7 +16,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.gamerules.GameRules;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
@@ -53,6 +53,11 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     private int nextWoodSearchTick;
     private int nextWoodRepathTick;
     private int nextLightFleeSearchTick;
+    private int nextLightFleeRetryTick;
+    @Nullable
+    private BlockPos reachCheckedWoodPos;
+    private boolean reachCheckedWoodResult;
+    private int nextWoodReachCheckTick;
 
     public TermiteEntity(EntityType<? extends BaseAntEntity> entityType, Level level) {
         super(entityType, level);
@@ -147,14 +152,17 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
             return false;
         }
 
-        if (this.getNavigation().isDone() || this.tickCount >= this.nextWoodRepathTick) {
-            this.getNavigation().moveTo(moveTarget.x, moveTarget.y, moveTarget.z, 1.22D);
-            this.nextWoodRepathTick = this.tickCount + WOOD_REPATH_INTERVAL_TICKS;
+        if (this.tickCount >= this.nextWoodRepathTick) {
+            boolean moving = this.getNavigation().moveTo(moveTarget.x, moveTarget.y, moveTarget.z, 1.22D);
+            this.nextWoodRepathTick = this.tickCount + (moving ? WOOD_REPATH_INTERVAL_TICKS : WOOD_SEARCH_INTERVAL_TICKS);
         }
         return true;
     }
 
     private void fleeBlockLight() {
+        if (this.tickCount < this.nextLightFleeRetryTick) {
+            return;
+        }
         if (this.tickCount < this.nextLightFleeSearchTick && !this.getNavigation().isDone()) {
             return;
         }
@@ -181,16 +189,19 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
             }
         }
 
-        if (bestPos == null) {
-            this.getNavigation().stop();
+        if (bestPos == null || bestPos.equals(origin)) {
+            this.failLightFlee();
             return;
         }
         Path path = this.getNavigation().createPath(bestPos, 0);
-        if (path == null || !path.canReach()) {
-            this.getNavigation().stop();
-            return;
+        if (path == null || !path.canReach() || !this.getNavigation().moveTo(path, 1.2D)) {
+            this.failLightFlee();
         }
-        this.getNavigation().moveTo(bestPos.getX() + 0.5D, bestPos.getY(), bestPos.getZ() + 0.5D, 1.2D);
+    }
+
+    private void failLightFlee() {
+        this.getNavigation().stop();
+        this.nextLightFleeRetryTick = this.tickCount + LIGHT_FLEE_SEARCH_INTERVAL_TICKS;
     }
 
     private boolean tryEatNearbyWood() {
@@ -202,7 +213,7 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
         for (Vec3i offset : IMMEDIATE_WOOD_OFFSETS) {
             BlockPos targetPos = basePos.offset(offset);
             BlockState targetState = this.level().getBlockState(targetPos);
-            if (this.isBlockLit(targetPos) || !this.isTermiteEdible(targetState)) {
+            if (!this.isTermiteEdible(targetState) || this.isBlockLit(targetPos)) {
                 continue;
             }
 
@@ -235,7 +246,11 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
         }
 
         this.nextWoodSearchTick = this.tickCount + WOOD_SEARCH_INTERVAL_TICKS;
-        this.targetWoodPos = this.findClosestWoodTarget();
+        BlockPos foundPos = this.findClosestWoodTarget();
+        if (foundPos != null && !foundPos.equals(this.targetWoodPos)) {
+            this.nextWoodRepathTick = 0;
+        }
+        this.targetWoodPos = foundPos;
         return this.targetWoodPos;
     }
 
@@ -293,7 +308,7 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private boolean isValidWoodTarget(BlockPos targetPos) {
-        return !this.isBlockLit(targetPos) && this.isTermiteEdible(this.level().getBlockState(targetPos));
+        return this.isTermiteEdible(this.level().getBlockState(targetPos)) && !this.isBlockLit(targetPos);
     }
 
     private boolean isBlockLit(BlockPos pos) {
@@ -302,7 +317,7 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private boolean isTermiteEdible(BlockState state) {
-        return state.is(AntarchyTags.Blocks.TERMITE_FOODS) || this.isStrippedWoodState(state);
+        return !state.isAir() && (state.is(AntarchyTags.Blocks.TERMITE_FOODS) || this.isStrippedWoodState(state));
     }
 
     private boolean tryStripWood(BlockPos targetPos, BlockState targetState) {
@@ -360,13 +375,16 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private boolean canReachWoodTarget(BlockPos targetPos) {
-        BlockPos approachPos = this.getWoodApproachBlockPos(targetPos);
-        if (approachPos == null) {
-            return false;
+        if (targetPos.equals(this.reachCheckedWoodPos) && this.tickCount < this.nextWoodReachCheckTick) {
+            return this.reachCheckedWoodResult;
         }
 
-        Path path = this.getNavigation().createPath(approachPos, 0);
-        return path != null && path.canReach();
+        BlockPos approachPos = this.getWoodApproachBlockPos(targetPos);
+        Path path = approachPos == null ? null : this.getNavigation().createPath(approachPos, 0);
+        this.reachCheckedWoodPos = targetPos;
+        this.reachCheckedWoodResult = path != null && path.canReach();
+        this.nextWoodReachCheckTick = this.tickCount + WOOD_SEARCH_INTERVAL_TICKS;
+        return this.reachCheckedWoodResult;
     }
 
     @Nullable
@@ -398,10 +416,10 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private boolean isWalkableStandPos(BlockPos pos) {
+        if (!this.level().getBlockState(pos).isAir() || !this.level().getBlockState(pos.above()).isAir()) {
+            return false;
+        }
         BlockPos floor = pos.below();
-        BlockState floorState = this.level().getBlockState(floor);
-        return this.level().getBlockState(pos).isAir()
-                && this.level().getBlockState(pos.above()).isAir()
-                && floorState.isFaceSturdy(this.level(), floor, Direction.UP);
+        return this.level().getBlockState(floor).isFaceSturdy(this.level(), floor, Direction.UP);
     }
 }

@@ -1,12 +1,15 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.ElythiaFog;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
@@ -14,6 +17,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.client.renderer.state.level.SkyRenderState;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -44,16 +48,40 @@ public final class ElythiaSkyRenderer {
     };
     private static final float SKY_RADIUS = 100.0F;
     private static final float BODY_SIZE = 32.0F;
+    private static final float[] HORIZON_FOG_ELEVATIONS = {
+            -60.0F, 0.0F, 1.0F, 2.0F, 3.5F, 5.0F, 7.0F, 9.5F, 12.5F, 16.0F, 20.0F, 25.0F, 31.0F, 38.0F, 46.0F, 55.0F, 65.0F, 78.0F, 90.0F
+    };
+    private static final float SKY_FOG_CEILING = 24.0F;
+    private static final float HORIZON_FOG_REBUILD_TOLERANCE = 0.5F;
+    private static final int HORIZON_FOG_SEGMENTS = 48;
+    private static final int GLOW_SEGMENTS = 16;
     private static final Map<SkyRenderState, State> STATES = new WeakHashMap<>();
 
     @Nullable
     private static AntarchySkyDraw.StaticMesh coloredStarMesh = null;
+    @Nullable
+    private static AntarchySkyDraw.StaticMesh horizonFogMesh = null;
+    private static float horizonFogStart = Float.NaN;
+    private static float horizonFogEnd = Float.NaN;
+    private static final Map<Float, AntarchySkyDraw.StaticMesh> GLOW_MESHES = new HashMap<>();
+    private static final AntarchySkyDraw.StaticMesh[] BODY_MESHES = new AntarchySkyDraw.StaticMesh[4];
+    @Nullable
+    private static FogData currentFog;
 
     private ElythiaSkyRenderer() {
     }
 
     public static boolean shouldRender(ClientLevel level) {
         return level.dimension().equals(ELYTHIA);
+    }
+
+    @Nullable
+    public static FogData currentFog() {
+        return currentFog;
+    }
+
+    public static void captureFog(FogData fog) {
+        currentFog = fog;
     }
 
     public static boolean shouldRender(SkyRenderState skyState) {
@@ -68,7 +96,6 @@ public final class ElythiaSkyRenderer {
         Minecraft minecraft = Minecraft.getInstance();
         State state = new State();
         state.skip = minecraft.gui.getBossOverlay().shouldCreateWorldFog()
-                || minecraft.options.hideLightningFlash().get()
                 || minecraft.gameRenderer.getMainCamera() != camera;
 
         long dayTime = level.getDefaultClockTime();
@@ -93,6 +120,9 @@ public final class ElythiaSkyRenderer {
         state.timeDegrees = (dayTime + partialTick) * (360.0D / 24000.0D);
         state.sunAngle = timeOfDay * Mth.TWO_PI;
         state.sunriseColor = sunriseColor(timeOfDay);
+        float renderDistance = Math.max(minecraft.options.getEffectiveRenderDistance() * 16.0F, 32.0F);
+        state.fogStart = ElythiaFog.start(level, renderDistance, partialTick);
+        state.fogEnd = ElythiaFog.end(level, renderDistance, partialTick);
 
         Entity cameraEntity = camera.entity();
         state.darkDisc = cameraEntity != null
@@ -110,6 +140,7 @@ public final class ElythiaSkyRenderer {
         AntarchySkyDraw.draw("Antarchy Elythia sky disc", RenderPipelines.SKY, AntarchySkyDraw.topSkyDisc(), modelView,
                 new Vector4f(state.red, state.green, state.blue, 1.0F), null);
 
+        renderHorizonFog(modelView, state.fogStart, state.fogEnd);
         renderSunrise(modelView, state);
         renderCelestialBodies(modelView, state.timeDegrees, state.rainLevel);
 
@@ -131,7 +162,70 @@ public final class ElythiaSkyRenderer {
         }
     }
 
-    private static float timeOfDay(long dayTime) {
+    private static float skyFogAlpha(float elevationDegrees, float fogStart, float fogEnd) {
+        if (elevationDegrees <= 0.0F) {
+            return 1.0F;
+        }
+        float tangent = (float) Math.tan(Math.toRadians(elevationDegrees));
+        float distance = Math.max(SKY_FOG_CEILING / tangent, SKY_FOG_CEILING);
+        return Mth.clamp((distance - fogStart) / Math.max(1.0F, fogEnd - fogStart), 0.0F, 1.0F);
+    }
+
+    private static void renderHorizonFog(Matrix4f modelView, float fogStart, float fogEnd) {
+        if (Float.isNaN(horizonFogStart)
+                || Math.abs(fogStart - horizonFogStart) > HORIZON_FOG_REBUILD_TOLERANCE
+                || Math.abs(fogEnd - horizonFogEnd) > HORIZON_FOG_REBUILD_TOLERANCE) {
+            rebuildHorizonFog(fogStart, fogEnd);
+        }
+        FogData fog = currentFog;
+        if (horizonFogMesh == null || fog == null) {
+            return;
+        }
+        AntarchySkyDraw.draw("Antarchy Elythia horizon fog", RenderPipelines.DEBUG_QUADS, horizonFogMesh, modelView,
+                new Vector4f(fog.color.x, fog.color.y, fog.color.z, 1.0F), null);
+    }
+
+    private static void rebuildHorizonFog(float fogStart, float fogEnd) {
+        horizonFogStart = fogStart;
+        horizonFogEnd = fogEnd;
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        int segments = HORIZON_FOG_SEGMENTS;
+        for (int ring = 0; ring < HORIZON_FOG_ELEVATIONS.length - 1; ring++) {
+            float lowElevation = (float) Math.toRadians(HORIZON_FOG_ELEVATIONS[ring]);
+            float highElevation = (float) Math.toRadians(HORIZON_FOG_ELEVATIONS[ring + 1]);
+            float lowAlpha = skyFogAlpha(HORIZON_FOG_ELEVATIONS[ring], fogStart, fogEnd);
+            float highAlpha = skyFogAlpha(HORIZON_FOG_ELEVATIONS[ring + 1], fogStart, fogEnd);
+            if (lowAlpha <= 0.0F && highAlpha <= 0.0F) {
+                continue;
+            }
+            float lowRadius = Mth.cos(lowElevation) * SKY_RADIUS;
+            float highRadius = Mth.cos(highElevation) * SKY_RADIUS;
+            float lowY = Mth.sin(lowElevation) * SKY_RADIUS;
+            float highY = Mth.sin(highElevation) * SKY_RADIUS;
+            for (int i = 0; i < segments; i++) {
+                float a0 = i * Mth.TWO_PI / segments;
+                float a1 = (i + 1) * Mth.TWO_PI / segments;
+                float c0 = Mth.cos(a0);
+                float s0 = Mth.sin(a0);
+                float c1 = Mth.cos(a1);
+                float s1 = Mth.sin(a1);
+                buffer.addVertex(c0 * lowRadius, lowY, s0 * lowRadius).setColor(1.0F, 1.0F, 1.0F, lowAlpha);
+                buffer.addVertex(c1 * lowRadius, lowY, s1 * lowRadius).setColor(1.0F, 1.0F, 1.0F, lowAlpha);
+                buffer.addVertex(c1 * highRadius, highY, s1 * highRadius).setColor(1.0F, 1.0F, 1.0F, highAlpha);
+                buffer.addVertex(c0 * highRadius, highY, s0 * highRadius).setColor(1.0F, 1.0F, 1.0F, highAlpha);
+            }
+        }
+        MeshData mesh = buffer.build();
+        if (horizonFogMesh != null) {
+            horizonFogMesh.vertices().close();
+            horizonFogMesh = null;
+        }
+        if (mesh != null) {
+            horizonFogMesh = AntarchySkyDraw.upload("Antarchy Elythia horizon fog", mesh);
+        }
+    }
+
+    public static float timeOfDay(long dayTime) {
         double fraction = Mth.frac(dayTime / 24000.0D - 0.25D);
         double eased = 0.5D - Math.cos(fraction * Math.PI) / 2.0D;
         return (float) (fraction * 2.0D + eased) / 3.0F;
@@ -197,10 +291,11 @@ public final class ElythiaSkyRenderer {
 
     private static float[] pickStarColor(Random random) {
         float roll = random.nextFloat();
-        if (roll < 0.80F) return new float[]{1.0F, 1.0F, 1.0F};
-        if (roll < 0.87F) return new float[]{0.85F, 0.60F, 1.00F};
-        if (roll < 0.94F) return new float[]{1.00F, 0.95F, 0.50F};
-        return new float[]{1.0F, 0.45F, 0.45F};
+        if (roll < 0.72F) return new float[]{1.0F, 0.97F, 1.0F};
+        if (roll < 0.82F) return new float[]{0.82F, 0.62F, 1.0F};
+        if (roll < 0.89F) return new float[]{1.0F, 0.74F, 0.45F};
+        if (roll < 0.96F) return new float[]{0.72F, 1.0F, 0.7F};
+        return new float[]{1.0F, 0.56F, 0.62F};
     }
 
     private static void renderSunrise(Matrix4f modelView, State state) {
@@ -232,19 +327,19 @@ public final class ElythiaSkyRenderer {
 
         float sun1Orbit = orbitAngle(timeDegrees, 1.0D, 0.0D);
         renderBodyGlow(modelView, sun1Orbit, 0.0F, 0xD06BFF, rainLevel, 70.0F);
-        renderTexturedBody(modelView, sun1Orbit, 0.0F, 38.0F, 0xD06BFF, 1.0F, SUN_TEXTURE, orbitAngle(timeDegrees, 0.8D, 0.0D));
+        renderTexturedBody(modelView, 0, sun1Orbit, 0.0F, 38.0F, 0xD06BFF, 1.0F, SUN_TEXTURE, orbitAngle(timeDegrees, 0.8D, 0.0D));
 
         float sun2Orbit = orbitAngle(timeDegrees, 0.73D, 54.0D);
         renderBodyGlow(modelView, sun2Orbit, -14.0F, 0xFF9A33, rainLevel, 70.0F);
-        renderTexturedBody(modelView, sun2Orbit, -14.0F, 16.0F, 0xFF9A33, 1.0F, SUN_TEXTURE, orbitAngle(timeDegrees, -0.5D, 0.0D));
+        renderTexturedBody(modelView, 1, sun2Orbit, -14.0F, 16.0F, 0xFF9A33, 1.0F, SUN_TEXTURE, orbitAngle(timeDegrees, -0.5D, 0.0D));
 
         float moon2Orbit = orbitAngle(timeDegrees, 1.27D, 228.0D);
         renderBodyGlow(modelView, moon2Orbit, 36.0F, 0x4FD84D, rainLevel, 78.0F);
-        renderTexturedBody(modelView, moon2Orbit, 36.0F, 14.0F, 0x4FD84D, 1.0F, MOON_PHASE_TEXTURES[1], orbitAngle(timeDegrees, 0.3D, 0.0D));
+        renderTexturedBody(modelView, 2, moon2Orbit, 36.0F, 14.0F, 0x4FD84D, 1.0F, MOON_PHASE_TEXTURES[1], orbitAngle(timeDegrees, 0.3D, 0.0D));
 
         float moon3Orbit = orbitAngle(timeDegrees, 0.38D, 122.0D);
         renderBodyGlow(modelView, moon3Orbit, -34.0F, 0xA3FF8F, rainLevel, 78.0F);
-        renderTexturedBody(modelView, moon3Orbit, -34.0F, 12.0F, 0xA3FF8F, 1.0F, MOON_PHASE_TEXTURES[2], orbitAngle(timeDegrees, -0.6D, 0.0D));
+        renderTexturedBody(modelView, 3, moon3Orbit, -34.0F, 12.0F, 0xA3FF8F, 1.0F, MOON_PHASE_TEXTURES[2], orbitAngle(timeDegrees, -0.6D, 0.0D));
     }
 
     private static float orbitAngle(double timeDegrees, double speed, double offset) {
@@ -276,20 +371,25 @@ public final class ElythiaSkyRenderer {
         float g = ((rgb >> 8) & 0xFF) / 255.0F;
         float b = (rgb & 0xFF) / 255.0F;
 
+        AntarchySkyDraw.StaticMesh glow = GLOW_MESHES.computeIfAbsent(glowRadius, ElythiaSkyRenderer::buildGlowMesh);
         Matrix4f bodyModelView = new Matrix4f(modelView).rotateX(orbitRad).rotateZ(yawRad);
+        AntarchySkyDraw.draw("Antarchy Elythia body glow", RenderPipelines.DEBUG_TRIANGLE_FAN, glow, bodyModelView,
+                new Vector4f(r, g, b, alpha), null);
+    }
 
+    private static AntarchySkyDraw.StaticMesh buildGlowMesh(float glowRadius) {
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-        buffer.addVertex(0.0F, SKY_RADIUS, 0.0F).setColor(r, g, b, alpha);
-        for (int i = 0; i <= 16; i++) {
-            float angle = i * Mth.TWO_PI / 16.0F;
-            buffer.addVertex(Mth.sin(angle) * glowRadius, SKY_RADIUS, Mth.cos(angle) * glowRadius).setColor(r, g, b, 0.0F);
+        buffer.addVertex(0.0F, SKY_RADIUS, 0.0F).setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        for (int i = 0; i <= GLOW_SEGMENTS; i++) {
+            float angle = i * Mth.TWO_PI / GLOW_SEGMENTS;
+            buffer.addVertex(Mth.sin(angle) * glowRadius, SKY_RADIUS, Mth.cos(angle) * glowRadius).setColor(1.0F, 1.0F, 1.0F, 0.0F);
         }
-        AntarchySkyDraw.draw("Antarchy Elythia body glow", RenderPipelines.DEBUG_TRIANGLE_FAN, buffer.buildOrThrow(), bodyModelView,
-                AntarchySkyDraw.WHITE, null);
+        return AntarchySkyDraw.upload("Antarchy Elythia body glow", buffer.buildOrThrow());
     }
 
     private static void renderTexturedBody(
             Matrix4f modelView,
+            int bodyIndex,
             float orbitDegrees,
             float yawDegrees,
             float radius,
@@ -303,14 +403,23 @@ public final class ElythiaSkyRenderer {
                 .rotateZ((float) Math.toRadians(yawDegrees))
                 .rotateY((float) Math.toRadians(selfRotationDegrees));
 
+        AntarchySkyDraw.StaticMesh body = BODY_MESHES[bodyIndex];
+        if (body == null) {
+            body = buildBodyMesh(radius);
+            BODY_MESHES[bodyIndex] = body;
+        }
+        AntarchySkyDraw.draw("Antarchy Elythia body", RenderPipelines.CELESTIAL, body, bodyModelView,
+                new Vector4f(((rgb >> 16) & 0xFF) / 255.0F, ((rgb >> 8) & 0xFF) / 255.0F, (rgb & 0xFF) / 255.0F, alpha), texture);
+    }
+
+    private static AntarchySkyDraw.StaticMesh buildBodyMesh(float radius) {
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         float halfSize = BODY_SIZE * 0.5F * (radius / 22.0F);
         buffer.addVertex(-halfSize, SKY_RADIUS, -halfSize).setUv(0.0F, 0.0F);
         buffer.addVertex(halfSize, SKY_RADIUS, -halfSize).setUv(1.0F, 0.0F);
         buffer.addVertex(halfSize, SKY_RADIUS, halfSize).setUv(1.0F, 1.0F);
         buffer.addVertex(-halfSize, SKY_RADIUS, halfSize).setUv(0.0F, 1.0F);
-        AntarchySkyDraw.draw("Antarchy Elythia body", RenderPipelines.CELESTIAL, buffer.buildOrThrow(), bodyModelView,
-                new Vector4f(((rgb >> 16) & 0xFF) / 255.0F, ((rgb >> 8) & 0xFF) / 255.0F, (rgb & 0xFF) / 255.0F, alpha), texture);
+        return AntarchySkyDraw.upload("Antarchy Elythia body", buffer.buildOrThrow());
     }
 
     private static final class State {
@@ -327,5 +436,7 @@ public final class ElythiaSkyRenderer {
         float sunAngle;
         float @Nullable [] sunriseColor;
         boolean darkDisc;
+        float fogStart;
+        float fogEnd;
     }
 }

@@ -268,22 +268,18 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
 
     private static int findFloorY(WorldGenLevel level, int x, int z) {
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-        int floorY = Integer.MIN_VALUE;
-
-        for (int y = level.getMinY() + 1; y < level.getMaxY(); y++) {
+        mutable.set(x, level.getMaxY(), z);
+        boolean aboveOpen = isOpenBlock(level.getBlockState(mutable));
+        for (int y = (level.getMaxY() + 1) - 2; y > level.getMinY(); y--) {
             mutable.set(x, y, z);
             BlockState state = level.getBlockState(mutable);
-            if (!isSolidSurface(state)) {
-                continue;
+            if (aboveOpen && isSolidSurface(state)) {
+                return y;
             }
-
-            mutable.set(x, y + 1, z);
-            if (isOpenBlock(level.getBlockState(mutable))) {
-                floorY = y;
-            }
+            aboveOpen = isOpenBlock(state);
         }
 
-        return floorY;
+        return Integer.MIN_VALUE;
     }
 
     private static int findCeilingY(WorldGenLevel level, int x, int z, int floorY) {

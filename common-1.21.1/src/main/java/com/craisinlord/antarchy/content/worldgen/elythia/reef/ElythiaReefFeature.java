@@ -4,11 +4,13 @@ import com.craisinlord.antarchy.content.worldgen.ocean.StarCoralPatchFeature;
 import com.mojang.serialization.Codec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -56,6 +58,12 @@ public final class ElythiaReefFeature extends Feature<NoneFeatureConfiguration> 
         }
         scatter(context, chunk, pieces);
         return true;
+    }
+
+    public static void prepare(ServerLevel level, ChunkGenerator generator, ChunkPos chunk) {
+        ReefPlanner.prepare(level, generator,
+                Math.floorDiv(chunk.getMinBlockX(), ReefPlanner.CELL),
+                Math.floorDiv(chunk.getMinBlockZ(), ReefPlanner.CELL));
     }
 
     private static boolean overlaps(ChunkPos chunk, int x, int z, int radius) {

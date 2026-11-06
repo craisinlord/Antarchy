@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "antarchy:block/zebra_stone_bricks",
+    "side": "antarchy:block/zebra_stone_bricks",
+    "top": "antarchy:block/zebra_stone_bricks"
+  }
+}
+

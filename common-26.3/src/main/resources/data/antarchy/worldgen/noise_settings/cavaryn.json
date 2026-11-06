@@ -14,10 +14,10 @@
     "height": 208
   },
   "noise_router": {
-    "temperature": 0,
+    "temperature": "antarchy:cavaryn/surface_temperature",
     "vegetation": "antarchy:cavaryn/humidity",
     "continents": 0,
-    "erosion": 0,
+    "erosion": "antarchy:cavaryn/surface_erosion",
     "depth": "minecraft:overworld/depth",
     "ridges": "antarchy:cavaryn/weirdness",
     "chunk_surface_level": -1000000.0,

@@ -348,6 +348,9 @@ public final class AntarchyForgeClient {
     @SubscribeEvent
     public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(AntarchyForgeMisc.DREAM_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
+        event.registerSpriteSet(AntarchyForgeMisc.WIND_LINE.get(), com.craisinlord.antarchy.content.client.particle.WindLineParticle.Provider::new);
+        event.registerSpriteSet(AntarchyForgeMisc.REMEMBRANCE_FLAME.get(), DreamFlameParticle.Provider::new);
+        event.registerSpriteSet(AntarchyForgeMisc.REMEMBRANCE_MOTE.get(), com.craisinlord.antarchy.content.client.particle.RemembranceMoteParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.NIGHTMARE_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.STINKY_GAS.get(), HypnoticGasParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.STINKY_FLY.get(), FireflyParticle.Provider::new);
@@ -456,6 +459,13 @@ public final class AntarchyForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.PEACH_DOOR.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.PEACH_TRAPDOOR.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.PEACH_SAPLING.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.CRANBERRY_SAPLING.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.CRANBERRY_LEAVES.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.CRANBERRY_DOOR.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.CRANBERRY_TRAPDOOR.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.JELLIED_CRANBERRY_BLOCK.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.REMEMBRANCE_TORCH.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.REMEMBRANCE_WALL_TORCH.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.POTTED_PEACH_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.NADIR_VEIL.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.NADIR_DOOR.get(), RenderType.cutout());
@@ -481,6 +491,8 @@ public final class AntarchyForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.CREEPVINE.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.CAMELLIA.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.SPIDER_LILY.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.PRIMORDIAL_GRASS.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.POTTED_PRIMORDIAL_GRASS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.POTTED_SPIDER_LILY.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.LOTUS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.POTTED_LOTUS.get(), RenderType.cutout());
@@ -628,6 +640,15 @@ public final class AntarchyForgeClient {
                     }
                     return cage.getItemState(stack);
                 }
+        );
+        ItemProperties.register(
+                AntarchyForgeItems.SNOUT_COMPASS.get(),
+                new ResourceLocation(Antarchy.MODID, "angle"),
+                (stack, level, entity, seed) -> com.craisinlord.antarchy.content.client.SnoutCompassAngle.angle(
+                        stack,
+                        level,
+                        entity,
+                        seed)
         );
     }
 

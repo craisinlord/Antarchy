@@ -37,22 +37,25 @@ public class ElythiaStoneTorFeature extends Feature<StoneTorConfiguration> {
         BlockState slab = StoneTorConfiguration.resolve(config.slab()).defaultBlockState();
         int span = Math.max(1, config.maxHeight() - config.minHeight() + 1);
         int height = config.minHeight() + random.nextInt(span);
-        boolean placed = placeSpire(level, config, ground, height, 2 + random.nextInt(2), block, accent, slab, random);
+        int seaLevel = context.chunkGenerator().getSeaLevel();
+        int radiusBonus = config.breach() ? 1 : 0;
+        boolean placed = placeSpire(level, config, seaLevel, ground, height, 2 + radiusBonus + random.nextInt(2), block, accent, slab, random);
         int satellites = 1 + random.nextInt(3);
         for (int i = 0; i < satellites; i++) {
             int x = origin.getX() + random.nextInt(9) - 4;
             int z = origin.getZ() + random.nextInt(9) - 4;
             BlockPos base = groundAt(level, config, x, z);
             if (validGround(level, config, base)) {
-                placed |= placeSpire(level, config, base, Math.max(2, height / 2 + random.nextInt(3) - 1), 1 + random.nextInt(2), block, accent, slab, random);
+                placed |= placeSpire(level, config, seaLevel, base, Math.max(2, height / 2 + random.nextInt(3) - 1), 1 + radiusBonus + random.nextInt(2), block, accent, slab, random);
             }
         }
         return placed;
     }
 
-    private static boolean placeSpire(WorldGenLevel level, StoneTorConfiguration config, BlockPos ground, int height, int baseRadius,
+    private static boolean placeSpire(WorldGenLevel level, StoneTorConfiguration config, int seaLevel, BlockPos ground, int height, int baseRadius,
                                       BlockState block, BlockState accent, BlockState slab, RandomSource random) {
-        int limit = config.submerged() ? Math.min(height, level.getSeaLevel() + SEA_CLEARANCE - ground.getY()) : height;
+        int limit = config.breach() ? height + Math.max(0, seaLevel - ground.getY())
+                : config.submerged() ? Math.min(height, seaLevel + SEA_CLEARANCE - ground.getY()) : height;
         if (limit < 1) {
             return false;
         }
@@ -99,11 +102,11 @@ public class ElythiaStoneTorFeature extends Feature<StoneTorConfiguration> {
         return wet == config.submerged() && isGround(level.getBlockState(ground));
     }
 
-    private static boolean canCarve(BlockState state) {
+    static boolean canCarve(BlockState state) {
         return state.isAir() || state.canBeReplaced() || isGround(state);
     }
 
-    private static boolean isGround(BlockState state) {
+    static boolean isGround(BlockState state) {
         return state.is(ElythiaGeologyFeature.NATURAL_STONE) || state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK)
                 || state.is(Blocks.SAND) || state.is(Blocks.GRAVEL) || state.is(Blocks.MOSS_BLOCK);
     }

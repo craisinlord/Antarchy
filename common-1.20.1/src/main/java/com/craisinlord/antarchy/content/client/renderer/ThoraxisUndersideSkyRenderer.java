@@ -90,7 +90,7 @@ public final class ThoraxisUndersideSkyRenderer {
             VertexBuffer skyBuffer
     ) {
         setupFog.run();
-        if (minecraft.options.hideLightningFlash().get() || minecraft.gameRenderer.getMainCamera() != camera) {
+        if (minecraft.gameRenderer.getMainCamera() != camera) {
             return;
         }
 

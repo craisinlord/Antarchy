@@ -1,3 +1,5 @@
 {
-  "type": "antarchy:peach_forest_mossy_boulder"
+  "type": "antarchy:peach_forest_mossy_boulder",
+  "block": "antarchy:arkrose",
+  "slab": "antarchy:arkrose_slab"
 }

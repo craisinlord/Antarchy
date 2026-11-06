@@ -65,18 +65,19 @@ public class PeachForestPondFeature implements Feature {
                         level.setBlock(waterPos, Blocks.WATER.defaultBlockState(), 2);
                         LumenWorldgenHelper.scheduleFluidTick(level, waterPos);
                     }
-                    level.setBlock(new BlockPos(topPos.getX(), floorY, topPos.getZ()), Blocks.TUFF.defaultBlockState(), 2);
+                    level.setBlock(new BlockPos(topPos.getX(), floorY, topPos.getZ()), com.craisinlord.antarchy.content.block.ElythiaPalette.block("arkrose").defaultBlockState(), 2);
+                    ElythiaGeologyFeature.placePondBed(level, new BlockPos(topPos.getX(), floorY, topPos.getZ()));
                     clearFloatingVegetation(level, topPos, center.getY());
                     placed = true;
                 } else if (distance <= 1.2D) {
                     int floorY = center.getY() - depth;
                     for (int y = rimTopY; y >= floorY; y--) {
-                        level.setBlock(new BlockPos(topPos.getX(), y, topPos.getZ()), Blocks.TUFF.defaultBlockState(), 2);
+                        level.setBlock(new BlockPos(topPos.getX(), y, topPos.getZ()), com.craisinlord.antarchy.content.block.ElythiaPalette.block("arkrose").defaultBlockState(), 2);
                     }
                     clearFloatingVegetation(level, topPos, rimTopY);
                     placed = true;
                 } else if (distance <= 1.45D && isSoil(level.getBlockState(topPos))) {
-                    level.setBlock(topPos, Blocks.TUFF.defaultBlockState(), 2);
+                    level.setBlock(topPos, com.craisinlord.antarchy.content.block.ElythiaPalette.block("arkrose").defaultBlockState(), 2);
                     clearFloatingVegetation(level, topPos, center.getY());
                 }
             }

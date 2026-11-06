@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.fabric.network;
 
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.client.BloodglassClientState;
 import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
@@ -17,6 +18,9 @@ public final class AntarchyFabricClientNetworking {
     }
 
     public static void register() {
+        AntarchyNetwork.bindClient(ClientPlayNetworking::send);
+        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEchoes.handleTest(payload.immediate())));
         ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload)));
         ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThoraxisEventPayload.TYPE, (payload, context) ->
@@ -27,9 +31,6 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.ThrowbackClientState.update(payload.strength())));
         ClientPlayNetworking.registerGlobalReceiver(AntarchyGameResultPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.AntarchyGameClientState.update(payload)));
-        com.craisinlord.antarchy.content.network.AntarchyGameNetworking.setSender(ClientPlayNetworking::send);
-        com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.setRequestSender(ClientPlayNetworking::send);
-        com.craisinlord.antarchy.content.client.MoonSkyTracker.setSender(ClientPlayNetworking::send);
         com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.setClientReporter(com.craisinlord.antarchy.content.client.MoonSkyTracker::report);
         ClientPlayNetworking.registerGlobalReceiver(PortalGunIndicatorPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.update(payload)));

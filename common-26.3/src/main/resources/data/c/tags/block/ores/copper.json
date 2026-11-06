@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "antarchy:myrmite_copper_ore",
-    "antarchy:broodstone_copper_ore"
+    "antarchy:broodstone_copper_ore",
+    "antarchy:rockite_copper_ore"
   ]
 }

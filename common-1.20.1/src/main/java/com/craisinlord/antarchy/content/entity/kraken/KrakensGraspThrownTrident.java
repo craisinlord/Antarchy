@@ -89,11 +89,18 @@ public class KrakensGraspThrownTrident extends AbstractArrow implements ItemSupp
         float damage = (float) this.getBaseDamage();
         Entity owner = this.getOwner();
         DamageSource damageSource = this.damageSources().trident(this, owner != null ? owner : this);
+        if (target instanceof LivingEntity livingTarget) {
+            damage += EnchantmentHelper.getDamageBonus(this.getPickupItem(), livingTarget.getMobType());
+        }
 
         this.dealtDamage = true;
 
         if (target.hurt(damageSource, damage) && target.getType() != EntityType.ENDERMAN) {
             if (target instanceof LivingEntity livingTarget) {
+                if (owner instanceof LivingEntity livingOwner) {
+                    EnchantmentHelper.doPostHurtEffects(livingTarget, livingOwner);
+                    EnchantmentHelper.doPostDamageEffects(livingOwner, livingTarget);
+                }
                 this.doPostHurtEffects(livingTarget);
             }
         }

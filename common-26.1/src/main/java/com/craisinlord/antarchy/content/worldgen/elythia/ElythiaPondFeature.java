@@ -44,6 +44,7 @@ public class ElythiaPondFeature extends Feature<NoneFeatureConfiguration> {
                         level.setBlock(waterPos, Blocks.WATER.defaultBlockState(), 2);
                     }
                     level.setBlock(new BlockPos(topPos.getX(), floorY, topPos.getZ()), Blocks.MOSS_BLOCK.defaultBlockState(), 2);
+                    ElythiaGeologyFeature.placePondBed(level, new BlockPos(topPos.getX(), floorY, topPos.getZ()));
                     placed = true;
                 } else if (distance <= 1.25D && isSoil(level.getBlockState(topPos))) {
                     level.setBlock(topPos, Blocks.MOSS_BLOCK.defaultBlockState(), 2);

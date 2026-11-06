@@ -1,0 +1,91 @@
+package com.craisinlord.antarchy.content.worldgen.cavaryn;
+
+import com.craisinlord.antarchy.Antarchy;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.util.RandomSource;
+import java.util.Set;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.synth.NormalNoise;
+
+public final class CavarynSpireDressingFeature implements Feature {
+    public static final ResourceKey<NormalNoise> SPIRE_NOISE = ResourceKey.create(
+            Registries.NOISE,
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "cavaryn_spire")
+    );
+    private static final Identifier CHITIN_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "chitin_block");
+    private static final CavarynBlockSet STRIPEABLE = new CavarynBlockSet(Set.of(
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "myrmite"),
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "loam"),
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "biomite"),
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "biomite_turf"),
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "amber_moss_block")
+    ));
+    private static final double SHELL = 2.0;
+
+    public static final MapCodec<CavarynSpireDressingFeature> CODEC = MapCodec.unit(CavarynSpireDressingFeature::new);
+
+    @Override
+    public MapCodec<CavarynSpireDressingFeature> codec() {
+        return CODEC;
+    }
+
+    @Override
+    public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
+        net.minecraft.world.level.levelgen.synth.Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(SPIRE_NOISE);
+        CavarynSpireGrid grid = CavarynSpireGrid.forSalt(CavarynWormBoreFunction.saltFor(
+                noise.get(1234.567, 89.123, -456.789),
+                noise.get(-987.654, 12.345, 654.321)
+        ));
+        Block chitin = BuiltInRegistries.BLOCK.getOptional(CHITIN_ID).orElse(null);
+        if (grid == null || chitin == null) {
+            return false;
+        }
+
+        int originX = origin.getX() & ~15;
+        int originZ = origin.getZ() & ~15;
+        int maxBuild = level.getMaxY();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        boolean placed = false;
+
+        for (int dx = 0; dx < 16; dx++) {
+            for (int dz = 0; dz < 16; dz++) {
+                int x = originX + dx;
+                int z = originZ + dz;
+                int[] range = grid.verticalRange(x, z);
+                if (range == null) {
+                    continue;
+                }
+                int maxY = Math.min(maxBuild, range[1]);
+                for (int y = range[0]; y <= maxY; y++) {
+                    if (!grid.onStripe(x, y, z, SHELL)) {
+                        continue;
+                    }
+                    pos.set(x, y, z);
+                    if (STRIPEABLE.contains(level.getBlockState(pos)) && exposed(level, pos)) {
+                        level.setBlock(pos, chitin.defaultBlockState(), 2);
+                        placed = true;
+                    }
+                }
+            }
+        }
+        return placed;
+    }
+
+    private static boolean exposed(WorldGenLevel level, BlockPos pos) {
+        for (Direction direction : Direction.values()) {
+            if (level.isEmptyBlock(pos.relative(direction))) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

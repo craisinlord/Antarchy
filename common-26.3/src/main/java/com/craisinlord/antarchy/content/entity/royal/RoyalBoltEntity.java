@@ -1,30 +1,30 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityTypes;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
+import net.minecraft.util.ARGB;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
@@ -139,7 +139,7 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile implements Glimme
         if (owner instanceof RoyalMountEntity mount) {
             damage *= mount.projectileDamageMultiplier();
         }
-        damage *= GlimmerEchoes.ownerDamageMultiplier(this, owner == null ? null : owner.getUUID());
+        damage *= GlimmerEchoes.damageMultiplier(owner);
         DamageSource boltSource = this.damageSources().mobProjectile(this, owner instanceof LivingEntity le ? le : null);
         target.hurtServer(hitLevel, boltSource, damage);
         if (target instanceof LivingEntity living) {

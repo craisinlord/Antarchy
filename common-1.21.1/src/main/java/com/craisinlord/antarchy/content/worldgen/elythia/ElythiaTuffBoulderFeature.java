@@ -34,13 +34,10 @@ public class ElythiaTuffBoulderFeature extends Feature<BoulderPaletteConfigurati
             return false;
         }
 
-        BlockPos center = surfacePos.above(1 + random.nextInt(2));
-        boolean placed = placeEllipsoid(level, center, 2 + random.nextInt(2), 2, 2 + random.nextInt(2), random, palette);
-        int shoulders = 1 + random.nextInt(2);
-        for (int i = 0; i < shoulders; i++) {
-            BlockPos shoulder = surfacePos.offset(random.nextInt(7) - 3, 1, random.nextInt(7) - 3);
-            placed |= placeEllipsoid(level, shoulder, 1 + random.nextInt(2), 1 + random.nextInt(2), 1 + random.nextInt(2), random, palette);
-        }
+        BlockPos center = surfacePos.above(1);
+        boolean placed = placeEllipsoid(level, center, 2, 1 + random.nextInt(2), 2, random, palette);
+        BlockPos shoulder = surfacePos.offset(random.nextInt(5) - 2, 1, random.nextInt(5) - 2);
+        placed |= placeEllipsoid(level, shoulder, 1, 1, 1, random, palette);
 
         if (placed) {
             this.softCapWithSlabs(level, center, 5, random, palette);

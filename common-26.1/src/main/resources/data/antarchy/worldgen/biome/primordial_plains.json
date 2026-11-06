@@ -16,11 +16,15 @@
   "features": [
     [],
     [],
-    [],
+    [
+      "antarchy:truffled_loam",
+      "antarchy:primordial_border_blend"
+    ],
     [],
     [],
     [],
     [
+      "antarchy:elythia_geology",
       "antarchy:elythia_ore_coal_upper",
       "antarchy:elythia_ore_coal_lower",
       "antarchy:elythia_ore_iron_upper",
@@ -47,6 +51,8 @@
     [
       "antarchy:primordial_plains_large_tuff_boulders",
       "antarchy:primordial_plains_tuff_boulders",
+      "antarchy:primordial_plains_rockite_ruins",
+      "antarchy:primordial_moss_patch",
       "antarchy:primordial_plains_flora",
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",
@@ -168,7 +174,7 @@
   "effects": {
     "water_color": "#4c9ef8",
     "foliage_color": "#2bc12d",
-    "grass_color": "#4ce596",
+    "grass_color": "#2da379",
     "grass_color_modifier": "none"
   }
 }

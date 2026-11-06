@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "S": "minecraft:stone",
+    "S": "antarchy:rockite",
     "P": "antarchy:primordial_scute"
   },
   "pattern": [

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RemembranceTorchBlock extends TorchBlock implements EntityBlock {
     private static final ResourceLocation FLAME_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "remembrance_flame");
+    private static final ResourceLocation MOTE_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "remembrance_mote");
 
     public RemembranceTorchBlock(BlockBehaviour.Properties properties) {
         super(ParticleTypes.FLAME, properties);
@@ -32,8 +33,7 @@ public class RemembranceTorchBlock extends TorchBlock implements EntityBlock {
         double x = pos.getX() + 0.5D;
         double y = pos.getY() + 0.7D;
         double z = pos.getZ() + 0.5D;
-        level.addParticle(ParticleTypes.SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
-        level.addParticle(flame(), x, y, z, 0.0D, 0.0D, 0.0D);
+        spawnParticles(level, random, x, y, z);
     }
 
     @Override
@@ -47,8 +47,18 @@ public class RemembranceTorchBlock extends TorchBlock implements EntityBlock {
         return ticker(level, type);
     }
 
-    static ParticleOptions flame() {
-        return BuiltInRegistries.PARTICLE_TYPE.get(FLAME_ID) instanceof ParticleOptions particle ? particle : ParticleTypes.FLAME;
+    static void spawnParticles(Level level, RandomSource random, double x, double y, double z) {
+        level.addParticle(particle(FLAME_ID), x, y, z, 0.0D, 0.0D, 0.0D);
+        int motes = 1 + random.nextInt(2);
+        for (int i = 0; i < motes; i++) {
+            double spreadX = (random.nextDouble() - 0.5D) * 0.35D;
+            double spreadZ = (random.nextDouble() - 0.5D) * 0.35D;
+            level.addParticle(particle(MOTE_ID), x + spreadX, y + random.nextDouble() * 0.2D, z + spreadZ, 0.0D, 0.0D, 0.0D);
+        }
+    }
+
+    private static ParticleOptions particle(ResourceLocation id) {
+        return BuiltInRegistries.PARTICLE_TYPE.get(id) instanceof ParticleOptions particle ? particle : ParticleTypes.FLAME;
     }
 
     @Nullable

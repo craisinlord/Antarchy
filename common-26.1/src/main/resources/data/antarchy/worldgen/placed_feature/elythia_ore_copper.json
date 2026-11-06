@@ -1,5 +1,5 @@
 {
-  "feature": "minecraft:ore_copper_small",
+  "feature": "antarchy:elythia_ore_copper_small",
   "placement": [
     {
       "type": "minecraft:count",

@@ -15,8 +15,12 @@ import java.util.WeakHashMap;
 final class AntMarchManager {
     private static final Object INSTANCES_LOCK = new Object();
     private static final WeakHashMap<ServerLevel, AntMarchManager> INSTANCES = new WeakHashMap<>();
+    private static final long CLEANUP_INTERVAL_TICKS = 200L;
 
+    
     private final Map<UUID, TreeMap<Integer, BaseAntEntity>> marches = new HashMap<>();
+
+    private long lastCleanupGameTime = -CLEANUP_INTERVAL_TICKS;
 
     private AntMarchManager() {}
 
@@ -26,10 +30,12 @@ final class AntMarchManager {
         }
     }
 
+    
     synchronized void register(UUID leaderUuid, int marchOrder, BaseAntEntity ant) {
         marches.computeIfAbsent(leaderUuid, k -> new TreeMap<>()).put(marchOrder, ant);
     }
 
+    
     synchronized void unregister(UUID leaderUuid, int marchOrder) {
         TreeMap<Integer, BaseAntEntity> march = marches.get(leaderUuid);
         if (march == null) return;
@@ -37,22 +43,26 @@ final class AntMarchManager {
         if (march.isEmpty()) marches.remove(leaderUuid);
     }
 
+    
     @Nullable
     synchronized BaseAntEntity getLeader(UUID leaderUuid) {
         return getByOrder(leaderUuid, 0);
     }
 
+    
     @Nullable
     synchronized BaseAntEntity getPredecessor(UUID leaderUuid, int order) {
         return order > 0 ? getByOrder(leaderUuid, order - 1) : null;
     }
 
+    
     synchronized int getNextOrder(UUID leaderUuid) {
         TreeMap<Integer, BaseAntEntity> march = marches.get(leaderUuid);
         if (march == null || march.isEmpty()) return 1;
         return march.lastKey() + 1;
     }
 
+    
     synchronized List<BaseAntEntity> getParticipantsNear(BaseAntEntity seeker, double radius, double verticalRange) {
         double radiusSqr = radius * radius;
         List<BaseAntEntity> result = new ArrayList<>();
@@ -71,7 +81,12 @@ final class AntMarchManager {
         return result;
     }
 
-    synchronized void cleanup() {
+    
+    synchronized void cleanup(long gameTime) {
+        if (gameTime - this.lastCleanupGameTime < CLEANUP_INTERVAL_TICKS) {
+            return;
+        }
+        this.lastCleanupGameTime = gameTime;
         Iterator<Map.Entry<UUID, TreeMap<Integer, BaseAntEntity>>> marchIter = marches.entrySet().iterator();
         while (marchIter.hasNext()) {
             Map.Entry<UUID, TreeMap<Integer, BaseAntEntity>> entry = marchIter.next();

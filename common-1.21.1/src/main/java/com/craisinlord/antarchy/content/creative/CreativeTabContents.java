@@ -78,6 +78,7 @@ public final class CreativeTabContents {
             entry("cranberry", "food_and_drinks"),
             entry("dried_cranberry", "food_and_drinks"),
             entry("cranberry_sauce", "food_and_drinks"),
+            entry("jellied_cranberry_block", "food_and_drinks"),
             entry("peach_log", "building_blocks"),
             entry("peach_wood", "building_blocks"),
             entry("stripped_peach_log", "building_blocks"),
@@ -201,7 +202,17 @@ public final class CreativeTabContents {
             entry("tidestone_pillar", "building_blocks"),
             entry("conglomerate", "building_blocks"),
             entry("truffled_loam", "natural_blocks"),
+            entry("loam", "building_blocks"),
+            entry("primordial_loam", "building_blocks"),
+            entry("packed_loam", "building_blocks"),
+            entry("loam_bricks", "building_blocks"),
+            entry("loam_brick_stairs", "building_blocks"),
+            entry("loam_brick_slab", "building_blocks"),
+            entry("loam_brick_wall", "building_blocks"),
+            entry("chiseled_loam_bricks", "building_blocks"),
             entry("primordial_grass", "natural_blocks"),
+            entry("primordial_moss_block", "building_blocks"),
+            entry("primordial_moss_carpet", "building_blocks"),
             entry("shellstone", "building_blocks"),
             entry("shellstone_stairs", "building_blocks"),
             entry("shellstone_slab", "building_blocks"),
@@ -279,7 +290,6 @@ public final class CreativeTabContents {
             entry("upper", "redstone_blocks"),
             entry("umbral_moss_block", "building_blocks"),
             entry("umbral_moss_carpet", "building_blocks"),
-            entry("remembrance_torch", "building_blocks"),
             entry("dream_torch", "building_blocks"),
             entry("dream_lantern", "building_blocks"),
             entry("dream_campfire", "building_blocks"),
@@ -349,14 +359,6 @@ public final class CreativeTabContents {
             entry("biomite_turf", "building_blocks"),
             entry("biowart", "building_blocks"),
             entry("biowart_tendrils", "building_blocks"),
-            entry("loam", "building_blocks"),
-            entry("primordial_loam", "building_blocks"),
-            entry("packed_loam", "building_blocks"),
-            entry("loam_bricks", "building_blocks"),
-            entry("loam_brick_stairs", "building_blocks"),
-            entry("loam_brick_slab", "building_blocks"),
-            entry("loam_brick_wall", "building_blocks"),
-            entry("chiseled_loam_bricks", "building_blocks"),
             entry("broodstone", "building_blocks"),
             entry("polished_broodstone", "building_blocks"),
             entry("chiseled_broodstone", "building_blocks"),
@@ -397,8 +399,6 @@ public final class CreativeTabContents {
             entry("bile_vein", "building_blocks"),
             entry("chitin_block", "building_blocks"),
             entry("chitin_spike", "building_blocks"),
-            entry("primordial_moss_block", "building_blocks"),
-            entry("primordial_moss_carpet", "building_blocks"),
             entry("amber_moss_block", "building_blocks"),
             entry("amber_moss_carpet", "building_blocks"),
             entry("uranium_block", "building_blocks"),
@@ -518,6 +518,7 @@ public final class CreativeTabContents {
             entry("glimmer_bottle", "tools_and_utilities"),
             entry("snout_compass", "tools_and_utilities"),
             entry("faded_memory", "tools_and_utilities"),
+            entry("remembrance_torch", "building_blocks"),
             entry("toreterror_glimmer_sigil", "tools_and_utilities"),
             entry("alpha_mantis_glimmer_sigil", "tools_and_utilities"),
             entry("emperor_scorpion_glimmer_sigil", "tools_and_utilities"),
@@ -777,7 +778,7 @@ public final class CreativeTabContents {
             acceptPotionFamily(output, potionPath);
         }
         for (String diskId : List.of("antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
-                "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:brutalfly", "antarchy:rainbow_ant", "antarchy:kraken", "antarchy:cavaryn", "antarchy:hercules_beetle", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
+                "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:brutalfly", "antarchy:rainbow_ant", "antarchy:kraken", "antarchy:cavaryn", "antarchy:hercules_beetle", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex", "antarchy:basilisk_game", "antarchy:glimmer", "antarchy:king", "antarchy:queen", "antarchy:trayaurus_lab_notes")) {
             ItemStack disk = new ItemStack(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK.get());
             disk.set(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK_COMPONENT.get(), ResourceLocation.parse(diskId));
             output.accept(disk);
@@ -796,6 +797,12 @@ public final class CreativeTabContents {
                 continue;
             }
             matched = true;
+            if ("glimmer_bottle".equals(entry.path())) {
+                for (GlimmerVariant variant : GlimmerVariant.values()) {
+                    output.accept(GlimmerBottleItem.create(variant));
+                }
+                continue;
+            }
             if (entry.insertAfterPath() != null) {
                 output.insertAfter(vanillaItem(entry.insertAfterPath()), item(entry.path()));
                 continue;

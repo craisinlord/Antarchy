@@ -118,7 +118,7 @@ public final class AntTeleportHelper {
         moved.restoreFrom(companion);
         moved.moveTo(destinationPos.x, destinationPos.y, destinationPos.z, companion.getYRot(), companion.getXRot());
         moved.setDeltaMovement(Vec3.ZERO);
-        companion.discard();
+        companion.remove(Entity.RemovalReason.CHANGED_DIMENSION);
         destination.addDuringTeleport(moved);
         return moved instanceof Mob mob ? mob : null;
     }

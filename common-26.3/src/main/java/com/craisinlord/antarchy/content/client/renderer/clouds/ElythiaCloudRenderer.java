@@ -16,6 +16,7 @@ import com.craisinlord.antarchy.content.client.renderer.AntarchySkyDraw;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ElythiaWind;
+import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
@@ -26,11 +27,14 @@ import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.fog.FogData;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public final class ElythiaCloudRenderer {
@@ -75,7 +79,7 @@ public final class ElythiaCloudRenderer {
     }
 
     public static void render(Minecraft minecraft, ClientLevel level, CloudStatus status, Vec3 cameraPosition,
-                              long gameTime, float partialTick, int packedCloudColor, int cloudRangeChunks, RenderPass renderPass) {
+                              long gameTime, float partialTick, int packedCloudColor, int cloudRangeChunks) {
         if (status == CloudStatus.OFF) {
             return;
         }
@@ -89,35 +93,90 @@ public final class ElythiaCloudRenderer {
         Vec3 cloudColor = new Vec3((packedCloudColor >> 16 & 255) / 255.0D, (packedCloudColor >> 8 & 255) / 255.0D,
                 (packedCloudColor & 255) / 255.0D);
         double[] wind = ElythiaWind.displacement(gameTime + partialTick);
-        float cloudRange = Math.max(MIN_CLOUD_RANGE, cloudRangeChunks * 16.0F);
+        FogData fog = ElythiaSkyRenderer.currentFog();
+        float terrainFogEnd = fog != null ? fog.environmentalEnd : cloudRangeChunks * 16.0F;
+        float cloudRange = Math.max(terrainFogEnd, MIN_CLOUD_RANGE);
+        CameraRenderState camera = minecraft.gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
+        float depthFar = camera.depthFar;
         Matrix4f modelView = AntarchySkyDraw.modelView();
-        ElythiaGiantCloudRenderer.render(minecraft, level, cloudColor, status, wind, cameraPosition.x, cameraPosition.y,
-                cameraPosition.z, partialTick, cloudRange, modelView, renderPass);
+        Frustum frustum = new Frustum(modelView, camera.projectionMatrix);
+        frustum.prepare(0.0D, 0.0D, 0.0D);
+        RenderTarget target = null;
+        double camX = cameraPosition.x;
+        double camY = cameraPosition.y;
+        double camZ = cameraPosition.z;
+
+        List<ElythiaSoftCloudPass.Draw> softDraws = new ArrayList<>();
+        boolean softEnabled = AntarchySettings.elythiaSoftCloudsEnabled() && ElythiaSoftCloudPass.supported();
+        ElythiaGiantCloudRenderer.render(minecraft, level, cloudColor, status, wind, camX, camY, camZ, partialTick,
+                terrainFogEnd, softEnabled, softDraws, modelView, target);
         float clearing = ElythiaGiantCloudRenderer.clearing();
+
         for (Layer layer : LAYERS) {
             float visibility = layer.visibility(clearing);
-            if (visibility > 0.0F) {
-                Vector4f color = new Vector4f((float) cloudColor.x * visibility, (float) cloudColor.y * visibility,
-                        (float) cloudColor.z * visibility, visibility);
-                drawLayer(layer, modelView, color, wind, cameraPosition.x, cameraPosition.y, cameraPosition.z, cloudRange, renderPass);
+            if (!layer.soft() && visibility > 0.0F) {
+                Vector4f color = new Vector4f((float) cloudColor.x, (float) cloudColor.y, (float) cloudColor.z, visibility);
+                drawLayer(layer, modelView, color, frustum, wind, camX, camY, camZ, terrainFogEnd, cloudRange, depthFar, target);
             }
+        }
+
+        for (Layer layer : LAYERS) {
+            float visibility = layer.visibility(clearing);
+            if (layer.soft() && visibility > 0.0F) {
+                collectSoftDraws(layer, softDraws, visibility, frustum, wind, camX, camY, camZ, terrainFogEnd, cloudRange, depthFar);
+            }
+        }
+        if (!softDraws.isEmpty()) {
+            float[] fogColor = fog != null ? new float[]{fog.color.x, fog.color.y, fog.color.z} : new float[]{0.0F, 0.0F, 0.0F};
+            double sunAngle = ElythiaSkyRenderer.timeOfDay(level.getDefaultClockTime()) * Math.PI * 2.0D;
+            float sunEast = (float) (0.5D - 0.5D * Math.sin(sunAngle));
+            float sunStrength = Mth.clamp((float) Math.cos(sunAngle) * 3.0F + 0.3F, 0.0F, 0.85F);
+            ElythiaSoftCloudPass.render(softDraws, modelView, new ElythiaSoftCloudPass.Frame(
+                    cloudColor, fogColor, sunEast, sunStrength,
+                    ElythiaGiantCloudRenderer.clearingData(), ElythiaGiantCloudRenderer.clearingCount(), clearing), target);
         }
     }
 
-    private static void drawLayer(Layer layer, Matrix4f modelView, Vector4f color, double[] wind,
-                                  double camX, double camY, double camZ, float range, RenderPass renderPass) {
+    private static void drawLayer(Layer layer, Matrix4f modelView, Vector4f color, Frustum frustum, double[] wind,
+                                  double camX, double camY, double camZ, float terrainFogEnd, float cloudRange, float depthFar,
+                                  @Nullable RenderTarget target) {
         List<Section> sections = layer.sections();
         if (sections == null) {
             return;
         }
-        forEachSection(layer, sections, null, wind, camX, camY, camZ, range,
+        float vertical = (float) Math.abs(layer.baseY + layer.thickness() * 0.5F - camY);
+        float fogEnd = Math.max(terrainFogEnd, vertical + cloudRange);
+        Vector3f fogRange = new Vector3f(fogEnd * FOG_START_FRACTION, fogEnd, 0.0F);
+        forEachSection(layer, sections, frustum, wind, camX, camY, camZ, Math.min(fogEnd, depthFar),
                 (section, originX, originY, originZ) -> {
                     Matrix4f transform = new Matrix4f(modelView).translate(originX, originY, originZ);
-                    AntarchySkyDraw.draw("Antarchy Elythia cloud layer", CLOUD_PIPELINE, section.buffer(), transform, color, null, renderPass);
+                    AntarchySkyDraw.draw("Antarchy Elythia cloud layer", CLOUD_PIPELINE, section.buffer(), transform, color, fogRange, target);
                 });
     }
 
-    private static void collectSoftDraws() {
+    private static void collectSoftDraws(
+            Layer layer,
+            List<ElythiaSoftCloudPass.Draw> draws,
+            float visibility,
+            Frustum frustum,
+            double[] wind,
+            double camX,
+            double camY,
+            double camZ,
+            float terrainFogEnd,
+            float cloudRange,
+            float depthFar
+    ) {
+        List<Section> sections = layer.sections();
+        if (sections == null) {
+            return;
+        }
+        float vertical = (float) Math.abs(layer.baseY + layer.thickness() * 0.5F - camY);
+        float fogEnd = Math.max(terrainFogEnd, vertical + cloudRange);
+        forEachSection(layer, sections, frustum, wind, camX, camY, camZ, Math.min(fogEnd, depthFar),
+                (section, originX, originY, originZ) -> draws.add(
+                        new ElythiaSoftCloudPass.Draw(section.buffer(), originX, originY, originZ, fogEnd, visibility,
+                                ElythiaSoftCloudPass.NO_GROWTH_LIMIT, true)));
     }
 
     private interface SectionConsumer {
@@ -161,7 +220,7 @@ public final class ElythiaCloudRenderer {
                     if (nearX * nearX + nearZ * nearZ > maxDistanceSq) {
                         continue;
                     }
-                    if (frustum != null && !frustum.isVisible(new AABB(minX, offsetY + section.minY(), minZ, maxX, offsetY + section.maxY(), maxZ))) {
+                    if (!frustum.isVisible(new AABB(minX, offsetY + section.minY(), minZ, maxX, offsetY + section.maxY(), maxZ))) {
                         continue;
                     }
                     consumer.accept(section, (float) originX, offsetY, (float) originZ);
@@ -450,7 +509,7 @@ public final class ElythiaCloudRenderer {
 
         @Nullable
         private List<Section> sections() {
-            boolean wantSoft = this.softCapable && AntarchySettings.elythiaSoftCloudsEnabled();
+            boolean wantSoft = this.softCapable && AntarchySettings.elythiaSoftCloudsEnabled() && ElythiaSoftCloudPass.supported();
             if (this.built && this.builtSoft == wantSoft) {
                 return this.sections;
             }

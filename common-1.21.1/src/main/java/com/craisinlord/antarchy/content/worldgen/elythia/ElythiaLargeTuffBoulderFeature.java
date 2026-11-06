@@ -35,13 +35,13 @@ public class ElythiaLargeTuffBoulderFeature extends Feature<BoulderPaletteConfig
         }
 
         BlockPos center = surfacePos.above(2);
-        int blobs = 2 + random.nextInt(3);
-        boolean placed = this.placeEllipsoid(level, center, 3 + random.nextInt(2), 3 + random.nextInt(2), 3 + random.nextInt(2), random, palette);
+        int blobs = 1 + random.nextInt(3);
+        boolean placed = this.placeEllipsoid(level, center, 2 + random.nextInt(2), 2 + random.nextInt(2), 2 + random.nextInt(2), random, palette);
         for (int i = 0; i < blobs; i++) {
-            BlockPos blobCenter = center.offset(random.nextInt(9) - 4, random.nextInt(3) - 1, random.nextInt(9) - 4);
-            int radiusX = 2 + random.nextInt(3);
+            BlockPos blobCenter = center.offset(random.nextInt(7) - 3, random.nextInt(3) - 1, random.nextInt(7) - 3);
+            int radiusX = 2 + random.nextInt(2);
             int radiusY = 2 + random.nextInt(2);
-            int radiusZ = 2 + random.nextInt(3);
+            int radiusZ = 2 + random.nextInt(2);
             placed |= this.placeEllipsoid(level, blobCenter, radiusX, radiusY, radiusZ, random, palette);
             if (random.nextFloat() < 0.35F) {
                 placed |= this.placeEllipsoid(level, blobCenter.above(), Math.max(2, radiusX - 1), 1, Math.max(2, radiusZ - 1), random, palette);

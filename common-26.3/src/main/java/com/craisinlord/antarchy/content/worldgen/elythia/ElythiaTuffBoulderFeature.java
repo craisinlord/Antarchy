@@ -1,30 +1,41 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class ElythiaTuffBoulderFeature implements Feature {
-    public static final MapCodec<ElythiaTuffBoulderFeature> CODEC = MapCodec.unit(ElythiaTuffBoulderFeature::new);
+    public static final MapCodec<ElythiaTuffBoulderFeature> CODEC = BoulderPaletteConfiguration.CODEC.xmap(ElythiaTuffBoulderFeature::new, ElythiaTuffBoulderFeature::config);
 
-    @Override
-    public MapCodec<ElythiaTuffBoulderFeature> codec() { return CODEC; }
+    private final BoulderPaletteConfiguration config;
+
     private static final int FOOTPRINT = 4;
     private static final int MAX_DROP = 1;
 
+    public ElythiaTuffBoulderFeature(BoulderPaletteConfiguration config) {
+        this.config = config;
+    }
+
+    public BoulderPaletteConfiguration config() {
+        return this.config;
+    }
+
+    @Override
+    public MapCodec<ElythiaTuffBoulderFeature> codec() {
+        return CODEC;
+    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
+        BoulderPaletteConfiguration.Palette palette = this.config.resolve();
         BlockPos surfacePos = new BlockPos(origin.getX(), level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, origin.getX(), origin.getZ()) - 1, origin.getZ());
         if (!isSoil(level.getBlockState(surfacePos))) {
             return false;
@@ -33,27 +44,19 @@ public class ElythiaTuffBoulderFeature implements Feature {
             return false;
         }
 
-        BlockPos center = surfacePos.below(random.nextInt(2));
-        int blobs = 1 + random.nextInt(2);
-        boolean placed = false;
-        for (int i = 0; i < blobs; i++) {
-            BlockPos blobCenter = center.offset(random.nextInt(5) - 2, random.nextInt(2), random.nextInt(5) - 2);
-            int radiusX = 1 + random.nextInt(2);
-            int radiusZ = 1 + random.nextInt(2);
-            placed |= this.placeEllipsoid(level, blobCenter, radiusX, 1, radiusZ, random);
-            if (random.nextFloat() < 0.18F) {
-                placed |= this.placeEllipsoid(level, blobCenter.above(), 1, 1, 1 + random.nextInt(2), random);
-            }
-        }
+        BlockPos center = surfacePos.above(1);
+        boolean placed = placeEllipsoid(level, center, 2, 1 + random.nextInt(2), 2, random, palette);
+        BlockPos shoulder = surfacePos.offset(random.nextInt(5) - 2, 1, random.nextInt(5) - 2);
+        placed |= placeEllipsoid(level, shoulder, 1, 1, 1, random, palette);
 
         if (placed) {
-            this.softCapWithSlabs(level, center, 5, random);
+            this.softCapWithSlabs(level, center, 5, random, palette);
         }
 
         return placed;
     }
 
-    private boolean placeEllipsoid(WorldGenLevel level, BlockPos center, int radiusX, int radiusY, int radiusZ, RandomSource random) {
+    private boolean placeEllipsoid(WorldGenLevel level, BlockPos center, int radiusX, int radiusY, int radiusZ, RandomSource random, BoulderPaletteConfiguration.Palette palette) {
         boolean placed = false;
         double rx = radiusX * radiusX;
         double ry = radiusY * radiusY;
@@ -69,7 +72,7 @@ public class ElythiaTuffBoulderFeature implements Feature {
                     BlockPos targetPos = center.offset(x, y, z);
                     BlockState targetState = level.getBlockState(targetPos);
                     if (targetState.isAir() || targetState.canBeReplaced() || isSoil(targetState)) {
-                        level.setBlock(targetPos, Blocks.TUFF.defaultBlockState(), 2);
+                        level.setBlock(targetPos, palette.block(), 2);
                         placed = true;
                     }
                 }
@@ -78,16 +81,19 @@ public class ElythiaTuffBoulderFeature implements Feature {
         return placed;
     }
 
-    private void softCapWithSlabs(WorldGenLevel level, BlockPos center, int radius, RandomSource random) {
-        BlockState slabState = Blocks.TUFF_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
+    private void softCapWithSlabs(WorldGenLevel level, BlockPos center, int radius, RandomSource random, BoulderPaletteConfiguration.Palette palette) {
+        if (palette.slab() == null) {
+            return;
+        }
+        BlockState slabState = palette.slab();
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
-                BlockPos topPos = center.offset(x, 0, z);
-                while (topPos.getY() < (level.getMaxY() + 1) - 1 && level.getBlockState(topPos.above()).is(Blocks.TUFF)) {
-                    topPos = topPos.above();
+                BlockPos topPos = center.offset(x, 4, z);
+                while (topPos.getY() > center.getY() - 4 && !level.getBlockState(topPos).is(palette.block().getBlock())) {
+                    topPos = topPos.below();
                 }
 
-                if (!level.getBlockState(topPos).is(Blocks.TUFF)) {
+                if (!level.getBlockState(topPos).is(palette.block().getBlock())) {
                     continue;
                 }
 
@@ -98,7 +104,7 @@ public class ElythiaTuffBoulderFeature implements Feature {
 
                 int openSides = 0;
                 for (Direction direction : Direction.Plane.HORIZONTAL) {
-                    if (!level.getBlockState(topPos.relative(direction)).is(Blocks.TUFF)) {
+                    if (!level.getBlockState(topPos.relative(direction)).is(palette.block().getBlock())) {
                         openSides++;
                     }
                 }
@@ -125,6 +131,6 @@ public class ElythiaTuffBoulderFeature implements Feature {
     }
 
     private static boolean isSoil(BlockState state) {
-        return state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MOSS_BLOCK) || state.is(Blocks.ROOTED_DIRT);
+        return state.is(ElythiaGeologyFeature.NATURAL_STONE) || state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MOSS_BLOCK) || state.is(Blocks.ROOTED_DIRT);
     }
 }

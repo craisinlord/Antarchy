@@ -9,11 +9,9 @@
           "name": "antarchy:chiseled_myrmite"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ],
   "random_sequence": "antarchy:blocks/chiseled_myrmite"

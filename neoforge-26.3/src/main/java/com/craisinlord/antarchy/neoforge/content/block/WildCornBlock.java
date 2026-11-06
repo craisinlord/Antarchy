@@ -22,6 +22,17 @@ public final class WildCornBlock extends CornCropBlock {
     }
 
     @Override
+    public int getAge(BlockState state) {
+        return 0;
+    }
+
+    @Override
+    protected boolean hasValidSoil(BlockState state, LevelReader level, BlockPos pos) {
+        BlockPos below = pos.below();
+        return this.mayPlaceOn(level.getBlockState(below), level, below);
+    }
+
+    @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(Blocks.GRASS_BLOCK);
     }

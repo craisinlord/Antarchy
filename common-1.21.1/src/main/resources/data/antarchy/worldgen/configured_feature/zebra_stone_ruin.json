@@ -5,6 +5,7 @@
     "pillar": "antarchy:zebra_stone_pillar",
     "chiseled": "antarchy:chiseled_zebra_stone",
     "slab": "antarchy:zebra_stone_brick_slab",
-    "wall": "antarchy:zebra_stone_brick_wall"
+    "wall": "antarchy:zebra_stone_brick_wall",
+    "submerged": true
   }
 }

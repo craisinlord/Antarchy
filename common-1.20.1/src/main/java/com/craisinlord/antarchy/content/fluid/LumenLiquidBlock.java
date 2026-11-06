@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.fluid;
 
+import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.FluidState;
 
 public class LumenLiquidBlock extends LiquidBlock {
     private static final int SOURCE_PARTICLE_INTERVAL = 8;
@@ -108,9 +110,17 @@ public class LumenLiquidBlock extends LiquidBlock {
     }
 
     private boolean solidifyAgainstWater(Level level, BlockPos pos, BlockState state) {
+        boolean source = state.getValue(LEVEL) == 0;
         for (Direction direction : Direction.values()) {
-            if (level.getFluidState(pos.relative(direction)).is(FluidTags.WATER)) {
-                level.setBlockAndUpdate(pos, Blocks.CALCITE.defaultBlockState());
+            FluidState neighbor = level.getFluidState(pos.relative(direction));
+            Block result = null;
+            if (neighbor.is(FluidTags.WATER)) {
+                result = source ? ElythiaPalette.TIDESTONE.get() : Blocks.CALCITE;
+            } else if (neighbor.is(FluidTags.LAVA)) {
+                result = source ? ElythiaPalette.ZEBRA_STONE.get() : ElythiaPalette.ROCKITE.get();
+            }
+            if (result != null) {
+                level.setBlockAndUpdate(pos, result.defaultBlockState());
                 level.levelEvent(LevelEvent.LAVA_FIZZ, pos, 0);
                 return true;
             }

@@ -15,8 +15,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -27,7 +26,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class CornCropBlock extends BushBlock implements BonemealableBlock {
+public class CornCropBlock extends CropBlock {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     private static final int MAX_AGE = 3;
@@ -52,6 +51,30 @@ public class CornCropBlock extends BushBlock implements BonemealableBlock {
     }
 
     @Override
+    protected IntegerProperty getAgeProperty() {
+        return AGE;
+    }
+
+    @Override
+    public int getMaxAge() {
+        return MAX_AGE;
+    }
+
+    @Override
+    public int getAge(BlockState state) {
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? 0 : state.getValue(AGE);
+    }
+
+    @Override
+    public void growCrops(Level level, BlockPos pos, BlockState state) {
+        BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+        BlockState lowerState = level.getBlockState(lowerPos);
+        if (level instanceof ServerLevel serverLevel && lowerState.is(this) && lowerState.getValue(HALF) == DoubleBlockHalf.LOWER) {
+            this.grow(serverLevel, lowerPos, lowerState);
+        }
+    }
+
+    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         int age = state.getValue(AGE);
         return state.getValue(HALF) == DoubleBlockHalf.UPPER ? UPPER_SHAPES[age] : LOWER_SHAPES[age];
@@ -60,6 +83,10 @@ public class CornCropBlock extends BushBlock implements BonemealableBlock {
     @Override
     public boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(Blocks.FARMLAND);
+    }
+
+    protected boolean hasValidSoil(BlockState state, LevelReader level, BlockPos pos) {
+        return super.canSurvive(state, level, pos);
     }
 
     @Override
@@ -71,7 +98,7 @@ public class CornCropBlock extends BushBlock implements BonemealableBlock {
             return below.is(this) && below.getValue(HALF) == DoubleBlockHalf.LOWER && below.getValue(AGE) >= TALL_AGE;
         }
 
-        if (!super.canSurvive(state, level, pos)) {
+        if (!this.hasValidSoil(state, level, pos)) {
             return false;
         }
 

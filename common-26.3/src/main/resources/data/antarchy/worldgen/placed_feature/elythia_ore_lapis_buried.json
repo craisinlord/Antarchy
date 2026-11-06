@@ -1,5 +1,5 @@
 {
-  "feature": "minecraft:ore_lapis_buried",
+  "feature": "antarchy:elythia_ore_lapis_buried",
   "placement": [
     {
       "type": "minecraft:count",

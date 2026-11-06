@@ -8,15 +8,18 @@ import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
+import com.craisinlord.antos.content.AntOSObjects;
 import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.recipe.vanilla.IJeiBrewingRecipe;
 import mezz.jei.api.recipe.vanilla.IVanillaRecipeFactory;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -32,6 +35,18 @@ public class AntarchyJeiPlugin implements IModPlugin {
     @Override
     public ResourceLocation getPluginUid() {
         return UID;
+    }
+
+    @Override
+    public void registerItemSubtypes(ISubtypeRegistration registration) {
+        registration.registerSubtypeInterpreter(AntarchyObjects.GLIMMER_BOTTLE.get(), (stack, context) -> {
+            GlimmerVariant variant = GlimmerBottleItem.getVariant(stack);
+            return variant == null ? IIngredientSubtypeInterpreter.NONE : variant.name();
+        });
+        registration.registerSubtypeInterpreter(AntOSObjects.FLOPPY_DISK.get(), (stack, context) -> {
+            ResourceLocation diskId = AntOSObjects.getFloppyDiskId(stack);
+            return diskId == null ? IIngredientSubtypeInterpreter.NONE : diskId.toString();
+        });
     }
 
     @Override

@@ -24,6 +24,19 @@
     "antarchy:mossy_myrmite_brick_stairs",
     "antarchy:mossy_broodstone_brick_stairs",
     "antarchy:mossy_nyxite_brick_stairs",
-    "antarchy:loam_brick_stairs"
+    "antarchy:loam_brick_stairs",
+    "antarchy:rockite_stairs",
+    "antarchy:polished_rockite_stairs",
+    "antarchy:rockite_brick_stairs",
+    "antarchy:zebra_stone_stairs",
+    "antarchy:polished_zebra_stone_stairs",
+    "antarchy:zebra_stone_brick_stairs",
+    "antarchy:arkrose_stairs",
+    "antarchy:polished_arkrose_stairs",
+    "antarchy:arkrose_brick_stairs",
+    "antarchy:tidestone_stairs",
+    "antarchy:polished_tidestone_stairs",
+    "antarchy:tidestone_brick_stairs",
+    "antarchy:mossy_rockite_brick_stairs"
   ]
 }

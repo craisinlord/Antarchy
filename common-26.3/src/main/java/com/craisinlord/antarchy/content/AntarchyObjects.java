@@ -1,5 +1,11 @@
 package com.craisinlord.antarchy.content;
 
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.BedBugEntity;
 import com.craisinlord.antarchy.content.entity.BomberEntity;
 import com.craisinlord.antarchy.content.entity.ButterflyEntity;
@@ -60,250 +66,126 @@ public final class AntarchyObjects {
         throw new IllegalStateException("Antarchy object supplier was accessed before registration finished");
     };
 
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<EasterBunnyEntity>> EASTER_BUNNY = (Supplier<EntityType<EasterBunnyEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<FlyingSquirrelEntity>> FLYING_SQUIRREL = (Supplier<EntityType<FlyingSquirrelEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<KrakenEntity>> KRAKEN = (Supplier<EntityType<KrakenEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<MissileSquidEntity>> MISSILE_SQUID = (Supplier<EntityType<MissileSquidEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<TentacleEntity>> TENTACLE = (Supplier<EntityType<TentacleEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<KrakensGraspThrownTrident>> KRAKENS_GRASP_TRIDENT = (Supplier<EntityType<KrakensGraspThrownTrident>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<OctopusBombEntity>> OCTOPUS_BOMB = (Supplier<EntityType<OctopusBombEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<NightmareEntity>> NIGHTMARE = (Supplier<EntityType<NightmareEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<NightmarePortalEntity>> NIGHTMARE_PORTAL = (Supplier<EntityType<NightmarePortalEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<DimensionalTearEntity>> DIMENSIONAL_TEAR = (Supplier<EntityType<DimensionalTearEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> DIMENSIONAL_TEAR_MARKER = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity>> DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY =
-            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = (Supplier<EntityType<NightmareBiteEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<LucidEntity>> LUCID = (Supplier<EntityType<LucidEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<VortexEntity>> VORTEX = (Supplier<EntityType<VortexEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<WindVortexEntity>> WIND_VORTEX = (Supplier<EntityType<WindVortexEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<VortexChargeProjectileEntity>> VORTEX_CHARGE_PROJECTILE = (Supplier<EntityType<VortexChargeProjectileEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> ROYAL_ASSAILANT_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> VORTEX_LENS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<VortexLensBlockEntity>> VORTEX_LENS_BLOCK_ENTITY = (Supplier<BlockEntityType<VortexLensBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<MolewormEntity>> MOLEWORM = (Supplier<EntityType<MolewormEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<MantisEntity>> MANTIS = (Supplier<EntityType<MantisEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<BedBugEntity>> BED_BUG = (Supplier<EntityType<BedBugEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<WaspEntity>> WASP = (Supplier<EntityType<WaspEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<BomberEntity>> BOMBER = (Supplier<EntityType<BomberEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<ScorpionEntity>> SCORPION = (Supplier<EntityType<ScorpionEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<CaterpillarEntity>> CATERPILLAR = (Supplier<EntityType<CaterpillarEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<ButterflyEntity>> BUTTERFLY = (Supplier<EntityType<ButterflyEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<ReverieEntity>> REVERIE = (Supplier<EntityType<ReverieEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<FlytrapEntity>> FLYTRAP = (Supplier<EntityType<FlytrapEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<BrutalflyEntity>> BRUTALFLY = (Supplier<EntityType<BrutalflyEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<BrutalflyOrbEntity>> BRUTALFLY_ORB = (Supplier<EntityType<BrutalflyOrbEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<HushProjectileEntity>> HUSH_PROJECTILE = (Supplier<EntityType<HushProjectileEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<ToreterrorEntity>> TORETERROR = (Supplier<EntityType<ToreterrorEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<WaterBombEntity>> WATER_BOMB = (Supplier<EntityType<WaterBombEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<CrawlingBlightEntity>> CRAWLING_BLIGHT = (Supplier<EntityType<CrawlingBlightEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<SkulkingFrightEntity>> SKULKING_FRIGHT = (Supplier<EntityType<SkulkingFrightEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> MANTICORE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<StinkBugEntity>> STINK_BUG = (Supplier<EntityType<StinkBugEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>> ROLLY_POLLY = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>> CHEEP = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.DorrieEntity>> DORRIE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.DorrieEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<HerculesBeetleEntity>> HERCULES_BEETLE = (Supplier<EntityType<HerculesBeetleEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> PRINCE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> PRINCESS = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> ROYAL_BOLT = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>> ROYAL_ELEMENTAL_PROJECTILE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>> ROYAL_ICE_SPIKE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> KING = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>> QUEEN = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> PRINCE_EGG = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> PRINCESS_EGG = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> OURANWOOD_DEER = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>> GLIMMER = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity>> STRATOSHARK = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> SPIRIT_APPLE = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> ELKA = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> PEACH = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> CORN = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> CORN_SEEDS = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> WILD_CORN = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> STAR_CORAL_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> STAR_CORAL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> STAR_CORAL_FAN = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> RAW_VENISON = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> COOKED_VENISON = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> COOKED_CORNDOG = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> GLIMMER_BOTTLE = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.core.component.DataComponentType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>> GLIMMER_VARIANT_COMPONENT =
-            (Supplier<net.minecraft.core.component.DataComponentType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> DORRIE_INVENTORY_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> GIANT_FRYING_PAN_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.world.item.Item> CHEEP_ITEM = (Supplier<net.minecraft.world.item.Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> DUPLICATOR_LOG = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> DUPLICATOR_SAPLING = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> DUCT_TAPE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> INFESTED_ROOTED_DIRT = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> INFESTED_COARSE_DIRT = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> NYXITE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SHELLSTONE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> POLISHED_SHELLSTONE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SHELLSTONE_BRICKS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> CHISELED_SHELLSTONE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> MOSSY_SHELLSTONE_BRICKS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> CRACKED_SHELLSTONE_BRICKS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> MOSSY_SHELLSTONE_BRICK_STAIRS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> MOSSY_SHELLSTONE_BRICK_SLAB = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> MOSSY_SHELLSTONE_BRICK_WALL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SHELLSTONE_STAIRS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SHELLSTONE_SLAB = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SHELLSTONE_WALL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> POLISHED_SHELLSTONE_STAIRS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> POLISHED_SHELLSTONE_SLAB = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> POLISHED_SHELLSTONE_WALL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SHELLSTONE_BRICK_STAIRS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SHELLSTONE_BRICK_SLAB = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SHELLSTONE_BRICK_WALL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> CLOUD_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> FLYTRAP_GOO_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> PALE_NYXITE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> NYXITE_SPIKE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> CHITIN_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> CHITIN_SPIKE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> POTENT_NYXITE = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> ANTIMETAL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> POLISHED_ANTIMETAL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> BUDDING_BLOOD_CRYSTAL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SMALL_BLOOD_CRYSTAL_BUD = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> MEDIUM_BLOOD_CRYSTAL_BUD = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> LARGE_BLOOD_CRYSTAL_BUD = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> BLOOD_CRYSTAL_CRYSTAL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> OURANWOOD_ACORN = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> KRAKEN_TOOTH = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> KRAKEN_TENTACLE = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> KRAKENS_GRASP = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> MOGGLES = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> REVERIE_BOTTLE = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> CRITTER_CAGE = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> STINK_BUG_ITEM = (Supplier<Item>) UNBOUND;
+    public static final Supplier<EntityType<EasterBunnyEntity>> EASTER_BUNNY = lookup(Registries.ENTITY_TYPE, "easter_bunny");
+    public static final Supplier<EntityType<FlyingSquirrelEntity>> FLYING_SQUIRREL = lookup(Registries.ENTITY_TYPE, "flying_squirrel");
+    public static final Supplier<EntityType<KrakenEntity>> KRAKEN = lookup(Registries.ENTITY_TYPE, "kraken");
+    public static final Supplier<EntityType<MissileSquidEntity>> MISSILE_SQUID = lookup(Registries.ENTITY_TYPE, "missile_squid");
+    public static final Supplier<EntityType<TentacleEntity>> TENTACLE = lookup(Registries.ENTITY_TYPE, "tentacle");
+    public static final Supplier<EntityType<KrakensGraspThrownTrident>> KRAKENS_GRASP_TRIDENT = lookup(Registries.ENTITY_TYPE, "krakens_grasp_trident");
+    public static final Supplier<EntityType<OctopusBombEntity>> OCTOPUS_BOMB = lookup(Registries.ENTITY_TYPE, "octopus_bomb");
+    public static final Supplier<EntityType<NightmareEntity>> NIGHTMARE = lookup(Registries.ENTITY_TYPE, "nightmare");
+    public static final Supplier<EntityType<NightmarePortalEntity>> NIGHTMARE_PORTAL = lookup(Registries.ENTITY_TYPE, "nightmare_portal");
+    public static final Supplier<EntityType<DimensionalTearEntity>> DIMENSIONAL_TEAR = lookup(Registries.ENTITY_TYPE, "dimensional_tear");
+    public static final Supplier<Block> DIMENSIONAL_TEAR_MARKER = lookup(Registries.BLOCK, "dimensional_tear_marker");
+    public static final Supplier<Block> REMEMBRANCE_TORCH = lookup(Registries.BLOCK, "remembrance_torch");
+    public static final Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity>> REMEMBRANCE_TORCH_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "remembrance_torch");
+    public static final Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity>> DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "dimensional_tear_marker");
+    public static final Supplier<EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = lookup(Registries.ENTITY_TYPE, "nightmare_bite");
+    public static final Supplier<EntityType<LucidEntity>> LUCID = lookup(Registries.ENTITY_TYPE, "lucid");
+    public static final Supplier<EntityType<VortexEntity>> VORTEX = lookup(Registries.ENTITY_TYPE, "vortex");
+    public static final Supplier<EntityType<WindVortexEntity>> WIND_VORTEX = lookup(Registries.ENTITY_TYPE, "wind_vortex");
+    public static final Supplier<EntityType<VortexChargeProjectileEntity>> VORTEX_CHARGE_PROJECTILE = lookup(Registries.ENTITY_TYPE, "vortex_charge_projectile");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = lookup(Registries.ENTITY_TYPE, "royal_black_hole");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> ROYAL_ASSAILANT_BLACK_HOLE = lookup(Registries.ENTITY_TYPE, "royal_assailant_black_hole");
+    public static final Supplier<Block> VORTEX_LENS = lookup(Registries.BLOCK, "vortex_lens");
+    public static final Supplier<BlockEntityType<VortexLensBlockEntity>> VORTEX_LENS_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "vortex_lens");
+    public static final Supplier<EntityType<MolewormEntity>> MOLEWORM = lookup(Registries.ENTITY_TYPE, "moleworm");
+    public static final Supplier<EntityType<MantisEntity>> MANTIS = lookup(Registries.ENTITY_TYPE, "mantis");
+    public static final Supplier<EntityType<BedBugEntity>> BED_BUG = lookup(Registries.ENTITY_TYPE, "bed_bug");
+    public static final Supplier<EntityType<WaspEntity>> WASP = lookup(Registries.ENTITY_TYPE, "wasp");
+    public static final Supplier<EntityType<BomberEntity>> BOMBER = lookup(Registries.ENTITY_TYPE, "bomber");
+    public static final Supplier<EntityType<ScorpionEntity>> SCORPION = lookup(Registries.ENTITY_TYPE, "scorpion");
+    public static final Supplier<EntityType<CaterpillarEntity>> CATERPILLAR = lookup(Registries.ENTITY_TYPE, "caterpillar");
+    public static final Supplier<EntityType<ButterflyEntity>> BUTTERFLY = lookup(Registries.ENTITY_TYPE, "butterfly");
+    public static final Supplier<EntityType<ReverieEntity>> REVERIE = lookup(Registries.ENTITY_TYPE, "reverie");
+    public static final Supplier<EntityType<FlytrapEntity>> FLYTRAP = lookup(Registries.ENTITY_TYPE, "flytrap");
+    public static final Supplier<EntityType<BrutalflyEntity>> BRUTALFLY = lookup(Registries.ENTITY_TYPE, "brutalfly");
+    public static final Supplier<EntityType<BrutalflyOrbEntity>> BRUTALFLY_ORB = lookup(Registries.ENTITY_TYPE, "brutalfly_orb");
+    public static final Supplier<EntityType<HushProjectileEntity>> HUSH_PROJECTILE = lookup(Registries.ENTITY_TYPE, "hush_projectile");
+    public static final Supplier<EntityType<ToreterrorEntity>> TORETERROR = lookup(Registries.ENTITY_TYPE, "toreterror");
+    public static final Supplier<EntityType<WaterBombEntity>> WATER_BOMB = lookup(Registries.ENTITY_TYPE, "water_bomb");
+    public static final Supplier<EntityType<CrawlingBlightEntity>> CRAWLING_BLIGHT = lookup(Registries.ENTITY_TYPE, "crawling_blight");
+    public static final Supplier<EntityType<SkulkingFrightEntity>> SKULKING_FRIGHT = lookup(Registries.ENTITY_TYPE, "skulking_fright");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> MANTICORE = lookup(Registries.ENTITY_TYPE, "manticore");
+    public static final Supplier<EntityType<StinkBugEntity>> STINK_BUG = lookup(Registries.ENTITY_TYPE, "stink_bug");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>> ROLLY_POLLY = lookup(Registries.ENTITY_TYPE, "rolly_polly");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>> CHEEP = lookup(Registries.ENTITY_TYPE, "cheep");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.DorrieEntity>> DORRIE = lookup(Registries.ENTITY_TYPE, "dorrie");
+    public static final Supplier<EntityType<HerculesBeetleEntity>> HERCULES_BEETLE = lookup(Registries.ENTITY_TYPE, "hercules_beetle");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> PRINCE = lookup(Registries.ENTITY_TYPE, "prince");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> PRINCESS = lookup(Registries.ENTITY_TYPE, "princess");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> ROYAL_BOLT = lookup(Registries.ENTITY_TYPE, "royal_bolt");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>> ROYAL_ELEMENTAL_PROJECTILE = lookup(Registries.ENTITY_TYPE, "royal_elemental_projectile");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>> ROYAL_ICE_SPIKE = lookup(Registries.ENTITY_TYPE, "royal_ice_spike");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> KING = lookup(Registries.ENTITY_TYPE, "king");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>> QUEEN = lookup(Registries.ENTITY_TYPE, "queen");
+    public static final Supplier<Block> PRINCE_EGG = lookup(Registries.BLOCK, "prince_egg");
+    public static final Supplier<Block> PRINCESS_EGG = lookup(Registries.BLOCK, "princess_egg");
+    public static final Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "royal_egg");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> OURANWOOD_DEER = lookup(Registries.ENTITY_TYPE, "ouranwood_deer");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>> GLIMMER = lookup(Registries.ENTITY_TYPE, "glimmer");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity>> STRATOSHARK = lookup(Registries.ENTITY_TYPE, "stratoshark");
+    public static final Supplier<Item> SPIRIT_APPLE = lookup(Registries.ITEM, "spirit_apple");
+    public static final Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> ELKA = lookup(Registries.ENTITY_TYPE, "elka");
+    public static final Supplier<Item> PEACH = lookup(Registries.ITEM, "peach");
+    public static final Supplier<Item> CORN = lookup(Registries.ITEM, "corn");
+    public static final Supplier<Item> CORN_SEEDS = lookup(Registries.ITEM, "corn_seeds");
+    public static final Supplier<Block> WILD_CORN = lookup(Registries.BLOCK, "wild_corn");
+    public static final Supplier<Block> STAR_CORAL_BLOCK = lookup(Registries.BLOCK, "star_coral_block");
+    public static final Supplier<Block> STAR_CORAL = lookup(Registries.BLOCK, "star_coral");
+    public static final Supplier<Block> STAR_CORAL_FAN = lookup(Registries.BLOCK, "star_coral_fan");
+    public static final Supplier<Item> COOKED_CORNDOG = lookup(Registries.ITEM, "cooked_corndog");
+    public static final Supplier<Item> GLIMMER_BOTTLE = lookup(Registries.ITEM, "glimmer_bottle");
+    public static final Supplier<net.minecraft.core.component.DataComponentType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>> GLIMMER_VARIANT_COMPONENT = lookup(Registries.DATA_COMPONENT_TYPE, "glimmer_variant");
+    public static final Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> DORRIE_INVENTORY_MENU = lookup(Registries.MENU, "dorrie_inventory");
+    public static final Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU = lookup(Registries.MENU, "royal_judgment");
+    public static final Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> GIANT_FRYING_PAN_MENU = lookup(Registries.MENU, "giant_frying_pan");
+    public static final Supplier<Block> DUPLICATOR_LOG = lookup(Registries.BLOCK, "duplicator_log");
+    public static final Supplier<Block> DUPLICATOR_SAPLING = lookup(Registries.BLOCK, "duplicator_sapling");
+    public static final Supplier<Block> DUCT_TAPE = lookup(Registries.BLOCK, "duct_tape");
+    public static final Supplier<Block> INFESTED_ROOTED_DIRT = lookup(Registries.BLOCK, "infested_rooted_dirt");
+    public static final Supplier<Block> INFESTED_COARSE_DIRT = lookup(Registries.BLOCK, "infested_coarse_dirt");
+    public static final Supplier<Block> NYXITE = lookup(Registries.BLOCK, "nyxite");
+    public static final Supplier<Block> SHELLSTONE = lookup(Registries.BLOCK, "shellstone");
+    public static final Supplier<Block> POLISHED_SHELLSTONE = lookup(Registries.BLOCK, "polished_shellstone");
+    public static final Supplier<Block> SHELLSTONE_BRICKS = lookup(Registries.BLOCK, "shellstone_bricks");
+    public static final Supplier<Block> CHISELED_SHELLSTONE = lookup(Registries.BLOCK, "chiseled_shellstone");
+    public static final Supplier<Block> MOSSY_SHELLSTONE_BRICKS = lookup(Registries.BLOCK, "mossy_shellstone_bricks");
+    public static final Supplier<Block> CRACKED_SHELLSTONE_BRICKS = lookup(Registries.BLOCK, "cracked_shellstone_bricks");
+    public static final Supplier<Block> MOSSY_SHELLSTONE_BRICK_STAIRS = lookup(Registries.BLOCK, "mossy_shellstone_brick_stairs");
+    public static final Supplier<Block> MOSSY_SHELLSTONE_BRICK_SLAB = lookup(Registries.BLOCK, "mossy_shellstone_brick_slab");
+    public static final Supplier<Block> MOSSY_SHELLSTONE_BRICK_WALL = lookup(Registries.BLOCK, "mossy_shellstone_brick_wall");
+    public static final Supplier<Block> SHELLSTONE_STAIRS = lookup(Registries.BLOCK, "shellstone_stairs");
+    public static final Supplier<Block> SHELLSTONE_SLAB = lookup(Registries.BLOCK, "shellstone_slab");
+    public static final Supplier<Block> SHELLSTONE_WALL = lookup(Registries.BLOCK, "shellstone_wall");
+    public static final Supplier<Block> POLISHED_SHELLSTONE_STAIRS = lookup(Registries.BLOCK, "polished_shellstone_stairs");
+    public static final Supplier<Block> POLISHED_SHELLSTONE_SLAB = lookup(Registries.BLOCK, "polished_shellstone_slab");
+    public static final Supplier<Block> POLISHED_SHELLSTONE_WALL = lookup(Registries.BLOCK, "polished_shellstone_wall");
+    public static final Supplier<Block> SHELLSTONE_BRICK_STAIRS = lookup(Registries.BLOCK, "shellstone_brick_stairs");
+    public static final Supplier<Block> SHELLSTONE_BRICK_SLAB = lookup(Registries.BLOCK, "shellstone_brick_slab");
+    public static final Supplier<Block> SHELLSTONE_BRICK_WALL = lookup(Registries.BLOCK, "shellstone_brick_wall");
+    public static final Supplier<Block> CLOUD_BLOCK = lookup(Registries.BLOCK, "cloud_block");
+    public static final Supplier<Block> FLYTRAP_GOO_BLOCK = lookup(Registries.BLOCK, "flytrap_goo_block");
+    public static final Supplier<Block> PALE_NYXITE = lookup(Registries.BLOCK, "pale_nyxite");
+    public static final Supplier<Block> NYXITE_SPIKE = lookup(Registries.BLOCK, "nyxite_spike");
+    public static final Supplier<Block> CHITIN_BLOCK = lookup(Registries.BLOCK, "chitin_block");
+    public static final Supplier<Block> CHITIN_SPIKE = lookup(Registries.BLOCK, "chitin_spike");
+    public static final Supplier<Block> POTENT_NYXITE = lookup(Registries.BLOCK, "potent_nyxite");
+    public static final Supplier<Block> ANTIMETAL = lookup(Registries.BLOCK, "antimetal");
+    public static final Supplier<Block> POLISHED_ANTIMETAL = lookup(Registries.BLOCK, "polished_antimetal");
+    public static final Supplier<Block> BUDDING_BLOOD_CRYSTAL = lookup(Registries.BLOCK, "budding_blood_crystal");
+    public static final Supplier<Block> SMALL_BLOOD_CRYSTAL_BUD = lookup(Registries.BLOCK, "small_blood_crystal_bud");
+    public static final Supplier<Block> MEDIUM_BLOOD_CRYSTAL_BUD = lookup(Registries.BLOCK, "medium_blood_crystal_bud");
+    public static final Supplier<Block> LARGE_BLOOD_CRYSTAL_BUD = lookup(Registries.BLOCK, "large_blood_crystal_bud");
+    public static final Supplier<Block> BLOOD_CRYSTAL_CRYSTAL = lookup(Registries.BLOCK, "blood_crystal_cluster");
+    public static final Supplier<Item> OURANWOOD_ACORN = lookup(Registries.ITEM, "ouranwood_acorn");
+    public static final Supplier<Item> KRAKEN_TOOTH = lookup(Registries.ITEM, "kraken_tooth");
+    public static final Supplier<Item> KRAKEN_TENTACLE = lookup(Registries.ITEM, "kraken_tentacle");
+    public static final Supplier<Item> KRAKENS_GRASP = lookup(Registries.ITEM, "krakens_grasp");
+    public static final Supplier<Item> MOGGLES = lookup(Registries.ITEM, "moggles");
+    public static final Supplier<Item> REVERIE_BOTTLE = lookup(Registries.ITEM, "reverie_bottle");
+    public static final Supplier<Item> CRITTER_CAGE = lookup(Registries.ITEM, "critter_cage");
+    public static final Supplier<Item> STINK_BUG_ITEM = lookup(Registries.ITEM, "stink_bug");
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> DREAD = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -319,523 +201,129 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> STINKY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Holder<MobEffect>> SAUCED_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> GLIMMERING_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> REMEMBRANCE_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> ROYAL_VITALITY_PENALTY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> BLEEDING_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> BLOOD_MOON_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Fluid> LUMEN = (Supplier<Fluid>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Fluid> FLOWING_LUMEN = (Supplier<Fluid>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> LUMEN_BUCKET = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> LUMEN_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> LUMEN_FROGLIGHT = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> GLIMMERING_REED = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> OURANWOOD_ACORN_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> MOSSY_OURANWOOD_LOG = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> MOSSY_OURANWOOD_WOOD = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> ORANGE_MILKWEED = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> PINK_MILKWEED = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> BED_BUG_EGG = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> CRAWLING_BLIGHT_EGGS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SKULKING_FRIGHT_EGGS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> WASP_NEST = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> UMBRAL_MOSS_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> UMBRAL_MOSS_CARPET = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> BLUSH_MOSS_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> BLUSH_MOSS_CARPET = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> HUSHWEED = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SQUIRREL_NEST_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> BRUTALFLY_COCOON_SPAWNER = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> GIANT_LILY_PAD = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> LOTUS = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> SEASHELL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> CRITTER_CAGE_BLOCK = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> LUCID_ANCHOR = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> MYRMITE_FOSSIL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Block> BROODSTONE_FOSSIL = (Supplier<Block>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<AntNestBlockEntity>> ANT_NEST_BLOCK_ENTITY = (Supplier<BlockEntityType<AntNestBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<DreamCampfireBlockEntity>> DREAM_CAMPFIRE_BLOCK_ENTITY = (Supplier<BlockEntityType<DreamCampfireBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<WaspNestBlockEntity>> WASP_NEST_BLOCK_ENTITY = (Supplier<BlockEntityType<WaspNestBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<HushweedBlockEntity>> HUSHWEED_BLOCK_ENTITY = (Supplier<BlockEntityType<HushweedBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<SeashellBlockEntity>> SEASHELL_BLOCK_ENTITY = (Supplier<BlockEntityType<SeashellBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity>> CRITTER_CAGE_BLOCK_ENTITY =
-            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> LUCID_ANCHOR_BLOCK_ENTITY =
-            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY =
-            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<SimpleParticleType> STINKY_GAS = (Supplier<SimpleParticleType>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<SimpleParticleType> BUG_SPRAY_PARTICLE = (Supplier<SimpleParticleType>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<SimpleParticleType> NIGHTMARE_FIRE_FLAME = (Supplier<SimpleParticleType>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<SimpleParticleType> STINKY_FLY = (Supplier<SimpleParticleType>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<SimpleParticleType> PEACH_LEAVES_PARTICLE = (Supplier<SimpleParticleType>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<SimpleParticleType> LOTUS_POLLEN = (Supplier<SimpleParticleType>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_SMALL = (Supplier<SimpleParticleType>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_LARGE = (Supplier<SimpleParticleType>) UNBOUND;
-    public static Supplier<SimpleParticleType> TEMPORAL_GLINT_SLOW = (Supplier<SimpleParticleType>) UNBOUND;
-    public static Supplier<SimpleParticleType> TEMPORAL_GLINT_FAST = (Supplier<SimpleParticleType>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> AMERICAN_COMPONENT =
-            (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> FOSSIL_ENTITY_COMPONENT =
-            (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> CRITTER_CAGE_PROJECTILE =
-            (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity>> LAUNCHED_ANVIL =
-            (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>> WORM_HOOK_PROJECTILE =
-            (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<Item> WORM_HOOK = (Supplier<Item>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> CRITTER_CAGE_ENTITY_TYPE_COMPONENT =
-            (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.core.component.DataComponentType<Integer>> CRITTER_CAGE_PRIMARY_COLOR_COMPONENT =
-            (Supplier<net.minecraft.core.component.DataComponentType<Integer>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<net.minecraft.core.component.DataComponentType<Integer>> CRITTER_CAGE_SECONDARY_COLOR_COMPONENT =
-            (Supplier<net.minecraft.core.component.DataComponentType<Integer>>) UNBOUND;
+    public static final Supplier<Fluid> LUMEN = lookup(Registries.FLUID, "lumen");
+    public static final Supplier<Fluid> FLOWING_LUMEN = lookup(Registries.FLUID, "flowing_lumen");
+    public static final Supplier<Item> LUMEN_BUCKET = lookup(Registries.ITEM, "lumen_bucket");
+    public static final Supplier<Block> LUMEN_BLOCK = lookup(Registries.BLOCK, "lumen");
+    public static final Supplier<Block> LUMEN_FROGLIGHT = lookup(Registries.BLOCK, "lumen_froglight");
+    public static final Supplier<Block> GLIMMERING_REED = lookup(Registries.BLOCK, "glimmering_reed");
+    public static final Supplier<Block> OURANWOOD_ACORN_BLOCK = lookup(Registries.BLOCK, "ouranwood_acorn");
+    public static final Supplier<Block> MOSSY_OURANWOOD_LOG = lookup(Registries.BLOCK, "mossy_ouranwood_log");
+    public static final Supplier<Block> MOSSY_OURANWOOD_WOOD = lookup(Registries.BLOCK, "mossy_ouranwood_wood");
+    public static final Supplier<Block> ORANGE_MILKWEED = lookup(Registries.BLOCK, "orange_milkweed");
+    public static final Supplier<Block> PINK_MILKWEED = lookup(Registries.BLOCK, "pink_milkweed");
+    public static final Supplier<Block> BED_BUG_EGG = lookup(Registries.BLOCK, "bed_bug_egg");
+    public static final Supplier<Block> CRAWLING_BLIGHT_EGGS = lookup(Registries.BLOCK, "crawling_blight_egg");
+    public static final Supplier<Block> SKULKING_FRIGHT_EGGS = lookup(Registries.BLOCK, "skulking_fright_egg");
+    public static final Supplier<Block> WASP_NEST = lookup(Registries.BLOCK, "wasp_nest");
+    public static final Supplier<Block> UMBRAL_MOSS_BLOCK = lookup(Registries.BLOCK, "umbral_moss_block");
+    public static final Supplier<Block> UMBRAL_MOSS_CARPET = lookup(Registries.BLOCK, "umbral_moss_carpet");
+    public static final Supplier<Block> BLUSH_MOSS_BLOCK = lookup(Registries.BLOCK, "blush_moss_block");
+    public static final Supplier<Block> BLUSH_MOSS_CARPET = lookup(Registries.BLOCK, "blush_moss_carpet");
+    public static final Supplier<Block> HUSHWEED = lookup(Registries.BLOCK, "hushweed");
+    public static final Supplier<Block> SQUIRREL_NEST_BLOCK = lookup(Registries.BLOCK, "ouranwood_squirrel_nest");
+    public static final Supplier<Block> BRUTALFLY_COCOON_SPAWNER = lookup(Registries.BLOCK, "brutalfly_cocoon_spawner");
+    public static final Supplier<Block> GIANT_LILY_PAD = lookup(Registries.BLOCK, "giant_lily_pad");
+    public static final Supplier<Block> LOTUS = lookup(Registries.BLOCK, "lotus");
+    public static final Supplier<Block> SEASHELL = lookup(Registries.BLOCK, "seashell");
+    public static final Supplier<Block> CRITTER_CAGE_BLOCK = lookup(Registries.BLOCK, "critter_cage_block");
+    public static final Supplier<Block> LUCID_ANCHOR = lookup(Registries.BLOCK, "lucid_anchor");
+    public static final Supplier<Block> MYRMITE_FOSSIL = lookup(Registries.BLOCK, "myrmite_fossil");
+    public static final Supplier<Block> BROODSTONE_FOSSIL = lookup(Registries.BLOCK, "broodstone_fossil");
+    public static final Supplier<BlockEntityType<AntNestBlockEntity>> ANT_NEST_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "ant_nest");
+    public static final Supplier<BlockEntityType<DreamCampfireBlockEntity>> DREAM_CAMPFIRE_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "dream_campfire");
+    public static final Supplier<BlockEntityType<WaspNestBlockEntity>> WASP_NEST_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "wasp_nest");
+    public static final Supplier<BlockEntityType<HushweedBlockEntity>> HUSHWEED_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "hushweed");
+    public static final Supplier<BlockEntityType<SeashellBlockEntity>> SEASHELL_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "seashell");
+    public static final Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity>> CRITTER_CAGE_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "critter_cage_block");
+    public static final Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> LUCID_ANCHOR_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "lucid_anchor");
+    public static final Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = lookup(Registries.BLOCK_ENTITY_TYPE, "fossil");
+    public static final Supplier<SimpleParticleType> STINKY_GAS = lookup(Registries.PARTICLE_TYPE, "stinky_gas");
+    public static final Supplier<SimpleParticleType> BUG_SPRAY_PARTICLE = lookup(Registries.PARTICLE_TYPE, "bug_spray");
+    public static final Supplier<SimpleParticleType> NIGHTMARE_FIRE_FLAME = lookup(Registries.PARTICLE_TYPE, "nightmare_fire_flame");
+    public static final Supplier<SimpleParticleType> STINKY_FLY = lookup(Registries.PARTICLE_TYPE, "stinky_fly");
+    public static final Supplier<SimpleParticleType> PEACH_LEAVES_PARTICLE = lookup(Registries.PARTICLE_TYPE, "peach_leaves_particle");
+    public static final Supplier<SimpleParticleType> LOTUS_POLLEN = lookup(Registries.PARTICLE_TYPE, "lotus_pollen");
+    public static final Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_SMALL = lookup(Registries.PARTICLE_TYPE, "lucid_bolt_impact_small");
+    public static final Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_LARGE = lookup(Registries.PARTICLE_TYPE, "lucid_bolt_impact_large");
+    public static final Supplier<SimpleParticleType> TEMPORAL_GLINT_SLOW = lookup(Registries.PARTICLE_TYPE, "temporal_glint_slow");
+    public static final Supplier<SimpleParticleType> TEMPORAL_GLINT_FAST = lookup(Registries.PARTICLE_TYPE, "temporal_glint_fast");
+    public static final Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> AMERICAN_COMPONENT = lookup(Registries.DATA_COMPONENT_TYPE, "american");
+    public static final Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> FOSSIL_ENTITY_COMPONENT = lookup(Registries.DATA_COMPONENT_TYPE, "fossil_entity");
+    public static final Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> CRITTER_CAGE_PROJECTILE = lookup(Registries.ENTITY_TYPE, "critter_cage_projectile");
+    public static final Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity>> LAUNCHED_ANVIL = lookup(Registries.ENTITY_TYPE, "launched_anvil");
+    public static final Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>> WORM_HOOK_PROJECTILE = lookup(Registries.ENTITY_TYPE, "worm_hook_projectile");
+    public static final Supplier<Item> WORM_HOOK = lookup(Registries.ITEM, "worm_hook");
+    public static final Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> CRITTER_CAGE_ENTITY_TYPE_COMPONENT = lookup(Registries.DATA_COMPONENT_TYPE, "critter_cage_entity_type");
+    public static final Supplier<net.minecraft.core.component.DataComponentType<Integer>> CRITTER_CAGE_PRIMARY_COLOR_COMPONENT = lookup(Registries.DATA_COMPONENT_TYPE, "critter_cage_primary_color");
+    public static final Supplier<net.minecraft.core.component.DataComponentType<Integer>> CRITTER_CAGE_SECONDARY_COLOR_COMPONENT = lookup(Registries.DATA_COMPONENT_TYPE, "critter_cage_secondary_color");
 
     private AntarchyObjects() {
     }
 
-    public static void bind(
-            Supplier<EntityType<EasterBunnyEntity>> easterBunny,
-            Supplier<EntityType<FlyingSquirrelEntity>> flyingSquirrel,
-            Supplier<EntityType<KrakenEntity>> kraken,
-            Supplier<EntityType<MissileSquidEntity>> missileSquid,
-            Supplier<EntityType<MolewormEntity>> moleworm,
-            Supplier<EntityType<MantisEntity>> mantis,
-            Supplier<EntityType<BedBugEntity>> bedBug,
-            Supplier<EntityType<WaspEntity>> wasp,
-            Supplier<EntityType<BomberEntity>> bomber,
-            Supplier<EntityType<ScorpionEntity>> scorpion,
-            Supplier<EntityType<CaterpillarEntity>> caterpillar,
-            Supplier<EntityType<ButterflyEntity>> butterfly,
-            Supplier<EntityType<ReverieEntity>> reverie,
-            Supplier<EntityType<FlytrapEntity>> flytrap,
-            Supplier<EntityType<BrutalflyEntity>> brutalfly,
-            Supplier<EntityType<BrutalflyOrbEntity>> brutalflyOrb,
-            Supplier<EntityType<HushProjectileEntity>> hushProjectile,
-            Supplier<EntityType<ToreterrorEntity>> toreterror,
-            Supplier<EntityType<WaterBombEntity>> waterBomb,
-            Supplier<EntityType<CrawlingBlightEntity>> crawlingBlight,
-            Supplier<EntityType<SkulkingFrightEntity>> skulkingFright,
-            Supplier<EntityType<StinkBugEntity>> stinkBug,
-            Supplier<EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>> cheep,
-            Supplier<EntityType<com.craisinlord.antarchy.content.entity.DorrieEntity>> dorrie,
-            Supplier<Block> duplicatorLog,
-            Supplier<Block> duplicatorSapling,
-            Supplier<Block> ductTape,
-            Supplier<Block> infestedRootedDirt,
-            Supplier<Block> infestedCoarseDirt,
-            Supplier<Block> nyxite,
-            Supplier<Block> shellstone,
-            Supplier<Block> polishedShellstone,
-            Supplier<Block> shellstoneBricks,
-            Supplier<Block> chiseledShellstone,
-            Supplier<Block> mossyShellstoneBricks,
-            Supplier<Block> crackedShellstoneBricks,
-            Supplier<Block> mossyShellstoneBrickStairs,
-            Supplier<Block> mossyShellstoneBrickSlab,
-            Supplier<Block> mossyShellstoneBrickWall,
-            Supplier<Block> shellstoneStairs,
-            Supplier<Block> shellstoneSlab,
-            Supplier<Block> shellstoneWall,
-            Supplier<Block> polishedShellstoneStairs,
-            Supplier<Block> polishedShellstoneSlab,
-            Supplier<Block> polishedShellstoneWall,
-            Supplier<Block> shellstoneBrickStairs,
-            Supplier<Block> shellstoneBrickSlab,
-            Supplier<Block> shellstoneBrickWall,
-            Supplier<Block> cloudBlock,
-            Supplier<Block> flytrapGooBlock,
-            Supplier<Block> paleNyxite,
-            Supplier<Block> nyxiteSpike,
-            Supplier<Block> chitinBlock,
-            Supplier<Block> chitinSpike,
-            Supplier<Block> potentNyxite,
-            Supplier<Block> antimetal,
-            Supplier<Block> polishedAntimetal,
-            Supplier<Block> buddingBloodCrystal,
-            Supplier<Block> smallBloodCrystalBud,
-            Supplier<Block> mediumBloodCrystalBud,
-            Supplier<Block> largeBloodCrystalBud,
-            Supplier<Block> bloodCrystalCrystal,
-            Supplier<Item> ouranwoodAcorn,
-            Supplier<Item> krakenTooth,
-            Supplier<Item> moggles,
-            Supplier<Item> reverieBottle,
-            Supplier<Item> stinkBugItem,
-            Supplier<Holder<MobEffect>> dread,
-            Supplier<Holder<MobEffect>> paralyzedEffect,
-            Supplier<Holder<MobEffect>> invertedEffect,
-            Supplier<Holder<MobEffect>> stinkyEffect,
-            Supplier<Block> ouranwoodAcornBlock,
-            Supplier<Block> mossyOuranwoodLog,
-            Supplier<Block> mossyOuranwoodWood,
-            Supplier<Block> umbralMossBlock,
-            Supplier<Block> umbralMossCarpet,
-            Supplier<Block> blushMossBlock,
-            Supplier<Block> blushMossCarpet,
-            Supplier<Block> orangeMilkweed,
-            Supplier<Block> pinkMilkweed,
-            Supplier<Block> bedBugEggs,
-            Supplier<Block> crawlingBlightEggs,
-            Supplier<Block> skulkingFrightEggs,
-            Supplier<Block> waspNest,
-            Supplier<Block> hushweed,
-            Supplier<Block> squirrelNestBlock,
-            Supplier<Block> brutalflyCocoonSpawner,
-            Supplier<Block> giantLilyPad,
-            Supplier<Block> seashell,
-            Supplier<BlockEntityType<AntNestBlockEntity>> antNestBlockEntity,
-            Supplier<BlockEntityType<DreamCampfireBlockEntity>> dreamCampfireBlockEntity,
-            Supplier<BlockEntityType<WaspNestBlockEntity>> waspNestBlockEntity,
-            Supplier<BlockEntityType<HushweedBlockEntity>> hushweedBlockEntity,
-            Supplier<BlockEntityType<SeashellBlockEntity>> seashellBlockEntity,
-            Supplier<SimpleParticleType> stinkyGas,
-            Supplier<SimpleParticleType> stinkyFly,
-            Supplier<SimpleParticleType> peachLeaves,
-            Supplier<Holder<Attribute>> doubleDamageChance,
-            Supplier<Holder<Attribute>> bloodglassMaxHearts,
-            Supplier<Holder<MobEffect>> bloodglassWard
-    ) {
-        EASTER_BUNNY = easterBunny;
-        FLYING_SQUIRREL = flyingSquirrel;
-        KRAKEN = kraken;
-        MISSILE_SQUID = missileSquid;
-        MOLEWORM = moleworm;
-        MANTIS = mantis;
-        BED_BUG = bedBug;
-        WASP = wasp;
-        BOMBER = bomber;
-        SCORPION = scorpion;
-        CATERPILLAR = caterpillar;
-        BUTTERFLY = butterfly;
-        REVERIE = reverie;
-        FLYTRAP = flytrap;
-        BRUTALFLY = brutalfly;
-        BRUTALFLY_ORB = brutalflyOrb;
-        HUSH_PROJECTILE = hushProjectile;
-        TORETERROR = toreterror;
-        WATER_BOMB = waterBomb;
-        CRAWLING_BLIGHT = crawlingBlight;
-        SKULKING_FRIGHT = skulkingFright;
-        STINK_BUG = stinkBug;
-        CHEEP = cheep;
-        DORRIE = dorrie;
-        DUPLICATOR_LOG = duplicatorLog;
-        DUPLICATOR_SAPLING = duplicatorSapling;
-        DUCT_TAPE = ductTape;
-        INFESTED_ROOTED_DIRT = infestedRootedDirt;
-        INFESTED_COARSE_DIRT = infestedCoarseDirt;
-        NYXITE = nyxite;
-        SHELLSTONE = shellstone;
-        POLISHED_SHELLSTONE = polishedShellstone;
-        SHELLSTONE_BRICKS = shellstoneBricks;
-        CHISELED_SHELLSTONE = chiseledShellstone;
-        MOSSY_SHELLSTONE_BRICKS = mossyShellstoneBricks;
-        CRACKED_SHELLSTONE_BRICKS = crackedShellstoneBricks;
-        MOSSY_SHELLSTONE_BRICK_STAIRS = mossyShellstoneBrickStairs;
-        MOSSY_SHELLSTONE_BRICK_SLAB = mossyShellstoneBrickSlab;
-        MOSSY_SHELLSTONE_BRICK_WALL = mossyShellstoneBrickWall;
-        SHELLSTONE_STAIRS = shellstoneStairs;
-        SHELLSTONE_SLAB = shellstoneSlab;
-        SHELLSTONE_WALL = shellstoneWall;
-        POLISHED_SHELLSTONE_STAIRS = polishedShellstoneStairs;
-        POLISHED_SHELLSTONE_SLAB = polishedShellstoneSlab;
-        POLISHED_SHELLSTONE_WALL = polishedShellstoneWall;
-        SHELLSTONE_BRICK_STAIRS = shellstoneBrickStairs;
-        SHELLSTONE_BRICK_SLAB = shellstoneBrickSlab;
-        SHELLSTONE_BRICK_WALL = shellstoneBrickWall;
-        CLOUD_BLOCK = cloudBlock;
-        FLYTRAP_GOO_BLOCK = flytrapGooBlock;
-        PALE_NYXITE = paleNyxite;
-        NYXITE_SPIKE = nyxiteSpike;
-        CHITIN_BLOCK = chitinBlock;
-        CHITIN_SPIKE = chitinSpike;
-        POTENT_NYXITE = potentNyxite;
-        ANTIMETAL = antimetal;
-        POLISHED_ANTIMETAL = polishedAntimetal;
-        BUDDING_BLOOD_CRYSTAL = buddingBloodCrystal;
-        SMALL_BLOOD_CRYSTAL_BUD = smallBloodCrystalBud;
-        MEDIUM_BLOOD_CRYSTAL_BUD = mediumBloodCrystalBud;
-        LARGE_BLOOD_CRYSTAL_BUD = largeBloodCrystalBud;
-        BLOOD_CRYSTAL_CRYSTAL = bloodCrystalCrystal;
-        OURANWOOD_ACORN = ouranwoodAcorn;
-        KRAKEN_TOOTH = krakenTooth;
-        MOGGLES = moggles;
-        REVERIE_BOTTLE = reverieBottle;
-        STINK_BUG_ITEM = stinkBugItem;
-        DREAD = dread;
-        PARALYZED_EFFECT = paralyzedEffect;
-        INVERTED_EFFECT = invertedEffect;
-        STINKY_EFFECT = stinkyEffect;
-        OURANWOOD_ACORN_BLOCK = ouranwoodAcornBlock;
-        MOSSY_OURANWOOD_LOG = mossyOuranwoodLog;
-        MOSSY_OURANWOOD_WOOD = mossyOuranwoodWood;
-        UMBRAL_MOSS_BLOCK = umbralMossBlock;
-        UMBRAL_MOSS_CARPET = umbralMossCarpet;
-        BLUSH_MOSS_BLOCK = blushMossBlock;
-        BLUSH_MOSS_CARPET = blushMossCarpet;
-        ORANGE_MILKWEED = orangeMilkweed;
-        PINK_MILKWEED = pinkMilkweed;
-        BED_BUG_EGG = bedBugEggs;
-        CRAWLING_BLIGHT_EGGS = crawlingBlightEggs;
-        SKULKING_FRIGHT_EGGS = skulkingFrightEggs;
-        WASP_NEST = waspNest;
-        HUSHWEED = hushweed;
-        SQUIRREL_NEST_BLOCK = squirrelNestBlock;
-        BRUTALFLY_COCOON_SPAWNER = brutalflyCocoonSpawner;
-        GIANT_LILY_PAD = giantLilyPad;
-        SEASHELL = seashell;
-        ANT_NEST_BLOCK_ENTITY = antNestBlockEntity;
-        DREAM_CAMPFIRE_BLOCK_ENTITY = dreamCampfireBlockEntity;
-        WASP_NEST_BLOCK_ENTITY = waspNestBlockEntity;
-        HUSHWEED_BLOCK_ENTITY = hushweedBlockEntity;
-        SEASHELL_BLOCK_ENTITY = seashellBlockEntity;
-        STINKY_GAS = stinkyGas;
-        STINKY_FLY = stinkyFly;
-        PEACH_LEAVES_PARTICLE = peachLeaves;
-        DOUBLE_DAMAGE_CHANCE = doubleDamageChance;
-        BLOODGLASS_MAX_HEARTS = bloodglassMaxHearts;
-        BLOODGLASS_WARD = bloodglassWard;
+    private static <T> Supplier<T> lookup(ResourceKey<? extends Registry<? super T>> registryKey, String path) {
+        return new Supplier<>() {
+            private T value;
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public T get() {
+                if (this.value == null) {
+                    Registry<?> registry = BuiltInRegistries.REGISTRY.getValue(registryKey.identifier());
+                    Object found = registry == null
+                            ? null
+                            : registry.getOptional(Identifier.fromNamespaceAndPath(Antarchy.MODID, path)).orElse(null);
+                    if (found == null) {
+                        throw new IllegalStateException("Antarchy object supplier was accessed before registration finished");
+                    }
+                    this.value = (T) found;
+                }
+                return this.value;
+            }
+        };
     }
 
-    public static boolean isDuplicatorTreeBlock(BlockState state) {
-        return state.is(DUPLICATOR_LOG.get()) || state.is(DUPLICATOR_SAPLING.get());
+    public static void setDread(Supplier<Holder<MobEffect>> supplier) {
+        DREAD = supplier;
     }
 
-    public static void setOctopusBomb(Supplier<EntityType<OctopusBombEntity>> supplier) {
-        OCTOPUS_BOMB = supplier;
+    public static void setDoubleDamageChance(Supplier<Holder<Attribute>> supplier) {
+        DOUBLE_DAMAGE_CHANCE = supplier;
     }
 
-    public static void setBugSprayParticle(Supplier<SimpleParticleType> supplier) {
-        BUG_SPRAY_PARTICLE = supplier;
+    public static void setBloodglassMaxHearts(Supplier<Holder<Attribute>> supplier) {
+        BLOODGLASS_MAX_HEARTS = supplier;
     }
 
-    public static void setTentacle(Supplier<EntityType<TentacleEntity>> supplier) {
-        TENTACLE = supplier;
+    public static void setBloodglassWard(Supplier<Holder<MobEffect>> supplier) {
+        BLOODGLASS_WARD = supplier;
     }
 
-    public static void setNightmarePortal(Supplier<EntityType<NightmarePortalEntity>> supplier) {
-        NIGHTMARE_PORTAL = supplier;
+    public static void setParalyzedEffect(Supplier<Holder<MobEffect>> supplier) {
+        PARALYZED_EFFECT = supplier;
     }
 
-    public static void setDimensionalTear(Supplier<EntityType<DimensionalTearEntity>> supplier) {
-        DIMENSIONAL_TEAR = supplier;
+    public static void setInvertedEffect(Supplier<Holder<MobEffect>> supplier) {
+        INVERTED_EFFECT = supplier;
     }
 
-    public static void setDimensionalTearMarker(Supplier<Block> supplier) {
-        DIMENSIONAL_TEAR_MARKER = supplier;
+    public static void setStinkyEffect(Supplier<Holder<MobEffect>> supplier) {
+        STINKY_EFFECT = supplier;
     }
 
-    public static void setDimensionalTearMarkerBlockEntity(
-            Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity>> supplier
-    ) {
-        DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY = supplier;
-    }
-
-    public static void setNightmare(Supplier<EntityType<NightmareEntity>> supplier) {
-        NIGHTMARE = supplier;
-    }
-
-    public static void setNightmareBite(Supplier<EntityType<NightmareBiteEntity>> supplier) {
-        NIGHTMARE_BITE = supplier;
-    }
-
-    public static void setLucid(Supplier<EntityType<LucidEntity>> supplier) {
-        LUCID = supplier;
-    }
-
-    public static void setVortex(Supplier<EntityType<VortexEntity>> supplier) {
-        VORTEX = supplier;
-    }
-
-    public static void setWindVortex(Supplier<EntityType<WindVortexEntity>> supplier) {
-        WIND_VORTEX = supplier;
-    }
-
-    public static void setVortexChargeProjectile(Supplier<EntityType<VortexChargeProjectileEntity>> supplier) {
-        VORTEX_CHARGE_PROJECTILE = supplier;
-    }
-
-    public static void setRoyalBlackHole(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> supplier) {
-        ROYAL_BLACK_HOLE = supplier;
-    }
-
-    public static void setRoyalAssailantBlackHole(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> supplier) {
-        ROYAL_ASSAILANT_BLACK_HOLE = supplier;
-    }
-
-    public static void setVortexLens(Supplier<Block> supplier) {
-        VORTEX_LENS = supplier;
-    }
-
-    public static void setVortexLensBlockEntity(Supplier<BlockEntityType<VortexLensBlockEntity>> supplier) {
-        VORTEX_LENS_BLOCK_ENTITY = supplier;
-    }
-
-    public static void setLotus(Supplier<Block> supplier) {
-        LOTUS = supplier;
-    }
-
-    public static void setKrakensGraspTrident(Supplier<EntityType<KrakensGraspThrownTrident>> supplier) {
-        KRAKENS_GRASP_TRIDENT = supplier;
-    }
-
-    public static void setKrakenTentacle(Supplier<Item> supplier) {
-        KRAKEN_TENTACLE = supplier;
-    }
-
-    public static void setKrakensGrasp(Supplier<Item> supplier) {
-        KRAKENS_GRASP = supplier;
-    }
-
-    public static void setHerculesBeetle(Supplier<EntityType<HerculesBeetleEntity>> supplier) {
-        HERCULES_BEETLE = supplier;
-    }
-
-    public static void setPrince(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> supplier) {
-        PRINCE = supplier;
-    }
-
-    public static void setPrincess(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> supplier) {
-        PRINCESS = supplier;
-    }
-
-    public static void setRoyalBolt(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> supplier) {
-        ROYAL_BOLT = supplier;
-    }
-
-    public static void setRoyalElementalProjectile(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>> supplier) {
-        ROYAL_ELEMENTAL_PROJECTILE = supplier;
-    }
-
-    public static void setRoyalIceSpike(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>> supplier) {
-        ROYAL_ICE_SPIKE = supplier;
-    }
-
-    public static void setKing(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> supplier) {
-        KING = supplier;
-    }
-
-    public static void setManticore(Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> supplier) {
-        MANTICORE = supplier;
-    }
-
-    public static void setQueen(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>> supplier) {
-        QUEEN = supplier;
-    }
-
-    public static void setPrinceEgg(Supplier<Block> supplier) {
-        PRINCE_EGG = supplier;
-    }
-
-    public static void setPrincessEgg(Supplier<Block> supplier) {
-        PRINCESS_EGG = supplier;
-    }
-
-    public static void setRoyalEggBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> supplier) {
-        ROYAL_EGG_BLOCK_ENTITY = supplier;
-    }
-
-    public static void setOuranwoodDeer(Supplier<EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> supplier) {
-        OURANWOOD_DEER = supplier;
-    }
-
-    public static void setRollyPolly(Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>> supplier) {
-        ROLLY_POLLY = supplier;
-    }
-
-    public static void setGlimmer(Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>> supplier) {
-        GLIMMER = supplier;
-    }
-
-    public static void setStratoshark(Supplier<EntityType<com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity>> supplier) {
-        STRATOSHARK = supplier;
-    }
-
-    public static void setLumen(Supplier<Fluid> supplier) {
-        LUMEN = supplier;
-    }
-
-    public static void setFlowingLumen(Supplier<Fluid> supplier) {
-        FLOWING_LUMEN = supplier;
-    }
-
-    public static void setLumenBucket(Supplier<Item> supplier) {
-        LUMEN_BUCKET = supplier;
-    }
-
-    public static void setLumenBlock(Supplier<Block> supplier) {
-        LUMEN_BLOCK = supplier;
-    }
-
-    public static void setLumenFroglight(Supplier<Block> supplier) {
-        LUMEN_FROGLIGHT = supplier;
-    }
-
-    public static void setGlimmeringReed(Supplier<Block> supplier) {
-        GLIMMERING_REED = supplier;
-    }
-
-    public static void setSpiritApple(Supplier<Item> supplier) {
-        SPIRIT_APPLE = supplier;
+    public static void setSaucedEffect(Supplier<Holder<MobEffect>> supplier) {
+        SAUCED_EFFECT = supplier;
     }
 
     public static void setGlimmeringEffect(Supplier<Holder<MobEffect>> supplier) {
@@ -858,156 +346,8 @@ public final class AntarchyObjects {
         BLOOD_MOON_EFFECT = supplier;
     }
 
-    public static void setElka(Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> supplier) {
-        ELKA = supplier;
-    }
-
-    public static void setPeach(Supplier<Item> supplier) {
-        PEACH = supplier;
-    }
-
-    public static void setCorn(Supplier<Item> supplier) {
-        CORN = supplier;
-    }
-
-    public static void setCornSeeds(Supplier<Item> supplier) {
-        CORN_SEEDS = supplier;
-    }
-
-    public static void setWildCorn(Supplier<Block> supplier) {
-        WILD_CORN = supplier;
-    }
-
-    public static void setCritterCageBlock(Supplier<Block> supplier) {
-        CRITTER_CAGE_BLOCK = supplier;
-    }
-
-    public static void setLucidAnchor(Supplier<Block> supplier) {
-        LUCID_ANCHOR = supplier;
-    }
-
-    public static void setMyrmiteFossil(Supplier<Block> supplier) { MYRMITE_FOSSIL = supplier; }
-    public static void setBroodstoneFossil(Supplier<Block> supplier) { BROODSTONE_FOSSIL = supplier; }
-
-    public static void setStarCoralBlock(Supplier<Block> supplier) {
-        STAR_CORAL_BLOCK = supplier;
-    }
-
-    public static void setStarCoral(Supplier<Block> supplier) {
-        STAR_CORAL = supplier;
-    }
-
-    public static void setStarCoralFan(Supplier<Block> supplier) {
-        STAR_CORAL_FAN = supplier;
-    }
-
-    public static void setRawVenison(Supplier<Item> supplier) {
-        RAW_VENISON = supplier;
-    }
-
-    public static void setCookedVenison(Supplier<Item> supplier) {
-        COOKED_VENISON = supplier;
-    }
-
-    public static void setCookedCorndog(Supplier<Item> supplier) {
-        COOKED_CORNDOG = supplier;
-    }
-
-    public static void setGlimmerBottle(Supplier<Item> supplier) {
-        GLIMMER_BOTTLE = supplier;
-    }
-
-    public static void setCritterCage(Supplier<Item> supplier) {
-        CRITTER_CAGE = supplier;
-    }
-
-    public static void setLotusPollen(Supplier<SimpleParticleType> supplier) {
-        LOTUS_POLLEN = supplier;
-    }
-
-    public static void setNightmareFireFlame(Supplier<SimpleParticleType> supplier) {
-        NIGHTMARE_FIRE_FLAME = supplier;
-    }
-
-    public static void setLucidBoltImpactSmall(Supplier<SimpleParticleType> supplier) {
-        LUCID_BOLT_IMPACT_SMALL = supplier;
-    }
-
-    public static void setLucidBoltImpactLarge(Supplier<SimpleParticleType> supplier) {
-        LUCID_BOLT_IMPACT_LARGE = supplier;
-    }
-
-    public static void setTemporalGlints(Supplier<SimpleParticleType> slow, Supplier<SimpleParticleType> fast) {
-        TEMPORAL_GLINT_SLOW = slow;
-        TEMPORAL_GLINT_FAST = fast;
-    }
-
-    public static void setPeachLeavesParticle(Supplier<SimpleParticleType> supplier) {
-        PEACH_LEAVES_PARTICLE = supplier;
-    }
-
-    public static void setGlimmerVariantComponent(Supplier<net.minecraft.core.component.DataComponentType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>> supplier) {
-        GLIMMER_VARIANT_COMPONENT = supplier;
-    }
-
-    public static void setDorrieInventoryMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> supplier) {
-        DORRIE_INVENTORY_MENU = supplier;
-    }
-
-    public static void setRoyalJudgmentMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> supplier) {
-        ROYAL_JUDGMENT_MENU = supplier;
-    }
-
-    public static void setGiantFryingPanMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> supplier) {
-        GIANT_FRYING_PAN_MENU = supplier;
-    }
-
-    public static void setAmericanComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> supplier) {
-        AMERICAN_COMPONENT = supplier;
-    }
-
-    public static void setCritterCageBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity>> supplier) {
-        CRITTER_CAGE_BLOCK_ENTITY = supplier;
-    }
-
-    public static void setLucidAnchorBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> supplier) {
-        LUCID_ANCHOR_BLOCK_ENTITY = supplier;
-    }
-
-    public static void setFossilBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> supplier) {
-        FOSSIL_BLOCK_ENTITY = supplier;
-    }
-
-    public static void setFossilEntityComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> supplier) {
-        FOSSIL_ENTITY_COMPONENT = supplier;
-    }
-
-    public static void setCritterCageProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> supplier) {
-        CRITTER_CAGE_PROJECTILE = supplier;
-    }
-
-    public static void setLaunchedAnvil(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity>> supplier) {
-        LAUNCHED_ANVIL = supplier;
-    }
-
-    public static void setWormHookProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>> supplier) {
-        WORM_HOOK_PROJECTILE = supplier;
-    }
-
-    public static void setWormHook(Supplier<Item> supplier) {
-        WORM_HOOK = supplier;
-    }
-
-    public static void setCritterCageEntityTypeComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> supplier) {
-        CRITTER_CAGE_ENTITY_TYPE_COMPONENT = supplier;
-    }
-
-    public static void setCritterCagePrimaryColorComponent(Supplier<net.minecraft.core.component.DataComponentType<Integer>> supplier) {
-        CRITTER_CAGE_PRIMARY_COLOR_COMPONENT = supplier;
-    }
-
-    public static void setCritterCageSecondaryColorComponent(Supplier<net.minecraft.core.component.DataComponentType<Integer>> supplier) {
-        CRITTER_CAGE_SECONDARY_COLOR_COMPONENT = supplier;
+    public static boolean isDuplicatorTreeBlock(BlockState state) {
+        return state.is(DUPLICATOR_LOG.get()) || state.is(DUPLICATOR_SAPLING.get());
     }
 
     public static BlockBehaviour.Properties shellstoneProperties() {

@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
+import com.craisinlord.antos.content.AntOSObjects;
 import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.IModPlugin;
@@ -17,6 +18,7 @@ import mezz.jei.api.recipe.vanilla.IJeiBrewingRecipe;
 import mezz.jei.api.recipe.vanilla.IVanillaRecipeFactory;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -32,6 +34,12 @@ public class AntarchyJeiPlugin implements IModPlugin {
     @Override
     public Identifier getPluginUid() {
         return UID;
+    }
+
+    @Override
+    public void registerItemSubtypes(ISubtypeRegistration registration) {
+        registration.registerFromDataComponentTypes(AntarchyObjects.GLIMMER_BOTTLE.get(), AntarchyObjects.GLIMMER_VARIANT_COMPONENT.get());
+        registration.registerFromDataComponentTypes(AntOSObjects.FLOPPY_DISK.get(), AntOSObjects.FLOPPY_DISK_COMPONENT.get());
     }
 
     @Override

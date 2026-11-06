@@ -126,6 +126,10 @@ public final class AntarchyForgeBlocks {
             () -> new DimensionalTearMarkerBlock(AntarchyForgeBlocks::dimensionalTearMarkerBlockEntityType,
                     BlockBehaviour.Properties.of().noCollission().noOcclusion().noLootTable().instabreak()
                             .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.RemembranceTorchBlock> REMEMBRANCE_TORCH = BLOCKS.register("remembrance_torch",
+            () -> new com.craisinlord.antarchy.content.block.RemembranceTorchBlock(BlockBehaviour.Properties.copy(Blocks.TORCH)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock> REMEMBRANCE_WALL_TORCH = BLOCKS.register("remembrance_wall_torch",
+            () -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(BlockBehaviour.Properties.copy(Blocks.WALL_TORCH)));
     public static final RegistryObject<StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
             () -> new StandingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_SIGN), AntarchyWoodTypes.OURANWOOD));
     public static final RegistryObject<WallSignBlock> OURANWOOD_WALL_SIGN = BLOCKS.register("ouranwood_wall_sign",
@@ -633,6 +637,153 @@ public final class AntarchyForgeBlocks {
     public static final RegistryObject<SkulkingFrightEggBlock> SKULKING_FRIGHT_EGG = BLOCKS.register("skulking_fright_egg",
             () -> new SkulkingFrightEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
 
+    public static final RegistryObject<Block> ROCKITE_COAL_ORE = BLOCKS.register("rockite_coal_ore",
+            () -> createOre(Blocks.COAL_ORE, 0, 2, MapColor.COLOR_GRAY));
+    public static final RegistryObject<Block> ROCKITE_COPPER_ORE = BLOCKS.register("rockite_copper_ore",
+            () -> createOre(Blocks.COPPER_ORE, 0, 0, MapColor.COLOR_GRAY));
+    public static final RegistryObject<Block> ROCKITE_IRON_ORE = BLOCKS.register("rockite_iron_ore",
+            () -> createOre(Blocks.IRON_ORE, 0, 0, MapColor.COLOR_GRAY));
+    public static final RegistryObject<Block> ROCKITE_GOLD_ORE = BLOCKS.register("rockite_gold_ore",
+            () -> createOre(Blocks.GOLD_ORE, 0, 0, MapColor.COLOR_GRAY));
+    public static final RegistryObject<Block> ROCKITE_REDSTONE_ORE = BLOCKS.register("rockite_redstone_ore",
+            () -> new net.minecraft.world.level.block.RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_ORE).mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> ROCKITE_LAPIS_ORE = BLOCKS.register("rockite_lapis_ore",
+            () -> createOre(Blocks.LAPIS_ORE, 2, 5, MapColor.COLOR_GRAY));
+    public static final RegistryObject<Block> ROCKITE_DIAMOND_ORE = BLOCKS.register("rockite_diamond_ore",
+            () -> createOre(Blocks.DIAMOND_ORE, 3, 7, MapColor.COLOR_GRAY));
+    public static final RegistryObject<Block> ROCKITE_TITANIUM_ORE = BLOCKS.register("rockite_titanium_ore",
+            () -> createOre(Blocks.DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
+    public static final RegistryObject<Block> ROCKITE_URANIUM_ORE = BLOCKS.register("rockite_uranium_ore",
+            () -> createOre(Blocks.EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
+
+    public static final RegistryObject<SlabBlock> ROCKITE_SLAB = BLOCKS.register("rockite_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> ZEBRA_STONE_SLAB = BLOCKS.register("zebra_stone_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> ARKROSE_SLAB = BLOCKS.register("arkrose_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> TIDESTONE_SLAB = BLOCKS.register("tidestone_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> POLISHED_ROCKITE = BLOCKS.register("polished_rockite",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> ROCKITE_BRICKS = BLOCKS.register("rockite_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> CRACKED_ROCKITE_BRICKS = BLOCKS.register("cracked_rockite_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> MOSSY_ROCKITE_BRICKS = BLOCKS.register("mossy_rockite_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> CHISELED_ROCKITE_BRICKS = BLOCKS.register("chiseled_rockite_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<RotatedPillarBlock> ROCKITE_PILLAR = BLOCKS.register("rockite_pillar",
+            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> ZEBRA_STONE = BLOCKS.register("zebra_stone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> POLISHED_ZEBRA_STONE = BLOCKS.register("polished_zebra_stone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> ZEBRA_STONE_BRICKS = BLOCKS.register("zebra_stone_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> CHISELED_ZEBRA_STONE = BLOCKS.register("chiseled_zebra_stone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<RotatedPillarBlock> ZEBRA_STONE_PILLAR = BLOCKS.register("zebra_stone_pillar",
+            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> ARKROSE = BLOCKS.register("arkrose",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> POLISHED_ARKROSE = BLOCKS.register("polished_arkrose",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> ARKROSE_BRICKS = BLOCKS.register("arkrose_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> CHISELED_ARKROSE = BLOCKS.register("chiseled_arkrose",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<RotatedPillarBlock> ARKROSE_PILLAR = BLOCKS.register("arkrose_pillar",
+            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> TIDESTONE = BLOCKS.register("tidestone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> POLISHED_TIDESTONE = BLOCKS.register("polished_tidestone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> TIDESTONE_BRICKS = BLOCKS.register("tidestone_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> CHISELED_TIDESTONE = BLOCKS.register("chiseled_tidestone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<RotatedPillarBlock> TIDESTONE_PILLAR = BLOCKS.register("tidestone_pillar",
+            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> CONGLOMERATE = BLOCKS.register("conglomerate",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<Block> TRUFFLED_LOAM = BLOCKS.register("truffled_loam",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
+
+    public static final RegistryObject<StairBlock> ROCKITE_STAIRS = BLOCKS.register("rockite_stairs",
+            () -> new StairBlock(ROCKITE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> ROCKITE_WALL = BLOCKS.register("rockite_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> POLISHED_ROCKITE_STAIRS = BLOCKS.register("polished_rockite_stairs",
+            () -> new StairBlock(POLISHED_ROCKITE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> POLISHED_ROCKITE_SLAB = BLOCKS.register("polished_rockite_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> POLISHED_ROCKITE_WALL = BLOCKS.register("polished_rockite_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> ROCKITE_BRICK_STAIRS = BLOCKS.register("rockite_brick_stairs",
+            () -> new StairBlock(ROCKITE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> ROCKITE_BRICK_SLAB = BLOCKS.register("rockite_brick_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> ROCKITE_BRICK_WALL = BLOCKS.register("rockite_brick_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> ZEBRA_STONE_STAIRS = BLOCKS.register("zebra_stone_stairs",
+            () -> new StairBlock(ZEBRA_STONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> ZEBRA_STONE_WALL = BLOCKS.register("zebra_stone_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> POLISHED_ZEBRA_STONE_STAIRS = BLOCKS.register("polished_zebra_stone_stairs",
+            () -> new StairBlock(POLISHED_ZEBRA_STONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> POLISHED_ZEBRA_STONE_SLAB = BLOCKS.register("polished_zebra_stone_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> POLISHED_ZEBRA_STONE_WALL = BLOCKS.register("polished_zebra_stone_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> ZEBRA_STONE_BRICK_STAIRS = BLOCKS.register("zebra_stone_brick_stairs",
+            () -> new StairBlock(ZEBRA_STONE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> ZEBRA_STONE_BRICK_SLAB = BLOCKS.register("zebra_stone_brick_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> ZEBRA_STONE_BRICK_WALL = BLOCKS.register("zebra_stone_brick_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> ARKROSE_STAIRS = BLOCKS.register("arkrose_stairs",
+            () -> new StairBlock(ARKROSE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> ARKROSE_WALL = BLOCKS.register("arkrose_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> POLISHED_ARKROSE_STAIRS = BLOCKS.register("polished_arkrose_stairs",
+            () -> new StairBlock(POLISHED_ARKROSE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> POLISHED_ARKROSE_SLAB = BLOCKS.register("polished_arkrose_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> POLISHED_ARKROSE_WALL = BLOCKS.register("polished_arkrose_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> ARKROSE_BRICK_STAIRS = BLOCKS.register("arkrose_brick_stairs",
+            () -> new StairBlock(ARKROSE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> ARKROSE_BRICK_SLAB = BLOCKS.register("arkrose_brick_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> ARKROSE_BRICK_WALL = BLOCKS.register("arkrose_brick_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> TIDESTONE_STAIRS = BLOCKS.register("tidestone_stairs",
+            () -> new StairBlock(TIDESTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> TIDESTONE_WALL = BLOCKS.register("tidestone_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> POLISHED_TIDESTONE_STAIRS = BLOCKS.register("polished_tidestone_stairs",
+            () -> new StairBlock(POLISHED_TIDESTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> POLISHED_TIDESTONE_SLAB = BLOCKS.register("polished_tidestone_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> POLISHED_TIDESTONE_WALL = BLOCKS.register("polished_tidestone_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> TIDESTONE_BRICK_STAIRS = BLOCKS.register("tidestone_brick_stairs",
+            () -> new StairBlock(TIDESTONE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> TIDESTONE_BRICK_SLAB = BLOCKS.register("tidestone_brick_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> TIDESTONE_BRICK_WALL = BLOCKS.register("tidestone_brick_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<StairBlock> MOSSY_ROCKITE_BRICK_STAIRS = BLOCKS.register("mossy_rockite_brick_stairs",
+            () -> new StairBlock(MOSSY_ROCKITE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<SlabBlock> MOSSY_ROCKITE_BRICK_SLAB = BLOCKS.register("mossy_rockite_brick_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<WallBlock> MOSSY_ROCKITE_BRICK_WALL = BLOCKS.register("mossy_rockite_brick_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+
     static {
         BiowartBlock.bindTendrils(BIOWART_TENDRILS);
     }
@@ -816,6 +967,12 @@ public final class AntarchyForgeBlocks {
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
     public static final RegistryObject<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD).sound(primordialLoamSoundType())));
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.PrimordialGrassBlock> PRIMORDIAL_GRASS = BLOCKS.register("primordial_grass",
+            () -> new com.craisinlord.antarchy.content.block.PrimordialGrassBlock(BlockBehaviour.Properties.copy(Blocks.GRASS)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.PrimordialMossBlock> PRIMORDIAL_MOSS_BLOCK = BLOCKS.register("primordial_moss_block", () -> new com.craisinlord.antarchy.content.block.PrimordialMossBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK)));
+    public static final RegistryObject<net.minecraft.world.level.block.CarpetBlock> PRIMORDIAL_MOSS_CARPET = BLOCKS.register("primordial_moss_carpet", () -> new net.minecraft.world.level.block.CarpetBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_CARPET)));
+    public static final RegistryObject<FlowerPotBlock> POTTED_PRIMORDIAL_GRASS = BLOCKS.register("potted_primordial_grass",
+            () -> new FlowerPotBlock(PRIMORDIAL_GRASS.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION)));
     public static final RegistryObject<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.PACKED_MUD)));
     public static final RegistryObject<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",
@@ -999,6 +1156,12 @@ public final class AntarchyForgeBlocks {
                     (pos, state) -> new DimensionalTearMarkerBlockEntity(pos, state, AntarchyForgeBlocks::dimensionalTearMarkerBlockEntityType),
                     DIMENSIONAL_TEAR_MARKER.get()
             ).build(null));
+    public static final RegistryObject<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity>> REMEMBRANCE_TORCH_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("remembrance_torch",
+            () -> BlockEntityType.Builder.of(
+                    com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity::new,
+                    REMEMBRANCE_TORCH.get(),
+                    REMEMBRANCE_WALL_TORCH.get()
+            ).build(null));
     public static final RegistryObject<BlockEntityType<QueenTrailSpawnMarkerBlockEntity>> QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("queen_trail_spawn_marker",
             () -> BlockEntityType.Builder.of(
                     (pos, state) -> new QueenTrailSpawnMarkerBlockEntity(pos, state, AntarchyForgeBlocks::queenTrailSpawnMarkerBlockEntityType),
@@ -1159,4 +1322,33 @@ public final class AntarchyForgeBlocks {
             return state.rotate(mirror.getRotation(state.getValue(FACING)));
         }
     }
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.CranberryLeavesBlock> CRANBERRY_LEAVES = BLOCKS.register("cranberry_leaves", () -> new com.craisinlord.antarchy.content.block.CranberryLeavesBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.JelliedCranberryBlock> JELLIED_CRANBERRY_BLOCK = BLOCKS.register("jellied_cranberry_block", () -> new com.craisinlord.antarchy.content.block.JelliedCranberryBlock(BlockBehaviour.Properties.copy(Blocks.HONEY_BLOCK).mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
+    public static final RegistryObject<RotatedPillarBlock> CRANBERRY_LOG = BLOCKS.register("cranberry_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LOG)));
+    public static final RegistryObject<RotatedPillarBlock> CRANBERRY_WOOD = BLOCKS.register("cranberry_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WOOD)));
+    public static final RegistryObject<RotatedPillarBlock> STRIPPED_CRANBERRY_LOG = BLOCKS.register("stripped_cranberry_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_JUNGLE_LOG)));
+    public static final RegistryObject<RotatedPillarBlock> STRIPPED_CRANBERRY_WOOD = BLOCKS.register("stripped_cranberry_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_JUNGLE_WOOD)));
+    public static final RegistryObject<Block> CRANBERRY_PLANKS = BLOCKS.register("cranberry_planks",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.JUNGLE_PLANKS)));
+    public static final RegistryObject<StairBlock> CRANBERRY_STAIRS = BLOCKS.register("cranberry_stairs",
+            () -> new StairBlock(CRANBERRY_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.JUNGLE_STAIRS)));
+    public static final RegistryObject<SlabBlock> CRANBERRY_SLAB = BLOCKS.register("cranberry_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_SLAB)));
+    public static final RegistryObject<FenceBlock> CRANBERRY_FENCE = BLOCKS.register("cranberry_fence",
+            () -> new FenceBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_FENCE)));
+    public static final RegistryObject<FenceGateBlock> CRANBERRY_FENCE_GATE = BLOCKS.register("cranberry_fence_gate",
+            () -> new FenceGateBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_FENCE_GATE), WoodType.JUNGLE));
+    public static final RegistryObject<DoorBlock> CRANBERRY_DOOR = BLOCKS.register("cranberry_door",
+            () -> new DoorBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_DOOR), BlockSetType.JUNGLE));
+    public static final RegistryObject<TrapDoorBlock> CRANBERRY_TRAPDOOR = BLOCKS.register("cranberry_trapdoor",
+            () -> new TrapDoorBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_TRAPDOOR), BlockSetType.JUNGLE));
+    public static final RegistryObject<PressurePlateBlock> CRANBERRY_PRESSURE_PLATE = BLOCKS.register("cranberry_pressure_plate",
+            () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.copy(Blocks.JUNGLE_PRESSURE_PLATE), BlockSetType.JUNGLE));
+    public static final RegistryObject<ButtonBlock> CRANBERRY_BUTTON = BLOCKS.register("cranberry_button",
+            () -> new ButtonBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_BUTTON), BlockSetType.JUNGLE, 30, true));
+    public static final RegistryObject<net.minecraft.world.level.block.SaplingBlock> CRANBERRY_SAPLING = BLOCKS.register("cranberry_sapling", () -> new net.minecraft.world.level.block.SaplingBlock(com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeGrowers.CRANBERRY, BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
 }

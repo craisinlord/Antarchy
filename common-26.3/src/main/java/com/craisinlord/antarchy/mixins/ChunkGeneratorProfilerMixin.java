@@ -1,0 +1,42 @@
+package com.craisinlord.antarchy.mixins;
+
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGenProfiler;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
+import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.blending.Blender;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import org.spongepowered.asm.mixin.Mixin;
+
+@Mixin(ChunkGenerator.class)
+public abstract class ChunkGeneratorProfilerMixin {
+    @WrapMethod(method = "applyBiomeDecoration")
+    private void antarchy$profileFeatures(WorldGenLevel level, ChunkAccess chunk, StructureManager structureManager, Operation<Void> original) {
+        long start = ElythiaGenProfiler.begin();
+        original.call(level, chunk, structureManager);
+        ElythiaGenProfiler.end(start, (ChunkGenerator) (Object) this, ElythiaGenProfiler.Stage.FEATURES, chunk);
+    }
+
+    @WrapMethod(method = "lambda$createBiomes$0")
+    private ChunkAccess antarchy$profileBiomes(Blender blender, RandomState randomState, ChunkAccess chunk, Operation<ChunkAccess> original) {
+        long start = ElythiaGenProfiler.begin();
+        ChunkAccess result = original.call(blender, randomState, chunk);
+        ElythiaGenProfiler.end(start, (ChunkGenerator) (Object) this, ElythiaGenProfiler.Stage.BIOMES, chunk);
+        return result;
+    }
+
+    @WrapMethod(method = "createStructures")
+    private void antarchy$profileStructures(RegistryAccess registryAccess, ChunkGeneratorStructureState structureState, StructureManager structureManager, ChunkAccess chunk, StructureTemplateManager templateManager, ResourceKey<Level> level, Operation<Void> original) {
+        long start = ElythiaGenProfiler.begin();
+        original.call(registryAccess, structureState, structureManager, chunk, templateManager, level);
+        ElythiaGenProfiler.end(start, (ChunkGenerator) (Object) this, ElythiaGenProfiler.Stage.STRUCTURES, chunk);
+    }
+}

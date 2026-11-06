@@ -62,7 +62,7 @@ public final class GroundMistParticle extends SingleQuadParticle {
 
     @Override
     public SingleQuadParticle.Layer getLayer() {
-        return SingleQuadParticle.Layer.TRANSLUCENT;
+        return GroundMistRenderType.INSTANCE;
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {

@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,6 +28,9 @@ public final class GlimmeringFallFeature implements Feature {
     private static final int MAX_SHIFTS = 24;
     private static final int MAX_CARVE = 6;
     private static final int FALLING_LEVEL = 8;
+    private static final int STAIN_REACH = 2;
+    private static final int MAX_RIM_FOOTING = 32;
+    private static final float OUTER_STAIN_CHANCE = 0.6F;
 
 
     @Override
@@ -84,7 +88,7 @@ public final class GlimmeringFallFeature implements Feature {
                 continue;
             }
             carveChannel(level, bounds, laneRim, bestDirection, topY, lane == 0 || lane == width - 1);
-            BlockPos landing = pour(level, bounds, laneRim.relative(bestDirection).atY(topY), bestDirection);
+            BlockPos landing = pour(level, random, bounds, laneRim.relative(bestDirection).atY(topY), bestDirection, lane == 0 || lane == width - 1);
             if (landing != null) {
                 landingX += landing.getX();
                 landingZ += landing.getZ();
@@ -128,7 +132,7 @@ public final class GlimmeringFallFeature implements Feature {
         }
     }
 
-    private static BlockPos pour(WorldGenLevel level, Bounds bounds, BlockPos start, Direction direction) {
+    private static BlockPos pour(WorldGenLevel level, RandomSource random, Bounds bounds, BlockPos start, Direction direction, boolean outer) {
         BlockState falling = lumen(FALLING_LEVEL);
         BlockPos.MutableBlockPos cursor = start.mutable();
         int shifts = 0;
@@ -137,6 +141,7 @@ public final class GlimmeringFallFeature implements Feature {
             BlockState state = level.getBlockState(cursor);
             if (state.isAir() || state.canBeReplaced() && state.getFluidState().isEmpty()) {
                 level.setBlock(cursor, falling, 2);
+                stain(level, random, bounds, cursor, direction, outer);
                 cursor.move(Direction.DOWN);
                 continue;
             }
@@ -152,6 +157,20 @@ public final class GlimmeringFallFeature implements Feature {
             shifts++;
         }
         return null;
+    }
+
+    private static void stain(WorldGenLevel level, RandomSource random, Bounds bounds, BlockPos pos, Direction direction, boolean outer) {
+        if (outer && random.nextFloat() >= OUTER_STAIN_CHANCE) return;
+        for (int reach = 1; reach <= STAIN_REACH; reach++) {
+            BlockPos wall = pos.relative(direction, -reach);
+            if (!bounds.contains(wall)) return;
+            BlockState state = level.getBlockState(wall);
+            if (state.is(ElythiaGeologyFeature.NATURAL_STONE)) {
+                level.setBlock(wall, ElythiaPalette.TIDESTONE.get().defaultBlockState(), 2);
+                return;
+            }
+            if (state.isSolid()) return;
+        }
     }
 
     private static void pool(WorldGenLevel level, RandomSource random, Bounds bounds, BlockPos landing, int width) {
@@ -196,6 +215,12 @@ public final class GlimmeringFallFeature implements Feature {
                         if (!state.isSolid() && !state.is(AntarchyObjects.LUMEN_BLOCK.get())) {
                             level.setBlock(pos, bankState(random), 2);
                         }
+                    }
+                    for (int y = waterline - 4; y > waterline - 4 - MAX_RIM_FOOTING; y--) {
+                        pos.set(x, y, z);
+                        BlockState state = level.getBlockState(pos);
+                        if (state.isSolid() || !state.getFluidState().isEmpty()) break;
+                        level.setBlock(pos, bankState(random), 2);
                     }
                 }
             }

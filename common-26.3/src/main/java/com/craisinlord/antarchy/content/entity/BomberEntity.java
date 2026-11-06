@@ -1,5 +1,10 @@
 package com.craisinlord.antarchy.content.entity;
 
+import net.minecraft.util.random.WeightedList;
+import net.minecraft.core.particles.ExplosionParticleInfo;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
@@ -8,11 +13,11 @@ import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.Objects;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.UUIDUtil;
-import net.minecraft.core.particles.ExplosionParticleInfo;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -23,7 +28,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -54,9 +58,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import java.util.UUID;
 import org.jetbrains.annotations.Nullable;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -69,17 +70,19 @@ import com.geckolib.animation.keyframehandler.AutoPlayingSoundKeyframeHandler;
 import com.geckolib.util.GeckoLibUtil;
 
 public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
-    private static final Identifier INTENTIONALLY_EMPTY_SOUND_ID = Identifier.withDefaultNamespace("intentionally_empty");
     private static final WeightedList<ExplosionParticleInfo> EXPLOSION_BLOCK_PARTICLES = WeightedList.<ExplosionParticleInfo>builder()
             .add(new ExplosionParticleInfo(ParticleTypes.POOF, 0.5F, 1.0F))
             .add(new ExplosionParticleInfo(ParticleTypes.SMOKE, 1.0F, 1.0F))
             .build();
+    private static final Identifier INTENTIONALLY_EMPTY_SOUND_ID = Identifier.withDefaultNamespace("intentionally_empty");
     private static final EntityDataAccessor<Integer> FUSE_TICKS_DATA =
             SynchedEntityData.defineId(BomberEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DETONATING_DATA =
             SynchedEntityData.defineId(BomberEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> GLIMMER_ECHO_DATA =
             SynchedEntityData.defineId(BomberEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final int BASE_XP_REWARD = 8;
 
     private static final int DEFAULT_FUSE_TICKS = 120;
     private static final int EXPLODE_ANIM_START_TICKS = 25;
@@ -99,7 +102,7 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     public BomberEntity(EntityType<? extends BomberEntity> entityType, Level level) {
         super(entityType, level);
-        this.xpReward = 8;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -152,7 +155,7 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
+    public boolean doHurtTarget(net.minecraft.server.level.ServerLevel level, Entity target) {
         if (!(target instanceof LivingEntity)) {
             return super.doHurtTarget(level, target);
         }
@@ -162,18 +165,10 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        this.reactToDamage(source);
-        return false;
-    }
-
-    @Override
-    public boolean hurtClient(DamageSource source) {
-        this.reactToDamage(source);
-        return false;
-    }
-
-    private void reactToDamage(DamageSource source) {
+    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.hurtServer(level, source, amount);
+        }
         if (source.is(DamageTypeTags.IS_FIRE) || source.is(DamageTypeTags.IS_EXPLOSION)) {
             this.primeFuse();
         }
@@ -185,6 +180,7 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
 
         this.playSound(AntarchySoundEvents.BOMBER_KNOCK.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.2F);
         this.pushAwayFrom(source);
+        return false;
     }
 
     @Override
@@ -230,7 +226,6 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
         controllers.add(new AnimationController<BomberEntity>("movement_controller", 0, this::movementAnimController)
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
         controllers.add(new AnimationController<BomberEntity>("explode_controller", 0, this::explodeAnimController)
-                .receiveTriggeredAnimations()
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
                 .triggerableAnim("explode", EXPLODE_ANIM));
     }
@@ -241,12 +236,57 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO_DATA);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO_DATA, glimmerEcho);
+        this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.bomber.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        output.putBoolean("Detonating", this.detonating);
+        output.putInt("FuseTicks", this.fuseTicks);
+        if (this.glimmerEchoOwner != null) {
+            output.store(GLIMMER_ECHO_OWNER_KEY, UUIDUtil.CODEC, this.glimmerEchoOwner);
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
+        this.detonating = input.getBooleanOr("Detonating", false);
+        this.fuseTicks = Math.max(0, input.getIntOr("FuseTicks", 0));
+        this.entityData.set(DETONATING_DATA, this.detonating);
+        this.entityData.set(FUSE_TICKS_DATA, this.fuseTicks);
+        this.glimmerEchoOwner = input.read(GLIMMER_ECHO_OWNER_KEY, UUIDUtil.CODEC).orElse(null);
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
         if (!this.level().isClientSide() && this.isGlimmerEcho()) {
             GlimmerEchoes.tickAmbient(this, 8, 1);
-            if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) return;
+            if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                return;
+            }
         }
 
         if (this.detonating && this.fuseTicks <= EXPLODE_ANIM_START_TICKS) {
@@ -277,41 +317,6 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
         return this.entityData.get(FUSE_TICKS_DATA);
     }
 
-    @Override
-    public boolean isGlimmerEcho() {
-        return this.entityData.get(GLIMMER_ECHO_DATA);
-    }
-
-    @Override
-    public void setGlimmerEcho(boolean glimmerEcho) {
-        this.entityData.set(GLIMMER_ECHO_DATA, glimmerEcho);
-        this.xpReward = glimmerEcho ? 0 : 8;
-    }
-
-    @Override
-    public void setGlimmerEchoOwner(@Nullable UUID owner) {
-        this.glimmerEchoOwner = owner;
-    }
-
-    @Override
-    protected net.minecraft.network.chat.Component getTypeName() {
-        return this.isGlimmerEcho() ? net.minecraft.network.chat.Component.translatable("entity.antarchy.bomber.glimmer") : super.getTypeName();
-    }
-
-    @Override
-    public void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
-        output.storeNullable("GlimmerEchoOwner", UUIDUtil.CODEC, this.glimmerEchoOwner);
-    }
-
-    @Override
-    public void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
-        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
-        this.glimmerEchoOwner = input.read("GlimmerEchoOwner", UUIDUtil.CODEC).orElse(null);
-    }
-
     public boolean isFlashing() {
         return this.isDetonating()
                 && this.getFuseTicks() > 0
@@ -327,9 +332,6 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     private PlayState explodeAnimController(AnimationTest<BomberEntity> state) {
-        if (state.controller().isPlayingTriggeredAnimation()) {
-            return PlayState.CONTINUE;
-        }
         if (this.isDetonating() && this.getFuseTicks() <= EXPLODE_ANIM_START_TICKS) {
             return state.setAndContinue(EXPLODE_ANIM);
         }
@@ -376,19 +378,21 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
                 EXPLOSION_BLOCK_PARTICLES,
                 BuiltInRegistries.SOUND_EVENT.get(INTENTIONALLY_EMPTY_SOUND_ID).orElseThrow()
         );
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.burst(serverLevel, explosionCenter, radius * 0.5D, 40);
+        }
 
-        if (this.isGlimmerEcho()) GlimmerEchoes.burst(serverLevel, explosionCenter, radius * 0.5D, 40);
         double extraDamage = AntarchySettings.bomberExplosionDamage() * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner);
         if (extraDamage > 0.0D) {
             AABB damageBox = this.getBoundingBox().inflate(radius * 2.0D);
-            for (LivingEntity livingEntity : serverLevel.getEntitiesOfClass(LivingEntity.class, damageBox, entity -> entity.isAlive() && entity != this)) {
+            for (LivingEntity livingEntity : serverLevel.getEntitiesOfClass(LivingEntity.class, damageBox, entity -> entity.isAlive() && entity != this && !(entity instanceof ToreterrorEntity))) {
                 double distance = explosionCenter.distanceTo(livingEntity.position());
                 double falloff = radius <= 0.0F ? 0.0D : Math.max(0.0D, 1.0D - distance / radius);
                 if (falloff <= 0.0D) {
                     continue;
                 }
 
-                livingEntity.hurtServer(serverLevel, this.level().damageSources().generic(), (float) (extraDamage * falloff));
+                livingEntity.hurt(this.level().damageSources().generic(), (float) (extraDamage * falloff));
             }
         }
 

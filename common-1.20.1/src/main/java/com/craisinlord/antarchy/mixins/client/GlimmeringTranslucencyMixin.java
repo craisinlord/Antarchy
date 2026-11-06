@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class GlimmeringTranslucencyMixin<T extends LivingEntity> {
-    private static final float GLIMMERING_ALPHA = 0x26 / 255.0F;
+    private static final float GLIMMERING_ALPHA = 0x40 / 255.0F;
 
     @Unique
     private boolean antarchy$glimmeringActive;

@@ -13,7 +13,6 @@ import java.util.List;
 public abstract class PrimordialGrassDebugMixin {
     @Inject(method = "getGameInformation", at = @At("RETURN"))
     private void antarchy$grassDebugLine(CallbackInfoReturnable<List<String>> callback) {
-        String line = PrimordialGrassRenderer.debugLine();
-        if (line != null) callback.getReturnValue().add(line);
+        PrimordialGrassRenderer.addDebugLines(callback.getReturnValue());
     }
 }

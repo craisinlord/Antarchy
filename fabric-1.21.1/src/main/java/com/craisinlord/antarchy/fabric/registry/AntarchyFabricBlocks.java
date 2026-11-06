@@ -774,6 +774,8 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrimordialGrassBlock> PRIMORDIAL_GRASS = BLOCKS.register("primordial_grass",
             () -> new com.craisinlord.antarchy.content.block.PrimordialGrassBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SHORT_GRASS)));
+    public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_PRIMORDIAL_GRASS = BLOCKS.register("potted_primordial_grass",
+            () -> new net.minecraft.world.level.block.FlowerPotBlock(PRIMORDIAL_GRASS.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> ROCKITE_STAIRS = BLOCKS.register("rockite_stairs",
             () -> new net.minecraft.world.level.block.StairBlock(ROCKITE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
@@ -924,6 +926,8 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.FlytrapGooBlock> FLYTRAP_GOO_BLOCK = BLOCKS.register("flytrap_goo_block",
             () -> new com.craisinlord.antarchy.content.block.FlytrapGooBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.JelliedCranberryBlock> JELLIED_CRANBERRY_BLOCK = BLOCKS.register("jellied_cranberry_block",
+            () -> new com.craisinlord.antarchy.content.block.JelliedCranberryBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.HONEY_BLOCK).mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",

@@ -1,29 +1,46 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.mojang.serialization.Codec;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 public final class ElythiaGeologyFeature extends Feature<NoneFeatureConfiguration> {
     public static final TagKey<Block> NATURAL_STONE = TagKey.create(Registries.BLOCK, id("elythia_natural_stone"));
     private static final TagKey<Biome> ARKROSE_BIOMES = TagKey.create(Registries.BIOME, id("arkrose_biomes"));
     private static final TagKey<Biome> CONGLOMERATE_BIOMES = TagKey.create(Registries.BIOME, id("conglomerate_biomes"));
+    private static final TagKey<Biome> STRATA_BIOMES = TagKey.create(Registries.BIOME, id("elythia_strata_biomes"));
     private static final int LENS_CELL = 32;
     private static final int LENS_HEIGHT = 24;
     private static final int MAX_RADIUS = 11;
+    private static final int GRID_MARGIN = ElythiaStrata.TIDE_RADIUS;
+    private static final int GRID_SIZE = 16 + GRID_MARGIN * 2;
+    private static final int NO_WATER = Integer.MIN_VALUE;
+    private static final int PEACH_SEARCH = 48;
 
     public ElythiaGeologyFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -35,14 +52,330 @@ public final class ElythiaGeologyFeature extends Feature<NoneFeatureConfiguratio
         int startX = context.origin().getX() & ~15;
         int startZ = context.origin().getZ() & ~15;
         BlockState rockite = state("rockite");
-        boolean placed = placeLenses(level, startX, startZ, rockite, state("zebra_stone"), 96, 256, 0x6D1C7B3AL, false);
-        placed |= placeLenses(level, startX, startZ, rockite, state("arkrose"), 40, level.getMaxBuildHeight() - 1, 0x473A2D91L, true);
-        placed |= placeBeds(level, startX, startZ, rockite, state("tidestone"), state("conglomerate"), state("shellstone"), state("loam"));
+        BlockState arkrose = state("arkrose");
+        removeLooseRock(level, startX, startZ);
+        int[] tops = new int[GRID_SIZE * GRID_SIZE];
+        int[] waterlines = new int[GRID_SIZE * GRID_SIZE];
+        boolean anyWater = readSurfaceGrid(level, startX, startZ, tops, waterlines);
+        StrataPalette palette = new StrataPalette(rockite, state("zebra_stone"), state("conglomerate"), arkrose, state("tidestone"));
+        boolean placed = placeStrata(level, context.chunkGenerator(), startX, startZ, tops, anyWater ? waterlines : null, palette);
+        placed |= placeLenses(level, startX, startZ, rockite, palette.zebraStone(), 96, 256, 0x6D1C7B3AL, biome -> !biome.is(STRATA_BIOMES));
+        if (hasSurfaceBiome(level, startX, startZ, tops, ARKROSE_BIOMES)) {
+            placed |= placeLenses(level, startX, startZ, rockite, arkrose, 40, level.getMaxBuildHeight() - 1, 0x473A2D91L, biome -> biome.is(ARKROSE_BIOMES));
+        }
+        placed |= placeBeds(level, startX, startZ, tops, rockite, palette.tidestone(), palette.conglomerate(), state("shellstone"), state("loam"));
         return placed;
     }
 
+    private static void removeLooseRock(WorldGenLevel level, int startX, int startZ) {
+        BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
+        Block loam = state("loam").getBlock();
+        Block primordialLoam = state("primordial_loam").getBlock();
+        Block primordialMoss = state("primordial_moss_block").getBlock();
+        Block shellstone = state("shellstone").getBlock();
+        ElythiaLooseRock.Cells cells = (x, y, z) -> {
+            BlockState state = level.getBlockState(probe.set(x, y, z));
+            if (state.isAir() || !state.getFluidState().isEmpty() || isSurfacePlant(state)) {
+                return ElythiaLooseRock.Cell.OPEN;
+            }
+            return isLooseRockTerrain(state) || state.is(loam) || state.is(primordialLoam) || state.is(primordialMoss) || state.is(shellstone)
+                    ? ElythiaLooseRock.Cell.TERRAIN : ElythiaLooseRock.Cell.ANCHOR;
+        };
+        ChunkAccess chunk = level.getChunk(startX >> 4, startZ >> 4);
+        Heightmap floor = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.OCEAN_FLOOR_WG);
+        Heightmap surface = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.WORLD_SURFACE_WG);
+        BlockState air = Blocks.AIR.defaultBlockState();
+        shaveNeedles(level, startX, startZ, cells, floor, surface);
+        LongOpenHashSet anchored = new LongOpenHashSet();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        int minY = level.getMinBuildHeight();
+        for (int x = startX; x < startX + 16; x++) {
+            for (int z = startZ; z < startZ + 16; z++) {
+                int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+                if (!level.getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(top), QuartPos.fromBlock(z)).is(STRATA_BIOMES)
+                        || !ElythiaLooseRock.isTopRunThin(cells, x, top, z)) {
+                    continue;
+                }
+                LongArrayList piece = ElythiaLooseRock.floatingPiece(cells, x, top, z, startX - 16, startX + 31, minY, startZ - 16, startZ + 31, anchored);
+                piece.sort((a, b) -> Integer.compare(BlockPos.getY(b), BlockPos.getY(a)));
+                for (int i = 0; i < piece.size(); i++) {
+                    long position = piece.getLong(i);
+                    int px = BlockPos.getX(position);
+                    int py = BlockPos.getY(position);
+                    int pz = BlockPos.getZ(position);
+                    if (px >> 4 != startX >> 4 || pz >> 4 != startZ >> 4) {
+                        continue;
+                    }
+                    clearPlantsAbove(level, px, py, pz, surface);
+                    level.setBlock(cursor.set(px, py, pz), air, 2);
+                    floor.update(px & 15, py, pz & 15, air);
+                    surface.update(px & 15, py, pz & 15, air);
+                }
+            }
+        }
+    }
+
+    private static void shaveNeedles(WorldGenLevel level, int startX, int startZ, ElythiaLooseRock.Cells cells, Heightmap floor, Heightmap surface) {
+        if (!hasCappedBiome(level, startX, startZ)) {
+            return;
+        }
+        int margin = ElythiaLooseRock.NEEDLE_RADIUS * 2;
+        int size = 16 + margin * 2;
+        int[] tops = new int[size * size];
+        for (int dx = 0; dx < size; dx++) {
+            for (int dz = 0; dz < size; dz++) {
+                tops[dx * size + dz] = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, startX - margin + dx, startZ - margin + dz) - 1;
+            }
+        }
+        int[] opened = ElythiaLooseRock.opened(tops, size, ElythiaLooseRock.NEEDLE_RADIUS);
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int localX = 0; localX < 16; localX++) {
+            for (int localZ = 0; localZ < 16; localZ++) {
+                int index = (localX + margin) * size + localZ + margin;
+                int top = tops[index];
+                int target = opened[index];
+                int x = startX + localX;
+                int z = startZ + localZ;
+                if (top - target < ElythiaLooseRock.NEEDLE_RISE
+                        || !isCapped(level.getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(top), QuartPos.fromBlock(z)))
+                        || cells.at(x, top, z) != ElythiaLooseRock.Cell.TERRAIN) {
+                    continue;
+                }
+                BlockState soil = level.getBlockState(cursor.set(x, top, z));
+                clearPlantsAbove(level, x, top, z, surface);
+                for (int y = top; y > target && cells.at(x, y, z) == ElythiaLooseRock.Cell.TERRAIN; y--) {
+                    level.setBlock(cursor.set(x, y, z), air, 2);
+                    floor.update(localX, y, localZ, air);
+                    surface.update(localX, y, localZ, air);
+                }
+                if (cells.at(x, target, z) == ElythiaLooseRock.Cell.TERRAIN) {
+                    level.setBlock(cursor.set(x, target, z), soil, 2);
+                }
+            }
+        }
+    }
+
+    private static void clearPlantsAbove(WorldGenLevel level, int x, int y, int z, Heightmap surface) {
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(x, y + 1, z);
+        BlockState air = Blocks.AIR.defaultBlockState();
+        while (cursor.getY() < level.getMaxBuildHeight() && isSurfacePlant(level.getBlockState(cursor))) {
+            level.setBlock(cursor, air, 2);
+            surface.update(x & 15, cursor.getY(), z & 15, air);
+            cursor.move(0, 1, 0);
+        }
+    }
+
+    private static boolean isSurfacePlant(BlockState state) {
+        return state.getFluidState().isEmpty() && (state.getBlock() instanceof BushBlock || state.getBlock() instanceof CarpetBlock);
+    }
+
+    private static boolean hasCappedBiome(WorldGenLevel level, int startX, int startZ) {
+        for (int localX = 0; localX < 16; localX += 4) {
+            for (int localZ = 0; localZ < 16; localZ += 4) {
+                int x = startX + localX;
+                int z = startZ + localZ;
+                int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+                if (isCapped(level.getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(top), QuartPos.fromBlock(z)))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isCapped(Holder<Biome> biome) {
+        return biome.is(STRATA_BIOMES) && biome.unwrapKey()
+                .flatMap(key -> ElythiaStrataProfile.forBiome(key.location().toString()))
+                .map(ElythiaStrataProfile::hasCap).orElse(false);
+    }
+
+    private static boolean isLooseRockTerrain(BlockState state) {
+        return state.is(NATURAL_STONE) || state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MOSS_BLOCK)
+                || state.is(Blocks.SAND) || state.is(Blocks.GRAVEL) || state.is(Blocks.DEEPSLATE) || state.is(BlockTags.BASE_STONE_OVERWORLD);
+    }
+
+    private record StrataPalette(BlockState rockite, BlockState zebraStone, BlockState conglomerate, BlockState arkrose, BlockState tidestone) {
+        BlockState of(ElythiaStrata.Layer layer) {
+            return switch (layer) {
+                case ZEBRA -> this.zebraStone;
+                case CONGLOMERATE -> this.conglomerate;
+                case ARKROSE -> this.arkrose;
+                case TIDESTONE -> this.tidestone;
+                case BASE -> this.rockite;
+            };
+        }
+    }
+
+    private static boolean placeStrata(WorldGenLevel level, ChunkGenerator generator, int startX, int startZ, int[] tops,
+                                       @Nullable int[] waterlines, StrataPalette palette) {
+        long seed = level.getSeed();
+        int minY = level.getMinBuildHeight();
+        Block rockite = palette.rockite().getBlock();
+        Holder<Biome> lastBiome = null;
+        ElythiaStrataProfile lastProfile = null;
+        Boolean nearPeach = null;
+        boolean placed = false;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int x = startX; x < startX + 16; x++) {
+            for (int z = startZ; z < startZ + 16; z++) {
+                int localX = x - startX;
+                int localZ = z - startZ;
+                int top = tops[gridIndex(localX, localZ)];
+                int waterline = waterlines == null ? NO_WATER : waterlineNear(waterlines, localX, localZ, top);
+                if (waterline != NO_WATER) {
+                    int upper = Math.min(top, waterline + ElythiaStrata.MAX_TIDE);
+                    int lower = Math.max(minY, waterline - ElythiaStrata.TIDE_BELOW);
+                    for (int y = upper; y >= lower; y--) {
+                        cursor.set(x, y, z);
+                        if (level.getBlockState(cursor).is(rockite) && ElythiaStrata.isTide(seed, x, y, z, waterline)) {
+                            level.setBlock(cursor, palette.of(ElythiaStrata.tideLayer(seed, x, y, z)), 2);
+                            placed = true;
+                        }
+                    }
+                }
+                Holder<Biome> biome = level.getNoiseBiome(
+                        QuartPos.fromBlock(x + ElythiaStrata.biomeJitterX(seed, x, z)),
+                        QuartPos.fromBlock(top),
+                        QuartPos.fromBlock(z + ElythiaStrata.biomeJitterZ(seed, x, z)));
+                if (biome != lastBiome) {
+                    lastBiome = biome;
+                    lastProfile = biome.is(STRATA_BIOMES)
+                            ? biome.unwrapKey().flatMap(key -> ElythiaStrataProfile.forBiome(key.location().toString())).orElse(null)
+                            : null;
+                }
+                ElythiaStrataProfile profile = lastProfile;
+                if (profile == null) {
+                    continue;
+                }
+                if (nearPeach == null) {
+                    nearPeach = nearPeach(level, generator, startX, startZ);
+                }
+                int capDepth = ElythiaStrata.capDepth(seed, profile, x, z);
+                boolean veins = ElythiaStrata.veinRegion(seed, profile, x, z, nearPeach);
+                int nearby = lowestNearby(tops, localX, localZ);
+                int bottom = Math.max(minY, ElythiaStrata.paintBottom(top, nearby, capDepth));
+                double bedOffset = ElythiaStrata.bedOffset(seed, profile, x, z);
+                int runTop = top;
+                int gapStart = NO_WATER;
+                for (int y = top; y >= minY && (y >= bottom || gapStart != NO_WATER); y--) {
+                    cursor.set(x, y, z);
+                    BlockState current = level.getBlockState(cursor);
+                    if (current.isAir() || !current.getFluidState().isEmpty()) {
+                        if (gapStart == NO_WATER && runTop - y <= ElythiaStrata.MAX_LIP_RUN && nearby < y) {
+                            gapStart = y;
+                        }
+                        if (gapStart != NO_WATER && gapStart - y > ElythiaStrata.MAX_LIP_GAP) {
+                            break;
+                        }
+                        continue;
+                    }
+                    if (gapStart != NO_WATER) {
+                        gapStart = NO_WATER;
+                        runTop = y;
+                        bottom = Math.max(minY, Math.min(bottom, ElythiaStrata.paintBottom(y, y, capDepth)));
+                    }
+                    if (!current.is(rockite)) {
+                        continue;
+                    }
+                    ElythiaStrata.Layer layer = veins && ElythiaStrata.inVein(seed, x, y, z)
+                            ? ElythiaStrata.Layer.ARKROSE : ElythiaStrata.capLayer(runTop - y, capDepth);
+                    if (layer == ElythiaStrata.Layer.BASE) {
+                        layer = ElythiaStrata.layerAt(seed, profile, y, bedOffset);
+                    }
+                    if (layer != ElythiaStrata.Layer.BASE) {
+                        level.setBlock(cursor, palette.of(layer), 2);
+                        placed = true;
+                    }
+                }
+            }
+        }
+        return placed;
+    }
+
+    private static boolean hasSurfaceBiome(WorldGenLevel level, int startX, int startZ, int[] tops, TagKey<Biome> tag) {
+        for (int localX = 0; localX < 16; localX += 4) {
+            for (int localZ = 0; localZ < 16; localZ += 4) {
+                int top = tops[gridIndex(localX, localZ)];
+                if (level.getNoiseBiome(QuartPos.fromBlock(startX + localX), QuartPos.fromBlock(top), QuartPos.fromBlock(startZ + localZ)).is(tag)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean readSurfaceGrid(WorldGenLevel level, int startX, int startZ, int[] tops, int[] waterlines) {
+        boolean anyWater = false;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        Block lumen = state("lumen").getBlock();
+        for (int dx = 0; dx < GRID_SIZE; dx++) {
+            for (int dz = 0; dz < GRID_SIZE; dz++) {
+                int x = startX - GRID_MARGIN + dx;
+                int z = startZ - GRID_MARGIN + dz;
+                int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+                int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
+                int index = dx * GRID_SIZE + dz;
+                tops[index] = top;
+                waterlines[index] = NO_WATER;
+                if (surface > top) {
+                    cursor.set(x, surface, z);
+                    if (level.getFluidState(cursor).is(FluidTags.WATER) || level.getBlockState(cursor).is(lumen)) {
+                        waterlines[index] = surface;
+                        anyWater = true;
+                    }
+                }
+            }
+        }
+        return anyWater;
+    }
+
+    private static int gridIndex(int localX, int localZ) {
+        return (localX + GRID_MARGIN) * GRID_SIZE + localZ + GRID_MARGIN;
+    }
+
+    private static int waterlineNear(int[] waterlines, int localX, int localZ, int top) {
+        int radius = ElythiaStrata.TIDE_RADIUS;
+        int best = NO_WATER;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                int waterline = waterlines[gridIndex(localX + dx, localZ + dz)];
+                if (waterline != NO_WATER && waterline <= top + 1 && waterline > best) {
+                    best = waterline;
+                }
+            }
+        }
+        return best;
+    }
+
+    private static int lowestNearby(int[] tops, int localX, int localZ) {
+        int radius = ElythiaStrata.EXPOSURE_RADIUS;
+        int lowest = Integer.MAX_VALUE;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                lowest = Math.min(lowest, tops[gridIndex(localX + dx, localZ + dz)]);
+            }
+        }
+        return lowest;
+    }
+
+    private static boolean nearPeach(WorldGenLevel level, ChunkGenerator generator, int startX, int startZ) {
+        Climate.Sampler sampler = level.getLevel().getChunkSource().randomState().sampler();
+        int quartY = QuartPos.fromBlock(level.getSeaLevel());
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                int quartX = QuartPos.fromBlock(startX + 8 + dx * PEACH_SEARCH);
+                int quartZ = QuartPos.fromBlock(startZ + 8 + dz * PEACH_SEARCH);
+                if (generator.getBiomeSource().getNoiseBiome(quartX, quartY, quartZ, sampler).is(ARKROSE_BIOMES)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean placeLenses(WorldGenLevel level, int startX, int startZ, BlockState rockite,
-                                       BlockState replacement, int lowerY, int upperY, long salt, boolean peachOnly) {
+                                       BlockState replacement, int lowerY, int upperY, long salt, Predicate<Holder<Biome>> allowed) {
         int minY = Math.max(level.getMinBuildHeight(), lowerY);
         int maxY = Math.min(level.getMaxBuildHeight() - 1, upperY);
         if (minY > maxY) {
@@ -78,10 +411,7 @@ public final class ElythiaGeologyFeature extends Feature<NoneFeatureConfiguratio
                                     continue;
                                 }
                                 cursor.set(x, y, z);
-                                if (peachOnly && !level.getBiome(cursor).is(ARKROSE_BIOMES)) {
-                                    continue;
-                                }
-                                if (level.getBlockState(cursor).is(rockite.getBlock())) {
+                                if (level.getBlockState(cursor).is(rockite.getBlock()) && allowed.test(level.getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z)))) {
                                     level.setBlock(cursor, replacement, 2);
                                     placed = true;
                                 }
@@ -94,14 +424,14 @@ public final class ElythiaGeologyFeature extends Feature<NoneFeatureConfiguratio
         return placed;
     }
 
-    private static boolean placeBeds(WorldGenLevel level, int startX, int startZ, BlockState rockite,
+    private static boolean placeBeds(WorldGenLevel level, int startX, int startZ, int[] tops, BlockState rockite,
                                      BlockState tidestone, BlockState conglomerate, BlockState shellstone, BlockState loam) {
         boolean placed = false;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         long seed = level.getSeed();
         for (int x = startX; x < startX + 16; x++) {
             for (int z = startZ; z < startZ + 16; z++) {
-                int floorY = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+                int floorY = tops[gridIndex(x - startX, z - startZ)];
                 if (floorY <= level.getMinBuildHeight() || floorY >= level.getMaxBuildHeight() - 1) {
                     continue;
                 }
@@ -109,8 +439,7 @@ public final class ElythiaGeologyFeature extends Feature<NoneFeatureConfiguratio
                 if (level.getFluidState(cursor).is(FluidTags.WATER)) {
                     placed |= placeTidestoneColumn(level, x, floorY, z, rockite, tidestone, shellstone, cursor);
                 }
-                cursor.set(x, floorY, z);
-                if (!level.getBiome(cursor).is(CONGLOMERATE_BIOMES)) {
+                if (!level.getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(floorY), QuartPos.fromBlock(z)).is(CONGLOMERATE_BIOMES)) {
                     continue;
                 }
                 int bandStart = -1;

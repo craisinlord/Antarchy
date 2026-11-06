@@ -1,12 +1,12 @@
 package com.craisinlord.antarchy.content.client;
 
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload;
 import com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 
@@ -15,13 +15,8 @@ public final class PortalGunIndicatorClientState {
     private static WeakReference<ClientLevel> level = new WeakReference<>(null);
     private static long lastRequestTick = Long.MIN_VALUE;
     private static UUID lastRequestedGun;
-    private static Consumer<PortalGunIndicatorRequestPayload> requestSender = payload -> {};
 
     private PortalGunIndicatorClientState() {
-    }
-
-    public static void setRequestSender(Consumer<PortalGunIndicatorRequestPayload> sender) {
-        requestSender = sender;
     }
 
     public static void requestIfNeeded(Minecraft minecraft, UUID gunId) {
@@ -39,7 +34,7 @@ public final class PortalGunIndicatorClientState {
         if (!gunId.equals(lastRequestedGun) || currentTick - lastRequestTick >= 20L) {
             lastRequestedGun = gunId;
             lastRequestTick = currentTick;
-            requestSender.accept(new PortalGunIndicatorRequestPayload(gunId));
+            AntarchyNetwork.sendToServer(new PortalGunIndicatorRequestPayload(gunId));
         }
     }
 

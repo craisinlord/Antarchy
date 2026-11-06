@@ -12,7 +12,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -53,6 +52,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import net.minecraft.resources.ResourceLocation;
 
 public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final DustParticleOptions OCTOPUS_BOMB_INK_PARTICLE =
@@ -63,6 +63,10 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
     private static final EntityDataAccessor<Boolean> CAN_FLY = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.BOOLEAN);
     private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final String KRAKEN_OWNER_KEY = "KrakenOwner";
+    private static final int KRAKEN_OWNER_GRACE_TICKS = 200;
+    private static final double GRAB_MAX_PULL_SPEED = 1.2D;
+    private static final double GRAB_CORRECTION_DISTANCE_SQR = 64.0D;
     private static final int BASE_XP_REWARD = 15;
 
     private static final int ATTACK_NONE = 0;
@@ -106,6 +110,9 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
 
     @Nullable
     private UUID glimmerEchoOwner;
+    @Nullable
+    private UUID krakenOwner;
+    private int krakenOwnerMissingTicks;
 
     public OctopusBombEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
@@ -151,6 +158,34 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
     @Override
     public void setGlimmerEchoOwner(@Nullable UUID owner) {
         this.glimmerEchoOwner = owner;
+    }
+
+    public void setKrakenOwner(@Nullable UUID owner) {
+        this.krakenOwner = owner;
+    }
+
+    public boolean isOwnedByKraken(UUID owner) {
+        return owner.equals(this.krakenOwner);
+    }
+
+    private boolean tickKrakenOwner() {
+        if (this.krakenOwner == null || this.tickCount % 20 != 0 || !(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        Entity owner = serverLevel.getEntity(this.krakenOwner);
+        if (owner != null && owner.isAlive()) {
+            this.krakenOwnerMissingTicks = 0;
+            return false;
+        }
+        if (owner == null) {
+            this.krakenOwnerMissingTicks += 20;
+            if (this.krakenOwnerMissingTicks < KRAKEN_OWNER_GRACE_TICKS) {
+                return false;
+            }
+        }
+        serverLevel.sendParticles(ParticleTypes.SQUID_INK, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(), 16, 0.5D, 0.5D, 0.5D, 0.02D);
+        this.discard();
+        return true;
     }
 
     private int glimmerCooldown(int ticks) {
@@ -199,10 +234,14 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
 
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+        this.applyConfiguredStats();
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
+    }
+
+    public void applyConfiguredStats() {
         Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(com.craisinlord.antarchy.config.AntarchySettings.octopusBombHealth());
         this.setHealth((float) com.craisinlord.antarchy.config.AntarchySettings.octopusBombHealth());
         Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(com.craisinlord.antarchy.config.AntarchySettings.octopusBombAttackDamage());
-        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
 
     @Override
@@ -249,7 +288,14 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
                 return;
             }
         }
+        if (!this.level().isClientSide && this.tickKrakenOwner()) {
+            return;
+        }
         this.setNoGravity(this.isInWater() || this.canFly());
+
+        if (this.isDeadOrDying()) {
+            return;
+        }
 
         if (this.explosiveImpact && !this.level().isClientSide) {
             this.explosiveArmTicks++;
@@ -347,12 +393,13 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
         tag.putInt("LastAttackState", this.lastAttackState);
         tag.putBoolean("CanFly", this.canFly());
         tag.putBoolean("SpawnedByKraken", this.spawnedByKraken);
-        if (this.grabbedTargetId >= 0) tag.putInt("GrabTarget", this.grabbedTargetId);
-        tag.putInt("AttackState", this.getAttackState());
         tag.putInt("AnimationState", this.getAnimationState());
         tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         if (this.glimmerEchoOwner != null) {
             tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
+        }
+        if (this.krakenOwner != null) {
+            tag.putUUID(KRAKEN_OWNER_KEY, this.krakenOwner);
         }
     }
 
@@ -366,9 +413,11 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
         this.spawnedByKraken = tag.getBoolean("SpawnedByKraken");
         this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
         this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
-        this.grabbedTargetId = tag.contains("GrabTarget") ? tag.getInt("GrabTarget") : -1;
-        this.entityData.set(ATTACK_STATE, tag.getInt("AttackState"));
-        this.entityData.set(ANIMATION_STATE, tag.contains("AnimationState") ? tag.getInt("AnimationState") : ANIM_IDLE);
+        this.krakenOwner = tag.hasUUID(KRAKEN_OWNER_KEY) ? tag.getUUID(KRAKEN_OWNER_KEY) : null;
+        this.grabbedTargetId = -1;
+        this.actionTicks = 0;
+        this.entityData.set(ATTACK_STATE, ATTACK_NONE);
+        this.entityData.set(ANIMATION_STATE, ANIM_IDLE);
     }
 
     public boolean canFly() {
@@ -614,12 +663,20 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
 
     private void holdGrabbedTarget(LivingEntity target) {
         Vec3 anchor = this.position().add(0.0D, -this.getBbHeight() * 0.4D, 0.0D);
-        target.setDeltaMovement(anchor.subtract(target.position()).scale(0.35D));
+        Vec3 toAnchor = anchor.subtract(target.position());
+        Vec3 pull = toAnchor.scale(0.35D);
+        if (pull.lengthSqr() > GRAB_MAX_PULL_SPEED * GRAB_MAX_PULL_SPEED) {
+            pull = pull.normalize().scale(GRAB_MAX_PULL_SPEED);
+        }
+        target.stopRiding();
+        target.setDeltaMovement(pull);
         target.resetFallDistance();
-        if (target instanceof ServerPlayer sp) {
-            sp.connection.teleport(anchor.x, anchor.y, anchor.z, target.getYRot(), target.getXRot());
-        } else {
-            target.moveTo(anchor.x, anchor.y, anchor.z, target.getYRot(), target.getXRot());
+        if (toAnchor.lengthSqr() > GRAB_CORRECTION_DISTANCE_SQR && this.actionTicks % 10 == 0) {
+            if (target instanceof ServerPlayer sp) {
+                sp.connection.teleport(anchor.x, anchor.y, anchor.z, target.getYRot(), target.getXRot());
+            } else {
+                target.moveTo(anchor.x, anchor.y, anchor.z, target.getYRot(), target.getXRot());
+            }
         }
         target.hurtMarked = true;
     }
@@ -644,7 +701,9 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
 
     private void resetCombatState() {
         this.setAttackState(ATTACK_NONE);
-        this.setTarget(null);
+        if (this.getTarget() != null) {
+            this.setTarget(null);
+        }
         this.actionTicks = 0;
         this.grabbedTargetId = -1;
     }
@@ -704,6 +763,9 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
         if (!this.level().isClientSide) {
             this.setAnimationState(ANIM_DEATH);
             this.setAttackState(ATTACK_NONE);
+            this.actionTicks = 0;
+            this.grabbedTargetId = -1;
+            this.setTarget(null);
             this.setDeltaMovement(Vec3.ZERO);
             this.getNavigation().stop();
         }
@@ -718,7 +780,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
             this.remove(RemovalReason.KILLED);
         }
     }
-
 
     private static final class KrakenSummonTargetGoal extends NearestAttackableTargetGoal<Player> {
         private final OctopusBombEntity octopus;

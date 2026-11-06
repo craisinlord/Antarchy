@@ -27,11 +27,12 @@ public class SpitBugProjectileEntity extends ThrowableItemProjectile {
             SynchedEntityData.defineId(SpitBugProjectileEntity.class, EntityDataSerializers.BOOLEAN);
     private static final int MAX_FLIGHT_TICKS = 100;
     private static final int LINGER_DURATION_TICKS = 300;
-    private static final int DIRECT_HIT_DAMAGE = 8;
+    public static final float DEFAULT_DIRECT_HIT_DAMAGE = 8.0F;
     private static final float LINGER_RADIUS = 1.65F;
 
     private boolean lingering;
     private int lingeringTicks;
+    private float directHitDamage = DEFAULT_DIRECT_HIT_DAMAGE;
 
     public SpitBugProjectileEntity(EntityType<? extends SpitBugProjectileEntity> entityType, Level level) {
         super(entityType, level);
@@ -65,6 +66,20 @@ public class SpitBugProjectileEntity extends ThrowableItemProjectile {
     @Override
     public boolean isAttackable() {
         return false;
+    }
+
+    public void setDirectHitDamage(float directHitDamage) {
+        this.directHitDamage = directHitDamage;
+    }
+
+    private boolean isOwnersMinion(Entity entity) {
+        Entity owner = this.getOwner();
+        return owner != null && entity instanceof ScorpionEntity scorpion && scorpion.isSummonedFor(owner.getUUID());
+    }
+
+    @Override
+    protected boolean canHitEntity(Entity target) {
+        return !this.isOwnersMinion(target) && super.canHitEntity(target);
     }
 
     public boolean isLingering() {
@@ -128,7 +143,7 @@ public class SpitBugProjectileEntity extends ThrowableItemProjectile {
         for (LivingEntity target : this.level().getEntitiesOfClass(
                 LivingEntity.class,
                 this.getBoundingBox().inflate(LINGER_RADIUS, 0.6D, LINGER_RADIUS),
-                entity -> entity.isAlive() && entity != this.getOwner()
+                entity -> entity.isAlive() && entity != this.getOwner() && !this.isOwnersMinion(entity)
         )) {
             applyGooped(target, 30);
             target.makeStuckInBlock(Blocks.HONEY_BLOCK.defaultBlockState(), new Vec3(0.2D, 0.0D, 0.2D));
@@ -144,11 +159,11 @@ public class SpitBugProjectileEntity extends ThrowableItemProjectile {
         if (!this.level().isClientSide && result.getEntity() instanceof LivingEntity livingTarget) {
             Entity owner = this.getOwner();
             if (owner instanceof SpitBugEntity && this.level() instanceof ServerLevel serverLevel) {
-                livingTarget.hurt(AntarchyDamageSources.spitBugDisrespect(serverLevel, this, owner), DIRECT_HIT_DAMAGE);
+                livingTarget.hurt(AntarchyDamageSources.spitBugDisrespect(serverLevel, this, owner), this.directHitDamage);
             } else if (owner instanceof LivingEntity livingOwner) {
-                livingTarget.hurt(this.damageSources().mobProjectile(this, livingOwner), DIRECT_HIT_DAMAGE);
+                livingTarget.hurt(this.damageSources().mobProjectile(this, livingOwner), this.directHitDamage);
             } else {
-                livingTarget.hurt(this.damageSources().magic(), DIRECT_HIT_DAMAGE);
+                livingTarget.hurt(this.damageSources().magic(), this.directHitDamage);
             }
             applyGooped(livingTarget, GoopedEffectHooks.PROJECTILE_DURATION_TICKS);
             livingTarget.makeStuckInBlock(Blocks.HONEY_BLOCK.defaultBlockState(), new Vec3(0.25D, 0.0D, 0.25D));

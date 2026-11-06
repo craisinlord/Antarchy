@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "antarchy:myrmite_coal_ore"
+    "antarchy:myrmite_coal_ore",
+    "antarchy:rockite_coal_ore"
   ]
 }

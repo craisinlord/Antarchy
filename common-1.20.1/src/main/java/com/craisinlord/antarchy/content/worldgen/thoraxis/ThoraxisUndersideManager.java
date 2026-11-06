@@ -67,12 +67,15 @@ public final class ThoraxisUndersideManager {
             return;
         }
 
-        TrackingState tracking = STATES.computeIfAbsent(level, ignored -> new TrackingState());
         if (level.players().isEmpty()) {
-            tracking.clear();
-            STATES.remove(level);
+            TrackingState existing = STATES.remove(level);
+            if (existing != null) {
+                existing.clear();
+            }
             return;
         }
+
+        TrackingState tracking = STATES.computeIfAbsent(level, ignored -> new TrackingState());
 
         long startNanos = System.nanoTime();
         long now = level.getGameTime();
@@ -183,7 +186,7 @@ public final class ThoraxisUndersideManager {
             for (ServerPlayer player : level.players()) {
                 AABB area = new AABB(
                         player.getX() - radius, level.getMinBuildHeight(), player.getZ() - radius,
-                        player.getX() + radius, level.getMaxBuildHeight(), player.getZ() + radius
+                        player.getX() + radius, EXIT_UNDERSIDE_Y, player.getZ() + radius
                 );
                 entities.add(player);
                 java.util.List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, area,

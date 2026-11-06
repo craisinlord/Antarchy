@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -43,7 +44,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -80,6 +80,8 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final int ATTACK_HIT_TICK = 6;
     private static final int ATTACK_COOLDOWN_TICKS = 16;
     private static final int POISON_DURATION_TICKS = 80;
+    private static final int SUMMON_OWNER_CHECK_TICKS = 20;
+    private static final int SUMMON_OWNER_MISSING_GRACE_TICKS = 600;
 
     private static final RawAnimation IDLE_ANIM   = RawAnimation.begin().thenLoop("Idle");
     private static final RawAnimation WALK_ANIM   = RawAnimation.begin().thenLoop("walk");
@@ -93,6 +95,7 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     @Nullable private LivingEntity attackTarget;
     @Nullable private UUID summonOwner;
     @Nullable private UUID glimmerEchoOwner;
+    private int summonOwnerMissingTicks;
 
     public ScorpionEntity(EntityType<? extends ScorpionEntity> entityType, Level level) {
         super(entityType, level);
@@ -195,6 +198,9 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
                 return;
             }
         }
+        if (this.tickSummonOwner()) {
+            return;
+        }
         if (this.attackCooldownTicks > 0) {
             this.attackCooldownTicks--;
         }
@@ -211,6 +217,38 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
                 this.resetAttackState();
             }
         }
+    }
+
+    private boolean tickSummonOwner() {
+        if (this.summonOwner == null
+                || this.isGlimmerEcho()
+                || this.tickCount % SUMMON_OWNER_CHECK_TICKS != 0
+                || !(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        Entity owner = serverLevel.getEntity(this.summonOwner);
+        if (owner != null) {
+            this.summonOwnerMissingTicks = 0;
+            if (owner.isAlive()) {
+                return false;
+            }
+        } else {
+            this.summonOwnerMissingTicks += SUMMON_OWNER_CHECK_TICKS;
+            if (this.summonOwnerMissingTicks < SUMMON_OWNER_MISSING_GRACE_TICKS) {
+                return false;
+            }
+        }
+        this.discard();
+        return true;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        Entity attacker = source.getEntity();
+        if (this.summonOwner != null && attacker != null && this.summonOwner.equals(attacker.getUUID())) {
+            return false;
+        }
+        return super.hurt(source, amount);
     }
 
     @Override

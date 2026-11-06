@@ -150,6 +150,27 @@
         "min": 4.0,
         "max": 7.0
       }
+    },
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.35
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:faded_memory",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 2
+            }
+          }
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/stampys_house/bedroom"

@@ -1,5 +1,8 @@
 package com.craisinlord.antarchy.content.entity;
 
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
@@ -9,7 +12,6 @@ import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -28,8 +30,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.phys.Vec3;
@@ -43,8 +45,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -70,7 +70,8 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
             SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.INT);
     private static final String TEXTURE_VARIANT_KEY = "TextureVariant";
     private static final String SUMMON_OWNER_KEY = "SummonOwner";
-    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.BOOLEAN);
     private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
     private static final int BASE_XP_REWARD = 5;
     public static final int BLUE_VARIANT = 0;
@@ -80,6 +81,8 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final int ATTACK_HIT_TICK = 6;
     private static final int ATTACK_COOLDOWN_TICKS = 16;
     private static final int POISON_DURATION_TICKS = 80;
+    private static final int SUMMON_OWNER_CHECK_TICKS = 20;
+    private static final int SUMMON_OWNER_MISSING_GRACE_TICKS = 600;
 
     private static final RawAnimation IDLE_ANIM   = RawAnimation.begin().thenLoop("Idle");
     private static final RawAnimation WALK_ANIM   = RawAnimation.begin().thenLoop("walk");
@@ -93,6 +96,7 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     @Nullable private LivingEntity attackTarget;
     @Nullable private UUID summonOwner;
     @Nullable private UUID glimmerEchoOwner;
+    private int summonOwnerMissingTicks;
 
     public ScorpionEntity(EntityType<? extends ScorpionEntity> entityType, Level level) {
         super(entityType, level);
@@ -108,20 +112,23 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     public void setGlimmerEcho(boolean glimmerEcho) {
         this.entityData.set(GLIMMER_ECHO, glimmerEcho);
         this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
-        if (glimmerEcho) {
-            this.syncGlimmerAttackDamage();
-        }
     }
 
     @Override
     public void setGlimmerEchoOwner(@Nullable UUID owner) {
         this.glimmerEchoOwner = owner;
-        this.syncGlimmerAttackDamage();
     }
 
     @Override
     protected Component getTypeName() {
         return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.scorpion.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected void dropFromLootTable(ServerLevel level, DamageSource damageSource, boolean causedByPlayer) {
+        if (!this.isGlimmerEcho()) {
+            super.dropFromLootTable(level, damageSource, causedByPlayer);
+        }
     }
 
     @Override
@@ -194,7 +201,9 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
             if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
                 return;
             }
-            this.syncGlimmerAttackDamage();
+        }
+        if (this.tickSummonOwner()) {
+            return;
         }
         if (this.attackCooldownTicks > 0) {
             this.attackCooldownTicks--;
@@ -214,8 +223,41 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
     }
 
+    private boolean tickSummonOwner() {
+        if (this.summonOwner == null
+                || this.isGlimmerEcho()
+                || this.tickCount % SUMMON_OWNER_CHECK_TICKS != 0
+                || !(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        Entity owner = serverLevel.getEntity(this.summonOwner);
+        if (owner != null) {
+            this.summonOwnerMissingTicks = 0;
+            if (owner.isAlive()) {
+                return false;
+            }
+        } else {
+            this.summonOwnerMissingTicks += SUMMON_OWNER_CHECK_TICKS;
+            if (this.summonOwnerMissingTicks < SUMMON_OWNER_MISSING_GRACE_TICKS) {
+                return false;
+            }
+        }
+        this.discard();
+        return true;
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        Entity attacker = source.getEntity();
+        if (this.summonOwner != null && attacker != null && this.summonOwner.equals(attacker.getUUID())) {
+            return false;
+        }
+        return super.hurtServer(level, source, amount);
+    }
+
     @Override
     public boolean doHurtTarget(ServerLevel level, net.minecraft.world.entity.Entity target) {
+        this.syncGlimmerAttackDamage();
         boolean hurt = super.doHurtTarget(level, target);
         if (hurt && target instanceof LivingEntity living) {
             int duration = this.level().getDifficulty() == Difficulty.HARD
@@ -237,12 +279,17 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
     }
 
+    private int attackCooldownTicks() {
+        if (!this.isGlimmerEcho()) {
+            return ATTACK_COOLDOWN_TICKS;
+        }
+        return Math.max(1, (int) Math.round(ATTACK_COOLDOWN_TICKS * AntarchySettings.glimmerEmperorScorpionCooldownMultiplier()));
+    }
+
     private void beginAttack(LivingEntity target) {
         this.attackTarget = target;
         this.attackAnimTicks = ATTACK_ANIM_TICKS;
-        this.attackCooldownTicks = this.isGlimmerEcho()
-                ? Math.max(1, (int) Math.round(ATTACK_COOLDOWN_TICKS * AntarchySettings.glimmerEmperorScorpionCooldownMultiplier()))
-                : ATTACK_COOLDOWN_TICKS;
+        this.attackCooldownTicks = this.attackCooldownTicks();
         this.attackDamageApplied = false;
         this.getNavigation().stop();
         this.level().broadcastEntityEvent(this, ATTACK_ANIM_EVENT);
@@ -314,14 +361,10 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<ScorpionEntity>("main", 3, this::mainController)
-                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainController(AnimationTest<ScorpionEntity> state) {
-        if (state.controller().isPlayingTriggeredAnimation()) {
-            return PlayState.CONTINUE;
-        }
         if (this.attackAnimTicks > 0) {
             return state.setAndContinue(ATTACK_ANIM);
         }
@@ -352,7 +395,6 @@ public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
         this.summonOwner = input.read(SUMMON_OWNER_KEY, UUIDUtil.CODEC).orElse(null);
         this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
         this.glimmerEchoOwner = input.read(GLIMMER_ECHO_OWNER_KEY, UUIDUtil.CODEC).orElse(null);
-        this.syncGlimmerAttackDamage();
     }
 
     @Override

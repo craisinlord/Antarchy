@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
@@ -12,7 +14,6 @@ import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -1354,7 +1355,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     private void broadcastImpactShake(ServerLevel level) {
         for (ServerPlayer player : level.players()) {
             if (player.distanceToSqr(this) <= 48.0D * 48.0D) {
-                HerculesBeetleImpactShakeSync.send(player, IMPACT_SHAKE_TICKS);
+                AntarchyNetwork.sendToPlayer(player, new HerculesBeetleImpactShakePayload(IMPACT_SHAKE_TICKS));
             }
         }
     }

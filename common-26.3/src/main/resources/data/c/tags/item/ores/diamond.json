@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "antarchy:myrmite_diamond_ore",
-    "antarchy:broodstone_diamond_ore"
+    "antarchy:broodstone_diamond_ore",
+    "antarchy:rockite_diamond_ore"
   ]
 }

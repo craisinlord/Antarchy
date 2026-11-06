@@ -3,21 +3,23 @@ package com.craisinlord.antarchy.content.client;
 public final class PrimordialGrassTrampleField {
     public static final int MAX_POINTS = 32;
     public static final float GRASS_HEIGHT = 1.125F;
-    public static final float LEAN = 0.7F;
-    public static final float DROP = 0.24F;
-    public static final float DRAG = 0.35F;
+    public static final float LEAN = 0.5F;
+    public static final float DROP = 0.14F;
+    public static final float OUTWARD = 0.45F;
+    public static final float FORWARD = 0.85F;
+    public static final float SATURATION = 1.25F;
     public static final float WIND_DAMPING = 0.6F;
     public static final float FLUTTER = 0.1F;
-    public static final double RANGE = 48.0D;
+    public static final double RANGE = 32.0D;
 
-    private static final float PRESS_STIFFNESS = 0.12F;
-    private static final float PRESS_DAMPING = 0.42F;
-    private static final float RELEASE_STIFFNESS = 0.016F;
-    private static final float RELEASE_DAMPING = 0.13F;
-    private static final float REST_VALUE = 0.004F;
+    private static final float PRESS_STIFFNESS = 0.22F;
+    private static final float PRESS_DAMPING = 0.55F;
+    private static final float RELEASE_STIFFNESS = 0.022F;
+    private static final float RELEASE_DAMPING = 0.14F;
+    private static final float REST_VALUE = 0.008F;
     private static final float REST_VELOCITY = 0.002F;
     private static final float HEADING_BLEND = 0.25F;
-    private static final double REFRESH_HORIZONTAL_SQR = 0.9D * 0.9D;
+    private static final double REFRESH_HORIZONTAL_SQR = 0.5D * 0.5D;
     private static final double REFRESH_VERTICAL = 1.0D;
 
     private final int[] entityIds = new int[MAX_POINTS];
@@ -27,6 +29,7 @@ public final class PrimordialGrassTrampleField {
     private final float[] radii = new float[MAX_POINTS];
     private final float[] headingXs = new float[MAX_POINTS];
     private final float[] headingZs = new float[MAX_POINTS];
+    private final float[] targets = new float[MAX_POINTS];
     private final float[] values = new float[MAX_POINTS];
     private final float[] previous = new float[MAX_POINTS];
     private final float[] velocities = new float[MAX_POINTS];
@@ -37,7 +40,7 @@ public final class PrimordialGrassTrampleField {
         count = 0;
     }
 
-    public void stamp(int entityId, double x, double y, double z, float radius, float headingX, float headingZ) {
+    public void stamp(int entityId, double x, double y, double z, float radius, float headingX, float headingZ, float target) {
         for (int i = 0; i < count; i++) {
             if (entityIds[i] != entityId || Math.abs(ys[i] - y) > REFRESH_VERTICAL) {
                 continue;
@@ -46,6 +49,7 @@ public final class PrimordialGrassTrampleField {
             double dz = zs[i] - z;
             if (dx * dx + dz * dz <= REFRESH_HORIZONTAL_SQR) {
                 held[i] = true;
+                targets[i] = target;
                 headingXs[i] += (headingX - headingXs[i]) * HEADING_BLEND;
                 headingZs[i] += (headingZ - headingZs[i]) * HEADING_BLEND;
                 return;
@@ -59,6 +63,7 @@ public final class PrimordialGrassTrampleField {
         radii[slot] = radius;
         headingXs[slot] = headingX;
         headingZs[slot] = headingZ;
+        targets[slot] = target;
         values[slot] = 0.0F;
         previous[slot] = 0.0F;
         velocities[slot] = 0.0F;
@@ -69,7 +74,7 @@ public final class PrimordialGrassTrampleField {
         for (int i = count - 1; i >= 0; i--) {
             boolean pressed = held[i];
             held[i] = false;
-            float target = pressed ? 1.0F : 0.0F;
+            float target = pressed ? targets[i] : 0.0F;
             float stiffness = pressed ? PRESS_STIFFNESS : RELEASE_STIFFNESS;
             float damping = pressed ? PRESS_DAMPING : RELEASE_DAMPING;
             previous[i] = values[i];
@@ -110,20 +115,26 @@ public final class PrimordialGrassTrampleField {
             float dist = (float) Math.sqrt(dx * dx + dz * dz);
             float r = positions[offset + 3];
             int motion = i * 3;
-            float w = motions[motion + 2] * vertical * (1.0F - smoothstep(r * 0.35F, r, dist));
-            float span = Math.max(dist, 0.3F);
-            pushX += w * (dx / span + motions[motion] * DRAG);
-            pushZ += w * (dz / span + motions[motion + 1] * DRAG);
+            float w = motions[motion + 2] * vertical * (1.0F - smoothstep(r * 0.45F, r, dist));
+            float span = Math.max(dist, 0.25F);
+            pushX += w * (dx / span * OUTWARD + motions[motion] * FORWARD);
+            pushZ += w * (dz / span * OUTWARD + motions[motion + 1] * FORWARD);
         }
-        float lean = (float) Math.sqrt(pushX * pushX + pushZ * pushZ);
-        if (lean > 1.0F) {
-            pushX /= lean;
-            pushZ /= lean;
-            lean = 1.0F;
+        float raw = (float) Math.sqrt(pushX * pushX + pushZ * pushZ);
+        if (raw <= 0.0F) {
+            out[0] = 0.0F;
+            out[1] = 0.0F;
+            out[2] = 0.0F;
+            return;
         }
-        out[0] = pushX;
-        out[1] = pushZ;
+        float lean = 1.0F - (float) Math.exp(-raw * SATURATION);
+        out[0] = pushX / raw * lean;
+        out[1] = pushZ / raw * lean;
         out[2] = lean;
+    }
+
+    public static float pressure(float speedPerTick) {
+        return Math.clamp(0.2F + 0.7F * speedPerTick / 0.28F, 0.2F, 0.9F);
     }
 
     public static float bend(float height) {
@@ -169,6 +180,7 @@ public final class PrimordialGrassTrampleField {
         radii[index] = radii[last];
         headingXs[index] = headingXs[last];
         headingZs[index] = headingZs[last];
+        targets[index] = targets[last];
         values[index] = values[last];
         previous[index] = previous[last];
         velocities[index] = velocities[last];

@@ -1,11 +1,11 @@
 package com.craisinlord.antarchy.content.throwback;
 
+import com.craisinlord.antarchy.content.network.ThrowbackZonePayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.network.ThrowbackZoneSync;
 import java.util.Map;
 import java.util.WeakHashMap;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -13,14 +13,23 @@ import net.minecraft.world.effect.MobEffectInstance;
 
 public final class ThrowbackZoneTracker {
     private static final int CHECK_INTERVAL_TICKS = 10;
-    private static final int FULL_RECHECK_TICKS = 100;
+    private static final int TORCH_TICK_OFFSET = 5;
     private static final int RESEND_TICKS = 100;
-    private static final int MOVE_RECHECK_DISTANCE = 2;
     private static final float SEND_THRESHOLD = 0.01F;
     private static final int REMEMBRANCE_DURATION_TICKS = 100;
+    private static final int REMEMBRANCE_REFRESH_BELOW_TICKS = 60;
     private static final Map<ServerPlayer, Sample> SAMPLES = new WeakHashMap<>();
+    private static final Map<ServerPlayer, ThrowbackZones.Influence> PENDING = new WeakHashMap<>();
 
     private ThrowbackZoneTracker() {
+    }
+
+    public static boolean isTorchTick(long gameTime) {
+        return gameTime % CHECK_INTERVAL_TICKS == TORCH_TICK_OFFSET;
+    }
+
+    public static void contribute(ServerPlayer player, ThrowbackZones.Influence influence) {
+        PENDING.merge(player, influence, ThrowbackZones.Influence::merge);
     }
 
     public static void tick(ServerLevel level) {
@@ -28,35 +37,16 @@ public final class ThrowbackZoneTracker {
         if (gameTime % CHECK_INTERVAL_TICKS != 0L) {
             return;
         }
-        boolean active = level.dimension().equals(ThrowbackZones.ELYTHIA) && AntarchySettings.throwbackZonesEnabled();
+        boolean active = AntarchySettings.throwbackZonesEnabled();
         MobEffect remembrance = AntarchyObjects.REMEMBRANCE_EFFECT.get();
         for (ServerPlayer player : level.players()) {
-            ThrowbackZones.Influence influence = active && player.isAlive() && !player.isSpectator()
-                    ? sample(level, player, gameTime)
-                    : ThrowbackZones.Influence.NONE;
+            ThrowbackZones.Influence influence = PENDING.remove(player);
+            if (influence == null || !active || !player.isAlive() || player.isSpectator()) {
+                influence = ThrowbackZones.Influence.NONE;
+            }
             applyEffect(player, remembrance, influence.inside());
             sync(player, influence.strength(), gameTime);
         }
-    }
-
-    private static ThrowbackZones.Influence sample(ServerLevel level, ServerPlayer player, long gameTime) {
-        BlockPos pos = player.blockPosition();
-        Sample sample = SAMPLES.get(player);
-        if (sample != null
-                && sample.level == level
-                && sample.influence != null
-                && gameTime - sample.sampledAt < FULL_RECHECK_TICKS
-                && sample.pos.distManhattan(pos) < MOVE_RECHECK_DISTANCE) {
-            return sample.influence;
-        }
-        ThrowbackZones.Influence influence = ThrowbackZones.influenceAt(level, pos);
-        Sample updated = sample == null ? new Sample() : sample;
-        updated.level = level;
-        updated.pos = pos;
-        updated.sampledAt = gameTime;
-        updated.influence = influence;
-        SAMPLES.put(player, updated);
-        return influence;
     }
 
     private static void applyEffect(ServerPlayer player, MobEffect remembrance, boolean inside) {
@@ -64,7 +54,7 @@ public final class ThrowbackZoneTracker {
             return;
         }
         MobEffectInstance current = player.getEffect(remembrance);
-        if (current != null && !current.isAmbient()) {
+        if (current != null && (!current.isAmbient() || current.getDuration() > REMEMBRANCE_REFRESH_BELOW_TICKS)) {
             return;
         }
         player.addEffect(new MobEffectInstance(remembrance, REMEMBRANCE_DURATION_TICKS, 0, true, false, true));
@@ -78,16 +68,12 @@ public final class ThrowbackZoneTracker {
         if (!changed && !keepAlive) {
             return;
         }
-        ThrowbackZoneSync.send(player, strength);
+        AntarchyNetwork.sendToPlayer(player, new ThrowbackZonePayload(strength));
         sample.lastSent = strength;
         sample.sentAt = gameTime;
     }
 
     private static final class Sample {
-        private ServerLevel level;
-        private BlockPos pos;
-        private long sampledAt;
-        private ThrowbackZones.Influence influence;
         private float lastSent;
         private long sentAt;
     }

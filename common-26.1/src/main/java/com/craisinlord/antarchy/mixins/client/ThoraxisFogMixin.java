@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.mixins.client;
 
+import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -29,8 +30,14 @@ public abstract class ThoraxisFogMixin {
         }
 
         FogData fog = cir.getReturnValue();
-        fog.color.set(FOG_RED, FOG_GREEN, FOG_BLUE, 1.0F);
-        float fogEnd = Math.max(renderDistanceInChunks * 16.0F, 1024.0F);
+        float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
+        float[] eventColor = ThoraxisEventClient.fogColor(FOG_RED, FOG_GREEN, FOG_BLUE, partialTick);
+        if (eventColor != null) {
+            fog.color.set(eventColor[0], eventColor[1], eventColor[2], 1.0F);
+        } else {
+            fog.color.set(FOG_RED, FOG_GREEN, FOG_BLUE, 1.0F);
+        }
+        float fogEnd = (float) ThoraxisEventClient.fogEnd(Math.max(renderDistanceInChunks * 16.0F, 1024.0F), partialTick);
         fog.environmentalStart = 0.5F;
         fog.environmentalEnd = fogEnd;
         fog.renderDistanceStart = fogEnd;

@@ -1,0 +1,7 @@
+{
+  "type": "antarchy:elythia_tuff_boulder",
+  "config": {
+    "block": "antarchy:arkrose",
+    "slab": "antarchy:arkrose_slab"
+  }
+}

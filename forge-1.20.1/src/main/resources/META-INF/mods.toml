@@ -36,14 +36,14 @@ displayTest="MATCH_VERSION"
 [[dependencies.${mod_id}]]
     modId="anthology"
     mandatory=true
-    versionRange="[1.0.5,)"
+    versionRange="[1.0.4,)"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
     modId="antos"
     mandatory=true
-    versionRange="[1.6.2,)"
+    versionRange="[1.6.4,)"
     ordering="AFTER"
     side="BOTH"
 
@@ -86,5 +86,12 @@ displayTest="MATCH_VERSION"
     modId="hoverboards"
     mandatory=false
     versionRange="(,0)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="configured"
+    mandatory=false
+    versionRange="*"
     ordering="NONE"
     side="BOTH"

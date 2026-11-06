@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.forge.registry;
 
+import com.craisinlord.antarchy.content.entity.AntarchyBoatEntity;
+import com.craisinlord.antarchy.content.entity.AntarchyChestBoatEntity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.AppleCow;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.EnchantedGoldenAppleCow;
@@ -32,16 +34,6 @@ import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.craisinlord.antarchy.content.entity.MolevoreEntity;
 import com.craisinlord.antarchy.content.entity.MolewormEntity;
 import com.craisinlord.antarchy.content.entity.WormEntity;
-import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
-import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.NadirBoatEntity;
-import com.craisinlord.antarchy.content.entity.NadirChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.RoyalBoatEntity;
-import com.craisinlord.antarchy.content.entity.RoyalChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.TruffaloBoatEntity;
-import com.craisinlord.antarchy.content.entity.TruffaloChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.PeachBoatEntity;
-import com.craisinlord.antarchy.content.entity.PeachChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.craisinlord.antarchy.content.entity.ScorpionEntity;
 import com.craisinlord.antarchy.content.entity.SizeRayProjectileEntity;
@@ -125,62 +117,62 @@ public final class AntarchyForgeEntities {
                     .sized(0.95F, 0.85F)
                     .clientTrackingRange(10)
                     .build("rolly_polly"));
-    public static final RegistryObject<EntityType<OuranwoodBoatEntity>> OURANWOOD_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_boat",
-            () -> EntityType.Builder.<OuranwoodBoatEntity>of(OuranwoodBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyBoatEntity>> OURANWOOD_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "ouranwood_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("ouranwood_boat"));
-    public static final RegistryObject<EntityType<OuranwoodChestBoatEntity>> OURANWOOD_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_chest_boat",
-            () -> EntityType.Builder.<OuranwoodChestBoatEntity>of(OuranwoodChestBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyChestBoatEntity>> OURANWOOD_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "ouranwood_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("ouranwood_chest_boat"));
-    public static final RegistryObject<EntityType<PeachBoatEntity>> PEACH_BOAT_ENTITY = ENTITY_TYPES.register("peach_boat",
-            () -> EntityType.Builder.<PeachBoatEntity>of(PeachBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyBoatEntity>> PEACH_BOAT_ENTITY = ENTITY_TYPES.register("peach_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "peach_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("peach_boat"));
-    public static final RegistryObject<EntityType<PeachChestBoatEntity>> PEACH_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("peach_chest_boat",
-            () -> EntityType.Builder.<PeachChestBoatEntity>of(PeachChestBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyChestBoatEntity>> PEACH_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("peach_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "peach_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("peach_chest_boat"));
-    public static final RegistryObject<EntityType<NadirBoatEntity>> NADIR_BOAT_ENTITY = ENTITY_TYPES.register("nadir_boat",
-            () -> EntityType.Builder.<NadirBoatEntity>of(NadirBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyBoatEntity>> NADIR_BOAT_ENTITY = ENTITY_TYPES.register("nadir_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "nadir_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("nadir_boat"));
-    public static final RegistryObject<EntityType<NadirChestBoatEntity>> NADIR_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("nadir_chest_boat",
-            () -> EntityType.Builder.<NadirChestBoatEntity>of(NadirChestBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyChestBoatEntity>> NADIR_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("nadir_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "nadir_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("nadir_chest_boat"));
-    public static final RegistryObject<EntityType<RoyalBoatEntity>> ROYAL_BOAT_ENTITY = ENTITY_TYPES.register("royal_boat",
-            () -> EntityType.Builder.<RoyalBoatEntity>of(RoyalBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyBoatEntity>> ROYAL_BOAT_ENTITY = ENTITY_TYPES.register("royal_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "royal_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("royal_boat"));
-    public static final RegistryObject<EntityType<RoyalChestBoatEntity>> ROYAL_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("royal_chest_boat",
-            () -> EntityType.Builder.<RoyalChestBoatEntity>of(RoyalChestBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyChestBoatEntity>> ROYAL_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("royal_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "royal_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("royal_chest_boat"));
-    public static final RegistryObject<EntityType<TruffaloBoatEntity>> TRUFFALO_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_boat",
-            () -> EntityType.Builder.<TruffaloBoatEntity>of(TruffaloBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyBoatEntity>> TRUFFALO_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "truffalo_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("truffalo_boat"));
-    public static final RegistryObject<EntityType<TruffaloChestBoatEntity>> TRUFFALO_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_chest_boat",
-            () -> EntityType.Builder.<TruffaloChestBoatEntity>of(TruffaloChestBoatEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<AntarchyChestBoatEntity>> TRUFFALO_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "truffalo_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)

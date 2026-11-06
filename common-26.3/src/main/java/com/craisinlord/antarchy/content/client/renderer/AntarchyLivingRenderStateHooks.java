@@ -12,5 +12,6 @@ public final class AntarchyLivingRenderStateHooks {
         ParalyzedStoneLivingLayer.extract(entity, state);
         GoopedLivingLayer.extract(renderer, entity, state);
         TigerEyeCamouflagePlayerLayer.extract(entity, state);
+        TemporalContractionAfterimageLayer.extract(entity, state, partialTick);
     }
 }

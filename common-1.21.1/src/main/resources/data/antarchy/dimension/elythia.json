@@ -97,6 +97,36 @@
           }
         },
         {
+          "biome": "antarchy:zebra_scarps",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.58,
+              -0.41
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -1,
+              -0.55
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
           "biome": "antarchy:elythia_beach",
           "parameters": {
             "temperature": [
@@ -176,7 +206,7 @@
               0.65
             ],
             "weirdness": [
-              -0.7,
+              -1,
               -0.05
             ],
             "depth": [
@@ -746,8 +776,8 @@
               0.65
             ],
             "weirdness": [
-              -1,
-              -0.7
+              -1.6,
+              -1.4
             ],
             "depth": [
               -1.5,
@@ -757,7 +787,7 @@
           }
         },
         {
-          "biome": "antarchy:zebra_scarps",
+          "biome": "antarchy:ouranwood_forest",
           "parameters": {
             "temperature": [
               0.55,
@@ -777,7 +807,7 @@
             ],
             "weirdness": [
               -0.68,
-              -0.35
+              -0.45
             ],
             "depth": [
               -1.5,
@@ -787,7 +817,7 @@
           }
         },
         {
-          "biome": "antarchy:zebra_scarps",
+          "biome": "antarchy:ouranwood_forest",
           "parameters": {
             "temperature": [
               0.55,

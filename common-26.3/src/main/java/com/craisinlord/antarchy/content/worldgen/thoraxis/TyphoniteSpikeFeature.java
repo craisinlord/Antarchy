@@ -43,6 +43,8 @@ public record TyphoniteSpikeFeature(
     ).apply(instance, TyphoniteSpikeFeature::new));
     private static final Identifier TYPHONITE_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "typhonite");
     private static final Identifier TYPHONITE_SPIKE_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "typhonite_spike");
+    private static final Identifier VERDANT_NYXIUM_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "verdant_nyxium");
+    private static volatile Block[] blocks;
 
     @Override
     public MapCodec<TyphoniteSpikeFeature> codec() {
@@ -144,11 +146,11 @@ public record TyphoniteSpikeFeature(
     }
 
     private boolean growPointedTyphonite(WorldGenLevel level, BlockPos rootStart, Direction direction, int length) {
-        Block typhoniteSpike = BuiltInRegistries.BLOCK.getValue(TYPHONITE_SPIKE_ID);
+        Block typhoniteSpike = blocks()[2];
         boolean placedAny = false;
         for (int offset = 0; offset < length; offset++) {
             BlockPos spikePos = rootStart.relative(direction, offset);
-            if (spikePos.getY() < level.getMinY() || spikePos.getY() >= level.getMaxY() + 1) {
+            if (spikePos.getY() < level.getMinY() || spikePos.getY() >= (level.getMaxY() + 1)) {
                 break;
             }
             if (!level.getBlockState(spikePos).isAir()) {
@@ -163,7 +165,7 @@ public record TyphoniteSpikeFeature(
                 break;
             }
 
-            level.setBlock(spikePos, spikeState, 3);
+            level.setBlock(spikePos, spikeState, 2);
             placedAny = true;
         }
         return placedAny;
@@ -213,7 +215,21 @@ public record TyphoniteSpikeFeature(
     }
 
     private static boolean isTyphoniteAnchor(BlockState state) {
-        Identifier blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        return blockId.equals(TYPHONITE_ID) || blockId.equals(Identifier.fromNamespaceAndPath(Antarchy.MODID, "verdant_nyxium"));
+        Block block = state.getBlock();
+        Block[] current = blocks();
+        return block == current[0] || block == current[1];
+    }
+
+    private static Block[] blocks() {
+        Block[] current = blocks;
+        if (current == null) {
+            current = new Block[]{
+                    BuiltInRegistries.BLOCK.getValue(TYPHONITE_ID),
+                    BuiltInRegistries.BLOCK.getValue(VERDANT_NYXIUM_ID),
+                    BuiltInRegistries.BLOCK.getValue(TYPHONITE_SPIKE_ID)
+            };
+            blocks = current;
+        }
+        return current;
     }
 }

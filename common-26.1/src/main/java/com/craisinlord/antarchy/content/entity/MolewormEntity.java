@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,6 +18,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -69,6 +72,7 @@ public class MolewormEntity extends Monster implements GeoEntity {
     @Nullable
     private BlockPos mergeTargetPos;
     private int mergeTicks;
+    private int pacifiedTicks;
 
     public MolewormEntity(EntityType<? extends MolewormEntity> entityType, Level level) {
         super(entityType, level);
@@ -185,6 +189,9 @@ public class MolewormEntity extends Monster implements GeoEntity {
         }
 
         boolean hurt = super.hurtServer(level, source, amount);
+        if (hurt && source.getEntity() instanceof LivingEntity) {
+            this.pacifiedTicks = 0;
+        }
         if (hurt && this.isMerging()) {
             this.cancelMerge();
         }
@@ -205,6 +212,11 @@ public class MolewormEntity extends Monster implements GeoEntity {
             }
         }
 
+        if (!this.level().isClientSide() && this.pacifiedTicks > 0) {
+            this.pacifiedTicks--;
+            MoleTruffles.tickCalm(this);
+        }
+
         if (!this.level().isClientSide()) {
             this.updateAnimationState();
         }
@@ -219,6 +231,46 @@ public class MolewormEntity extends Monster implements GeoEntity {
     @Override
     public float getWalkTargetValue(BlockPos pos, LevelReader level) {
         return isMergeHost(level.getBlockState(pos.below())) ? 10.0F : super.getWalkTargetValue(pos, level);
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return this.pacifiedTicks <= 0 && super.canAttack(target);
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(this.pacifiedTicks > 0 ? null : target);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return this.pacifiedTicks <= 0 && super.removeWhenFarAway(distanceToClosestPlayer);
+    }
+
+    @Override
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!MoleTruffles.isTruffle(player.getItemInHand(hand)) || this.isDeadOrDying()) {
+            return super.mobInteract(player, hand);
+        }
+        if (this.level().isClientSide()) {
+            return InteractionResult.CONSUME;
+        }
+        this.cancelMerge();
+        this.pacifiedTicks = MoleTruffles.feed(this, player, hand, this.pacifiedTicks);
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putInt(MoleTruffles.PACIFIED_KEY, this.pacifiedTicks);
+    }
+
+    @Override
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.pacifiedTicks = input.getIntOr(MoleTruffles.PACIFIED_KEY, 0);
     }
 
     public boolean isMerging() {
@@ -368,7 +420,7 @@ public class MolewormEntity extends Monster implements GeoEntity {
             }
 
             RandomSource random = this.mob.getRandom();
-            if (canMobGrief(this.mob.level()) && random.nextInt(reducedTickDelay(10)) == 0) {
+            if (this.moleworm.pacifiedTicks <= 0 && canMobGrief(this.mob.level()) && random.nextInt(reducedTickDelay(10)) == 0) {
                 BlockPos candidate = this.mob.blockPosition().below();
                 if (isMergeHost(this.mob.level().getBlockState(candidate))) {
                     this.mergePos = candidate;

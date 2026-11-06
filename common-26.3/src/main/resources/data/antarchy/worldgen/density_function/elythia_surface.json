@@ -10,11 +10,11 @@
         "type": "minecraft:add",
         "left": {
           "type": "minecraft:gradient",
-          "axis": "y",
           "from_coordinate": -64,
           "to_coordinate": 400,
           "from_value": 3.08559,
-          "to_value": -4.229252
+          "to_value": -4.229252,
+          "axis": "y"
         },
         "right": {
           "type": "minecraft:add",
@@ -55,7 +55,27 @@
                 "input": "antarchy:elythia_shelf_roughness_scale"
               }
             },
-            "right": "antarchy:elythia_shelf_lip"
+            "right": {
+              "type": "minecraft:add",
+              "left": "antarchy:elythia_shelf_lip",
+              "right": {
+                "type": "minecraft:mul",
+                "left": {
+                  "type": "minecraft:mul",
+                  "left": 0.1,
+                  "right": {
+                    "type": "minecraft:cache",
+                    "input": "antarchy:elythia_shelf_mask"
+                  }
+                },
+                "right": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_cliff_roughness",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.5
+                }
+              }
+            }
           }
         }
       }

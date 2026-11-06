@@ -18,6 +18,9 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 
 public final class TyphoniteSwirlFeature extends Feature<NoneFeatureConfiguration> {
     private static final Identifier TYPHONITE_SPIKE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "typhonite_spike");
+    private static final Identifier TYPHONITE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "typhonite");
+    private static final Identifier VEINED_TYPHONITE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "veined_typhonite");
+    private static volatile Block[] blocks;
 
     public TyphoniteSwirlFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -66,9 +69,20 @@ public final class TyphoniteSwirlFeature extends Feature<NoneFeatureConfiguratio
     }
 
     private static BlockState materialState(RandomSource random, int y, int height) {
-        String blockName = random.nextFloat() < 0.18F ? "veined_typhonite" : "typhonite";
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(Antarchy.MODID, blockName));
-        return block.defaultBlockState();
+        return (random.nextFloat() < 0.18F ? blocks()[1] : blocks()[0]).defaultBlockState();
+    }
+
+    private static Block[] blocks() {
+        Block[] current = blocks;
+        if (current == null) {
+            current = new Block[]{
+                    BuiltInRegistries.BLOCK.getValue(TYPHONITE),
+                    BuiltInRegistries.BLOCK.getValue(VEINED_TYPHONITE),
+                    BuiltInRegistries.BLOCK.getValue(TYPHONITE_SPIKE)
+            };
+            blocks = current;
+        }
+        return current;
     }
 
     private static boolean placeIfAir(WorldGenLevel level, BlockPos pos, BlockState state) {
@@ -93,7 +107,7 @@ public final class TyphoniteSwirlFeature extends Feature<NoneFeatureConfiguratio
     }
 
     private static boolean placeSpike(WorldGenLevel level, BlockPos pos, RandomSource random, Direction direction) {
-        Block spike = BuiltInRegistries.BLOCK.getValue(TYPHONITE_SPIKE);
+        Block spike = blocks()[2];
         int length = 2 + random.nextInt(4);
         boolean placed = false;
         for (int i = 0; i < length; i++) {

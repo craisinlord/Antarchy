@@ -28,7 +28,6 @@ import com.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.UUID;
-import org.jetbrains.annotations.Nullable;
 
 public class TentacleEntity extends Mob implements GeoEntity {
     private static final RawAnimation GRASP_ANIM = RawAnimation.begin().thenLoop("animation");
@@ -101,7 +100,7 @@ public class TentacleEntity extends Mob implements GeoEntity {
     }
 
     @Override
-    public boolean canBeCollidedWith(@Nullable net.minecraft.world.entity.Entity other) {
+    public boolean canBeCollidedWith(@org.jetbrains.annotations.Nullable net.minecraft.world.entity.Entity other) {
         return false;
     }
 

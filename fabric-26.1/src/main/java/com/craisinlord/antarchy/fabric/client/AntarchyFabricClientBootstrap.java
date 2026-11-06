@@ -349,6 +349,9 @@ public final class AntarchyFabricClientBootstrap {
     private static void registerParticles() {
         ParticleProviderRegistry registry = ParticleProviderRegistry.getInstance();
         registry.register(AntarchyFabricMisc.DREAM_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.WIND_LINE.get(), com.craisinlord.antarchy.content.client.particle.WindLineParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.REMEMBRANCE_FLAME.get(), DreamFlameParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.REMEMBRANCE_MOTE.get(), com.craisinlord.antarchy.content.client.particle.RemembranceMoteParticle.Provider::new);
         registry.register(AntarchyFabricMisc.NIGHTMARE_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
         registry.register(AntarchyFabricMisc.STINKY_GAS.get(), HypnoticGasParticle.Provider::new);
         registry.register(AntarchyFabricMisc.STINKY_FLY.get(), FireflyParticle.Provider::new);
@@ -377,6 +380,7 @@ public final class AntarchyFabricClientBootstrap {
 
     private static void registerItemProperties() {
         RangeSelectItemModelProperties.ID_MAPPER.put(Identifier.fromNamespaceAndPath(Antarchy.MODID, "critter_cage_state"), CritterCageStateProperty.MAP_CODEC);
+        RangeSelectItemModelProperties.ID_MAPPER.put(Identifier.fromNamespaceAndPath(Antarchy.MODID, "snout_compass_angle"), SnoutCompassAngleProperty.MAP_CODEC);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -413,6 +417,7 @@ public final class AntarchyFabricClientBootstrap {
             registrationHelper.register((RenderLayer) new GoopedLivingLayer(parent));
             registrationHelper.register((RenderLayer) new GlimmeringLivingLayer(parent));
             registrationHelper.register((RenderLayer) new com.craisinlord.antarchy.content.client.renderer.RoyalIndicatorLivingLayer(parent));
+            registrationHelper.register((RenderLayer) new com.craisinlord.antarchy.content.client.renderer.TemporalContractionAfterimageLayer(parent));
         });
     }
 
@@ -420,6 +425,7 @@ public final class AntarchyFabricClientBootstrap {
         TigerEyeClientHooks.setCamouflageKeyTextSupplier(() -> AntarchyKeyBindings.TIGERS_EYE_CAMOUFLAGE.getTranslatedKeyMessage());
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             com.craisinlord.antarchy.content.client.AntTransitClientState.tick();
+            com.craisinlord.antarchy.content.client.renderer.PrimordialGrassRenderer.tick(client);
             com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
             com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();

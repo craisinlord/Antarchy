@@ -1,12 +1,12 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public final class ElythiaSlopeField {
     private static final int HEIGHT_GRID = 4;
+    private static final int GRID_POINTS = 16 / HEIGHT_GRID + 1;
     private static final int PATCH_GRID = 16;
 
     private ElythiaSlopeField() {
@@ -17,18 +17,25 @@ public final class ElythiaSlopeField {
         int at(int x, int z);
     }
 
-    public record Column(int x, int z, int height, int slope, int rise, boolean zebraStone) {
+    public record Column(int x, int z, int height, int slope, int rise) {
         public boolean outcrop() {
             return rise > 0;
         }
     }
 
     public static List<Column> chunk(long seed, int chunkX, int chunkZ, Heights heights) {
-        Map<Long, Integer> cache = new HashMap<>();
-        Heights cached = (x, z) -> cache.computeIfAbsent((long) x << 32 | (z & 0xFFFFFFFFL), key -> heights.at(x, z));
-        List<Column> columns = new ArrayList<>();
         int startX = chunkX * 16;
         int startZ = chunkZ * 16;
+        int[] cache = new int[GRID_POINTS * GRID_POINTS];
+        Arrays.fill(cache, Integer.MIN_VALUE);
+        Heights cached = (x, z) -> {
+            int index = (x - startX) / HEIGHT_GRID * GRID_POINTS + (z - startZ) / HEIGHT_GRID;
+            if (cache[index] == Integer.MIN_VALUE) {
+                cache[index] = heights.at(x, z);
+            }
+            return cache[index];
+        };
+        List<Column> columns = new ArrayList<>();
         for (int x = startX; x < startX + 16; x++) {
             for (int z = startZ; z < startZ + 16; z++) {
                 Column column = sample(seed, x, z, cached);
@@ -60,8 +67,7 @@ public final class ElythiaSlopeField {
             return null;
         }
         int rise = slope >= 6 && patch < 0.45D ? (unit(mix(grain + 1)) < 0.2D ? 2 : 1) : 0;
-        boolean zebraStone = height >= 192 && unit(hash(seed ^ 0x7B925E13L, Math.floorDiv(x, 8), Math.floorDiv(z, 8))) < 0.28D;
-        return new Column(x, z, height, slope, rise, zebraStone);
+        return new Column(x, z, height, slope, rise);
     }
 
     private static double patch(long seed, int x, int z) {

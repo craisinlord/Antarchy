@@ -105,18 +105,18 @@ public final class ThoraxisBubbleRenderer {
         List<Shape> shapes = shapes(cameraPos, partialTick);
         if (shapes.isEmpty()) return;
         double time = Minecraft.getInstance().level.getGameTime() + partialTick;
-        collector.submitCustomGeometry(poseStack, net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(SHELL_TEXTURE), (pose, consumer) -> {
+        collector.submitCustomGeometry(poseStack, AntarchySkyDraw.additiveTexture(SHELL_TEXTURE), (pose, consumer) -> {
             Matrix4f matrix = pose.pose();
             for (Shape shape : shapes) drawShell(consumer, matrix, shape);
         });
-        collector.submitCustomGeometry(poseStack, net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(FRAME_TEXTURE), (pose, consumer) -> {
+        collector.submitCustomGeometry(poseStack, AntarchySkyDraw.additiveTexture(FRAME_TEXTURE), (pose, consumer) -> {
             Matrix4f matrix = pose.pose();
             for (Shape shape : shapes) {
                 drawShellEdges(consumer, matrix, shape);
                 drawFrames(consumer, matrix, shape, time);
             }
         });
-        collector.submitCustomGeometry(poseStack, net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(CORE_TEXTURE), (pose, consumer) -> {
+        collector.submitCustomGeometry(poseStack, AntarchySkyDraw.additiveTexture(CORE_TEXTURE), (pose, consumer) -> {
             Matrix4f matrix = pose.pose();
             for (Shape shape : shapes) drawCore(consumer, matrix, shape, time);
         });

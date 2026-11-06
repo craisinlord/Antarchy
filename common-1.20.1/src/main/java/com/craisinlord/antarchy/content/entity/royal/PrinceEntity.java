@@ -27,6 +27,10 @@ import org.joml.Vector3f;
 
 public class PrinceEntity extends RoyalMountEntity {
     private static final DustParticleOptions COMMAND_DUST = new DustParticleOptions(new Vector3f(1.0F, 0.75F, 0.15F), 1.6F);
+    private static final int SIGNATURE_CHECK_INTERVAL_TICKS = 10;
+
+    private int nextSignatureCheckTick;
+    private boolean cachedSignatureUseful;
 
     public PrinceEntity(EntityType<? extends PrinceEntity> entityType, Level level) {
         super(entityType, level);
@@ -127,7 +131,11 @@ public class PrinceEntity extends RoyalMountEntity {
 
     @Override
     protected boolean isSignatureUseful(LivingEntity target) {
-        return RoyalEffectHooks.commandedHolder() != null && this.commandCandidates(this.position()).size() >= 2;
+        if (this.tickCount >= this.nextSignatureCheckTick) {
+            this.nextSignatureCheckTick = this.tickCount + SIGNATURE_CHECK_INTERVAL_TICKS;
+            this.cachedSignatureUseful = RoyalEffectHooks.commandedHolder() != null && this.commandCandidates(this.position()).size() >= 2;
+        }
+        return this.cachedSignatureUseful;
     }
 
     @Override

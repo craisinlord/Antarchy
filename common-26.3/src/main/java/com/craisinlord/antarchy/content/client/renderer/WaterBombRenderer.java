@@ -8,6 +8,9 @@ import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.resources.Identifier;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -37,6 +40,18 @@ public class WaterBombRenderer extends GeoEntityRenderer<WaterBombEntity, Entity
         float appliedPitch = renderPassInfo.getOrDefaultGeckolibData(APPLIED_PITCH, 0.0F);
         poseStack.rotate(Axis.YP.rotationDegrees(appliedYaw - 90.0F));
         poseStack.rotate(Axis.XP.rotationDegrees(-appliedPitch));
+    }
+
+    @Override
+    public RenderType getRenderType(EntityRenderState renderState, Identifier texture) {
+        return renderState.getOrDefaultGeckolibData(WaterBombModel.GLIMMER_ECHO, false)
+                ? RenderTypes.entityTranslucent(texture)
+                : super.getRenderType(renderState, texture);
+    }
+
+    @Override
+    public int getRenderColor(WaterBombEntity animatable, Void relatedObject, float partialTick) {
+        return GlimmerEchoRendering.renderColor(animatable.isGlimmerEcho(), super.getRenderColor(animatable, relatedObject, partialTick));
     }
 
     @Override

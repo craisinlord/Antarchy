@@ -1,8 +1,9 @@
 package com.craisinlord.antarchy.content.throwback;
 
+import com.craisinlord.antarchy.content.network.ThrowbackZonePayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.network.ThrowbackZoneSync;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.core.Holder;
@@ -17,6 +18,7 @@ public final class ThrowbackZoneTracker {
     private static final int RESEND_TICKS = 100;
     private static final float SEND_THRESHOLD = 0.01F;
     private static final int REMEMBRANCE_DURATION_TICKS = 100;
+    private static final int REMEMBRANCE_REFRESH_BELOW_TICKS = 60;
     private static final Map<ServerPlayer, Sample> SAMPLES = new WeakHashMap<>();
     private static final Map<ServerPlayer, ThrowbackZones.Influence> PENDING = new WeakHashMap<>();
 
@@ -53,7 +55,7 @@ public final class ThrowbackZoneTracker {
             return;
         }
         MobEffectInstance current = player.getEffect(remembrance);
-        if (current != null && !current.isAmbient()) {
+        if (current != null && (!current.isAmbient() || current.getDuration() > REMEMBRANCE_REFRESH_BELOW_TICKS)) {
             return;
         }
         player.addEffect(new MobEffectInstance(remembrance, REMEMBRANCE_DURATION_TICKS, 0, true, false, true));
@@ -67,7 +69,7 @@ public final class ThrowbackZoneTracker {
         if (!changed && !keepAlive) {
             return;
         }
-        ThrowbackZoneSync.send(player, strength);
+        AntarchyNetwork.sendToPlayer(player, new ThrowbackZonePayload(strength));
         sample.lastSent = strength;
         sample.sentAt = gameTime;
     }

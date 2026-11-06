@@ -30,7 +30,8 @@ public class RoyalElementalProjectileRenderer extends GeoEntityRenderer<RoyalEle
     @Override
     public RenderType getRenderType(EntityRenderState renderState, Identifier texture) {
         return isIceball(renderState)
-                ? RenderTypes.entityCutout(texture)
+                ? (renderState.getOrDefaultGeckolibData(RoyalElementalProjectileModel.GLIMMER_ECHO, false)
+                        ? RenderTypes.entityTranslucent(texture) : RenderTypes.entityCutout(texture))
                 : RenderTypes.entityTranslucentEmissive(texture);
     }
 

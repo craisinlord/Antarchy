@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,13 +36,6 @@ public class BloodCrystalKatanaItem extends Item {
     private static final Map<UUID, Long> LAST_DASH_TICK = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> DASH_UNTIL_TICK = new ConcurrentHashMap<>();
 
-    @FunctionalInterface
-    public interface TrailCallback {
-        void trigger(ServerPlayer player, int durationTicks);
-    }
-
-    private static TrailCallback trailCallback = (player, durationTicks) -> {};
-
     private final ToolMaterial material;
     private final int attackDamage;
     private final float attackSpeed;
@@ -58,10 +53,6 @@ public class BloodCrystalKatanaItem extends Item {
         this.material = material;
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
-    }
-
-    public static void setTrailCallback(TrailCallback callback) {
-        trailCallback = callback == null ? (player, durationTicks) -> {} : callback;
     }
 
     @Override
@@ -93,7 +84,7 @@ public class BloodCrystalKatanaItem extends Item {
         player.needsSync = true;
         player.syncVelocity = true;
 
-        trailCallback.trigger(player, AntarchySettings.bloodCrystalKatanaTrailDurationTicks());
+        AntarchyNetwork.sendToTrackingAndSelf(player, new BloodCrystalKatanaTrailPayload(player.getId(), AntarchySettings.bloodCrystalKatanaTrailDurationTicks()));
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 AntarchySoundEvents.BLOOD_CRYSTAL_KATANA_DASH.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 

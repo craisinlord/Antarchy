@@ -34,6 +34,11 @@
     "antarchy:myrmite_diamond_ore",
     "antarchy:broodstone_diamond_ore",
     "antarchy:myrmite_emerald_ore",
-    "antarchy:broodstone_emerald_ore"
+    "antarchy:broodstone_emerald_ore",
+    "antarchy:rockite_gold_ore",
+    "antarchy:rockite_redstone_ore",
+    "antarchy:rockite_diamond_ore",
+    "antarchy:rockite_titanium_ore",
+    "antarchy:rockite_uranium_ore"
   ]
 }

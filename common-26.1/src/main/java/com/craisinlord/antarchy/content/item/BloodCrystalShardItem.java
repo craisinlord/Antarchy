@@ -14,9 +14,13 @@ import net.minecraft.world.level.Level;
 import java.util.function.Consumer;
 
 public class BloodCrystalShardItem extends Item {
-    public static Consumer<ServerPlayer> SYNC_BLOODGLASS = p -> {};
+    private static Consumer<ServerPlayer> bloodglassSync = player -> {};
 
     private static final int COOLDOWN_TICKS = 60;
+
+    public static void setBloodglassSync(Consumer<ServerPlayer> sync) {
+        bloodglassSync = sync;
+    }
 
     public BloodCrystalShardItem(Properties properties) {
         super(properties);
@@ -55,7 +59,7 @@ public class BloodCrystalShardItem extends Item {
         player.getCooldowns().addCooldown(stack, COOLDOWN_TICKS);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-        SYNC_BLOODGLASS.accept((ServerPlayer) player);
+        bloodglassSync.accept((ServerPlayer) player);
 
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);

@@ -170,6 +170,7 @@ public final class AntarchyFabricEvents {
             }
         });
 
+        net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tryStart(player, world, hand, hitResult.getBlockPos()));
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             com.craisinlord.antarchy.content.transit.AntTransit.tick(server);
             Set<UUID> activeThisTick = new HashSet<>();
@@ -184,6 +185,7 @@ public final class AntarchyFabricEvents {
                 com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
                 com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
                 com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
+                com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tick(level);
                 tickInvertedPlayers(level, activeThisTick);
                 tickIchorPlayers(level);
                 tickBloodglassRecharge(level);

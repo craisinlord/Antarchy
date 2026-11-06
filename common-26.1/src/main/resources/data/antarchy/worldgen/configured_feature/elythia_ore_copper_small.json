@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "discard_chance_on_air_exposure": 0,
+    "size": 10,
+    "targets": [
+      {
+        "state": {
+          "Name": "antarchy:rockite_copper_ore"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "antarchy:rockite"
+        }
+      },
+      {
+        "state": {
+          "Name": "minecraft:deepslate_copper_ore"
+        },
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "minecraft:deepslate_ore_replaceables"
+        }
+      }
+    ]
+  }
+}

@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.fabric.registry;
 
+import com.craisinlord.antarchy.content.item.AntarchyBoatItem;
+import com.craisinlord.antarchy.content.item.AntarchyChestBoatItem;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.*;
@@ -305,11 +307,11 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> OURANWOOD_BOAT = ITEMS.register("ouranwood_boat",
-            () -> new OuranwoodBoatOnlyItem(AntarchyFabricEntities.OURANWOOD_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyBoatItem(AntarchyFabricEntities.OURANWOOD_BOAT_ENTITY.get(), "ouranwood_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<Item> OURANWOOD_CHEST_BOAT = ITEMS.register("ouranwood_chest_boat",
-            () -> new OuranwoodChestBoatItem(AntarchyFabricEntities.OURANWOOD_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyChestBoatItem(AntarchyFabricEntities.OURANWOOD_CHEST_BOAT_ENTITY.get(), "ouranwood_chest_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<Item> HOVERBOARD = ITEMS.register("hoverboard",
@@ -357,11 +359,11 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> PEACH_BOAT = ITEMS.register("peach_boat",
-            () -> new com.craisinlord.antarchy.content.item.PeachBoatOnlyItem(AntarchyFabricEntities.PEACH_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyBoatItem(AntarchyFabricEntities.PEACH_BOAT_ENTITY.get(), "peach_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<Item> PEACH_CHEST_BOAT = ITEMS.register("peach_chest_boat",
-            () -> new com.craisinlord.antarchy.content.item.PeachChestBoatItem(AntarchyFabricEntities.PEACH_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyChestBoatItem(AntarchyFabricEntities.PEACH_CHEST_BOAT_ENTITY.get(), "peach_chest_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<net.minecraft.world.item.SignItem> NADIR_SIGN_ITEM = ITEMS.register("nadir_sign",
@@ -373,11 +375,11 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> NADIR_BOAT = ITEMS.register("nadir_boat",
-            () -> new com.craisinlord.antarchy.content.item.NadirBoatOnlyItem(AntarchyFabricEntities.NADIR_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyBoatItem(AntarchyFabricEntities.NADIR_BOAT_ENTITY.get(), "nadir_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<Item> NADIR_CHEST_BOAT = ITEMS.register("nadir_chest_boat",
-            () -> new com.craisinlord.antarchy.content.item.NadirChestBoatItem(AntarchyFabricEntities.NADIR_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyChestBoatItem(AntarchyFabricEntities.NADIR_CHEST_BOAT_ENTITY.get(), "nadir_chest_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_LOG);
@@ -437,11 +439,11 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> ROYAL_BOAT = ITEMS.register("royal_boat",
-            () -> new com.craisinlord.antarchy.content.item.RoyalBoatOnlyItem(AntarchyFabricEntities.ROYAL_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyBoatItem(AntarchyFabricEntities.ROYAL_BOAT_ENTITY.get(), "royal_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<Item> ROYAL_CHEST_BOAT = ITEMS.register("royal_chest_boat",
-            () -> new com.craisinlord.antarchy.content.item.RoyalChestBoatItem(AntarchyFabricEntities.ROYAL_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyChestBoatItem(AntarchyFabricEntities.ROYAL_CHEST_BOAT_ENTITY.get(), "royal_chest_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_LOG);
@@ -495,11 +497,11 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> TRUFFALO_BOAT = ITEMS.register("truffalo_boat",
-            () -> new com.craisinlord.antarchy.content.item.TruffaloBoatOnlyItem(AntarchyFabricEntities.TRUFFALO_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyBoatItem(AntarchyFabricEntities.TRUFFALO_BOAT_ENTITY.get(), "truffalo_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<Item> TRUFFALO_CHEST_BOAT = ITEMS.register("truffalo_chest_boat",
-            () -> new com.craisinlord.antarchy.content.item.TruffaloChestBoatItem(AntarchyFabricEntities.TRUFFALO_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+            () -> new AntarchyChestBoatItem(AntarchyFabricEntities.TRUFFALO_CHEST_BOAT_ENTITY.get(), "truffalo_chest_boat", new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_WHITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_WHITE);
@@ -984,6 +986,8 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> FLYTRAP_GOO_BLOCK_ITEM = ITEMS.register("flytrap_goo_block",
             () -> new com.craisinlord.antarchy.content.item.FlytrapGooBlockItem(AntarchyFabricBlocks.FLYTRAP_GOO_BLOCK.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> JELLIED_CRANBERRY_BLOCK_ITEM = ITEMS.register("jellied_cranberry_block",
+            () -> new com.craisinlord.antarchy.content.item.JelliedCranberryBlockItem(AntarchyFabricBlocks.JELLIED_CRANBERRY_BLOCK.get(), new Item.Properties()));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PALE_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.PALE_NYXITE);
@@ -2043,7 +2047,7 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<Item> CRANBERRY = ITEMS.registerSimpleItem("cranberry", new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build()));
     public static final DeferredItem<Item> DRIED_CRANBERRY = ITEMS.registerSimpleItem("dried_cranberry", new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build()));
     public static final DeferredItem<com.craisinlord.antarchy.content.item.CranberrySauceItem> CRANBERRY_SAUCE = ITEMS.register("cranberry_sauce",
-            () -> new com.craisinlord.antarchy.content.item.CranberrySauceItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.5F).build())));
+            () -> new com.craisinlord.antarchy.content.item.CranberrySauceItem(new Item.Properties().stacksTo(16).craftRemainder(net.minecraft.world.item.Items.GLASS_BOTTLE).food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.5F).alwaysEdible().build())));
 
     public static final DeferredItem<com.craisinlord.antarchy.content.item.SnoutCompassItem> SNOUT_COMPASS = ITEMS.register("snout_compass",
             () -> new com.craisinlord.antarchy.content.item.SnoutCompassItem(new Item.Properties().rarity(Rarity.UNCOMMON)));

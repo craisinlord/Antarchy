@@ -15,10 +15,16 @@ public final class ElythiaShared implements DensityFunction {
             .xmap(ElythiaShared::new, ElythiaShared::argument);
     public static final KeyDispatchDataCodec<ElythiaShared> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
-    private final DensityFunction argument;
+    private DensityFunction argument;
     @Nullable
     private final Object origin;
-    private final Map<Visitor, WeakReference<DensityFunction>> mapped = Collections.synchronizedMap(new WeakHashMap<>());
+    @Nullable
+    private final Map<Visitor, WeakReference<DensityFunction>> mapped;
+    @Nullable
+    private volatile LastMapping lastMapping;
+
+    private record LastMapping(WeakReference<Visitor> visitor, WeakReference<DensityFunction> result) {
+    }
 
     public ElythiaShared(DensityFunction argument) {
         this(argument, null);
@@ -27,6 +33,7 @@ public final class ElythiaShared implements DensityFunction {
     private ElythiaShared(DensityFunction argument, @Nullable Object origin) {
         this.argument = argument;
         this.origin = origin;
+        this.mapped = origin == null ? Collections.synchronizedMap(new WeakHashMap<>()) : null;
     }
 
     public DensityFunction argument() {
@@ -45,13 +52,33 @@ public final class ElythiaShared implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
+        if (this.origin == null) {
+            return this.wire(visitor);
+        }
+        ElythiaShared shell = new ElythiaShared(this.argument, this.origin);
+        DensityFunction result = visitor.apply(shell);
+        if (result != shell && result instanceof ElythiaShared shared && shared.origin == this.origin) {
+            return result;
+        }
+        LastMapping last = this.lastMapping;
+        if (last != null && last.visitor().get() == visitor) {
+            DensityFunction previous = last.result().get();
+            if (previous != null) {
+                return previous;
+            }
+        }
+        shell.argument = this.argument.mapAll(visitor);
+        this.lastMapping = new LastMapping(new WeakReference<>(visitor), new WeakReference<>(result));
+        return result;
+    }
+
+    private DensityFunction wire(Visitor visitor) {
         WeakReference<DensityFunction> reference = this.mapped.get(visitor);
         DensityFunction previous = reference == null ? null : reference.get();
         if (previous != null) {
             return previous;
         }
-        Object mappedOrigin = this.origin != null ? this.origin : new Object();
-        DensityFunction result = visitor.apply(new ElythiaShared(this.argument.mapAll(visitor), mappedOrigin));
+        DensityFunction result = visitor.apply(new ElythiaShared(this.argument.mapAll(visitor), new Object()));
         this.mapped.put(visitor, new WeakReference<>(result));
         return result;
     }

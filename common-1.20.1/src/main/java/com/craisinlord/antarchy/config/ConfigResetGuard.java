@@ -27,11 +27,6 @@ public final class ConfigResetGuard {
         writeGeneration(markerPath);
     }
 
-    @Deprecated
-    public static void wipeIfNeeded(Path configDir, Path... configFiles) {
-        migrateIfNeeded(configDir, configFiles);
-    }
-
     private static int readGeneration(Path markerPath) {
         if (!Files.exists(markerPath)) {
             return 0;

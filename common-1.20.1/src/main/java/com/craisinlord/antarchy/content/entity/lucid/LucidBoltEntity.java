@@ -118,8 +118,8 @@ public class LucidBoltEntity extends ThrowableProjectile implements GeoEntity {
         }
 
         double horizontal = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
-        this.setYRot((float) (net.minecraft.util.Mth.atan2(motion.x, motion.z) * (180.0D / Math.PI)));
-        this.setXRot((float) (net.minecraft.util.Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI)));
+        this.setYRot((float) (net.minecraft.util.Mth.atan2(motion.z, motion.x) * (180.0D / Math.PI)) - 90.0F);
+        this.setXRot((float) (-(net.minecraft.util.Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI))));
     }
 
     @Override

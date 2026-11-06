@@ -15,12 +15,29 @@
           "minecraft:bad_omen": {}
         }
       }
+    },
+    "elythia_ocean": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biomes": "#antarchy:is_elythia_ocean"
+              }
+            }
+          }
+        ]
+      }
     }
   },
   "requirements": [
     [
       "killed_squid",
-      "bad_omen"
+      "bad_omen",
+      "elythia_ocean"
     ]
   ]
 }

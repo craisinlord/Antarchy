@@ -11,4 +11,9 @@ public class TentacleRenderer extends GeoEntityRenderer<TentacleEntity, LivingEn
         super(context, new TentacleModel());
         this.shadowRadius = 0.0F;
     }
+
+    @Override
+    protected boolean affectedByCulling(TentacleEntity entity) {
+        return false;
+    }
 }

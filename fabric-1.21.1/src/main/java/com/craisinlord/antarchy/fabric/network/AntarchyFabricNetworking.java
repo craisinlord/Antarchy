@@ -1,4 +1,7 @@
 package com.craisinlord.antarchy.fabric.network;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
@@ -16,7 +19,6 @@ import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
 import com.craisinlord.antarchy.content.network.*;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
-import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieJumpInputPayload;
 import com.craisinlord.antarchy.content.network.SpringyBootsLaunchPayload;
@@ -29,7 +31,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -39,10 +40,22 @@ public final class AntarchyFabricNetworking {
     }
 
     public static void register() {
+        AntarchyNetwork.bindServer(new AntarchyNetwork.ServerBridge() {
+            @Override
+            public void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+                ServerPlayNetworking.send(player, payload);
+            }
+
+            @Override
+            public void sendToTrackingAndSelf(ServerPlayer player, CustomPacketPayload payload) {
+                for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
+                    ServerPlayNetworking.send(tracking, payload);
+                }
+                ServerPlayNetworking.send(player, payload);
+            }
+        });
         registerPayloadTypes();
         registerServerReceivers();
-        com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler.setResultSender(ServerPlayNetworking::send);
-        com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.setSender(ServerPlayNetworking::send);
     }
 
     private static void registerPayloadTypes() {
@@ -150,40 +163,6 @@ public final class AntarchyFabricNetworking {
 
     public static void syncBloodglass(ServerPlayer player, int shieldsActive, int shieldsMax) {
         ServerPlayNetworking.send(player, new BloodglassStatePayload(shieldsActive, shieldsMax));
-    }
-
-    public static void syncTigerEyeCamouflage(ServerPlayer player) {
-        TigerEyeCamouflageStatePayload payload = TigerEyeCamouflageSync.payload(player);
-        for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
-            ServerPlayNetworking.send(tracking, payload);
-        }
-        ServerPlayNetworking.send(player, payload);
-    }
-
-    public static void syncKatanaTrail(Entity entity, int durationTicks) {
-        BloodCrystalKatanaTrailPayload payload = new BloodCrystalKatanaTrailPayload(entity.getId(), durationTicks);
-        for (ServerPlayer player : PlayerLookup.tracking(entity)) {
-            ServerPlayNetworking.send(player, payload);
-        }
-        if (entity instanceof ServerPlayer serverPlayer) {
-            ServerPlayNetworking.send(serverPlayer, payload);
-        }
-    }
-
-    public static void syncScorpionWhipTether(ServerPlayer player, int targetId) {
-        ScorpionWhipTetherPayload payload = new ScorpionWhipTetherPayload(player.getId(), targetId);
-        for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
-            ServerPlayNetworking.send(tracking, payload);
-        }
-        ServerPlayNetworking.send(player, payload);
-    }
-
-    public static void syncWormHookTether(ServerPlayer player, int hookId) {
-        WormHookTetherPayload payload = new WormHookTetherPayload(player.getId(), hookId);
-        for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
-            ServerPlayNetworking.send(tracking, payload);
-        }
-        ServerPlayNetworking.send(player, payload);
     }
 
     private static void handleGravityGunPrimary(ServerPlayer player, GravityGunPrimaryPayload payload) {
@@ -391,7 +370,7 @@ public final class AntarchyFabricNetworking {
     private static void handleTigerEyeCamouflageToggle(ServerPlayer player) {
         TigerEyeCamouflageController.ToggleResult result = TigerEyeCamouflageController.toggle(player);
         if (result != TigerEyeCamouflageController.ToggleResult.NO_CHANGE) {
-            syncTigerEyeCamouflage(player);
+            TigerEyeCamouflageSync.sync(player);
         }
 
         String messageKey = switch (result) {

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "group": "uranium_nugget",
+  "ingredient": {
+    "item": "antarchy:rockite_uranium_ore"
+  },
+  "result": "antarchy:uranium_nugget",
+  "experience": 2,
+  "cookingtime": 100
+}

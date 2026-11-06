@@ -20,6 +20,8 @@ public record ThoraxisRibColumnsFeature(
         int curveStrength,
         float clawGapChance
 ) implements Feature {
+    private static final int ROOF_DIRECTION_Y = 128;
+
     public static final MapCodec<ThoraxisRibColumnsFeature> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.intRange(1, 24).fieldOf("min_ribs").forGetter(ThoraxisRibColumnsFeature::minRibs),
             Codec.intRange(1, 24).fieldOf("max_ribs").forGetter(ThoraxisRibColumnsFeature::maxRibs),
@@ -39,7 +41,7 @@ public record ThoraxisRibColumnsFeature(
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
         int ribs = randomBetween(random, this.minRibs(), this.maxRibs());
-        boolean upward = origin.getY() < level.getHeight() / 2;
+        boolean upward = origin.getY() < ROOF_DIRECTION_Y;
         int direction = upward ? 1 : -1;
         int spread = 2 + random.nextInt(4);
 

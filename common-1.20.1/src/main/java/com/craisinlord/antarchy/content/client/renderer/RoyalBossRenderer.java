@@ -170,7 +170,11 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
                           @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay,
                           float red, float green, float blue, float alpha) {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-        poseStack.scale(RoyalBossEntity.MODEL_RENDER_SCALE, RoyalBossEntity.MODEL_RENDER_SCALE, RoyalBossEntity.MODEL_RENDER_SCALE);
+        if (!isReRender) {
+            if (!isReRender) {
+            poseStack.scale(RoyalBossEntity.MODEL_RENDER_SCALE, RoyalBossEntity.MODEL_RENDER_SCALE, RoyalBossEntity.MODEL_RENDER_SCALE);
+        }
+        }
         this.shadowRadius = 8.0F * RoyalBossEntity.MODEL_RENDER_SCALE;
     }
 

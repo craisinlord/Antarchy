@@ -166,7 +166,7 @@ public final class AntarchyFabric implements ModInitializer {
         TigerEyeFabricManager.register();
         AntarchyAdvancementTriggers.register();
         Antarchy.init();
-        BloodCrystalShardItem.SYNC_BLOODGLASS = BloodglassManager::syncBloodglass;
+        BloodCrystalShardItem.setBloodglassSync(BloodglassManager::syncBloodglass);
         registerTradeReloadListener();
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (source.isBuiltin() && AntarchyLootInjections.addsPhone(key.location())) {

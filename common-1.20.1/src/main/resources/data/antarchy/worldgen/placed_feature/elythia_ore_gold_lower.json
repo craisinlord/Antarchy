@@ -1,5 +1,5 @@
 {
-  "feature": "minecraft:ore_gold_buried",
+  "feature": "antarchy:elythia_ore_gold_buried",
   "placement": [
     {
       "type": "minecraft:count",

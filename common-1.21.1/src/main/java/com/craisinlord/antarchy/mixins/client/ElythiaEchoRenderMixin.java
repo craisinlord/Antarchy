@@ -2,13 +2,17 @@ package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.client.ElythiaEchoes;
 import com.craisinlord.antarchy.content.client.renderer.AntTransitGroundRenderer;
+import com.craisinlord.antarchy.content.client.renderer.PrimordialGrassRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
+import net.minecraft.client.renderer.culling.Frustum;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,6 +27,15 @@ public abstract class ElythiaEchoRenderMixin {
     @Final
     private RenderBuffers renderBuffers;
 
+    @Shadow
+    @Final
+    private ObjectArrayList<SectionRenderDispatcher.RenderSection> visibleSections;
+
+    @Inject(method = "applyFrustum", at = @At("RETURN"))
+    private void antarchy$grassVisibilityChanged(Frustum frustum, CallbackInfo ci) {
+        PrimordialGrassRenderer.visibilityChanged(this.visibleSections);
+    }
+
     @Inject(
             method = "renderLevel",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;endLastBatch()V", ordinal = 0)
@@ -30,10 +43,7 @@ public abstract class ElythiaEchoRenderMixin {
     private void antarchy$renderEchoes(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer,
                                        LightTexture lightTexture, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
         float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
-        net.minecraft.client.renderer.culling.Frustum grassFrustum = new net.minecraft.client.renderer.culling.Frustum(frustumMatrix, projectionMatrix);
-        net.minecraft.world.phys.Vec3 grassCamera = camera.getPosition();
-        grassFrustum.prepare(grassCamera.x, grassCamera.y, grassCamera.z);
-        com.craisinlord.antarchy.content.client.renderer.PrimordialGrassRenderer.render(this.renderBuffers.bufferSource(), camera, grassFrustum, partialTick);
+        PrimordialGrassRenderer.render(camera, frustumMatrix, projectionMatrix, partialTick);
         ElythiaEchoes.render(new PoseStack(), this.renderBuffers.bufferSource(), camera, partialTick);
         AntTransitGroundRenderer.render(new PoseStack(), this.renderBuffers.bufferSource(), camera, partialTick);
     }

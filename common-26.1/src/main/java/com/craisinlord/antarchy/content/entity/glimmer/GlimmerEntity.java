@@ -6,6 +6,8 @@ import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
+import com.craisinlord.antarchy.content.weather.ElythiaEvent;
+import com.craisinlord.antarchy.content.weather.ElythiaEvents;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -43,6 +45,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import java.util.function.Predicate;
 import org.jetbrains.annotations.Nullable;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -81,6 +84,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "elythia_river")
     );
     private static final int LUMEN_SPAWN_RADIUS = 4;
+    private static final GlimmerVariant[] GLIMMER_VARIANTS = GlimmerVariant.values();
     private static final ResourceKey<Biome> PEACH_FOREST = ResourceKey.create(
             Registries.BIOME,
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "peach_forest")
@@ -108,16 +112,25 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(GlimmerEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ELKA_IDLE_QUIRK_VARIANT =
             SynchedEntityData.defineId(GlimmerEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ABILITY_TARGET_ID =
+            SynchedEntityData.defineId(GlimmerEntity.class, EntityDataSerializers.INT);
 
     public static final int FADE_DURATION_TICKS = 40;
     private static final int PASSIVE_RANGE = 16;
     private static final int PASSIVE_EFFECT_REFRESH_TICKS = 60;
+    private static final int COMPANION_CHECK_INTERVAL_TICKS = 20;
+    private static final int COOLDOWN_SYNC_INTERVAL_TICKS = 10;
+    private static final int GROWTH_DECAY_INTERVAL_TICKS = 20;
+    private static final int NO_ABILITY_TARGET = -1;
+    private static final double STEP_RISE_PER_TICK = 0.25D;
+    private static Predicate<GlimmerEntity> clientPickFilter = glimmer -> true;
 
     private static final String VARIANT_KEY = "GlimmerVariant";
     private static final String SHEAR_COOLDOWN_KEY = "ShearCooldown";
     private static final String VARIANT_LOCKED_KEY = "VariantLocked";
     private static final String FOLLOWING_KEY = "GlimmerFollowing";
     private static final String ABILITY_COOLDOWN_KEY = "AbilityCooldown";
+    private static final String GROWTH_SCALE_KEY = "GrowthScale";
     private static final String ELKA_IDLE_SITTING_KEY = "ElkaIdleSitting";
     private static final String ELKA_IDLE_SIT_TICKS_KEY = "ElkaIdleSitTicks";
     private static final String ELKA_IDLE_SIT_COOLDOWN_KEY = "ElkaIdleSitCooldown";
@@ -128,6 +141,13 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     private boolean variantLocked;
     private float lastOwnerExhaustion = -1.0F;
     private long lastOwnerShieldLostCount = -1L;
+    private int lastOwnerHurtMobTimestamp = -1;
+    private int abilityCooldownTicks;
+    private int shearCooldownTicks;
+    private int abilityAnimTicks;
+    private boolean movementLocked;
+    @Nullable
+    private Object abilityState;
     private int elkaIdleSitTicksRemaining;
     private int elkaIdleSitCooldownTicks = 20 * 60 * 6;
     private int elkaIdleAnimationCycleTicks;
@@ -155,6 +175,39 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     public void push(Entity entity) {
     }
 
+    @Nullable
+    public java.util.UUID getOwnerUUID() {
+        net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity> reference = this.getOwnerReference();
+        return reference == null ? null : reference.getUUID();
+    }
+
+    public static void setClientPickFilter(Predicate<GlimmerEntity> filter) {
+        clientPickFilter = filter;
+    }
+
+    @Override
+    public boolean isPickable() {
+        return super.isPickable() && (!this.level().isClientSide() || clientPickFilter.test(this));
+    }
+
+    @Override
+    public boolean canBeHitByProjectile() {
+        return false;
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (this.level() instanceof ServerLevel serverLevel && this.isTame()) {
+            if (this.getOwner() instanceof Player owner) {
+                this.getVariant().getBehavior().clearPassive(this, owner);
+            }
+            if (reason.shouldDestroy() && this.getOwnerUUID() != null) {
+                GlimmerCompanionSavedData.clearCompanion(serverLevel.getServer(), this.getOwnerUUID(), this.getUUID());
+            }
+        }
+        super.remove(reason);
+    }
+
     @Override
     public boolean isInvulnerableTo(ServerLevel level, DamageSource damageSource) {
         return !damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !damageSource.is(DamageTypes.GENERIC);
@@ -178,10 +231,41 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         builder.define(ELKA_IDLE_SITTING, false);
         builder.define(ELKA_IDLE_QUIRK_TICKS, 0);
         builder.define(ELKA_IDLE_QUIRK_VARIANT, 0);
+        builder.define(ABILITY_TARGET_ID, NO_ABILITY_TARGET);
     }
 
     public void playAbilityAnimation(int ticks) {
+        this.abilityAnimTicks = ticks;
         this.entityData.set(ABILITY_ANIM_TICKS, ticks);
+    }
+
+    @Nullable
+    public <T> T getAbilityState(Class<T> type) {
+        return type.isInstance(this.abilityState) ? type.cast(this.abilityState) : null;
+    }
+
+    public void setAbilityState(@Nullable Object state) {
+        this.abilityState = state;
+    }
+
+    public void setAbilityTarget(@Nullable Entity target) {
+        this.entityData.set(ABILITY_TARGET_ID, target == null ? NO_ABILITY_TARGET : target.getId());
+    }
+
+    @Nullable
+    public Entity getAbilityTarget() {
+        int id = this.entityData.get(ABILITY_TARGET_ID);
+        return id == NO_ABILITY_TARGET ? null : this.level().getEntity(id);
+    }
+
+    public boolean canUseAbility() {
+        return this.abilityCooldownTicks <= 0 && !this.isOrderedToSit();
+    }
+
+    public void faceYaw(float yaw) {
+        this.setYRot(yaw);
+        this.yBodyRot = yaw;
+        this.yHeadRot = yaw;
     }
 
     public int getFadeTicks() {
@@ -201,15 +285,16 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     }
 
     public boolean isAbilityOnCooldown() {
-        return this.entityData.get(ABILITY_COOLDOWN) > 0;
+        return this.abilityCooldownTicks > 0;
     }
 
     public void startAbilityCooldown() {
-        this.entityData.set(ABILITY_COOLDOWN, this.getVariant().getBehavior().abilityCooldownTicks());
+        this.setAbilityCooldown(this.getVariant().getBehavior().abilityCooldownTicks());
     }
 
     public void setAbilityCooldown(int ticks) {
-        this.entityData.set(ABILITY_COOLDOWN, Math.max(0, ticks));
+        this.abilityCooldownTicks = Math.max(0, ticks);
+        this.entityData.set(ABILITY_COOLDOWN, this.abilityCooldownTicks);
     }
 
     public float getAbilityCooldownFraction(float partialTick) {
@@ -235,6 +320,14 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
     public void setLastOwnerShieldLostCount(long value) {
         this.lastOwnerShieldLostCount = value;
+    }
+
+    public int getLastOwnerHurtMobTimestamp() {
+        return this.lastOwnerHurtMobTimestamp;
+    }
+
+    public void setLastOwnerHurtMobTimestamp(int value) {
+        this.lastOwnerHurtMobTimestamp = value;
     }
 
     public float getGrowthScale() {
@@ -310,8 +403,8 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     }
 
     public GlimmerVariant getVariant() {
-        int ordinal = Mth.clamp(this.entityData.get(VARIANT), 0, GlimmerVariant.values().length - 1);
-        return GlimmerVariant.values()[ordinal];
+        int ordinal = Mth.clamp(this.entityData.get(VARIANT), 0, GLIMMER_VARIANTS.length - 1);
+        return GLIMMER_VARIANTS[ordinal];
     }
 
     public void setVariant(GlimmerVariant variant) {
@@ -333,6 +426,8 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
                 this.targetSelector.removeAllGoals(goal -> true);
                 this.registerGoals();
             }
+        } else if (GROWTH_SCALE.equals(key)) {
+            this.refreshDimensions();
         }
     }
 
@@ -355,7 +450,8 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     }
 
     public void startShearCooldown(int ticks) {
-        this.entityData.set(SHEAR_COOLDOWN, ticks);
+        this.shearCooldownTicks = Math.max(0, ticks);
+        this.entityData.set(SHEAR_COOLDOWN, this.shearCooldownTicks);
     }
 
     @Override
@@ -405,7 +501,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             return this.captureInBottle(player, hand, stack);
         }
 
-        if (this.isTame() && this.isOwnedBy(player) && stack.isEmpty() && !player.isSecondaryUseActive()) {
+        if (this.isTame() && this.isOwnedBy(player) && stack.isEmpty() && player.isSecondaryUseActive()) {
             if (!this.level().isClientSide()) {
                 this.cycleMovementState(player);
             }
@@ -421,8 +517,13 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     }
 
     private InteractionResult tameWithSpiritApple(Player player, InteractionHand hand, ItemStack stack) {
-        if (this.level().isClientSide()) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
             return InteractionResult.CONSUME;
+        }
+
+        if (!this.storePreviousCompanion(serverLevel, player)) {
+            player.sendOverlayMessage(Component.translatable("entity.antarchy.glimmer.need_bottle"));
+            return InteractionResult.FAIL;
         }
 
         this.usePlayerItem(player, hand, stack);
@@ -430,10 +531,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         this.setOrderedToSit(false);
         this.level().broadcastEntityEvent(this, (byte) 7);
         GlimmerParticles.tickBurst(this);
-
-        if (this.level() instanceof ServerLevel serverLevel) {
-            GlimmerCompanionSavedData.replaceCompanion(serverLevel.getServer(), player.getUUID(), this.getUUID());
-        }
+        GlimmerCompanionSavedData.setCompanion(serverLevel.getServer(), player.getUUID(), this.getUUID(), this.getVariant());
 
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
             AntarchyAdvancements.award(serverPlayer, this.getVariant().tameAdvancementId());
@@ -443,23 +541,83 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         return InteractionResult.SUCCESS;
     }
 
+    private boolean storePreviousCompanion(ServerLevel serverLevel, Player player) {
+        if (!GlimmerCompanionSavedData.hasCompanion(serverLevel.getServer(), player.getUUID())) {
+            return true;
+        }
+
+        ItemStack emptyBottle = findEmptyBottle(player);
+        if (emptyBottle == null && !player.hasInfiniteMaterials()) {
+            return false;
+        }
+
+        ItemStack previous = GlimmerCompanionSavedData.retireCompanion(serverLevel.getServer(), player.getUUID());
+        if (!previous.isEmpty()) {
+            if (emptyBottle != null && !player.hasInfiniteMaterials()) {
+                emptyBottle.shrink(1);
+            }
+            player.getInventory().placeItemBackInInventory(previous);
+        }
+        return true;
+    }
+
+    @Nullable
+    private static ItemStack findEmptyBottle(Player player) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack candidate = player.getInventory().getItem(slot);
+            if (candidate.is(net.minecraft.world.item.Items.GLASS_BOTTLE)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
     private InteractionResult captureInBottle(Player player, InteractionHand hand, ItemStack stack) {
         if (this.level().isClientSide()) {
             return InteractionResult.CONSUME;
         }
 
-        ItemStack filled = com.craisinlord.antarchy.content.item.GlimmerBottleItem.create(
-                this.getVariant(), this.entityData.get(ABILITY_COOLDOWN), this.entityData.get(SHEAR_COOLDOWN));
-        ItemStack result = net.minecraft.world.item.ItemUtils.createFilledResult(stack, player, filled);
+        ItemStack result = net.minecraft.world.item.ItemUtils.createFilledResult(stack, player, this.toBottle());
         player.setItemInHand(hand, result);
         this.playSound(net.minecraft.sounds.SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
-
-        if (this.level() instanceof ServerLevel serverLevel) {
-            GlimmerCompanionSavedData.clearCompanion(serverLevel.getServer(), player.getUUID(), this.getUUID());
-        }
-
         this.discard();
         return InteractionResult.SUCCESS;
+    }
+
+    public ItemStack toBottle() {
+        ItemStack bottle = com.craisinlord.antarchy.content.item.GlimmerBottleItem.create(
+                this.getVariant(), this.abilityCooldownTicks, this.shearCooldownTicks, this.getGrowthScale());
+        if (this.hasCustomName()) {
+            bottle.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, this.getCustomName());
+        }
+        return bottle;
+    }
+
+    private void releaseToWild() {
+        if (this.getOwner() instanceof Player owner) {
+            this.getVariant().getBehavior().clearPassive(this, owner);
+        }
+        this.setOrderedToSit(false);
+        this.setTame(false, true);
+        this.setOwnerReference(null);
+    }
+
+    private boolean tickCompanionRecord() {
+        if (!this.isTame() || this.tickCount % COMPANION_CHECK_INTERVAL_TICKS != 0
+                || !(this.level() instanceof ServerLevel serverLevel) || this.getOwnerUUID() == null) {
+            return true;
+        }
+
+        switch (GlimmerCompanionSavedData.reconcile(serverLevel.getServer(), this.getOwnerUUID(), this.getUUID(), this.getVariant())) {
+            case RETIRED -> {
+                this.discard();
+                return false;
+            }
+            case SUPERSEDED -> this.releaseToWild();
+            case CURRENT -> {
+            }
+        }
+        return true;
     }
 
     @Override
@@ -538,47 +696,86 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         GlimmerParticles.tickAmbient(this, this.getDeltaMovement().horizontalDistanceSqr() > 0.01D);
 
         if (!this.level().isClientSide()) {
+            if (!this.tickCompanionRecord()) {
+                return;
+            }
+
             int fadeTicks = this.entityData.get(FADE_TICKS);
-            if (this.isTame() || this.level().getBiome(this.blockPosition()).is(GLIMMERING_POOLS)) {
-                if (fadeTicks > 0) {
-                    this.entityData.set(FADE_TICKS, 0);
-                }
-            } else if (fadeTicks > 0 || this.level().isBrightOutside()) {
-                if (fadeTicks <= 0) {
-                    fadeTicks = FADE_DURATION_TICKS;
-                }
-                fadeTicks--;
-                this.entityData.set(FADE_TICKS, fadeTicks);
-                if (fadeTicks <= 0) {
-                    this.discard();
-                    return;
+            if (fadeTicks > 0 || this.level().isBrightOutside()) {
+                if (this.isTame()
+                        || this.level() instanceof ServerLevel serverLevel && ElythiaEvents.isActive(serverLevel, ElythiaEvent.LUMEN_RAIN)
+                        || this.level().getBiome(this.blockPosition()).is(GLIMMERING_POOLS)) {
+                    if (fadeTicks > 0) {
+                        this.entityData.set(FADE_TICKS, 0);
+                    }
+                } else {
+                    if (fadeTicks <= 0) {
+                        fadeTicks = FADE_DURATION_TICKS;
+                    }
+                    fadeTicks--;
+                    this.entityData.set(FADE_TICKS, fadeTicks);
+                    if (fadeTicks <= 0) {
+                        this.discard();
+                        return;
+                    }
                 }
             }
 
-            int shearCooldown = this.entityData.get(SHEAR_COOLDOWN);
-            if (shearCooldown > 0) {
-                this.entityData.set(SHEAR_COOLDOWN, shearCooldown - 1);
+            if (this.shearCooldownTicks > 0 && --this.shearCooldownTicks == 0) {
+                this.entityData.set(SHEAR_COOLDOWN, 0);
             }
 
             this.applyGroundSupport();
             this.getVariant().getBehavior().customTick(this);
+            this.updateMovementLock();
             this.tickAbilitiesAndPassive();
             this.tickGrowthDecay();
         }
     }
 
+    private void updateMovementLock() {
+        boolean locked = this.getVariant().getBehavior().locksMovement(this);
+        if (locked == this.movementLocked) {
+            return;
+        }
+        this.movementLocked = locked;
+        this.updateControlFlags();
+        if (locked) {
+            this.getNavigation().stop();
+        }
+    }
+
+    @Override
+    protected void updateControlFlags() {
+        super.updateControlFlags();
+        if (this.movementLocked) {
+            this.goalSelector.setControlFlag(Goal.Flag.MOVE, false);
+            this.goalSelector.setControlFlag(Goal.Flag.LOOK, false);
+        }
+    }
+
+    private void tickAbilityTimers() {
+        if (this.abilityCooldownTicks > 0) {
+            this.abilityCooldownTicks--;
+            if (this.abilityCooldownTicks == 0 || this.abilityCooldownTicks % COOLDOWN_SYNC_INTERVAL_TICKS == 0) {
+                this.entityData.set(ABILITY_COOLDOWN, this.abilityCooldownTicks);
+            }
+            if (this.abilityCooldownTicks == 0 && this.isTame()) {
+                GlimmerParticles.readyPulse(this);
+                this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                        net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME, this.getSoundSource(), 0.7F, 1.6F);
+            }
+        }
+
+        if (this.abilityAnimTicks > 0 && --this.abilityAnimTicks == 0) {
+            this.entityData.set(ABILITY_ANIM_TICKS, 0);
+        }
+    }
+
     private void tickAbilitiesAndPassive() {
-        int cooldown = this.entityData.get(ABILITY_COOLDOWN);
-        if (cooldown > 0) {
-            this.entityData.set(ABILITY_COOLDOWN, cooldown - 1);
-        }
+        this.tickAbilityTimers();
 
-        int animTicks = this.entityData.get(ABILITY_ANIM_TICKS);
-        if (animTicks > 0) {
-            this.entityData.set(ABILITY_ANIM_TICKS, animTicks - 1);
-        }
-
-        if (!this.isTame() || !(this.getOwner() instanceof Player owner)) {
+        if (!this.isTame() || !(this.getOwner() instanceof Player owner) || !owner.isAlive()) {
             return;
         }
 
@@ -594,23 +791,26 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         }
         this.getVariant().getBehavior().tickPassiveEveryTick(this, owner);
 
-        if (cooldown <= 0) {
+        if (this.canUseAbility()) {
             this.getVariant().getBehavior().tickAbilityCheck(this, owner);
         }
     }
 
     private void tickGrowthDecay() {
+        if (this.tickCount % GROWTH_DECAY_INTERVAL_TICKS != 0) {
+            return;
+        }
         float scale = this.getGrowthScale();
         if (scale == 1.0F) {
             return;
         }
-        double decayPerTick = this.getVariant().getBehavior().growthDecayPerTick();
-        if (decayPerTick <= 0.0D) {
+        double decay = this.getVariant().getBehavior().growthDecayPerTick() * GROWTH_DECAY_INTERVAL_TICKS;
+        if (decay <= 0.0D) {
             return;
         }
         float next = scale > 1.0F
-                ? (float) Math.max(1.0D, scale - decayPerTick)
-                : (float) Math.min(1.0D, scale + decayPerTick);
+                ? (float) Math.max(1.0D, scale - decay)
+                : (float) Math.min(1.0D, scale + decay);
         if (next != scale) {
             this.setGrowthScale(next);
         }
@@ -624,7 +824,31 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
+    private boolean riseOverLowStep() {
+        BlockPos feet = BlockPos.containing(this.getX(), this.getY() + 0.01D, this.getZ());
+        VoxelShape feetShape = this.level().getBlockState(feet).getCollisionShape(this.level(), feet);
+        if (feetShape.isEmpty()) {
+            return false;
+        }
+        BlockPos above = feet.above();
+        if (!this.level().getBlockState(above).getCollisionShape(this.level(), above).isEmpty()) {
+            return false;
+        }
+        double top = feet.getY() + feetShape.max(Direction.Axis.Y);
+        if (top <= this.getY()) {
+            return false;
+        }
+        this.setPos(this.getX(), Math.min(top, this.getY() + STEP_RISE_PER_TICK), this.getZ());
+        this.setDeltaMovement(this.getDeltaMovement().x, 0.0D, this.getDeltaMovement().z);
+        this.setOnGround(true);
+        return true;
+    }
+
     private void applyGroundSupport() {
+        if (this.riseOverLowStep()) {
+            return;
+        }
+
         BlockPos below = BlockPos.containing(this.getX(), this.getY() - 0.05D, this.getZ());
         VoxelShape shape = this.level().getBlockState(below).getCollisionShape(this.level(), below);
         if (!shape.isEmpty()) {
@@ -643,10 +867,11 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     public void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
         output.putString(VARIANT_KEY, this.getVariant().name());
-        output.putInt(SHEAR_COOLDOWN_KEY, this.entityData.get(SHEAR_COOLDOWN));
+        output.putInt(SHEAR_COOLDOWN_KEY, this.shearCooldownTicks);
         output.putBoolean(VARIANT_LOCKED_KEY, this.variantLocked);
         output.putBoolean(FOLLOWING_KEY, this.isFollowingOwner());
-        output.putInt(ABILITY_COOLDOWN_KEY, this.entityData.get(ABILITY_COOLDOWN));
+        output.putInt(ABILITY_COOLDOWN_KEY, this.abilityCooldownTicks);
+        output.putFloat(GROWTH_SCALE_KEY, this.getGrowthScale());
         output.putBoolean(ELKA_IDLE_SITTING_KEY, this.isElkaIdleSitting());
         output.putInt(ELKA_IDLE_SIT_TICKS_KEY, this.elkaIdleSitTicksRemaining);
         output.putInt(ELKA_IDLE_SIT_COOLDOWN_KEY, this.elkaIdleSitCooldownTicks);
@@ -658,10 +883,11 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     public void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
         input.getString(VARIANT_KEY).ifPresent(name -> this.setVariant(GlimmerVariant.byName(name)));
-        this.entityData.set(SHEAR_COOLDOWN, input.getIntOr(SHEAR_COOLDOWN_KEY, 0));
+        this.startShearCooldown(input.getIntOr(SHEAR_COOLDOWN_KEY, 0));
         this.variantLocked = input.getBooleanOr(VARIANT_LOCKED_KEY, false);
         this.entityData.set(FOLLOWING, input.getBooleanOr(FOLLOWING_KEY, true));
-        this.entityData.set(ABILITY_COOLDOWN, input.getIntOr(ABILITY_COOLDOWN_KEY, 0));
+        this.setAbilityCooldown(input.getIntOr(ABILITY_COOLDOWN_KEY, 0));
+        this.setGrowthScale(input.getFloatOr(GROWTH_SCALE_KEY, 1.0F));
         this.entityData.set(ELKA_IDLE_SITTING, input.getBooleanOr(ELKA_IDLE_SITTING_KEY, false));
         this.elkaIdleSitTicksRemaining = input.getIntOr(ELKA_IDLE_SIT_TICKS_KEY, 0);
         this.elkaIdleSitCooldownTicks = input.getIntOr(ELKA_IDLE_SIT_COOLDOWN_KEY, 20 * 60 * 6);

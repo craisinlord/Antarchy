@@ -6,14 +6,14 @@ import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
@@ -22,6 +22,7 @@ import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.state.AnimationTest;
 import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
@@ -152,34 +153,34 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEch
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        this.impacted = input.getBooleanOr("Impacted", false);
-        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
-        input.read("Owner", UUIDUtil.CODEC).ifPresent(id -> this.ownerId = id);
-        if (input.read("CustomImpactDamage", com.mojang.serialization.Codec.FLOAT).isPresent()) {
-            this.customImpactDamage = input.getFloatOr("CustomImpactDamage", 0.0F);
-            this.customImpactRadius = input.getDoubleOr("CustomImpactRadius", 0.0D);
-            this.customFreezeTicks = input.getIntOr("CustomFreezeTicks", 0);
-            this.customSlowTicks = input.getIntOr("CustomSlowTicks", 0);
-            this.customSlowAmplifier = input.getIntOr("CustomSlowAmplifier", 0);
-            this.customKnockup = input.getDoubleOr("CustomKnockup", 0.0D);
+    protected void readAdditionalSaveData(ValueInput tag) {
+        this.impacted = tag.getBooleanOr("Impacted", false);
+        this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
+        tag.read("Owner", UUIDUtil.CODEC).ifPresent(id -> this.ownerId = id);
+        if (tag.read("CustomImpactDamage", com.mojang.serialization.Codec.FLOAT).isPresent()) {
+            this.customImpactDamage = tag.getFloatOr("CustomImpactDamage", 0.0F);
+            this.customImpactRadius = tag.getDoubleOr("CustomImpactRadius", 0.0D);
+            this.customFreezeTicks = tag.getIntOr("CustomFreezeTicks", 0);
+            this.customSlowTicks = tag.getIntOr("CustomSlowTicks", 0);
+            this.customSlowAmplifier = tag.getIntOr("CustomSlowAmplifier", 0);
+            this.customKnockup = tag.getDoubleOr("CustomKnockup", 0.0D);
         }
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
-        output.putBoolean("Impacted", this.impacted);
-        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+    protected void addAdditionalSaveData(ValueOutput tag) {
+        tag.putBoolean("Impacted", this.impacted);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         if (this.ownerId != null) {
-            output.store("Owner", UUIDUtil.CODEC, this.ownerId);
+            tag.store("Owner", UUIDUtil.CODEC, this.ownerId);
         }
         if (this.customImpactDamage >= 0.0F) {
-            output.putFloat("CustomImpactDamage", this.customImpactDamage);
-            output.putDouble("CustomImpactRadius", this.customImpactRadius);
-            output.putInt("CustomFreezeTicks", this.customFreezeTicks);
-            output.putInt("CustomSlowTicks", this.customSlowTicks);
-            output.putInt("CustomSlowAmplifier", this.customSlowAmplifier);
-            output.putDouble("CustomKnockup", this.customKnockup);
+            tag.putFloat("CustomImpactDamage", this.customImpactDamage);
+            tag.putDouble("CustomImpactRadius", this.customImpactRadius);
+            tag.putInt("CustomFreezeTicks", this.customFreezeTicks);
+            tag.putInt("CustomSlowTicks", this.customSlowTicks);
+            tag.putInt("CustomSlowAmplifier", this.customSlowAmplifier);
+            tag.putDouble("CustomKnockup", this.customKnockup);
         }
     }
 

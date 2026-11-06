@@ -15,13 +15,14 @@ public final class ElythiaBasinFill implements DensityFunction {
     public static final KeyDispatchDataCodec<ElythiaBasinFill> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
     private static final double CEILING = -0.28D;
-    private static final double DEEP = -0.7D;
+    private static final double DEEP = -1.5D;
     private static final double RIM_LOW = -0.43D;
     private static final double RIM_HIGH = -0.39D;
-    private static final double OPEN_LOW = -0.45D;
-    private static final double OPEN_HIGH = -0.39D;
+    private static final double OPEN_LOW = -0.52D;
+    private static final double OPEN_HIGH = -0.46D;
     private static final double SOFTNESS = 0.02D;
-    private static final int[] RADII = {48, 96, 144, 192};
+    private static final int[] RADII = {48, 96, 144, 192, 240, 288, 336, 384};
+    private static final int MAX_RIM_RADIUS = 288;
     private static final double[][] DIRECTIONS = directions(8);
     private static final int GRID_SHIFT = 4;
     private static final int GRID = 1 << GRID_SHIFT;
@@ -97,8 +98,11 @@ public final class ElythiaBasinFill implements DensityFunction {
                 int sampleZ = z + (int) Math.round(direction[1] * radius);
                 ring = Math.min(ring, this.argument.compute(new DensityFunction.SinglePointContext(sampleX, 0, sampleZ)));
             }
-            fill = Math.max(fill, ring);
             lowest = Math.min(lowest, ring);
+            if (radius > MAX_RIM_RADIUS) {
+                continue;
+            }
+            fill = Math.max(fill, ring);
             if (fill >= CEILING) {
                 cache.rims[slot] = 1.0D;
                 cache.targets[slot] = CEILING;

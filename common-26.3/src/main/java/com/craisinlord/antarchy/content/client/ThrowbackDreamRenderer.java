@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.craisinlord.antarchy.mixins.client.PostChainAccessor;
 import com.craisinlord.antarchy.mixins.client.PostPassUniformAccessor;
 import com.mojang.renderpearl.api.buffers.GpuBuffer;
@@ -18,6 +17,7 @@ import java.util.Map;
 
 public final class ThrowbackDreamRenderer {
     private static final Identifier DREAM_EFFECT = Identifier.fromNamespaceAndPath("antarchy", "throwback_dream");
+    private static final Identifier DREAM_NO_AFTERIMAGE_EFFECT = Identifier.fromNamespaceAndPath("antarchy", "throwback_dream_no_afterimage");
     private static final Identifier TINT_EFFECT = Identifier.fromNamespaceAndPath("antarchy", "throwback_tint");
     private static final float ACTIVE_THRESHOLD = 0.01F;
     private static final float BASELINE_SATURATION = 0.12F;
@@ -34,6 +34,7 @@ public final class ThrowbackDreamRenderer {
 
     public static void syncRequestedEffects(List<Identifier> requested) {
         requested.remove(DREAM_EFFECT);
+        requested.remove(DREAM_NO_AFTERIMAGE_EFFECT);
         requested.remove(TINT_EFFECT);
         Selection selection = selection();
         if (selection != null) {
@@ -59,7 +60,7 @@ public final class ThrowbackDreamRenderer {
         if (selection.dreaming()) {
             float distortion = minecraft.options.screenEffectScale().get().floatValue();
             float time = ((minecraft.level.getGameTime() % TIME_WRAP_TICKS) + partialTick) / 20.0F;
-            float ghost = AntarchySettings.throwbackAfterimages() ? AFTERIMAGE_WEIGHT * zone * distortion : 0.0F;
+            float ghost = AntarchySettings.throwbackAfterimages() && distortion > 0.0F ? AFTERIMAGE_WEIGHT * zone * distortion : 0.0F;
             updateUniform(chain, "ThrowbackDreamConfig", baseline, wake, zone, distortion, time, ghost,
                     1.0F + BASELINE_SATURATION * baseline + ZONE_SATURATION * zone);
         } else {
@@ -89,12 +90,9 @@ public final class ThrowbackDreamRenderer {
             return null;
         }
         float partialTick = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-        boolean elythia = AntarchySettings.throwbackDreamHaze()
-                && minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA);
-        float zone = elythia ? ThrowbackClientState.zone(partialTick) * dreamStrength() : 0.0F;
-        float baseline = elythia
-                ? ThrowbackClientState.baseline(partialTick) * Mth.clamp(zone, 0.0F, 1.0F)
-                : 0.0F;
+        boolean haze = AntarchySettings.throwbackDreamHaze();
+        float zone = haze ? ThrowbackClientState.zone(partialTick) * dreamStrength() : 0.0F;
+        float baseline = haze ? ThrowbackClientState.baseline(partialTick) * Mth.clamp(zone, 0.0F, 1.0F) : 0.0F;
         float wake = AntTransitClientState.saturation(partialTick);
         float prism = AntTransitClientState.prism(partialTick);
         boolean transit = Math.abs(wake - 1.0F) > ACTIVE_THRESHOLD || prism > ACTIVE_THRESHOLD;
@@ -102,7 +100,10 @@ public final class ThrowbackDreamRenderer {
             return null;
         }
         boolean dreaming = zone >= ACTIVE_THRESHOLD && prism <= ACTIVE_THRESHOLD;
-        return new Selection(dreaming ? DREAM_EFFECT : TINT_EFFECT, dreaming, zone, baseline, wake, prism);
+        float distortion = dreaming ? minecraft.options.screenEffectScale().get().floatValue() : 0.0F;
+        boolean afterimages = AntarchySettings.throwbackAfterimages() && distortion > 0.0F;
+        Identifier effect = dreaming ? (afterimages ? DREAM_EFFECT : DREAM_NO_AFTERIMAGE_EFFECT) : TINT_EFFECT;
+        return new Selection(effect, dreaming, zone, baseline, wake, prism);
     }
 
     private static float dreamStrength() {

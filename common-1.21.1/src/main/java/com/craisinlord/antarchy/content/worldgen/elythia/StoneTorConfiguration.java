@@ -9,14 +9,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 public record StoneTorConfiguration(ResourceLocation block, Optional<ResourceLocation> accent, ResourceLocation slab,
-                                    int minHeight, int maxHeight, boolean submerged) implements FeatureConfiguration {
+                                    int minHeight, int maxHeight, boolean submerged, boolean breach) implements FeatureConfiguration {
     public static final Codec<StoneTorConfiguration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("block").forGetter(StoneTorConfiguration::block),
             ResourceLocation.CODEC.optionalFieldOf("accent").forGetter(StoneTorConfiguration::accent),
             ResourceLocation.CODEC.fieldOf("slab").forGetter(StoneTorConfiguration::slab),
             Codec.intRange(2, 32).fieldOf("min_height").forGetter(StoneTorConfiguration::minHeight),
             Codec.intRange(2, 32).fieldOf("max_height").forGetter(StoneTorConfiguration::maxHeight),
-            Codec.BOOL.optionalFieldOf("submerged", false).forGetter(StoneTorConfiguration::submerged)
+            Codec.BOOL.optionalFieldOf("submerged", false).forGetter(StoneTorConfiguration::submerged),
+            Codec.BOOL.optionalFieldOf("breach", false).forGetter(StoneTorConfiguration::breach)
     ).apply(instance, StoneTorConfiguration::new));
 
     public static Block resolve(ResourceLocation id) {

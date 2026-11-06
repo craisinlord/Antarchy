@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "antarchy:block/tidestone",
+    "side": "antarchy:block/tidestone",
+    "top": "antarchy:block/tidestone"
+  }
+}
+

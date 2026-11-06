@@ -62,7 +62,6 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import com.geckolib.animatable.GeoAnimatable;
@@ -74,6 +73,7 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void tickThrowbackState(ClientTickEvent.Post event) {
         com.craisinlord.antarchy.content.client.AntTransitClientState.tick();
+        com.craisinlord.antarchy.content.client.renderer.PrimordialGrassRenderer.tick(net.minecraft.client.Minecraft.getInstance());
         com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
         com.craisinlord.antarchy.content.client.ThoraxisEventClient.tick();
         com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
@@ -120,8 +120,7 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
         Antarchy.physicalClient = true;
-        com.craisinlord.antarchy.content.network.AntarchyGameNetworking.setSender(payload ->
-                ClientPacketDistributor.sendToServer(payload));
+        com.craisinlord.antarchy.content.network.AntarchyNetwork.bindClient(net.neoforged.neoforge.client.network.ClientPacketDistributor::sendToServer);
         com.craisinlord.antarchy.content.AntarchyAnthologyHooks.registerClient();
         event.enqueueWork(() -> {
             AntarchyArchivePreviews.register();
@@ -280,6 +279,7 @@ public final class AntarchyNeoForgeClient {
         ((LivingEntityRenderer) livingRenderer).addLayer(new GoopedLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new GlimmeringLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new com.craisinlord.antarchy.content.client.renderer.RoyalIndicatorLivingLayer<>(livingRenderer));
+        ((LivingEntityRenderer) livingRenderer).addLayer(new com.craisinlord.antarchy.content.client.renderer.TemporalContractionAfterimageLayer<>(livingRenderer));
     }
 
     private static <T extends Entity & GeoAnimatable, S extends EntityRenderState, R extends GeoEntityRenderer<T, S>> R withParalyzedGeoLayer(R renderer) {
@@ -359,11 +359,15 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
         event.register(Identifier.fromNamespaceAndPath(Antarchy.MODID, "critter_cage_state"), CritterCageStateProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(Antarchy.MODID, "snout_compass_angle"), SnoutCompassAngleProperty.MAP_CODEC);
     }
 
     @SubscribeEvent
     public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(AntarchyNeoforgeMisc.DREAM_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
+        event.registerSpriteSet(AntarchyNeoforgeMisc.WIND_LINE.get(), com.craisinlord.antarchy.content.client.particle.WindLineParticle.Provider::new);
+        event.registerSpriteSet(AntarchyNeoforgeMisc.REMEMBRANCE_FLAME.get(), DreamFlameParticle.Provider::new);
+        event.registerSpriteSet(AntarchyNeoforgeMisc.REMEMBRANCE_MOTE.get(), com.craisinlord.antarchy.content.client.particle.RemembranceMoteParticle.Provider::new);
         event.registerSpriteSet(AntarchyNeoforgeMisc.NIGHTMARE_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
         event.registerSpriteSet(AntarchyNeoforgeMisc.STINKY_GAS.get(), HypnoticGasParticle.Provider::new);
         event.registerSpriteSet(AntarchyNeoforgeMisc.STINKY_FLY.get(), FireflyParticle.Provider::new);

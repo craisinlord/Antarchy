@@ -28,6 +28,7 @@ public final class ElythiaAquifer implements Aquifer {
     private static final int COLUMNS = 256;
     private static final int UNSET = Integer.MIN_VALUE;
     private static final int NO_SEAM = Integer.MIN_VALUE + 1;
+    private static final int LIP_HEIGHT = 3;
     private static final int NO_LIP = Integer.MIN_VALUE + 1;
     private static final int[] NEIGHBOR_X = {1, -1, 0, 0};
     private static final int[] NEIGHBOR_Z = {0, 0, 1, -1};
@@ -79,18 +80,27 @@ public final class ElythiaAquifer implements Aquifer {
         double reserve = this.reserves[column];
         if (reserve < RIVER_RESERVE_LIMIT && this.valley(column, context) > VALLEY_THRESHOLD) {
             int level = this.level(column, context);
-            boolean wet = this.wet(column, context);
-            if (y >= this.floor(column, context) && y < this.lip(column, context) && !wet) {
-                this.shouldScheduleFluidUpdate = false;
-                return null;
-            }
-            if (wet || this.floor(column, context) >= level) {
-                if (y < level + BANK_BAND && y >= level - RIVER_DEPTH_BAND) {
-                    return this.river(column, context, y, level, reserve);
-                }
-                if (y < level - RIVER_DEPTH_BAND && y >= this.floor(column, context)) {
-                    this.shouldScheduleFluidUpdate = false;
-                    return null;
+            if (level > this.hydrology.seaLevel()) {
+                int floor = this.floor(column, context);
+                if (this.wet(column, context)) {
+                    if (y < level + BANK_BAND && y >= level - RIVER_DEPTH_BAND) {
+                        return this.river(column, context, y, level, reserve);
+                    }
+                    if (y < level - RIVER_DEPTH_BAND && y >= floor) {
+                        this.shouldScheduleFluidUpdate = false;
+                        return null;
+                    }
+                } else {
+                    int lip = this.lip(column, context);
+                    if (lip != NO_LIP && lip - floor <= LIP_HEIGHT) {
+                        if (y >= floor && y < lip) {
+                            this.shouldScheduleFluidUpdate = false;
+                            return null;
+                        }
+                        if (floor >= level && y < level + BANK_BAND && y >= level - RIVER_DEPTH_BAND) {
+                            return this.river(column, context, y, level, reserve);
+                        }
+                    }
                 }
             }
         }
@@ -198,14 +208,18 @@ public final class ElythiaAquifer implements Aquifer {
         return this.reserves[column] < RIVER_RESERVE_LIMIT
                 && this.valley(column, context) > VALLEY_THRESHOLD
                 && this.channel(column, context) > CHANNEL_THRESHOLD
+                && this.level(column, context) > this.hydrology.seaLevel()
                 && this.floor(column, context) < this.level(column, context);
     }
 
     private boolean wet(ElythiaField.Point point) {
-        return this.reserve.sampleValue(point.blockX(), point.blockY(), point.blockZ()) < RIVER_RESERVE_LIMIT
-                && this.valley.sampleValue(point.blockX(), point.blockY(), point.blockZ()) > VALLEY_THRESHOLD
-                && this.riverChannel.sampleValue(point.blockX(), point.blockY(), point.blockZ()) > CHANNEL_THRESHOLD
-                && Mth.ceil(this.floor.sampleValue(point.blockX(), point.blockY(), point.blockZ())) < level(this.riverLevel.sampleValue(point.blockX(), point.blockY(), point.blockZ()));
+        if (this.reserve.sampleValue(point.blockX(), point.blockY(), point.blockZ()) >= RIVER_RESERVE_LIMIT
+                || this.valley.sampleValue(point.blockX(), point.blockY(), point.blockZ()) <= VALLEY_THRESHOLD
+                || this.riverChannel.sampleValue(point.blockX(), point.blockY(), point.blockZ()) <= CHANNEL_THRESHOLD) {
+            return false;
+        }
+        int level = level(this.riverLevel.sampleValue(point.blockX(), point.blockY(), point.blockZ()));
+        return level > this.hydrology.seaLevel() && Mth.ceil(this.floor.sampleValue(point.blockX(), point.blockY(), point.blockZ())) < level;
     }
 
     private double channel(int column, ElythiaField.Point context) {

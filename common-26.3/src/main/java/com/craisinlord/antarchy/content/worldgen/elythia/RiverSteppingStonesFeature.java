@@ -17,6 +17,7 @@ public class RiverSteppingStonesFeature implements Feature {
     @Override
     public MapCodec<RiverSteppingStonesFeature> codec() { return CODEC; }
     private static final int MAX_DEPTH = 10;
+    private static final double BOAT_LANE_HALF_WIDTH = 2.0D;
 
 
     @Override
@@ -31,6 +32,7 @@ public class RiverSteppingStonesFeature implements Feature {
         int perpZ = crossing.dx();
         int offset = 0;
         boolean placed = false;
+        double laneCenter = crossing.steps() / 2.0D;
         int step = 1 + random.nextInt(2);
         while (step < crossing.steps()) {
             if (random.nextFloat() < 0.3F) {
@@ -38,13 +40,13 @@ public class RiverSteppingStonesFeature implements Feature {
             }
             int x = crossing.x(step) + perpX * offset;
             int z = crossing.z(step) + perpZ * offset;
-            placed |= this.placeStone(level, random, crossing, x, z);
+            placed |= this.placeStone(level, random, crossing, x, z, laneCenter);
             step += random.nextFloat() < (crossing.diagonal() ? 0.15F : 0.4F) ? 3 : 2;
         }
         return placed;
     }
 
-    private boolean placeStone(WorldGenLevel level, RandomSource random, ElythiaRiverCrossing crossing, int x, int z) {
+    private boolean placeStone(WorldGenLevel level, RandomSource random, ElythiaRiverCrossing crossing, int x, int z, double laneCenter) {
         int waterY = crossing.waterY();
         int topY = random.nextFloat() < 0.15F ? waterY : waterY + 1;
         boolean large = random.nextFloat() < 0.7F;
@@ -61,9 +63,17 @@ public class RiverSteppingStonesFeature implements Feature {
                 continue;
             }
             int cellTop = cell > 0 && random.nextFloat() < 0.25F ? topY - 1 : topY;
+            if (Math.abs(alongCrossing(crossing, cx, cz) - laneCenter) <= BOAT_LANE_HALF_WIDTH) {
+                cellTop = Math.min(cellTop, waterY - 1);
+            }
             placed |= this.placeColumn(level, random, cx, cz, waterY, cellTop);
         }
         return placed;
+    }
+
+    private static double alongCrossing(ElythiaRiverCrossing crossing, int x, int z) {
+        int dot = (x - crossing.x(0)) * crossing.dx() + (z - crossing.z(0)) * crossing.dz();
+        return dot / (double) (crossing.dx() * crossing.dx() + crossing.dz() * crossing.dz());
     }
 
     private boolean placeColumn(WorldGenLevel level, RandomSource random, int x, int z, int waterY, int topY) {
@@ -97,15 +107,15 @@ public class RiverSteppingStonesFeature implements Feature {
     }
 
     private static BlockState bodyState(RandomSource random) {
-        return random.nextFloat() < 0.65F ? Blocks.TUFF.defaultBlockState() : Blocks.MOSSY_COBBLESTONE.defaultBlockState();
+        return random.nextFloat() < 0.35F ? com.craisinlord.antarchy.content.block.ElythiaPalette.block("rockite").defaultBlockState() : com.craisinlord.antarchy.content.block.ElythiaPalette.block("tidestone").defaultBlockState();
     }
 
     private static BlockState topState(RandomSource random) {
         float roll = random.nextFloat();
-        if (roll < 0.3F) {
+        if (roll < 0.25F) {
             return Blocks.MOSS_BLOCK.defaultBlockState();
         }
-        return roll < 0.65F ? Blocks.MOSSY_COBBLESTONE.defaultBlockState() : Blocks.TUFF.defaultBlockState();
+        return roll < 0.85F ?com.craisinlord.antarchy.content.block.ElythiaPalette.block("tidestone").defaultBlockState() : com.craisinlord.antarchy.content.block.ElythiaPalette.block("rockite").defaultBlockState();
     }
 
     private static boolean canReplace(BlockState state) {

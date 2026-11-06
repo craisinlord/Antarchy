@@ -466,18 +466,19 @@ public class StratosharkEntity extends Monster implements GeoEntity {
     }
 
     private boolean canStartDive(LivingEntity target) {
-        if (this.diveCooldown > 0 || !this.hasLineOfSight(target)) return false;
+        if (this.diveCooldown > 0) return false;
         if (this.strafeTicks > Math.max(6, this.currentStrafeDuration / 2)) return false;
         double distanceToTarget = this.distanceToSqr(target);
         double localHeight = this.toLocal(target.position().subtract(this.position())).y;
         return distanceToTarget >= 9.0D
                 && distanceToTarget <= 144.0D
-                && localHeight < -0.5D;
+                && localHeight < -0.5D
+                && this.hasLineOfSight(target);
     }
 
     private boolean canConnectDive(LivingEntity target) {
-        return this.hasLineOfSight(target)
-                && this.distanceToSqr(target) <= this.getDiveReachSqr(target);
+        return this.distanceToSqr(target) <= this.getDiveReachSqr(target)
+                && this.hasLineOfSight(target);
     }
 
     private double getDiveReachSqr(LivingEntity target) {

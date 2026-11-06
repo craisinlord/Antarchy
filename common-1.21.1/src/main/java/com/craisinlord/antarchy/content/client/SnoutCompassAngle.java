@@ -27,7 +27,7 @@ public final class SnoutCompassAngle {
         }
         double dx = target.getX() + 0.5 - entity.getX();
         double dz = target.getZ() + 0.5 - entity.getZ();
-        double angle = 0.75 - entity.getYRot() / 360.0 + Math.atan2(dz, dx) / (Math.PI * 2.0);
+        double angle = 0.25 - entity.getYRot() / 360.0 + Math.atan2(dz, dx) / (Math.PI * 2.0);
         if (dx * dx + dz * dz < 4.0) {
             angle += Math.sin(time * 0.2) * 0.025;
         }

@@ -24,6 +24,7 @@ public final class ThrowbackDreamRenderer {
 
     private static final Chain TINT = new Chain(new ResourceLocation(Antarchy.MODID, "shaders/post/throwback_tint.json"));
     private static final Chain DREAM = new Chain(new ResourceLocation(Antarchy.MODID, "shaders/post/throwback_dream.json"));
+    private static final Chain DREAM_NO_AFTERIMAGE = new Chain(new ResourceLocation(Antarchy.MODID, "shaders/post/throwback_dream_no_afterimage.json"));
 
     private static Boolean irisPresent;
     private static boolean shaderPackActive;
@@ -47,7 +48,9 @@ public final class ThrowbackDreamRenderer {
             return;
         }
         boolean dreaming = zone >= ACTIVE_THRESHOLD && prism <= ACTIVE_THRESHOLD;
-        PostChain postChain = (dreaming ? DREAM : TINT).get(minecraft);
+        float distortion = dreaming ? minecraft.options.screenEffectScale().get().floatValue() : 0.0F;
+        boolean afterimages = AntarchySettings.throwbackAfterimages() && distortion > 0.0F;
+        PostChain postChain = (dreaming ? (afterimages ? DREAM : DREAM_NO_AFTERIMAGE) : TINT).get(minecraft);
         if (postChain == null) {
             return;
         }
@@ -57,9 +60,8 @@ public final class ThrowbackDreamRenderer {
             setUniform(postChain, "Prism", prism);
         }
         if (dreaming) {
-            float distortion = minecraft.options.screenEffectScale().get().floatValue();
             float time = ((minecraft.level.getGameTime() % TIME_WRAP_TICKS) + partialTick) / 20.0F;
-            float ghost = AntarchySettings.throwbackAfterimages() ? AFTERIMAGE_WEIGHT * zone * distortion : 0.0F;
+            float ghost = afterimages ? AFTERIMAGE_WEIGHT * zone * distortion : 0.0F;
             setUniform(postChain, "Zone", zone);
             setUniform(postChain, "Distortion", distortion);
             setUniform(postChain, "DreamTime", time);
@@ -76,11 +78,13 @@ public final class ThrowbackDreamRenderer {
     public static void resize(int width, int height) {
         TINT.resize(width, height);
         DREAM.resize(width, height);
+        DREAM_NO_AFTERIMAGE.resize(width, height);
     }
 
     public static void reset() {
         TINT.close();
         DREAM.close();
+        DREAM_NO_AFTERIMAGE.close();
         irisPresent = null;
         framesUntilIrisCheck = 0;
     }

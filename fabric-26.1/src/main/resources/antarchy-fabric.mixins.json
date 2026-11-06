@@ -3,6 +3,7 @@
   "package": "com.craisinlord.antarchy.fabric.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "JelliedCranberryPistonMixin",
     "AntiwaterLivingEntityMixin",
     "AntiwaterItemEntityMixin",
     "LivingEntityJumpingAccessor",
@@ -22,6 +23,9 @@
     "WoodTypeInvoker"
   ],
   "client": [
+    "client.SodiumOuranwoodLeavesCullingMixin",
+    "client.OuranwoodLeavesCullingMixin",
+    "client.AppleSkinOverlayMixin",
     "client.BrutalflyElytraExperienceBarMixin",
     "client.BloodglassChatOrderMixin",
     "client.LiquidFogMixin",

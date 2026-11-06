@@ -6,19 +6,12 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
-import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
 import com.craisinlord.antarchy.fabric.registry.DeferredHolder;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
-import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
-import com.craisinlord.antarchy.content.item.WormHookTetherSync;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
-import com.craisinlord.antarchy.content.network.HordeIntensitySync;
-import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
 import net.minecraft.core.Holder;
@@ -68,12 +61,13 @@ public final class AntarchyFabricContent {
         registerBrewingRecipes();
         AntarchyFabricRegistries.registerAll();
         bindCommonContent();
-        bindNetworkSinks();
         AntarchyFabricEvents.register();
     }
 
     private static void registerBrewingRecipes() {
         FabricPotionBrewingBuilder.BUILD.register(builder -> {
+            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.FADED_MEMORY.get()), potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION));
+            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_REMEMBRANCE));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.LUCID_EYE.get()), potionHolder(AntarchyFabricMisc.INVERSION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.INVERSION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_INVERSION));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.STINK_BUG_ITEM.get()), potionHolder(AntarchyFabricMisc.STINKY_POTION));
@@ -332,193 +326,19 @@ public final class AntarchyFabricContent {
         AntarchySoundEvents.bindHoverboardSounds(AntarchyFabricSounds.HOVERBOARD_MOUNT, AntarchyFabricSounds.HOVERBOARD_DISMOUNT, AntarchyFabricSounds.HOVERBOARD_IDLE);
         AntarchySoundEvents.bindThrowbackSounds(AntarchyFabricSounds.THROWBACK_MUSIC, AntarchyFabricSounds.PLAYER_HURT_CLASSIC);
 
-        AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
-        AntarchyObjects.setTentacle(AntarchyFabricEntities.TENTACLE);
-        AntarchyObjects.setNightmare(AntarchyFabricEntities.NIGHTMARE);
-        AntarchyObjects.setNightmarePortal(AntarchyFabricEntities.NIGHTMARE_PORTAL);
-        AntarchyObjects.setDimensionalTear(AntarchyFabricEntities.DIMENSIONAL_TEAR);
-        AntarchyObjects.setNightmareBite(AntarchyFabricEntities.NIGHTMARE_BITE);
-        AntarchyObjects.setLucid(AntarchyFabricEntities.LUCID);
-        AntarchyObjects.setVortex(AntarchyFabricEntities.VORTEX);
-        AntarchyObjects.setWindVortex(() -> AntarchyFabricEntities.WIND_VORTEX.get());
-        AntarchyObjects.setRoyalBlackHole(() -> AntarchyFabricEntities.ROYAL_BLACK_HOLE.get());
-        AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get());
-        AntarchyObjects.setVortexChargeProjectile(() -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get());
-        AntarchyObjects.setPrince(() -> AntarchyFabricEntities.PRINCE.get());
-        AntarchyObjects.setPrincess(() -> AntarchyFabricEntities.PRINCESS.get());
-        AntarchyObjects.setKing(() -> AntarchyFabricEntities.KING.get());
-        AntarchyObjects.setQueen(() -> AntarchyFabricEntities.QUEEN.get());
-        AntarchyObjects.setManticore(() -> AntarchyFabricEntities.MANTICORE.get());
-        AntarchyObjects.setRoyalBolt(() -> AntarchyFabricEntities.ROYAL_BOLT.get());
-        AntarchyObjects.setRoyalElementalProjectile(() -> AntarchyFabricEntities.ROYAL_ELEMENTAL_PROJECTILE.get());
-        AntarchyObjects.setRoyalIceSpike(() -> AntarchyFabricEntities.ROYAL_ICE_SPIKE.get());
-        AntarchyObjects.setPrinceEgg(() -> AntarchyFabricBlocks.PRINCE_EGG.get());
-        AntarchyObjects.setPrincessEgg(() -> AntarchyFabricBlocks.PRINCESS_EGG.get());
-        AntarchyObjects.setRoyalEggBlockEntity(() -> AntarchyFabricBlocks.ROYAL_EGG_BLOCK_ENTITY.get());
-        AntarchyObjects.setVortexLens(() -> AntarchyFabricBlocks.VORTEX_LENS.get());
-        AntarchyObjects.setVortexLensBlockEntity(() -> AntarchyFabricBlocks.VORTEX_LENS_BLOCK_ENTITY.get());
-        AntarchyObjects.setDimensionalTearMarker(() -> AntarchyFabricBlocks.DIMENSIONAL_TEAR_MARKER.get());
-        AntarchyObjects.setDimensionalTearMarkerBlockEntity(() -> AntarchyFabricBlocks.DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY.get());
-        AntarchyObjects.setKrakensGraspTrident(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT);
-        AntarchyObjects.setLotus(() -> AntarchyFabricBlocks.LOTUS.get());
-        AntarchyObjects.setKrakenTentacle(() -> AntarchyFabricItems.KRAKEN_TENTACLE.get());
-        AntarchyObjects.setKrakensGrasp(() -> AntarchyFabricItems.KRAKENS_GRASP.get());
-        AntarchyObjects.setOuranwoodDeer(AntarchyFabricEntities.OURANWOOD_DEER);
-        AntarchyObjects.setRollyPolly(AntarchyFabricEntities.ROLLY_POLLY);
-        AntarchyObjects.setGlimmer(AntarchyFabricEntities.GLIMMER);
-        AntarchyObjects.setStratoshark(AntarchyFabricEntities.STRATOSHARK);
-        AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.GLIMMERING));
         AntarchyObjects.setRemembranceEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.REMEMBRANCE));
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.ROYAL_VITALITY_PENALTY));
         AntarchyObjects.setBleedingEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.BLEEDING));
         AntarchyObjects.setBloodMoonEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.BLOOD_MOON));
-        AntarchyObjects.setElka(AntarchyFabricEntities.ELKA);
-        AntarchyObjects.setPeach(() -> AntarchyFabricItems.PEACH.get());
-        AntarchyObjects.setCorn(() -> AntarchyFabricItems.CORN.get());
-        AntarchyObjects.setCornSeeds(() -> AntarchyFabricItems.CORN_SEEDS.get());
-        AntarchyObjects.setWildCorn(() -> AntarchyFabricBlocks.WILD_CORN.get());
-        AntarchyObjects.setStarCoralBlock(() -> AntarchyFabricBlocks.STAR_CORAL_BLOCK.get());
-        AntarchyObjects.setStarCoral(() -> AntarchyFabricBlocks.STAR_CORAL.get());
-        AntarchyObjects.setStarCoralFan(() -> AntarchyFabricBlocks.STAR_CORAL_FAN.get());
-        AntarchyObjects.setCookedCorndog(() -> AntarchyFabricItems.COOKED_CORNDOG.get());
-        AntarchyObjects.setGlimmerBottle(() -> AntarchyFabricItems.GLIMMER_BOTTLE.get());
-        AntarchyObjects.setGlimmerVariantComponent(() -> AntarchyFabricMisc.GLIMMER_VARIANT.get());
-        AntarchyObjects.setAmericanComponent(() -> AntarchyFabricMisc.AMERICAN.get());
-        AntarchyObjects.setLumen(() -> AntarchyFabricMisc.LUMEN.get());
-        AntarchyObjects.setFlowingLumen(() -> AntarchyFabricMisc.FLOWING_LUMEN.get());
-        AntarchyObjects.setLumenBucket(() -> AntarchyFabricItems.LUMEN_BUCKET.get());
-        AntarchyObjects.setLumenBlock(() -> AntarchyFabricBlocks.LUMEN_BLOCK.get());
-        AntarchyObjects.setLumenFroglight(() -> AntarchyFabricBlocks.LUMEN_FROGLIGHT.get());
-        AntarchyObjects.setGlimmeringReed(() -> AntarchyFabricBlocks.GLIMMERING_REED.get());
-        AntarchyObjects.setPeachLeavesParticle(() -> AntarchyFabricMisc.PEACH_LEAVES_PARTICLE.get());
-        AntarchyObjects.setBugSprayParticle(() -> AntarchyFabricMisc.BUG_SPRAY_PARTICLE.get());
-        AntarchyObjects.setLotusPollen(() -> AntarchyFabricMisc.LOTUS_POLLEN.get());
-        AntarchyObjects.setNightmareFireFlame(() -> AntarchyFabricMisc.NIGHTMARE_FIRE_FLAME.get());
-        AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyFabricMisc.LUCID_BOLT_IMPACT_SMALL.get());
-        AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyFabricMisc.LUCID_BOLT_IMPACT_LARGE.get());
-        AntarchyObjects.setTemporalGlints(() -> AntarchyFabricMisc.TEMPORAL_GLINT_SLOW.get(), () -> AntarchyFabricMisc.TEMPORAL_GLINT_FAST.get());
-        AntarchyObjects.setDorrieInventoryMenu(AntarchyFabricMisc.DORRIE_INVENTORY_MENU);
-        AntarchyObjects.setRoyalJudgmentMenu(AntarchyFabricMisc.ROYAL_JUDGMENT_MENU);
-        AntarchyObjects.setGiantFryingPanMenu(AntarchyFabricMisc.GIANT_FRYING_PAN_MENU);
-        AntarchyObjects.setCritterCage(() -> AntarchyFabricItems.CRITTER_CAGE.get());
-        AntarchyObjects.setCritterCageBlock(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK.get());
-        AntarchyObjects.setLucidAnchor(() -> AntarchyFabricBlocks.LUCID_ANCHOR.get());
-        AntarchyObjects.setMyrmiteFossil(() -> AntarchyFabricBlocks.MYRMITE_FOSSIL.get());
-        AntarchyObjects.setBroodstoneFossil(() -> AntarchyFabricBlocks.BROODSTONE_FOSSIL.get());
-        AntarchyObjects.setCritterCageBlockEntity(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK_ENTITY.get());
-        AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyFabricBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
-        AntarchyObjects.setFossilBlockEntity(() -> AntarchyFabricBlocks.FOSSIL_BLOCK_ENTITY.get());
-        AntarchyObjects.setCritterCageProjectile(() -> AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get());
-        AntarchyObjects.setLaunchedAnvil(() -> AntarchyFabricEntities.LAUNCHED_ANVIL.get());
-        AntarchyObjects.setWormHookProjectile(() -> AntarchyFabricEntities.WORM_HOOK_PROJECTILE.get());
-        AntarchyObjects.setWormHook(() -> AntarchyFabricItems.WORM_HOOK.get());
-        AntarchyObjects.setCritterCageEntityTypeComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_ENTITY_TYPE_COMPONENT.get());
-        AntarchyObjects.setCritterCagePrimaryColorComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_PRIMARY_COLOR_COMPONENT.get());
-        AntarchyObjects.setCritterCageSecondaryColorComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_SECONDARY_COLOR_COMPONENT.get());
-        AntarchyObjects.setFossilEntityComponent(() -> AntarchyFabricMisc.FOSSIL_ENTITY_COMPONENT.get());
-        AntarchyObjects.bind(
-                AntarchyFabricEntities.EASTER_BUNNY,
-                AntarchyFabricEntities.FLYING_SQUIRREL,
-                AntarchyFabricEntities.KRAKEN,
-                AntarchyFabricEntities.MISSILE_SQUID,
-                AntarchyFabricEntities.MOLEWORM,
-                AntarchyFabricEntities.MANTIS,
-                AntarchyFabricEntities.BED_BUG,
-                AntarchyFabricEntities.WASP,
-                AntarchyFabricEntities.BOMBER,
-                AntarchyFabricEntities.SCORPION,
-                AntarchyFabricEntities.CATERPILLAR,
-                AntarchyFabricEntities.BUTTERFLY,
-                AntarchyFabricEntities.REVERIE,
-                AntarchyFabricEntities.FLYTRAP,
-                AntarchyFabricEntities.BRUTALFLY,
-                AntarchyFabricEntities.BRUTALFLY_ORB,
-                AntarchyFabricEntities.HUSH_PROJECTILE,
-                AntarchyFabricEntities.TORETERROR,
-                AntarchyFabricEntities.WATER_BOMB,
-                AntarchyFabricEntities.CRAWLING_BLIGHT,
-                AntarchyFabricEntities.SKULKING_FRIGHT,
-                AntarchyFabricEntities.STINK_BUG,
-                AntarchyFabricEntities.CHEEP,
-                AntarchyFabricEntities.DORRIE,
-                () -> AntarchyFabricBlocks.DUPLICATOR_LOG.get(),
-                () -> AntarchyFabricBlocks.DUPLICATOR_SAPLING.get(),
-                () -> AntarchyFabricBlocks.DUCT_TAPE.get(),
-                () -> AntarchyFabricBlocks.INFESTED_ROOTED_DIRT.get(),
-                () -> AntarchyFabricBlocks.INFESTED_COARSE_DIRT.get(),
-                () -> AntarchyFabricBlocks.NYXITE.get(),
-                () -> AntarchyFabricBlocks.SHELLSTONE.get(),
-                () -> AntarchyFabricBlocks.POLISHED_SHELLSTONE.get(),
-                () -> AntarchyFabricBlocks.SHELLSTONE_BRICKS.get(),
-                () -> AntarchyFabricBlocks.CHISELED_SHELLSTONE.get(),
-                () -> AntarchyFabricBlocks.MOSSY_SHELLSTONE_BRICKS.get(),
-                () -> AntarchyFabricBlocks.CRACKED_SHELLSTONE_BRICKS.get(),
-                () -> AntarchyFabricBlocks.MOSSY_SHELLSTONE_BRICK_STAIRS.get(),
-                () -> AntarchyFabricBlocks.MOSSY_SHELLSTONE_BRICK_SLAB.get(),
-                () -> AntarchyFabricBlocks.MOSSY_SHELLSTONE_BRICK_WALL.get(),
-                () -> AntarchyFabricBlocks.SHELLSTONE_STAIRS.get(),
-                () -> AntarchyFabricBlocks.SHELLSTONE_SLAB.get(),
-                () -> AntarchyFabricBlocks.SHELLSTONE_WALL.get(),
-                () -> AntarchyFabricBlocks.POLISHED_SHELLSTONE_STAIRS.get(),
-                () -> AntarchyFabricBlocks.POLISHED_SHELLSTONE_SLAB.get(),
-                () -> AntarchyFabricBlocks.POLISHED_SHELLSTONE_WALL.get(),
-                () -> AntarchyFabricBlocks.SHELLSTONE_BRICK_STAIRS.get(),
-                () -> AntarchyFabricBlocks.SHELLSTONE_BRICK_SLAB.get(),
-                () -> AntarchyFabricBlocks.SHELLSTONE_BRICK_WALL.get(),
-                () -> AntarchyFabricBlocks.CLOUD_BLOCK.get(),
-                () -> AntarchyFabricBlocks.FLYTRAP_GOO_BLOCK.get(),
-                () -> AntarchyFabricBlocks.PALE_NYXITE.get(),
-                () -> AntarchyFabricBlocks.NYXITE_SPIKE.get(),
-                () -> AntarchyFabricBlocks.CHITIN_BLOCK.get(),
-                () -> AntarchyFabricBlocks.CHITIN_SPIKE.get(),
-                () -> AntarchyFabricBlocks.POTENT_NYXITE.get(),
-                () -> AntarchyFabricBlocks.ANTIMETAL.get(),
-                () -> AntarchyFabricBlocks.POLISHED_ANTIMETAL.get(),
-                () -> AntarchyFabricBlocks.BUDDING_BLOOD_CRYSTAL.get(),
-                () -> AntarchyFabricBlocks.SMALL_BLOOD_CRYSTAL_BUD.get(),
-                () -> AntarchyFabricBlocks.MEDIUM_BLOOD_CRYSTAL_BUD.get(),
-                () -> AntarchyFabricBlocks.LARGE_BLOOD_CRYSTAL_BUD.get(),
-                () -> AntarchyFabricBlocks.BLOOD_CRYSTAL_CRYSTAL.get(),
-                () -> AntarchyFabricItems.OURANWOOD_ACORN.get(),
-                AntarchyFabricItems.KRAKEN_TOOTH,
-                () -> AntarchyFabricItems.MOGGLES.get(),
-                () -> AntarchyFabricItems.REVERIE_BOTTLE.get(),
-                () -> AntarchyFabricItems.STINK_BUG_ITEM.get(),
-                () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.DREAD),
-                () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.PARALYZED),
-                AnthologyEffects::inverted,
-                () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.STINKY),
-                () -> AntarchyFabricBlocks.OURANWOOD_ACORN_BLOCK.get(),
-                () -> AntarchyFabricBlocks.MOSSY_OURANWOOD_LOG.get(),
-                () -> AntarchyFabricBlocks.MOSSY_OURANWOOD_WOOD.get(),
-                () -> AntarchyFabricBlocks.UMBRAL_MOSS_BLOCK.get(),
-                () -> AntarchyFabricBlocks.UMBRAL_MOSS_CARPET.get(),
-                () -> AntarchyFabricBlocks.BLUSH_MOSS_BLOCK.get(),
-                () -> AntarchyFabricBlocks.BLUSH_MOSS_CARPET.get(),
-                () -> AntarchyFabricBlocks.ORANGE_MILKWEED.get(),
-                () -> AntarchyFabricBlocks.PINK_MILKWEED.get(),
-                () -> AntarchyFabricBlocks.BED_BUG_EGG.get(),
-                () -> AntarchyFabricBlocks.CRAWLING_BLIGHT_EGG.get(),
-                () -> AntarchyFabricBlocks.SKULKING_FRIGHT_EGG.get(),
-                () -> AntarchyFabricBlocks.WASP_NEST.get(),
-                () -> AntarchyFabricBlocks.HUSHWEED.get(),
-                () -> AntarchyFabricBlocks.OURANWOOD_SQUIRREL_NEST.get(),
-                () -> AntarchyFabricBlocks.BRUTALFLY_COCOON_SPAWNER.get(),
-                () -> AntarchyFabricBlocks.GIANT_LILY_PAD.get(),
-                () -> AntarchyFabricBlocks.SEASHELL.get(),
-                () -> AntarchyFabricBlocks.ANT_NEST_BLOCK_ENTITY.get(),
-                () -> AntarchyFabricBlocks.DREAM_CAMPFIRE_BLOCK_ENTITY.get(),
-                () -> AntarchyFabricBlocks.WASP_NEST_BLOCK_ENTITY.get(),
-                () -> AntarchyFabricBlocks.HUSHWEED_BLOCK_ENTITY.get(),
-                () -> AntarchyFabricBlocks.SEASHELL_BLOCK_ENTITY.get(),
-                () -> AntarchyFabricMisc.STINKY_GAS.get(),
-                () -> AntarchyFabricMisc.STINKY_FLY.get(),
-                () -> AntarchyFabricMisc.PEACH_LEAVES_PARTICLE.get(),
-                () -> AntarchyFabricMisc.attributeHolder(AntarchyFabricMisc.DOUBLE_DAMAGE_CHANCE),
-                () -> AntarchyFabricMisc.attributeHolder(AntarchyFabricMisc.BLOODGLASS_MAX_HEARTS),
-                () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.BLOODGLASS_WARD)
-        );
+        AntarchyObjects.setSaucedEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.SAUCED));
+        AntarchyObjects.setDread(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.DREAD));
+        AntarchyObjects.setParalyzedEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.PARALYZED));
+        AntarchyObjects.setInvertedEffect(AnthologyEffects::inverted);
+        AntarchyObjects.setStinkyEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.STINKY));
+        AntarchyObjects.setDoubleDamageChance(() -> AntarchyFabricMisc.attributeHolder(AntarchyFabricMisc.DOUBLE_DAMAGE_CHANCE));
+        AntarchyObjects.setBloodglassMaxHearts(() -> AntarchyFabricMisc.attributeHolder(AntarchyFabricMisc.BLOODGLASS_MAX_HEARTS));
+        AntarchyObjects.setBloodglassWard(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.BLOODGLASS_WARD));
 
         LucidEyeProjectileEntity.defaultItemSupplier = () -> AntarchyFabricItems.LUCID_PEARL.get();
         LucidEntity.invertedEffectSupplier = AnthologyEffects::inverted;
@@ -532,17 +352,5 @@ public final class AntarchyFabricContent {
 
     }
 
-    private static void bindNetworkSinks() {
-        ScorpionWhipTetherSync.setSink(AntarchyFabricNetworking::syncScorpionWhipTether);
-        WormHookTetherSync.setSink(AntarchyFabricNetworking::syncWormHookTether);
-        HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
-        com.craisinlord.antarchy.content.network.KingJudgmentFlashSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload(ticks)));
-        HordeIntensitySync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
-        com.craisinlord.antarchy.content.network.ElythiaEventSync.setSink(net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking::send);
-        com.craisinlord.antarchy.content.network.ThrowbackZoneSync.setSink(net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking::send);
-        TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
-        TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
-        BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
-    }
 
 }

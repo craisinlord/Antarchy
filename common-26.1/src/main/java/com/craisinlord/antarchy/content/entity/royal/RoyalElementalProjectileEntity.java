@@ -2,12 +2,14 @@ package com.craisinlord.antarchy.content.entity.royal;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -19,11 +21,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -63,13 +64,13 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         RoyalElementalProjectileEntity projectile = new RoyalElementalProjectileEntity(
                 AntarchyObjects.ROYAL_ELEMENTAL_PROJECTILE.get(), level);
         projectile.setOwner(owner);
-        GlimmerEchoes.markSummon(owner, projectile);
         projectile.setPos(position.x, position.y, position.z);
         projectile.setAttackType(element == RoyalBeamElement.ICE ? ICEBALL
                 : element == RoyalBeamElement.DREAM_FIRE ? DREAM_FIREBALL : FIREBALL);
         float speed = element == RoyalBeamElement.ICE ? ICEBALL_SPEED
                 : element == RoyalBeamElement.DREAM_FIRE ? DREAM_FIREBALL_SPEED : FIREBALL_SPEED;
         projectile.shoot(direction.x, direction.y, direction.z, speed, 0.0F);
+        GlimmerEchoes.markSummon(owner, projectile);
         return projectile;
     }
 
@@ -143,7 +144,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         }
         super.tick();
         if (this.level().isClientSide()) {
-            this.level().addParticle(this.getTrailParticle(),
+            this.level().addParticle(GlimmerEchoes.particle(this, this.getTrailParticle()),
                     this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
         }
     }
@@ -207,11 +208,10 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
             float falloff = (float) Math.max(0.25D, 1.0D - distance / 5.0D);
             double damage = AntarchySettings.kingFireballDamage() * falloff;
             living.hurtServer(level, source, this.getOwner() instanceof RoyalBossEntity royalBoss
-                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage * GlimmerEchoes.ownerDamageMultiplier(this,
-                            this.getOwner() == null ? null : this.getOwner().getUUID()));
+                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             living.setRemainingFireTicks(Math.max(living.getRemainingFireTicks(), 120));
         }
-        if (!this.isGlimmerEcho()) {
+        if (!this.isGlimmerEcho() && level.getGameRules().get(GameRules.MOB_GRIEFING)) {
             igniteImpact(level, center, this.isDreamFireball());
         }
         level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.EXPLOSION_EMITTER), center.x, center.y, center.z, 4, 1.5D, 1.5D, 1.5D, 0.0D);
@@ -232,7 +232,6 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
                 ? BuiltInRegistries.BLOCK.getOptional(net.minecraft.resources.Identifier.fromNamespaceAndPath(
                         "antarchy", "dream_fire")).orElse(Blocks.FIRE)
                 : Blocks.FIRE;
-        if (this.isGlimmerEcho()) return;
         for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
             if (pos.distToCenterSqr(center.x, center.y, center.z) > radius * radius || !level.isEmptyBlock(pos)) {
                 continue;
@@ -250,12 +249,13 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
                 this::canDamageWithImpact)) {
             double damage = AntarchySettings.kingIceballDamage();
             living.hurtServer(level, source, this.getOwner() instanceof RoyalBossEntity royalBoss
-                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage * GlimmerEchoes.ownerDamageMultiplier(this,
-                            this.getOwner() == null ? null : this.getOwner().getUUID()));
+                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 80, living.getTicksFrozen() + 180));
             living.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.SLOWNESS, 120, 3));
         }
-        coverInIce(level, center, AntarchySettings.kingIceballRadius(), AntarchySettings.kingElementalTerrainCap());
+        if (!this.isGlimmerEcho() && level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+            coverInIce(level, center, AntarchySettings.kingIceballRadius(), AntarchySettings.kingElementalTerrainCap());
+        }
         level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.SNOWFLAKE), center.x, center.y, center.z, 80, 4.0D, 2.0D, 4.0D, 0.08D);
     }
 
@@ -286,7 +286,6 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
     }
 
     protected net.minecraft.core.particles.ParticleOptions getTrailParticle() {
-        if (this.isGlimmerEcho()) return GlimmerEchoes.dust();
         if (this.isIceball()) {
             return ParticleTypes.SNOWFLAKE;
         }
@@ -299,17 +298,17 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
     }
 
     @Override
-    public void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        output.putInt("AttackType", this.entityData.get(ATTACK_TYPE));
-        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+    public void addAdditionalSaveData(ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("AttackType", this.entityData.get(ATTACK_TYPE));
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
     }
 
     @Override
-    public void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
-        this.setAttackType(input.getIntOr("AttackType", 0));
-        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
+    public void readAdditionalSaveData(ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        this.setAttackType(tag.getIntOr("AttackType", 0));
+        this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
     }
 
     @Override

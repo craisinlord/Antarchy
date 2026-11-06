@@ -3,6 +3,10 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.mojang.renderpearl.api.buffers.GpuBuffer;
 import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
 import com.mojang.renderpearl.api.commands.CommandEncoder;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.CompareOp;
+import com.mojang.renderpearl.api.pipeline.DepthStencilState;
 import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import com.mojang.blaze3d.pipeline.RenderTarget;
@@ -15,7 +19,14 @@ import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.renderpearl.api.vertex.VertexFormat;
 import java.util.Optional;
 import java.util.OptionalDouble;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BindGroupLayouts;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.oit.OitPipelineSet;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -28,6 +39,24 @@ import org.jetbrains.annotations.Nullable;
 
 public final class AntarchySkyDraw {
     static final Vector4fc WHITE = new Vector4f(1.0F, 1.0F, 1.0F, 1.0F);
+    private static final RenderPipeline.Snippet ADDITIVE_TEXTURE_SNIPPET = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
+            .withBindGroupLayout(BindGroupLayouts.PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS)
+            .withBindGroupLayout(BindGroupLayouts.SAMPLER0)
+            .withVertexShader(Identifier.fromNamespaceAndPath("antarchy", "core/antarchy_additive_texture"))
+            .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/antarchy_additive_texture"))
+            .withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR)
+            .withPrimitiveTopology(PrimitiveTopology.QUADS)
+            .withCull(false)
+            .buildSnippet();
+    private static final RenderPipeline ADDITIVE_TEXTURE_PIPELINE = RenderPipeline.builder(ADDITIVE_TEXTURE_SNIPPET)
+            .withLocation(Identifier.fromNamespaceAndPath("antarchy", "pipeline/additive_texture"))
+            .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
+            .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, false))
+            .build();
+    private static final OitPipelineSet ADDITIVE_TEXTURE_OIT = OitPipelineSet.builder("antarchy_additive_texture",
+            RenderPipeline.builder(ADDITIVE_TEXTURE_SNIPPET).withShaderDefine("OIT_ADDITIVE")).build();
+    private static final Map<Identifier, RenderType> ADDITIVE_TEXTURE_TYPES = new HashMap<>();
     private static final int INITIAL_BUFFER_SIZE = 786432;
     private static final long VERTEX_ALIGNMENT = 16L;
 
@@ -49,6 +78,12 @@ public final class AntarchySkyDraw {
             byteBuffer = new ByteBufferBuilder(INITIAL_BUFFER_SIZE);
         }
         return new BufferBuilder(byteBuffer, topology, format);
+    }
+
+    public static RenderType additiveTexture(Identifier texture) {
+        return ADDITIVE_TEXTURE_TYPES.computeIfAbsent(texture, id -> RenderType.create(
+                "antarchy_additive_texture",
+                RenderSetup.builder(ADDITIVE_TEXTURE_PIPELINE).setOitPipelines(ADDITIVE_TEXTURE_OIT).withTexture("Sampler0", id).createRenderSetup()));
     }
 
     public static StaticMesh upload(String label, MeshData mesh) {
@@ -123,6 +158,10 @@ public final class AntarchySkyDraw {
         renderPass.drawIndexed(mesh.indexCount(), 1, 0, 0, 0);
     }
 
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, Vector3f modelOffset, @Nullable RenderTarget target) {
+        draw(label, pipeline, mesh.vertices().slice(), mesh.indexCount(), mesh.topology(), modelView, color, modelOffset, null, target);
+    }
+
     private static void draw(
             String label,
             RenderPipeline pipeline,
@@ -134,13 +173,28 @@ public final class AntarchySkyDraw {
             @Nullable Identifier texture,
             @Nullable RenderTarget target
     ) {
+        draw(label, pipeline, vertices, indexCount, topology, modelView, color, new Vector3f(), texture, target);
+    }
+
+    private static void draw(
+            String label,
+            RenderPipeline pipeline,
+            GpuBufferSlice vertices,
+            int indexCount,
+            PrimitiveTopology topology,
+            Matrix4fc modelView,
+            Vector4fc color,
+            Vector3f modelOffset,
+            @Nullable Identifier texture,
+            @Nullable RenderTarget target
+    ) {
         if (indexCount <= 0) {
             return;
         }
         RenderSystem.AutoStorageIndexBuffer indices = RenderSystem.getSequentialBuffer(topology);
         GpuBuffer indexBuffer = indices.getBuffer(indexCount);
         GpuBufferSlice transforms = RenderSystem.getDynamicUniforms()
-                .writeTransform(new Matrix4f(modelView), new Vector4f(color), new Vector3f(), new Matrix4f());
+                .writeTransform(new Matrix4f(modelView), new Vector4f(color), modelOffset, new Matrix4f());
         AbstractTexture abstractTexture = texture != null ? Minecraft.getInstance().getTextureManager().getTexture(texture) : null;
         if (target == null) {
             target = Minecraft.getInstance().gameRenderer.mainRenderTarget();

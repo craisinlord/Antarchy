@@ -12,6 +12,14 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.Heightmap;
+import java.util.HashMap;
+import java.util.Arrays;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -34,23 +42,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration> {
     private static final Map<ServerLevel, Set<Long>> CLAIMED_TREE_KINGS = new WeakHashMap<>();
+    private static final Map<ServerLevel, Map<Long, Integer>> TREE_BASE_HEIGHTS = new WeakHashMap<>();
     private static final ConcurrentLinkedQueue<PendingKingSpawn> PENDING_KING_SPAWNS = new ConcurrentLinkedQueue<>();
     private static final int SPAWN_RETRY_TICKS = 100;
     private static final int SPAWN_ANGLES = 16;
     private static final double[] SPAWN_RADII = {96.0D, 80.0D, 64.0D};
     private static final double[] SPAWN_HEIGHT_OFFSETS = {0.0D, 18.0D, -12.0D, 32.0D};
+    private static final int[] GROUND_SAMPLE_RADII = {0, 48, 96, 144, 192};
+    private static final double GROUND_SAMPLE_PERCENTILE = 0.25D;
     private static final int TREE_MIN_X = -191;
     private static final int TREE_MAX_X = 192;
     private static final int TREE_MIN_Z = -227;
     private static final int TREE_MAX_Z = 227;
     private static final int TREE_BOTTOM_Y = -22;
     private static final int TREE_TOP_Y = 335;
-
-    public static int treeBaseY(ServerLevel level, int centerX, int centerZ) {
-        int surfaceY = level.getChunkSource().getGenerator().getBaseHeight(centerX, centerZ,
-                Heightmap.Types.WORLD_SURFACE_WG, level, level.getChunkSource().randomState());
-        return Math.clamp(surfaceY, level.getMinY() - TREE_BOTTOM_Y, level.getMaxY() - 1 - TREE_TOP_Y);
-    }
 
     public KingsTreeGridFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -79,16 +84,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
         int minTileZ = Math.floorDiv(relativeMinZ, 16);
         int maxTileZ = Math.floorDiv(relativeMaxZ, 16);
 
-        int surfaceY = context.chunkGenerator().getBaseHeight(
-                centerX,
-                centerZ,
-                Heightmap.Types.WORLD_SURFACE_WG,
-                level,
-                level.getLevel().getChunkSource().randomState()
-        );
-        int minimumBaseY = level.getMinY() - TREE_BOTTOM_Y;
-        int maximumBaseY = level.getMaxY() - TREE_TOP_Y;
-        int baseY = Math.clamp(surfaceY, minimumBaseY, maximumBaseY);
+        int baseY = treeBaseY(level, context.chunkGenerator(), centerX, centerZ);
         BlockPos treeBottomOrigin = new BlockPos(0, baseY + TREE_BOTTOM_Y, 0);
 
         BoundingBox chunkBounds = new BoundingBox(
@@ -102,7 +98,8 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
         StructurePlaceSettings settings = new StructurePlaceSettings()
                 .setBoundingBox(chunkBounds)
                 .setLiquidSettings(LiquidSettings.IGNORE_WATERLOGGING)
-                .addProcessor(BlockIgnoreProcessor.STRUCTURE_BLOCK);
+                .addProcessor(BlockIgnoreProcessor.STRUCTURE_BLOCK)
+                .addProcessor(TerrainPreservingProcessor.INSTANCE);
         StructureTemplateManager templates = level.getLevel().getStructureManager();
         RandomSource random = context.random();
         boolean placed = false;
@@ -128,6 +125,54 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
         return placed;
     }
 
+    public static int treeBaseY(ServerLevel level, int centerX, int centerZ) {
+        return treeBaseY(level, level.getChunkSource().getGenerator(), centerX, centerZ);
+    }
+
+    private static int treeBaseY(WorldGenLevel level, ChunkGenerator generator, int centerX, int centerZ) {
+        ServerLevel serverLevel = level.getLevel();
+        long treeKey = KingsTreeSavedData.treeKey(centerX, centerZ);
+        synchronized (TREE_BASE_HEIGHTS) {
+            Integer cached = TREE_BASE_HEIGHTS.computeIfAbsent(serverLevel, ignored -> new HashMap<>()).get(treeKey);
+            if (cached != null) {
+                return cached;
+            }
+        }
+        int surfaceY = sampleGroundY(level, generator, centerX, centerZ);
+        int minimumBaseY = level.getMinY() - TREE_BOTTOM_Y;
+        int maximumBaseY = level.getMaxY() - TREE_TOP_Y;
+        int baseY = Math.clamp(surfaceY, minimumBaseY, maximumBaseY);
+        synchronized (TREE_BASE_HEIGHTS) {
+            TREE_BASE_HEIGHTS.computeIfAbsent(serverLevel, ignored -> new HashMap<>()).put(treeKey, baseY);
+        }
+        return baseY;
+    }
+
+    private static int sampleGroundY(WorldGenLevel level, ChunkGenerator generator, int centerX, int centerZ) {
+        var randomState = level.getLevel().getChunkSource().randomState();
+        int sampleCount = 0;
+        for (int radius : GROUND_SAMPLE_RADII) {
+            sampleCount += samplesAtRadius(radius);
+        }
+        int[] heights = new int[sampleCount];
+        int index = 0;
+        for (int radius : GROUND_SAMPLE_RADII) {
+            int samples = samplesAtRadius(radius);
+            for (int sample = 0; sample < samples; sample++) {
+                double angle = sample * Math.PI * 2.0D / samples;
+                int x = centerX + (int) Math.round(Math.cos(angle) * radius);
+                int z = centerZ + (int) Math.round(Math.sin(angle) * radius);
+                heights[index++] = generator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, level, randomState);
+            }
+        }
+        Arrays.sort(heights);
+        return heights[(int) ((heights.length - 1) * GROUND_SAMPLE_PERCENTILE)];
+    }
+
+    private static int samplesAtRadius(int radius) {
+        return radius == 0 ? 1 : Math.max(8, radius / 12);
+    }
+
     private static void queueTreeKing(ServerLevel serverLevel, int centerX, int centerZ, int baseY) {
         long treeKey = KingsTreeSavedData.treeKey(centerX, centerZ);
         synchronized (CLAIMED_TREE_KINGS) {
@@ -141,6 +186,10 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
     private static void restoreSavedTrees(ServerLevel level, KingsTreeSavedData saved) {
         if (!saved.markRestored()) {
             return;
+        }
+        synchronized (TREE_BASE_HEIGHTS) {
+            Map<Long, Integer> heights = TREE_BASE_HEIGHTS.computeIfAbsent(level, ignored -> new HashMap<>());
+            saved.treeBaseHeights().forEach(heights::putIfAbsent);
         }
         synchronized (CLAIMED_TREE_KINGS) {
             Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new java.util.HashSet<>());
@@ -201,7 +250,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
                 centerX - 512.0D, serverLevel.getMinY(), centerZ - 512.0D,
                 centerX + 512.0D, serverLevel.getMaxY() + 1, centerZ + 512.0D);
         List<KingEntity> treeKings = serverLevel.getEntitiesOfClass(KingEntity.class, searchBox,
-                king -> king.isAlive() && king.isTreePatrolFor(treeCenter));
+                king -> king.isAlive() && !king.isGlimmerEcho() && king.isTreePatrolFor(treeCenter));
         if (!treeKings.isEmpty()) {
             for (int index = 1; index < treeKings.size(); index++) {
                 treeKings.get(index).discard();
@@ -291,5 +340,38 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
 
     private static String coordinateName(int coordinate) {
         return coordinate < 0 ? "m" + -coordinate : "p" + coordinate;
+    }
+
+    private static final class TerrainPreservingProcessor extends StructureProcessor {
+        private static final TerrainPreservingProcessor INSTANCE = new TerrainPreservingProcessor();
+
+        @Override
+        public StructureTemplate.StructureBlockInfo processBlock(
+                LevelReader level,
+                BlockPos offset,
+                BlockPos pos,
+                StructureTemplate.StructureBlockInfo blockInfo,
+                StructureTemplate.StructureBlockInfo relativeBlockInfo,
+                StructurePlaceSettings settings
+        ) {
+            BlockState templateState = relativeBlockInfo.state();
+            if (!templateState.isAir() && !templateState.is(Blocks.LIGHT)) {
+                return relativeBlockInfo;
+            }
+            BoundingBox bounds = settings.getBoundingBox();
+            if (bounds != null && !bounds.isInside(relativeBlockInfo.pos())) {
+                return relativeBlockInfo;
+            }
+            BlockState worldState = level.getBlockState(relativeBlockInfo.pos());
+            if (!worldState.isAir() && (worldState.isSolid() || !worldState.getFluidState().isEmpty())) {
+                return null;
+            }
+            return relativeBlockInfo;
+        }
+
+        @Override
+        protected StructureProcessorType<?> getType() {
+            return StructureProcessorType.NOP;
+        }
     }
 }

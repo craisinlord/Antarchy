@@ -1,5 +1,5 @@
 plugins {
-    id 'net.neoforged.moddev' version '2.0.148'
+    id 'net.neoforged.moddev'
 }
 
 base {
@@ -58,6 +58,7 @@ dependencies {
     implementation files(rootProject.file("jars_26/integrated_api-neoforge-26.1-${intapi_version_26}.jar"))
     implementation files(rootProject.file("jars_26/sizeable_foliage-neoforge-26.1-${sizeable_foliage_version_26}.jar"))
     compileOnly files(rootProject.file("jars_26/sodium-neoforge-${sodium_version_26_1}.jar"))
+    compileOnly files(zipTree(rootProject.file("jars_26/sodium-neoforge-${sodium_version_26_1}.jar")).matching { include "META-INF/jarjar/net.caffeinemc.sodium-neoforge-*-mod.jar" })
     if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
         sodiumRuntime files(rootProject.file("jars_26/sodium-neoforge-${sodium_version_26_1}.jar"))
     }

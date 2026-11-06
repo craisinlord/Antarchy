@@ -2,34 +2,6 @@
   "has_precipitation": false,
   "temperature": 0.77,
   "downfall": 0.96,
-  "attributes": {
-    "minecraft:audio/ambient_sounds": {},
-    "minecraft:audio/background_music": {
-      "default": {
-        "sound": "antarchy:music.game.cavaryn",
-        "min_delay": 600,
-        "max_delay": 1800,
-        "replace_current_music": true
-      }
-    },
-    "minecraft:visual/ambient_particles": [
-      {
-        "particle": {
-          "type": "minecraft:ash"
-        },
-        "probability": 0.009
-      }
-    ],
-    "minecraft:visual/fog_color": "#070617",
-    "minecraft:visual/sky_color": "#000000",
-    "minecraft:visual/water_fog_color": "#263042"
-  },
-  "effects": {
-    "water_color": "#4c9ef8",
-    "foliage_color": "#2bc12d",
-    "grass_color": "#45ae25",
-    "grass_color_modifier": "none"
-  },
   "spawn_costs": {
     "antarchy:molevore": {
       "energy_budget": 0.9,
@@ -115,5 +87,33 @@
     "water_creature": [],
     "water_ambient": [],
     "misc": []
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": "#0f0000",
+    "minecraft:visual/sky_color": "#080000",
+    "minecraft:visual/water_fog_color": "#263042",
+    "minecraft:audio/ambient_sounds": {},
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:ash"
+        },
+        "probability": 0.009
+      }
+    ]
+  },
+  "effects": {
+    "water_color": "#4c9ef8",
+    "foliage_color": "#ff2b00",
+    "grass_color": "#ff7f00",
+    "grass_color_modifier": "none"
   }
 }

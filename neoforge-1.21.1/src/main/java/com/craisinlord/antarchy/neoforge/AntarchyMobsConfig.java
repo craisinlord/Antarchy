@@ -92,6 +92,8 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON;
+    private static final ModConfigSpec.BooleanValue KRAKEN_RITUAL_ENABLED;
+    private static final ModConfigSpec.IntValue     KRAKEN_RITUAL_INK_COST;
     private static final ModConfigSpec.DoubleValue  KRAKEN_FOLLOW_RANGE;
     private static final ModConfigSpec.DoubleValue  KRAKEN_DAMAGE_RANGE;
     private static final ModConfigSpec.DoubleValue  KRAKEN_ARMOR;
@@ -572,6 +574,8 @@ public final class AntarchyMobsConfig {
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
+        KRAKEN_RITUAL_ENABLED                    = b.comment("If true, using Ink Sacs on a Chiseled Tidestone touching water in an Elythia ocean biome begins the Kraken summoning ritual.").define("ritualEnabled", true);
+        KRAKEN_RITUAL_INK_COST                   = b.comment("Ink Sacs consumed from the held stack to begin the Kraken summoning ritual.").defineInRange("ritualInkCost", 8, 1, 64);
         KRAKEN_FOLLOW_RANGE                      = b.comment("How far the Kraken can see/target players.").defineInRange("followRange", 96.0D, 1.0D, 256.0D);
         KRAKEN_DAMAGE_RANGE                      = b.comment("Range in blocks a player must be within for the Kraken to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 35.0D, 1.0D, 256.0D);
         KRAKEN_ARMOR                              = b.comment("Base armor value.").defineInRange("armor", 8.0D, 0.0D, 1024.0D);
@@ -1123,6 +1127,8 @@ public final class AntarchyMobsConfig {
     static boolean krakenSquidSpawnEnabled()                { return KRAKEN_SQUID_SPAWN_ENABLED.get(); }
     static boolean krakenMassSpawnEnabled()                 { return KRAKEN_MASS_SPAWN_ENABLED.get(); }
     static boolean krakenRequireBadOmenToSummon()           { return KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON.get(); }
+    static boolean krakenRitualEnabled()                    { return KRAKEN_RITUAL_ENABLED.get(); }
+    static int     krakenRitualInkCost()                    { return KRAKEN_RITUAL_INK_COST.get(); }
     static double  krakenFollowRange()                      { return KRAKEN_FOLLOW_RANGE.get(); }
     static double  krakenDamageRange()                      { return KRAKEN_DAMAGE_RANGE.get(); }
     static double  krakenArmor()                            { return KRAKEN_ARMOR.get(); }

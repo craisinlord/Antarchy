@@ -108,6 +108,7 @@ public final class AntarchyForgeEvents {
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleScorpionWhipLeftClickBlock);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handlePortalGunLeftClickBlock);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleScorpionWhipRightClickBlock);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleKrakenRitualRightClickBlock);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleScorpionWhipRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleGiantFryingPanRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleParalyzedAttackEntity);
@@ -238,6 +239,7 @@ public final class AntarchyForgeEvents {
             com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
             com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
             com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
+            com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tick(level);
         }
     }
 
@@ -960,6 +962,14 @@ public final class AntarchyForgeEvents {
         event.setCanceled(true);
     }
 
+    static void handleKrakenRitualRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        InteractionResult result = com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tryStart(event.getEntity(), event.getLevel(), event.getHand(), event.getPos());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
     static void handleScorpionWhipRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
@@ -1172,6 +1182,8 @@ public final class AntarchyForgeEvents {
             }
         });
         addPotionMix(Potions.AWKWARD, AntarchyForgeItems.LUCID_EYE.get(), AntarchyForgeMisc.INVERSION.get());
+        addPotionMix(Potions.AWKWARD, AntarchyForgeItems.FADED_MEMORY.get(), AntarchyForgeMisc.REMEMBRANCE_POTION.get());
+        addPotionMix(AntarchyForgeMisc.REMEMBRANCE_POTION.get(), Items.REDSTONE, AntarchyForgeMisc.LONG_REMEMBRANCE.get());
         addPotionMix(AntarchyForgeMisc.INVERSION.get(), Items.REDSTONE, AntarchyForgeMisc.LONG_INVERSION.get());
         addPotionMix(Potions.AWKWARD, AntarchyForgeItems.STINK_BUG.get(), AntarchyForgeMisc.STINKY_POTION.get());
         addPotionMix(AntarchyForgeMisc.STINKY_POTION.get(), Items.REDSTONE, AntarchyForgeMisc.LONG_STINKY.get());
@@ -1278,6 +1290,15 @@ public final class AntarchyForgeEvents {
             return;
         }
 
+        if (state.is(AntarchyForgeBlocks.CRANBERRY_LOG.get())) {
+            event.setFinalState(AntarchyForgeBlocks.STRIPPED_CRANBERRY_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyForgeBlocks.CRANBERRY_WOOD.get())) {
+            event.setFinalState(AntarchyForgeBlocks.STRIPPED_CRANBERRY_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
         if (state.is(AntarchyForgeBlocks.PEACH_WOOD.get())) {
             event.setFinalState(AntarchyForgeBlocks.STRIPPED_PEACH_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
             return;
@@ -1304,7 +1325,7 @@ public final class AntarchyForgeEvents {
     }
 
     static void onCommonSetup(FMLCommonSetupEvent event) {
-        BloodCrystalShardItem.SYNC_BLOODGLASS = AntarchyForgeEvents::syncBloodglass;
+        BloodCrystalShardItem.setBloodglassSync(AntarchyForgeEvents::syncBloodglass);
         if (com.craisinlord.antarchy.compat.infinity.InfinityCompat.get().isAvailable()) {
             com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh.refreshIfStale(net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get());
         }
@@ -1347,6 +1368,8 @@ public final class AntarchyForgeEvents {
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.BLUSH_MOSS_BLOCK.get().asItem(), 0.65f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.PRIMORDIAL_MOSS_BLOCK.get().asItem(), 0.65f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.PRIMORDIAL_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.BLUSH_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.HUSHWEED.get().asItem(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.CORNEA_EAR.get(), 0.65f);

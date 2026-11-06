@@ -1,4 +1,5 @@
 {
   "title": "guide.antarchy.category.thoraxis",
-  "texture": "antarchy:item/floppy_disk/thoraxis_floppy_disk"
+  "texture": "antarchy:item/floppy_disk/thoraxis_floppy_disk",
+  "color": "#EE5A64"
 }

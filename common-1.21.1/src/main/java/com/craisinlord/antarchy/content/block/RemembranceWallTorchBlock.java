@@ -26,8 +26,7 @@ public class RemembranceWallTorchBlock extends WallTorchBlock implements EntityB
         double x = pos.getX() + 0.5D + 0.27D * direction.getStepX();
         double y = pos.getY() + 0.92D;
         double z = pos.getZ() + 0.5D + 0.27D * direction.getStepZ();
-        level.addParticle(ParticleTypes.SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
-        level.addParticle(RemembranceTorchBlock.flame(), x, y, z, 0.0D, 0.0D, 0.0D);
+        RemembranceTorchBlock.spawnParticles(level, random, x, y, z);
     }
 
     @Override

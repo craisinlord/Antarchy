@@ -363,7 +363,7 @@ public class WindVortexEntity extends Entity {
     private void applyVortexForces() {
         double height = this.getVortexHeight();
         double maxRadius = this.getTopRadius();
-        AABB area = this.getBoundingBox().inflate(maxRadius + height + 1.0D);
+        AABB area = this.getBoundingBox().inflate(maxRadius + height + 1.0D).intersect(new AABB(this.position().add(this.getAxis().scale(-1.0D)), this.position().add(this.getAxis().scale(height + 2.0D))).inflate(Math.max(BASE_RADIUS, maxRadius) * 1.35D + 2.75D));
         Basis basis = this.basis();
         VortexMode mode = this.getMode();
 

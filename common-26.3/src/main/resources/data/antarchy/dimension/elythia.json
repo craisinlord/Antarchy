@@ -15,19 +15,19 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
-              -1.0,
+              -1,
               -0.41
             ],
             "erosion": [
-              -1.0,
-              1.0
+              -1,
+              1
             ],
             "weirdness": [
-              -1.0,
-              1.0
+              -1,
+              1
             ],
             "depth": [
               -1.5,
@@ -45,10 +45,10 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
-              -1.0,
+              -1,
               -0.5
             ],
             "erosion": [
@@ -63,7 +63,67 @@
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:conglomerate_shore",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.41,
+              -0.37
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -1,
+              -0.4
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:zebra_scarps",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.58,
+              -0.41
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -1,
+              -0.55
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
           }
         },
         {
@@ -75,25 +135,55 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.41,
               -0.37
             ],
             "erosion": [
-              -1.0,
+              -1,
               0.65
             ],
             "weirdness": [
-              -1.0,
-              1.0
+              -0.4,
+              0.4
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:arkrose_strand",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.41,
+              -0.37
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.4,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
           }
         },
         {
@@ -105,25 +195,55 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.37,
               0.05
             ],
             "erosion": [
-              -1.0,
+              -1,
               0.65
             ],
             "weirdness": [
-              -1.0,
-              0.2
+              -1,
+              -0.05
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:cranberry_fields",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -0.05,
+              0.12
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
           }
         },
         {
@@ -135,25 +255,85 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
-              0.05,
-              0.62
+              -0.37,
+              0.05
             ],
             "erosion": [
-              -1.0,
+              -1,
               0.65
             ],
             "weirdness": [
-              0.62,
-              1.0
+              0.12,
+              0.2
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:cranberry_fields",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.68
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.62,
+              0.8
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:primordial_plains",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.68
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.8,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
           }
         },
         {
@@ -165,25 +345,25 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
-              0.0,
-              1.0
+              0,
+              1
             ],
             "erosion": [
               0.68,
               0.72
             ],
             "weirdness": [
-              -1.0,
-              1.0
+              -1,
+              1
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -195,7 +375,7 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.37,
@@ -206,14 +386,14 @@
               0.9
             ],
             "weirdness": [
-              -1.0,
-              1.0
+              -1,
+              1
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -225,7 +405,7 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.37,
@@ -236,14 +416,14 @@
               0.915
             ],
             "weirdness": [
-              -1.0,
-              1.0
+              -1,
+              1
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -255,14 +435,14 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.37,
               0.05
             ],
             "erosion": [
-              -1.0,
+              -1,
               0.65
             ],
             "weirdness": [
@@ -273,7 +453,7 @@
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -285,14 +465,14 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.37,
               0.05
             ],
             "erosion": [
-              -1.0,
+              -1,
               0.65
             ],
             "weirdness": [
@@ -303,7 +483,7 @@
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -315,7 +495,7 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.37,
@@ -333,7 +513,7 @@
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -345,14 +525,14 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.37,
               0.05
             ],
             "erosion": [
-              -1.0,
+              -1,
               0.3
             ],
             "weirdness": [
@@ -363,7 +543,7 @@
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -375,19 +555,19 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.37,
               0.05
             ],
             "erosion": [
-              -1.0,
+              -1,
               0.65
             ],
             "weirdness": [
               0.75,
-              1.0
+              1
             ],
             "depth": [
               -1.5,
@@ -405,7 +585,7 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.3,
@@ -417,13 +597,13 @@
             ],
             "weirdness": [
               0.75,
-              1.0
+              1
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -435,11 +615,11 @@
             ],
             "humidity": [
               0.84,
-              1.0
+              1
             ],
             "continentalness": [
               0.05,
-              0.62
+              0.68
             ],
             "erosion": [
               -0.5,
@@ -453,7 +633,7 @@
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -465,25 +645,25 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.41,
-              1.0
+              1
             ],
             "erosion": [
               0.75,
               0.85
             ],
             "weirdness": [
-              -1.0,
-              1.0
+              -1,
+              1
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -495,25 +675,25 @@
             ],
             "humidity": [
               0.82,
-              1.0
+              1
             ],
             "continentalness": [
               -0.41,
-              1.0
+              1
             ],
             "erosion": [
               0.92,
-              1.0
+              1
             ],
             "weirdness": [
-              -1.0,
-              1.0
+              -1,
+              1
             ],
             "depth": [
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
           }
         },
         {
@@ -525,10 +705,10 @@
             ],
             "humidity": [
               0.84,
-              1.0
+              1
             ],
             "continentalness": [
-              0.3,
+              0.36,
               0.62
             ],
             "erosion": [
@@ -536,8 +716,8 @@
               0.45
             ],
             "weirdness": [
-              -1.0,
-              -0.62
+              -1,
+              -0.68
             ],
             "depth": [
               -1.5,
@@ -558,8 +738,8 @@
               0.98
             ],
             "continentalness": [
-              0.62,
-              1.0
+              0.68,
+              1
             ],
             "erosion": [
               -0.5,
@@ -573,7 +753,127 @@
               -1.5,
               1.5
             ],
-            "offset": 0.0
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:rockite_barrens",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -1.6,
+              -1.4
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.68
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -0.68,
+              -0.45
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.36
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -1,
+              -0.68
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:tidestone_lagoon",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.52,
+              -0.41
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -0.5,
+              0.4
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
           }
         }
       ]

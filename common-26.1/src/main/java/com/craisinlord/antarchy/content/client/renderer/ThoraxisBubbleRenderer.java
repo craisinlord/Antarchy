@@ -105,15 +105,18 @@ public final class ThoraxisBubbleRenderer {
         List<Shape> shapes = shapes(cameraPos, partialTick);
         if (shapes.isEmpty()) return;
         Matrix4f matrix = poseStack.last().pose();
-        VertexConsumer shells = buffers.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(SHELL_TEXTURE));
+        VertexConsumer shells = buffers.getBuffer(AntarchySkyDraw.additiveTexture(SHELL_TEXTURE));
         for (Shape shape : shapes) drawShell(shells, matrix, shape);
-        VertexConsumer frames = buffers.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(FRAME_TEXTURE));
+        buffers.endBatch(AntarchySkyDraw.additiveTexture(SHELL_TEXTURE));
+        VertexConsumer frames = buffers.getBuffer(AntarchySkyDraw.additiveTexture(FRAME_TEXTURE));
         for (Shape shape : shapes) {
             drawShellEdges(frames, matrix, shape);
             drawFrames(frames, matrix, shape, Minecraft.getInstance().level.getGameTime() + partialTick);
         }
-        VertexConsumer cores = buffers.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(CORE_TEXTURE));
+        buffers.endBatch(AntarchySkyDraw.additiveTexture(FRAME_TEXTURE));
+        VertexConsumer cores = buffers.getBuffer(AntarchySkyDraw.additiveTexture(CORE_TEXTURE));
         for (Shape shape : shapes) drawCore(cores, matrix, shape, Minecraft.getInstance().level.getGameTime() + partialTick);
+        buffers.endBatch(AntarchySkyDraw.additiveTexture(CORE_TEXTURE));
     }
 
     private static List<Shape> shapes(Vec3 cameraPos, float partialTick) {

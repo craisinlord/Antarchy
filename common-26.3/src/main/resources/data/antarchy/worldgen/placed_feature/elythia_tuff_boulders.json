@@ -1,9 +1,9 @@
 {
-  "feature": "antarchy:elythia_tuff_boulder",
+  "feature": "antarchy:tuff_boulder",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
-      "chance": 9
+      "chance": 32
     },
     {
       "type": "minecraft:in_square"

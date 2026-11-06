@@ -1,5 +1,14 @@
 package com.craisinlord.antarchy.content.entity;
 
+import net.minecraft.world.level.block.BonemealSource;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
@@ -9,7 +18,6 @@ import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 
 import java.util.EnumSet;
-import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -54,13 +62,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.item.ItemStackTemplate;
-import net.minecraft.world.item.component.Consumable;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BedBlock;
@@ -113,8 +115,8 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         super(entityType, level);
     }
 
-    public static boolean canSpawn(EntityType<RollyPollyEntity> entityType, net.minecraft.world.level.ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, net.minecraft.util.RandomSource random) {
-        if (spawnReason == EntitySpawnReason.SPAWN_ITEM_USE || spawnReason == EntitySpawnReason.SPAWNER || spawnReason == EntitySpawnReason.TRIAL_SPAWNER || spawnReason == EntitySpawnReason.COMMAND) {
+    public static boolean canSpawn(EntityType<RollyPollyEntity> entityType, net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.entity.EntitySpawnReason spawnReason, BlockPos pos, net.minecraft.util.RandomSource random) {
+        if (spawnReason == net.minecraft.world.entity.EntitySpawnReason.SPAWN_ITEM_USE || spawnReason == net.minecraft.world.entity.EntitySpawnReason.SPAWNER || spawnReason == net.minecraft.world.entity.EntitySpawnReason.TRIAL_SPAWNER || spawnReason == net.minecraft.world.entity.EntitySpawnReason.COMMAND) {
             return true;
         }
 
@@ -132,7 +134,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return net.minecraft.world.entity.animal.Animal.createAnimalAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.rollyPollyHealth())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.rollyPollyMovementSpeed())
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.rollyPollyBowlingDamage())
@@ -142,7 +144,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-            EntitySpawnReason spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+            net.minecraft.world.entity.EntitySpawnReason spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.rollyPollyHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
@@ -318,7 +320,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
         if (this.isRolled() && source.is(DamageTypeTags.IS_PROJECTILE)) {
             amount *= 0.25F;
         }
@@ -585,7 +587,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         @Override
         protected boolean isValidTarget(LevelReader level, BlockPos pos) {
             BlockState state = level.getBlockState(pos);
-            return state.getBlock() instanceof CropBlock crop && !crop.isMaxAge(state);
+            return state.getBlock() instanceof CropBlock crop && crop.isValidBonemealTarget(level, pos, state, BonemealSource.MOB);
         }
 
         @Override
@@ -637,7 +639,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         private void fertilize() {
             if (RollyPollyEntity.this.level() instanceof ServerLevel serverLevel) {
                 BlockState state = serverLevel.getBlockState(this.blockPos);
-                if (state.getBlock() instanceof CropBlock crop && !crop.isMaxAge(state)) {
+                if (state.getBlock() instanceof CropBlock crop && crop.isValidBonemealTarget(serverLevel, this.blockPos, state, BonemealSource.MOB)) {
                     crop.performBonemeal(serverLevel, RollyPollyEntity.this.random, this.blockPos, state, BonemealSource.MOB);
                     serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, this.blockPos, 15);
                 }
@@ -653,6 +655,9 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         private static final int ATTACK_COOLDOWN_TICKS = 20;
 
         private int attackCooldown;
+        private int nextChaseRepathTick;
+        @Nullable
+        private Vec3 lastChaseTargetPos;
 
         BowlingAttackGoal() {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
@@ -704,7 +709,12 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                 return;
             }
 
-            RollyPollyEntity.this.getNavigation().moveTo(target, CHARGE_SPEED);
+            if (RollyPollyEntity.this.tickCount >= this.nextChaseRepathTick
+                    || this.lastChaseTargetPos == null
+                    || target.distanceToSqr(this.lastChaseTargetPos) > 1.0D) {
+                this.lastChaseTargetPos = target.position();
+                this.nextChaseRepathTick = RollyPollyEntity.this.tickCount + (RollyPollyEntity.this.getNavigation().moveTo(target, CHARGE_SPEED) ? 4 : 10);
+            }
 
             if (this.attackCooldown <= 0 && RollyPollyEntity.this.distanceToSqr(target) <= HIT_RANGE_SQR) {
                 this.attackCooldown = ATTACK_COOLDOWN_TICKS;

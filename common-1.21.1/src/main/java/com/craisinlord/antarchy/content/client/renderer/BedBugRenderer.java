@@ -30,7 +30,9 @@ public class BedBugRenderer extends GeoEntityRenderer<BedBugEntity> {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 
         if (animatable.isBaby()) {
-            poseStack.scale(BABY_SCALE, BABY_SCALE, BABY_SCALE);
+            if (!isReRender) {
+                poseStack.scale(BABY_SCALE, BABY_SCALE, BABY_SCALE);
+            }
             this.shadowRadius = ADULT_SHADOW_RADIUS * BABY_SCALE;
         } else {
             this.shadowRadius = ADULT_SHADOW_RADIUS;

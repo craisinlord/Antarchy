@@ -33,7 +33,7 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
 [[dependencies.antarchy]]
     modId="anthology"
     type="required"
-    versionRange="[1.0.5,)"
+    versionRange="[1.0.4,)"
     ordering="AFTER"
     side="BOTH"
 

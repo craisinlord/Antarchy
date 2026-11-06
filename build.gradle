@@ -1,6 +1,7 @@
 plugins {
     id "java-library"
     id "maven-publish"
+    id 'net.neoforged.moddev' version '2.0.148' apply false
 }
 
 allprojects {
@@ -91,19 +92,5 @@ def forge1201Wrapper = providers.systemProperty('os.name').get().toLowerCase().c
         description = "Runs ':${name}' inside the forge-1.20.1 build"
         workingDir = forge1201Dir
         commandLine forge1201Wrapper.absolutePath, name
-    }
-}
-
-def fabric120Dir = file('fabric-1.20.1')
-def fabric120Wrapper = providers.systemProperty('os.name').get().toLowerCase().contains('win')
-        ? new File(fabric120Dir, 'gradlew.bat')
-        : new File(fabric120Dir, 'gradlew')
-
-['build', 'assemble', 'clean', 'runClient', 'runServer'].each { name ->
-    tasks.register("fabric120${name.capitalize()}", Exec) {
-        group = 'fabric-1.20.1'
-        description = "Runs ':${name}' inside the fabric-1.20.1 build"
-        workingDir = fabric120Dir
-        commandLine fabric120Wrapper.absolutePath, name
     }
 }

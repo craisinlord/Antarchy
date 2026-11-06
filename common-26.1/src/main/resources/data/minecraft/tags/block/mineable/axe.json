@@ -92,6 +92,19 @@
         "antarchy:truffalo_sign",
         "antarchy:truffalo_wall_sign",
         "antarchy:truffalo_hanging_sign",
-        "antarchy:truffalo_wall_hanging_sign"
+        "antarchy:truffalo_wall_hanging_sign",
+        "antarchy:cranberry_log",
+        "antarchy:cranberry_wood",
+        "antarchy:stripped_cranberry_log",
+        "antarchy:stripped_cranberry_wood",
+        "antarchy:cranberry_planks",
+        "antarchy:cranberry_stairs",
+        "antarchy:cranberry_slab",
+        "antarchy:cranberry_fence",
+        "antarchy:cranberry_fence_gate",
+        "antarchy:cranberry_door",
+        "antarchy:cranberry_trapdoor",
+        "antarchy:cranberry_pressure_plate",
+        "antarchy:cranberry_button"
     ]
 }

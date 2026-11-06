@@ -266,6 +266,7 @@ public class MolewormSurfaceMoundsFeature extends Feature<NoneFeatureConfigurati
                 || state.is(Blocks.MOSS_BLOCK)
                 || state.is(Blocks.PODZOL)
                 || state.is(Blocks.STONE)
+                || state.is(ElythiaGeologyFeature.NATURAL_STONE)
                 || state.is(Blocks.DEEPSLATE)
                 || state.is(Blocks.GRAVEL);
     }

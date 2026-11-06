@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:simple_block",
+  "config": {
+    "to_place": {
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "data": {
+            "Name": "antarchy:primordial_moss_carpet"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "antarchy:primordial_grass"
+          },
+          "weight": 2
+        }
+      ]
+    }
+  }
+}

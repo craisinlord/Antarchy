@@ -1,5 +1,10 @@
 package com.craisinlord.antarchy.content.client.renderer.glimmer;
 
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.Minecraft;
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.client.model.glimmer.GlimmerFrogModel;
 import com.craisinlord.antarchy.content.client.model.glimmer.GlimmerModel;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
@@ -37,6 +42,25 @@ public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity, LivingEnti
         this.shadowRadius = SHADOW_RADIUS;
         this.withRenderLayer(new GlimmerEmissiveLayer(this));
         this.frogModel = new GlimmerFrogModel(context.bakeLayer(ModelLayers.FROG));
+        GlimmerEntity.setClientPickFilter(GlimmerRenderer::localPlayerCanInteract);
+    }
+
+    private static boolean localPlayerCanInteract(GlimmerEntity glimmer) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) {
+            return false;
+        }
+        if (player.isSecondaryUseActive() && player.getMainHandItem().isEmpty()) {
+            return true;
+        }
+        return isInteractionItem(player.getMainHandItem()) || isInteractionItem(player.getOffhandItem());
+    }
+
+    private static boolean isInteractionItem(ItemStack stack) {
+        return stack.is(AntarchyObjects.SPIRIT_APPLE.get())
+                || stack.is(Items.GLASS_BOTTLE)
+                || stack.is(Items.SHEARS)
+                || stack.is(Items.NAME_TAG);
     }
 
     @Override
@@ -65,6 +89,14 @@ public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity, LivingEnti
         frog.color = color;
         frog.texture = entity.getVariant().getBehavior().texture(entity);
         frog.emissiveTexture = emissiveTexture;
+        net.minecraft.world.entity.Entity target = entity.getAbilityTarget();
+        if (target != null) {
+            net.minecraft.world.phys.Vec3 mouth = entity.position().add(0.0D, entity.getBbHeight() * 0.5D, 0.0D);
+            net.minecraft.world.phys.Vec3 toTarget = target.getBoundingBox().getCenter().subtract(mouth);
+            frog.hasTongueTarget = true;
+            frog.tongueTargetDistance = (float) toTarget.length();
+            frog.tongueTargetPitch = (float) -Mth.atan2(toTarget.y, toTarget.horizontalDistance());
+        }
         return frog;
     }
 

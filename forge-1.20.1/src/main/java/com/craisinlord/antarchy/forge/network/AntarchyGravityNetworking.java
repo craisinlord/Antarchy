@@ -15,7 +15,6 @@ import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 import com.craisinlord.antarchy.forge.network.AntarchyPayloadContext;
 import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
 
@@ -24,7 +23,6 @@ public final class AntarchyGravityNetworking {
     }
 
     public static void register(AntarchyForgePayloadRegistrar registrar) {
-        com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.setSender(AntarchyForgeNetworkCore::sendToPlayer);
         registrar.playToClient(
                 com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload.TYPE,
                 com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload.STREAM_CODEC,

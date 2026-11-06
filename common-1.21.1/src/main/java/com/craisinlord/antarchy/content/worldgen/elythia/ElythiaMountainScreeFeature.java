@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -15,13 +16,13 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public final class ElythiaMountainScreeFeature extends Feature<NoneFeatureConfiguration> {
     private static final TagKey<Biome> BIOMES = TagKey.create(Registries.BIOME, id("mountain_scree_biomes"));
+    private static final int ROCK_ABOVE = 3;
 
     public ElythiaMountainScreeFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -30,9 +31,8 @@ public final class ElythiaMountainScreeFeature extends Feature<NoneFeatureConfig
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
-        RandomState randomState = level.getLevel().getChunkSource().randomState();
         var columns = ElythiaSlopeField.chunk(level.getSeed(), context.origin().getX() >> 4, context.origin().getZ() >> 4,
-                (x, z) -> context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, level, randomState));
+                (x, z) -> level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z));
         BlockState rockite = state("rockite");
         BlockState zebraStone = state("zebra_stone");
         BlockState rockiteSlab = state("rockite_slab").setValue(SlabBlock.TYPE, SlabType.BOTTOM);
@@ -46,7 +46,8 @@ public final class ElythiaMountainScreeFeature extends Feature<NoneFeatureConfig
             }
             cursor.set(column.x(), y, column.z());
             BlockPos above = cursor.above();
-            if (!level.getBiome(cursor).is(BIOMES) || !level.getFluidState(cursor).isEmpty()
+            Holder<Biome> biome = level.getBiome(cursor);
+            if (!biome.is(BIOMES) || !level.getFluidState(cursor).isEmpty()
                     || !level.getFluidState(above).isEmpty() || !level.canSeeSky(above) || !level.isEmptyBlock(above)) {
                 continue;
             }
@@ -55,8 +56,9 @@ public final class ElythiaMountainScreeFeature extends Feature<NoneFeatureConfig
                     && !surface.is(Blocks.GRASS_BLOCK) && !surface.is(Blocks.MOSS_BLOCK)) {
                 continue;
             }
-            BlockState block = column.zebraStone() ? zebraStone : rockite;
-            BlockState slab = column.zebraStone() ? zebraStoneSlab : rockiteSlab;
+            boolean zebra = matchesZebra(level.getSeed(), biome, column.x(), y + ROCK_ABOVE, column.z());
+            BlockState block = zebra ? zebraStone : rockite;
+            BlockState slab = zebra ? zebraStoneSlab : rockiteSlab;
             if (column.outcrop()) {
                 level.setBlock(cursor, block, 2);
                 level.setBlock(above, block, 2);
@@ -69,6 +71,12 @@ public final class ElythiaMountainScreeFeature extends Feature<NoneFeatureConfig
             placed = true;
         }
         return placed;
+    }
+
+    private static boolean matchesZebra(long seed, Holder<Biome> biome, int x, int y, int z) {
+        return biome.unwrapKey().flatMap(key -> ElythiaStrataProfile.forBiome(key.location().toString()))
+                .map(profile -> ElythiaStrata.layerAt(seed, profile, y, ElythiaStrata.bedOffset(seed, profile, x, z)) == ElythiaStrata.Layer.ZEBRA)
+                .orElse(false);
     }
 
     private static ResourceLocation id(String path) {

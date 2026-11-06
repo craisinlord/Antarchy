@@ -9,11 +9,13 @@ import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
@@ -32,7 +34,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.MoveTowardsTargetGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -40,6 +41,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -74,25 +76,60 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     private static final int ANIM_SPIN_END = 6;
     private static final int ANIM_DEATH = 7;
     private static final int ANIM_RAPID_SHOOT = 8;
+    private static final int ANIM_SWIPE_WINDUP = 9;
 
     private static final int ATTACK_RAPID_FIRE = 0;
     private static final int ATTACK_BOMBERS = 1;
+
+    private static final int ACTION_NONE = -1;
+    private static final int ACTION_SHOOT = 0;
+    private static final int ACTION_JUMP = 1;
+    private static final int ACTION_SPIN = 2;
+    private static final int ACTION_SWIPE = 3;
 
     private static final int DEATH_TICKS = 60;
     private static final int SHOOT_TOTAL_TICKS = 75;
     private static final int RAPID_FIRE_INTERVAL = 4;
     private static final int RAPID_FIRE_END_TICK = 60;
+    private static final int RAPID_FIRE_FIRST_TICK = 14;
     private static final int SHOOT_BOMBER_TICK = 12;
     private static final int SHOOT_BOMBER_SECOND_TICK = 32;
     private static final int JUMP_TOTAL_TICKS = 40;
     private static final int JUMP_LAUNCH_TICK = 10;
     private static final int JUMP_SHAKE_TICKS = 12;
-    private static final int SPIN_START_TOTAL_TICKS = 5;
+    private static final int JUMP_FLIGHT_TICKS = 12;
+    private static final int JUMP_FORCE_DOWN_GRACE_TICKS = 4;
+    private static final int JUMP_MAX_AIR_TICKS = 80;
+    private static final double JUMP_MAX_HORIZONTAL_RANGE = 22.0D;
+    private static final double JUMP_MAX_ASCENT = 8.0D;
+    private static final double JUMP_SELECT_MAX_ASCENT = 10.0D;
+    private static final double GRAVITY_PER_TICK = 0.08D;
+    private static final double VERTICAL_DRAG = 0.98D;
+    private static final int SPIN_START_TOTAL_TICKS = 12;
     private static final int SPIN_LOOP_MIN_TICKS = 200;
     private static final int SPIN_LOOP_MAX_TICKS = 300;
     private static final int SPIN_END_TOTAL_TICKS = 10;
     private static final int SPIN_HIT_INTERVAL = 5;
     private static final int SPIN_STUCK_FAIL_LIMIT = 10;
+    private static final int SWIPE_WINDUP_TICKS = 20;
+    private static final int SWIPE_STRIKE_TICKS = 6;
+    private static final int SWIPE_HIT_TICK = 22;
+    private static final int SWIPE_TOTAL_TICKS = 36;
+    private static final int PHASE_TRANSITION_TICKS = 50;
+    private static final int PHASE_BLAST_TICK = 25;
+    private static final int PHASE_SPIN_END_TICK = 35;
+    private static final int PHASE_CLIP_END_TICK = 45;
+    private static final int SHOOT_RECOVERY_TICKS = 16;
+    private static final int JUMP_RECOVERY_TICKS = 24;
+    private static final int SPIN_RECOVERY_TICKS = 28;
+    private static final int SWIPE_RECOVERY_TICKS = 28;
+    private static final int RANGE_FEEDBACK_INTERVAL_TICKS = 20;
+    private static final int RETURN_DELAY_TICKS = 60;
+    private static final int RESET_DELAY_TICKS = 400;
+    private static final int TARGET_UNSEEN_MEMORY_TICKS = 300;
+    private static final int CHASE_REPATH_TICKS = 8;
+    private static final int CHASE_REPATH_FAIL_TICKS = 16;
+    private static final int RETURN_REPATH_TICKS = 20;
 
     private static final double CLOSE_RANGE_SQR = 64.0D;
     private static final double JUMP_RANGE_SQR = 400.0D;
@@ -102,7 +139,26 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     private static final double SPIN_RADIUS = 2.5D;
     private static final double SPIN_MOVE_SPEED = 0.65D;
     private static final double SPIN_ANIMATION_SPEED = 0.49D;
+    private static final double SPIN_START_ANIMATION_SPEED = 5.0D / SPIN_START_TOTAL_TICKS;
+    private static final double SWIPE_WINDUP_ANIMATION_SPEED = 5.0D / SWIPE_WINDUP_TICKS;
     private static final double JUMP_SHOCKWAVE_RADIUS = 6.0D;
+    private static final double JUMP_SHOCKWAVE_FULL_RADIUS = 3.0D;
+    private static final double JUMP_SHOCKWAVE_HEIGHT = 2.0D;
+    private static final float JUMP_SHOCKWAVE_MIN_DAMAGE_FRACTION = 0.5F;
+    private static final double SWIPE_TRIGGER_RANGE_SQR = 36.0D;
+    private static final double SWIPE_RADIUS = 5.0D;
+    private static final double SWIPE_HEIGHT = 3.5D;
+    private static final float SWIPE_DAMAGE_FRACTION = 0.85F;
+    private static final double SWIPE_KNOCKBACK_MULTIPLIER = 1.5D;
+    private static final double PHASE_BLAST_RADIUS = 7.0D;
+    private static final double CHASE_STOP_RANGE_SQR = 20.25D;
+    private static final double RETURN_ARRIVAL_RANGE_SQR = 81.0D;
+    private static final double PARTICIPATION_RANGE = 48.0D;
+    private static final double SPIN_MAX_VERTICAL_OFFSET = 3.0D;
+    private static final double RANGE_FALLOFF_MAX_RATIO = 1.67D;
+    private static final double PHASE_TWO_COOLDOWN_MULTIPLIER = 0.8D;
+    private static final double PHASE_TWO_RECOVERY_MULTIPLIER = 0.7D;
+    private static final int REPEAT_WEIGHT_DIVISOR = 3;
 
     private static final int BASE_XP_REWARD = 50;
     private static final int GLIMMER_XP_REWARD = 250;
@@ -114,22 +170,37 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     private static final float GLIMMER_PULSE_DAMAGE_FRACTION = 0.6F;
     private static final double GLIMMER_ABANDON_RANGE = 48.0D;
     private static final int GLIMMER_ABANDON_TICKS = 600;
-    private static final ResourceLocation GLIMMER_LOOT_TABLE =
-            new ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "entities/toreterror_glimmer");
+    private static final ResourceLocation GLIMMER_LOOT_TABLE = new ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "entities/toreterror_glimmer");
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("Idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation SHOOT_ANIM = RawAnimation.begin().thenPlay("shoot").thenLoop("Idle");
     private static final RawAnimation RAPID_SHOOT_ANIM = RawAnimation.begin().thenLoop("shoot");
     private static final RawAnimation JUMP_ANIM = RawAnimation.begin().thenPlay("jump_attack").thenLoop("Idle");
-    private static final RawAnimation SPIN_START_ANIM = RawAnimation.begin().thenPlay("spin_attack_start");
+    private static final RawAnimation SPIN_START_ANIM = RawAnimation.begin().thenPlayAndHold("spin_attack_start");
+    private static final RawAnimation SWIPE_WINDUP_ANIM = RawAnimation.begin().thenPlayAndHold("spin_attack_start");
     private static final RawAnimation SPIN_LOOP_ANIM = RawAnimation.begin().thenLoop("spin_attack");
     private static final RawAnimation SPIN_END_ANIM = RawAnimation.begin().thenPlay("spin_attack_end");
     private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("death");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private final ServerBossEvent bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.toreterror"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
+    private final ServerBossEvent bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, Component.translatable("entity.antarchy.toreterror"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
 
+    private int phaseTransitionTicks;
+    private int recoveryTicks;
+    private int swipeTicks;
+    private int swipeCooldown;
+    private int previousAction = ACTION_NONE;
+    private int lastRangeFeedbackTick = -RANGE_FEEDBACK_INTERVAL_TICKS;
+    private boolean encounterActive;
+    private int disengageTicks;
+    @Nullable
+    private BlockPos encounterHome;
+    @Nullable
+    private Vec3 jumpLandingPoint;
+    private int jumpFlightTicks;
+    private int jumpFlightTotalTicks;
+    private int jumpAirTicks;
     private int shootAnimTicks;
     private int jumpAnimTicks;
     private int spinStartTicks;
@@ -202,24 +273,19 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new ToreterrorFloatGoal());
-        this.goalSelector.addGoal(1, new ToreterrorRangedGoal());
-        this.goalSelector.addGoal(2, new ToreterrorJumpGoal());
-        this.goalSelector.addGoal(3, new ToreterrorSpinGoal());
-        this.goalSelector.addGoal(4, new MoveTowardsTargetGoal(this, 1.0D, 64.0F));
+        this.goalSelector.addGoal(1, new ToreterrorAttackGoal());
+        this.goalSelector.addGoal(3, new ToreterrorChaseGoal());
+        this.goalSelector.addGoal(4, new ToreterrorReturnGoal());
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 16.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.5D));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::canTargetEntity));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, ToreterrorEntity.class).setAlertOthers().setUnseenMemoryTicks(TARGET_UNSEEN_MEMORY_TICKS));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::canTargetEntity).setUnseenMemoryTicks(TARGET_UNSEEN_MEMORY_TICKS));
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
-                .triggerableAnim("jump_attack", JUMP_ANIM)
-                .triggerableAnim("spin_attack_start", SPIN_START_ANIM)
-                .triggerableAnim("spin_attack", SPIN_LOOP_ANIM)
-                .triggerableAnim("spin_attack_end", SPIN_END_ANIM));
+        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
     }
 
     private PlayState mainAnimController(AnimationState<ToreterrorEntity> state) {
@@ -230,7 +296,14 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
             case ANIM_SHOOT -> state.setAndContinue(SHOOT_ANIM);
             case ANIM_RAPID_SHOOT -> state.setAndContinue(RAPID_SHOOT_ANIM);
             case ANIM_JUMP_ATTACK -> state.setAndContinue(JUMP_ANIM);
-            case ANIM_SPIN_START -> state.setAndContinue(SPIN_START_ANIM);
+            case ANIM_SPIN_START -> {
+                state.getController().setAnimationSpeed(SPIN_START_ANIMATION_SPEED);
+                yield state.setAndContinue(SPIN_START_ANIM);
+            }
+            case ANIM_SWIPE_WINDUP -> {
+                state.getController().setAnimationSpeed(SWIPE_WINDUP_ANIMATION_SPEED);
+                yield state.setAndContinue(SWIPE_WINDUP_ANIM);
+            }
             case ANIM_SPIN_LOOP -> {
                 state.getController().setAnimationSpeed(SPIN_ANIMATION_SPEED);
                 yield state.setAndContinue(SPIN_LOOP_ANIM);
@@ -264,6 +337,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
         if (this.shootCooldown > 0) this.shootCooldown--;
         if (this.jumpCooldown > 0) this.jumpCooldown--;
         if (this.spinCooldown > 0) this.spinCooldown--;
+        if (this.swipeCooldown > 0) this.swipeCooldown--;
         if (this.spinRicochetCooldown > 0) this.spinRicochetCooldown--;
         if (this.jumpShakeTicks > 0) {
             this.jumpShakeTicks--;
@@ -274,6 +348,8 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
 
         this.spinHitCooldowns.replaceAll((uuid, cd) -> cd - 1);
         this.spinHitCooldowns.entrySet().removeIf(e -> e.getValue() <= 0);
+
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
 
         if (this.isDeadOrDying()) {
             this.setAnimationState(ANIM_DEATH);
@@ -288,17 +364,27 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
             this.tickGlimmerPulse();
         }
 
-        if (this.shootAnimTicks > 0) {
+        this.tickEncounter();
+
+        if (!this.isPhase2() && this.phaseTransitionTicks <= 0 && this.getHealth() <= this.getMaxHealth() * 0.5F) {
+            this.beginPhaseTransition();
+        }
+
+        if (this.phaseTransitionTicks > 0) {
+            this.tickPhaseTransition();
+        } else if (this.shootAnimTicks > 0) {
             this.tickShootAnimation();
         } else if (this.jumpAnimTicks > 0) {
             this.tickJumpAnimation();
         } else if (this.isSpinSequenceActive()) {
             this.tickSpinSequence();
+        } else if (this.swipeTicks > 0) {
+            this.tickSwipe();
+        } else if (this.recoveryTicks > 0) {
+            this.tickRecovery();
         } else {
             this.updateIdleAnimation();
         }
-
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
     }
 
     @Override
@@ -307,35 +393,344 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
             amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
         }
         if (source.is(net.minecraft.world.damagesource.DamageTypes.DROWN)) return false;
-        if (source.is(DamageTypeTags.IS_PROJECTILE)) {
-            amount *= (float) AntarchySettings.toreterrorProjectileDamageMultiplier();
-        }
-        if (!this.isPhase2()) {
-            float halfHealth = this.getMaxHealth() * 0.5F;
-            if (this.getHealth() - amount <= halfHealth) {
-                float capDamage = this.getHealth() - halfHealth;
-                if (capDamage <= 0.0F) {
-                    this.enterPhase2();
+        if (source.getEntity() instanceof BomberEntity || source.getDirectEntity() instanceof BomberEntity) return false;
+        boolean bypass = source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+        if (!bypass) {
+            if (this.phaseTransitionTicks > 0) {
+                this.playRangeResistFeedback();
+                return false;
+            }
+            double fullRange = AntarchySettings.toreterrorDamageRange();
+            if (source.getEntity() == null && fullRange > 0.0D && !this.hasParticipantWithin(fullRange)) {
+                return false;
+            }
+            float rangeMultiplier = BossCombatUtil.damageRangeMultiplier(this, source, fullRange, fullRange * RANGE_FALLOFF_MAX_RATIO);
+            if (rangeMultiplier < 1.0F) {
+                this.playRangeResistFeedback();
+                if (rangeMultiplier <= 0.0F) {
                     return false;
                 }
-                boolean result = super.hurt(source, capDamage);
-                if (result) this.enterPhase2();
-                return result;
+                amount *= rangeMultiplier;
             }
+        }
+        if (source.is(DamageTypeTags.IS_PROJECTILE)) {
+            amount *= (float) AntarchySettings.toreterrorProjectileDamageMultiplier();
         }
         return super.hurt(source, amount);
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        if (super.isInvulnerableTo(source)) {
-            return true;
+    protected void actuallyHurt(DamageSource source, float amount) {
+        float preHealth = this.getHealth();
+        super.actuallyHurt(source, amount);
+        float halfHealth = this.getMaxHealth() * 0.5F;
+        if (!this.isPhase2() && preHealth >= halfHealth && this.getHealth() < halfHealth && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            this.setHealth(halfHealth);
         }
-        return BossCombatUtil.isOutOfDamageRange(this, AntarchySettings.toreterrorDamageRange());
     }
 
-    private void enterPhase2() {
+    private boolean hasParticipantWithin(double range) {
+        double rangeSqr = range * range;
+        for (Player player : this.level().players()) {
+            if (player.isAlive() && !player.isCreative() && !player.isSpectator() && this.distanceToSqr(player) <= rangeSqr) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void playRangeResistFeedback() {
+        if (this.tickCount - this.lastRangeFeedbackTick < RANGE_FEEDBACK_INTERVAL_TICKS) {
+            return;
+        }
+        this.lastRangeFeedbackTick = this.tickCount;
+        this.playSound(SoundEvents.SHIELD_BLOCK, 1.5F, 0.6F);
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, net.minecraft.core.particles.ParticleTypes.ENCHANTED_HIT), this.getX(), this.getY() + this.getBbHeight() * 0.6D, this.getZ(),
+                    10, this.getBbWidth() * 0.4D, this.getBbHeight() * 0.3D, this.getBbWidth() * 0.4D, 0.1D);
+        }
+    }
+
+    private void beginPhaseTransition() {
         this.entityData.set(PHASE_2, true);
+        this.clearActions();
+        this.recoveryTicks = 0;
+        this.phaseTransitionTicks = PHASE_TRANSITION_TICKS;
+        this.getNavigation().stop();
+        this.playSound(AntarchySoundEvents.TORETERROR_HURT.get(), 2.5F, 0.6F);
+    }
+
+    private void tickPhaseTransition() {
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+        int elapsed = PHASE_TRANSITION_TICKS - this.phaseTransitionTicks;
+        if (elapsed < PHASE_BLAST_TICK) {
+            this.setAnimationState(ANIM_SWIPE_WINDUP);
+            if (elapsed % 5 == 0) {
+                this.sendGroundRing(this.position(), PHASE_BLAST_RADIUS * (elapsed + 5) / (double) PHASE_BLAST_TICK);
+            }
+        } else if (elapsed < PHASE_SPIN_END_TICK) {
+            this.setAnimationState(ANIM_SPIN_LOOP);
+        } else if (elapsed < PHASE_CLIP_END_TICK) {
+            this.setAnimationState(ANIM_SPIN_END);
+        } else {
+            this.setAnimationState(ANIM_IDLE);
+        }
+        if (elapsed == PHASE_BLAST_TICK) {
+            this.applyPhaseBlast();
+        }
+        this.phaseTransitionTicks--;
+    }
+
+    private void applyPhaseBlast() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        AABB area = this.getBoundingBox().inflate(PHASE_BLAST_RADIUS, 3.0D, PHASE_BLAST_RADIUS);
+        for (LivingEntity victim : this.level().getEntitiesOfClass(LivingEntity.class, area, this::canTargetEntity)) {
+            if (!this.hasLineOfSight(victim)) continue;
+            Vec3 knockDir = this.horizontalDirectionTo(victim.position());
+            victim.push(knockDir.x * 1.2D, 0.45D, knockDir.z * 1.2D);
+            victim.hurtMarked = true;
+        }
+        this.sendGroundRing(this.position(), PHASE_BLAST_RADIUS);
+        this.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 0.6F);
+        this.playSound(AntarchySoundEvents.TORETERROR_JUMP_LAND.get(), 1.5F, 0.7F);
+        serverLevel.sendParticles(GlimmerEchoes.particle(this, net.minecraft.core.particles.ParticleTypes.SPLASH), this.getX(), this.getY() + 0.5D, this.getZ(), 40, 2.0D, 0.5D, 2.0D, 0.2D);
+    }
+
+    private void sendGroundRing(Vec3 center, double radius) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.ring(serverLevel, center, radius, 32);
+            return;
+        }
+        for (int i = 0; i < 12; i++) {
+            double angle = i * Math.PI / 6.0D;
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SPLASH, center.x + Math.cos(angle) * radius, center.y + 0.2D, center.z + Math.sin(angle) * radius, 2, 0.1D, 0.05D, 0.1D, 0.0D);
+        }
+    }
+
+    private void clearActions() {
+        this.shootAnimTicks = 0;
+        this.jumpAnimTicks = 0;
+        this.swipeTicks = 0;
+        this.jumpLandingPoint = null;
+        this.stopSpinSequence();
+    }
+
+    private void tickRecovery() {
+        this.setAnimationState(ANIM_IDLE);
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().multiply(0.7D, 1.0D, 0.7D));
+        this.recoveryTicks--;
+    }
+
+    private void beginRecovery(int ticks) {
+        this.recoveryTicks = this.isPhase2() ? Math.max(1, (int) Math.round(ticks * PHASE_TWO_RECOVERY_MULTIPLIER)) : ticks;
+    }
+
+    private void tickEncounter() {
+        if (this.isGlimmerEcho()) {
+            return;
+        }
+        LivingEntity target = this.getTarget();
+        if (target != null && this.canTargetEntity(target)) {
+            if (!this.encounterActive) {
+                this.encounterActive = true;
+                this.encounterHome = this.blockPosition();
+            }
+            this.disengageTicks = 0;
+            return;
+        }
+        if (!this.encounterActive || this.isBusy()) {
+            return;
+        }
+        if (this.hasParticipantWithin(PARTICIPATION_RANGE)) {
+            this.disengageTicks = 0;
+            return;
+        }
+        BlockPos home = this.encounterHome;
+        boolean displaced = home != null && this.distanceToSqr(Vec3.atBottomCenterOf(home)) > RETURN_ARRIVAL_RANGE_SQR;
+        if (!this.needsReset() && !displaced) {
+            this.encounterActive = false;
+            this.disengageTicks = 0;
+            return;
+        }
+        this.disengageTicks++;
+        if (this.disengageTicks >= RESET_DELAY_TICKS) {
+            this.resetEncounter();
+        }
+    }
+
+    private boolean needsReset() {
+        return this.isPhase2() || this.getHealth() < this.getMaxHealth();
+    }
+
+    private boolean shouldReturnHome() {
+        return this.encounterActive
+                && this.encounterHome != null
+                && this.disengageTicks >= RETURN_DELAY_TICKS
+                && this.getTarget() == null
+                && !this.isBusy()
+                && this.distanceToSqr(Vec3.atBottomCenterOf(this.encounterHome)) > RETURN_ARRIVAL_RANGE_SQR;
+    }
+
+    private void resetEncounter() {
+        this.clearActions();
+        this.recoveryTicks = 0;
+        this.phaseTransitionTicks = 0;
+        this.entityData.set(PHASE_2, false);
+        this.shootCooldown = 0;
+        this.jumpCooldown = 0;
+        this.spinCooldown = 0;
+        this.swipeCooldown = 0;
+        this.previousAction = ACTION_NONE;
+        this.encounterActive = false;
+        this.disengageTicks = 0;
+        this.getNavigation().stop();
+        this.setHealth(this.getMaxHealth());
+        this.sendResetEffects();
+        BlockPos home = this.encounterHome;
+        if (home != null && this.distanceToSqr(Vec3.atBottomCenterOf(home)) > RETURN_ARRIVAL_RANGE_SQR && this.level().hasChunkAt(home)) {
+            Vec3 destination = Vec3.atBottomCenterOf(home);
+            AABB box = this.getBoundingBox().move(destination.subtract(this.position()));
+            if (this.level().noCollision(this, box)) {
+                this.moveTo(destination.x, destination.y, destination.z, this.getYRot(), this.getXRot());
+                this.setDeltaMovement(Vec3.ZERO);
+                this.sendResetEffects();
+            }
+        }
+        this.encounterHome = null;
+    }
+
+    private void sendResetEffects() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SPLASH, this.getX(), this.getY() + 1.0D, this.getZ(), 40, 1.2D, 1.0D, 1.2D, 0.1D);
+        this.playSound(AntarchySoundEvents.TORETERROR_JUMP_LAND.get(), 1.0F, 0.6F);
+    }
+
+    private boolean isBusy() {
+        return this.isInAttackAnimation() || this.recoveryTicks > 0 || this.phaseTransitionTicks > 0;
+    }
+
+    private int selectAction(LivingEntity target) {
+        if (this.shootCooldown > 0 && this.jumpCooldown > 0 && this.spinCooldown > 0 && this.swipeCooldown > 0) {
+            return ACTION_NONE;
+        }
+        double distSqr = this.distanceToSqr(target);
+        if (distSqr > RANGED_MAX_RANGE_SQR || !this.hasLineOfSight(target)) {
+            return ACTION_NONE;
+        }
+        boolean grounded = this.onGround();
+        boolean close = distSqr <= CLOSE_RANGE_SQR;
+        int shootWeight = this.shootCooldown <= 0 && !close && (grounded || this.isInWater()) ? this.weightFor(ACTION_SHOOT, 5) : 0;
+        int jumpWeight = this.jumpCooldown <= 0 && grounded && distSqr <= JUMP_RANGE_SQR
+                && target.getY() - this.getY() <= JUMP_SELECT_MAX_ASCENT ? this.weightFor(ACTION_JUMP, close ? 2 : 5) : 0;
+        int spinWeight = this.spinCooldown <= 0 && grounded && distSqr <= SPIN_TRIGGER_RANGE_SQR
+                && Math.abs(target.getY() - this.getY()) <= SPIN_MAX_VERTICAL_OFFSET ? this.weightFor(ACTION_SPIN, 3) : 0;
+        int swipeWeight = this.swipeCooldown <= 0 && grounded && distSqr <= SWIPE_TRIGGER_RANGE_SQR ? this.weightFor(ACTION_SWIPE, 8) : 0;
+        int total = shootWeight + jumpWeight + spinWeight + swipeWeight;
+        if (total <= 0) {
+            return ACTION_NONE;
+        }
+        int roll = this.random.nextInt(total);
+        if (roll < shootWeight) {
+            return ACTION_SHOOT;
+        }
+        roll -= shootWeight;
+        if (roll < jumpWeight) {
+            return ACTION_JUMP;
+        }
+        roll -= jumpWeight;
+        return roll < spinWeight ? ACTION_SPIN : ACTION_SWIPE;
+    }
+
+    private int weightFor(int action, int weight) {
+        return action == this.previousAction ? Math.max(1, weight / REPEAT_WEIGHT_DIVISOR) : weight;
+    }
+
+    private void beginAction(int action, LivingEntity target) {
+        this.previousAction = action;
+        this.getNavigation().stop();
+        switch (action) {
+            case ACTION_SHOOT -> this.beginShoot();
+            case ACTION_JUMP -> this.beginJump(target);
+            case ACTION_SPIN -> this.startSpinSequence(target);
+            case ACTION_SWIPE -> this.beginSwipe();
+            default -> {
+            }
+        }
+    }
+
+    private void beginShoot() {
+        this.shootAnimTicks = SHOOT_TOTAL_TICKS;
+        this.shootBomberFired = false;
+        this.shootBomberFiredSecond = false;
+        this.shootBomberFiredThird = false;
+        this.rapidFireNextTick = RAPID_FIRE_FIRST_TICK;
+        this.shootAttackType = this.random.nextBoolean() ? ATTACK_RAPID_FIRE : ATTACK_BOMBERS;
+    }
+
+    private void beginJump(LivingEntity target) {
+        this.jumpAnimTicks = JUMP_TOTAL_TICKS;
+        this.jumpLaunched = false;
+        this.jumpAirborne = false;
+        this.shockwaveApplied = false;
+        this.jumpFlightTicks = 0;
+        this.jumpAirTicks = 0;
+        this.jumpLandingPoint = this.computeLandingPoint(target);
+        this.sendGroundRing(this.jumpLandingPoint, JUMP_SHOCKWAVE_RADIUS);
+        this.playSound(AntarchySoundEvents.TORETERROR_JUMP_UP.get(), 1.2F, 0.9F + this.random.nextFloat() * 0.15F);
+    }
+
+    private void beginSwipe() {
+        this.swipeTicks = SWIPE_TOTAL_TICKS;
+        this.playSound(AntarchySoundEvents.TORETERROR_SPIN.get(), 1.0F, 0.6F);
+    }
+
+    private void tickSwipe() {
+        int elapsed = SWIPE_TOTAL_TICKS - this.swipeTicks;
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+        if (elapsed < SWIPE_WINDUP_TICKS) {
+            this.setAnimationState(ANIM_SWIPE_WINDUP);
+            if (elapsed % 5 == 0) {
+                this.sendGroundRing(this.position(), SWIPE_RADIUS);
+            }
+        } else if (elapsed < SWIPE_WINDUP_TICKS + SWIPE_STRIKE_TICKS) {
+            this.setAnimationState(ANIM_SPIN_LOOP);
+        } else {
+            this.setAnimationState(ANIM_SPIN_END);
+        }
+        if (elapsed == SWIPE_HIT_TICK) {
+            this.applySwipeDamage();
+        }
+        this.swipeTicks--;
+        if (this.swipeTicks <= 0) {
+            this.swipeCooldown = this.scaledCooldown(120 + this.random.nextInt(40));
+            this.beginRecovery(SWIPE_RECOVERY_TICKS);
+        }
+    }
+
+    private void applySwipeDamage() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        AABB area = this.getBoundingBox().inflate(SWIPE_RADIUS, SWIPE_HEIGHT, SWIPE_RADIUS);
+        float damage = (float) AntarchySettings.toreterrorJumpAttackDamage() * SWIPE_DAMAGE_FRACTION * this.glimmerEchoDamageMultiplier();
+        double knockback = AntarchySettings.toreterrorSpinKnockback() * SWIPE_KNOCKBACK_MULTIPLIER;
+        this.playSound(AntarchySoundEvents.TORETERROR_RICOCHET.get(), 1.4F, 0.7F);
+        for (LivingEntity victim : this.level().getEntitiesOfClass(LivingEntity.class, area, this::canTargetEntity)) {
+            if (this.horizontalDistanceTo(victim) > SWIPE_RADIUS || !this.hasLineOfSight(victim)) continue;
+            if (victim.hurt(AntarchyDamageSources.toreterrorSpin(serverLevel, this), damage)) {
+                Vec3 knockDir = this.horizontalDirectionTo(victim.position());
+                victim.push(knockDir.x * knockback, 0.35D, knockDir.z * knockback);
+                victim.hurtMarked = true;
+            }
+        }
+    }
+
+    private double horizontalDistanceTo(LivingEntity entity) {
+        double dx = entity.getX() - this.getX();
+        double dz = entity.getZ() - this.getZ();
+        return Math.sqrt(dx * dx + dz * dz);
     }
 
     public boolean isPhase2() {
@@ -375,10 +770,14 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     }
 
     private int scaledCooldown(int ticks) {
-        if (!this.isGlimmerEcho()) {
-            return ticks;
+        double scaled = ticks;
+        if (this.isPhase2()) {
+            scaled *= PHASE_TWO_COOLDOWN_MULTIPLIER;
         }
-        return Math.max(10, (int) Math.round(ticks * AntarchySettings.glimmerToreterrorCooldownMultiplier()));
+        if (this.isGlimmerEcho()) {
+            scaled *= AntarchySettings.glimmerToreterrorCooldownMultiplier();
+        }
+        return Math.max(10, (int) Math.round(scaled));
     }
 
     private boolean tickGlimmerAbandonment() {
@@ -415,7 +814,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
         if (!(this.level() instanceof ServerLevel serverLevel)) return;
         AABB pulseArea = this.getBoundingBox().inflate(GLIMMER_PULSE_RADIUS, 1.5D, GLIMMER_PULSE_RADIUS);
         List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, pulseArea,
-                entity -> this.canTargetEntity(entity) && entity.onGround());
+                entity -> this.canTargetEntity(entity) && entity.onGround() && this.hasLineOfSight(entity));
         float damage = (float) AntarchySettings.toreterrorJumpAttackDamage() * GLIMMER_PULSE_DAMAGE_FRACTION * this.glimmerEchoDamageMultiplier();
         for (LivingEntity victim : victims) {
             if (victim.hurt(AntarchyDamageSources.toreterrorJump(serverLevel, this), damage)) {
@@ -472,7 +871,12 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("AnimationState", this.getAnimationState());
+        tag.putBoolean("Phase2", this.isPhase2());
+        tag.putInt("SwipeCooldown", this.swipeCooldown);
+        tag.putBoolean("EncounterActive", this.encounterActive);
+        if (this.encounterHome != null) {
+            tag.putLong("EncounterHome", this.encounterHome.asLong());
+        }
         tag.putInt("ShootCooldown", this.shootCooldown);
         tag.putInt("JumpCooldown", this.jumpCooldown);
         tag.putInt("SpinCooldown", this.spinCooldown);
@@ -482,7 +886,11 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.entityData.set(ANIMATION_STATE, tag.contains("AnimationState") ? tag.getInt("AnimationState") : ANIM_IDLE);
+        this.entityData.set(ANIMATION_STATE, ANIM_IDLE);
+        this.entityData.set(PHASE_2, tag.getBoolean("Phase2") || this.getHealth() <= this.getMaxHealth() * 0.5F);
+        this.swipeCooldown = tag.getInt("SwipeCooldown");
+        this.encounterActive = tag.getBoolean("EncounterActive");
+        this.encounterHome = tag.contains("EncounterHome") ? BlockPos.of(tag.getLong("EncounterHome")) : null;
         this.shootCooldown = tag.getInt("ShootCooldown");
         this.jumpCooldown = tag.getInt("JumpCooldown");
         this.spinCooldown = tag.getInt("SpinCooldown");
@@ -493,9 +901,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     public void die(DamageSource damageSource) {
         if (!this.level().isClientSide) {
             this.setAnimationState(ANIM_DEATH);
-            this.shootAnimTicks = 0;
-            this.jumpAnimTicks = 0;
-            this.stopSpinSequence();
+            this.clearActions();
+            this.recoveryTicks = 0;
+            this.phaseTransitionTicks = 0;
             this.setDeltaMovement(Vec3.ZERO);
             this.getNavigation().stop();
         }
@@ -520,16 +928,6 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     private void setAnimationState(int state) {
         if (this.entityData.get(ANIMATION_STATE) != state) {
             this.entityData.set(ANIMATION_STATE, state);
-            String trigger = switch (state) {
-                case ANIM_JUMP_ATTACK -> "jump_attack";
-                case ANIM_SPIN_START -> "spin_attack_start";
-                case ANIM_SPIN_LOOP -> "spin_attack";
-                case ANIM_SPIN_END -> "spin_attack_end";
-                default -> null;
-            };
-            if (trigger != null) {
-                this.triggerAnim("main_controller", trigger);
-            }
         }
     }
 
@@ -540,7 +938,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     }
 
     private boolean isInAttackAnimation() {
-        return this.shootAnimTicks > 0 || this.jumpAnimTicks > 0 || this.isSpinSequenceActive();
+        return this.shootAnimTicks > 0 || this.jumpAnimTicks > 0 || this.swipeTicks > 0 || this.isSpinSequenceActive();
     }
 
     private boolean isSpinSequenceActive() {
@@ -548,6 +946,13 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     }
 
     private void tickShootAnimation() {
+        LivingEntity shootTarget = this.getTarget();
+        if (shootTarget == null || !shootTarget.isAlive()) {
+            this.shootAnimTicks = 0;
+            this.shootCooldown = this.scaledCooldown(100 + this.random.nextInt(60));
+            this.beginRecovery(SHOOT_RECOVERY_TICKS);
+            return;
+        }
         int elapsed = SHOOT_TOTAL_TICKS - this.shootAnimTicks;
         switch (this.shootAttackType) {
             case ATTACK_RAPID_FIRE -> {
@@ -575,58 +980,124 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
         }
         this.getNavigation().stop();
         this.setDeltaMovement(this.getDeltaMovement().scale(0.85D));
-        if (this.getTarget() != null) {
-            Vec3 toTarget = this.getTarget().position().subtract(this.position());
-            float yaw = (float) (net.minecraft.util.Mth.atan2(toTarget.z, toTarget.x) * (180.0D / Math.PI)) - 90.0F;
-            this.setYRot(yaw);
-            this.yBodyRot = yaw;
-            this.yHeadRot = yaw;
-            this.setYHeadRot(yaw);
-        }
+        this.turnToward(this.horizontalDirectionTo(shootTarget.position()), 6.0F);
         this.shootAnimTicks--;
         if (this.shootAnimTicks <= 0) {
             this.shootCooldown = this.scaledCooldown(100 + this.random.nextInt(60));
+            this.beginRecovery(SHOOT_RECOVERY_TICKS);
         }
     }
 
     private void tickJumpAnimation() {
         this.setAnimationState(ANIM_JUMP_ATTACK);
         int elapsed = JUMP_TOTAL_TICKS - this.jumpAnimTicks;
-        if (!this.jumpLaunched && elapsed >= JUMP_LAUNCH_TICK) {
-            this.jumpLaunched = true;
-            LivingEntity target = this.getTarget();
-            if (target != null) {
-                Vec3 toTarget = target.position().subtract(this.position()).normalize();
-                this.setDeltaMovement(toTarget.x * 0.6D, 1.15D, toTarget.z * 0.6D);
-                this.hasImpulse = true;
+        if (!this.jumpLaunched) {
+            this.getNavigation().stop();
+            Vec3 landing = this.jumpLandingPoint;
+            if (landing == null) {
+                this.finishJump();
+                return;
             }
-        }
-        if (this.jumpLaunched && !this.onGround()) {
-            this.jumpAirborne = true;
-        }
-        if (this.jumpLaunched && this.jumpAirborne && !this.shockwaveApplied) {
-            if (this.onGround()) {
-                this.shockwaveApplied = true;
-                this.playSound(AntarchySoundEvents.TORETERROR_JUMP_LAND.get(), 1.2F, 0.9F + this.random.nextFloat() * 0.15F);
-                this.applyJumpShockwave();
-                if (this.isGlimmerEcho()) {
-                    this.glimmerPulseTicks = GLIMMER_PULSE_DELAY_TICKS;
-                }
-                this.jumpShakeTicks = JUMP_SHAKE_TICKS;
-                this.entityData.set(JUMP_SHAKING, true);
-            } else if (this.jumpAnimTicks <= 10) {
-                Vec3 vel = this.getDeltaMovement();
-                this.setDeltaMovement(vel.x * 0.5D, Math.min(vel.y, -1.5D), vel.z * 0.5D);
-                this.hasImpulse = true;
-                if (this.jumpAnimTicks <= 2) {
-                    this.jumpAnimTicks = 2;
-                }
+            this.turnToward(this.horizontalDirectionTo(landing), 12.0F);
+            if (elapsed % 5 == 0) {
+                this.sendGroundRing(landing, JUMP_SHOCKWAVE_RADIUS);
             }
+            if (elapsed >= JUMP_LAUNCH_TICK) {
+                this.launchJump(landing);
+            }
+        } else if (!this.shockwaveApplied) {
+            this.tickJumpFlight();
         }
         this.jumpAnimTicks--;
         if (this.jumpAnimTicks <= 0) {
-            this.jumpCooldown = this.scaledCooldown(140 + this.random.nextInt(80));
+            this.finishJump();
         }
+    }
+
+    private Vec3 computeLandingPoint(LivingEntity target) {
+        Vec3 horizontal = new Vec3(target.getX() - this.getX(), 0.0D, target.getZ() - this.getZ());
+        double distance = horizontal.length();
+        if (distance > JUMP_MAX_HORIZONTAL_RANGE) {
+            horizontal = horizontal.scale(JUMP_MAX_HORIZONTAL_RANGE / distance);
+        }
+        double rise = Math.min(target.getY() - this.getY(), JUMP_MAX_ASCENT);
+        return new Vec3(this.getX() + horizontal.x, this.getY() + rise, this.getZ() + horizontal.z);
+    }
+
+    private void launchJump(Vec3 landing) {
+        this.jumpLaunched = true;
+        this.jumpFlightTotalTicks = JUMP_FLIGHT_TICKS;
+        this.jumpFlightTicks = 0;
+        this.jumpAirTicks = 0;
+        this.setDeltaMovement((landing.x - this.getX()) / JUMP_FLIGHT_TICKS, launchVelocityFor(landing.y - this.getY(), JUMP_FLIGHT_TICKS), (landing.z - this.getZ()) / JUMP_FLIGHT_TICKS);
+        this.hasImpulse = true;
+        this.sendGroundRing(landing, JUMP_SHOCKWAVE_RADIUS);
+    }
+
+    private static double launchVelocityFor(double rise, int ticks) {
+        double fall = 0.0D;
+        double fallVelocity = 0.0D;
+        double reach = 0.0D;
+        double factor = 1.0D;
+        for (int i = 0; i < ticks; i++) {
+            fall += fallVelocity;
+            fallVelocity = (fallVelocity - GRAVITY_PER_TICK) * VERTICAL_DRAG;
+            reach += factor;
+            factor *= VERTICAL_DRAG;
+        }
+        return (rise - fall) / reach;
+    }
+
+    private void tickJumpFlight() {
+        this.jumpFlightTicks++;
+        this.jumpAirTicks++;
+        if (!this.onGround() && !this.isInWater()) {
+            this.jumpAirborne = true;
+        } else if (this.jumpAirborne) {
+            this.landJump();
+            return;
+        }
+        if (this.jumpAirTicks > JUMP_MAX_AIR_TICKS) {
+            this.landJump();
+            return;
+        }
+        Vec3 landing = this.jumpLandingPoint;
+        Vec3 velocity = this.getDeltaMovement();
+        int ticksLeft = this.jumpFlightTotalTicks - this.jumpFlightTicks;
+        if (landing != null && ticksLeft > 0) {
+            this.setDeltaMovement((landing.x - this.getX()) / ticksLeft, velocity.y, (landing.z - this.getZ()) / ticksLeft);
+            this.hasImpulse = true;
+            if (this.jumpFlightTicks % 5 == 0) {
+                this.sendGroundRing(landing, JUMP_SHOCKWAVE_RADIUS);
+            }
+        } else if (this.jumpFlightTicks >= this.jumpFlightTotalTicks + JUMP_FORCE_DOWN_GRACE_TICKS) {
+            this.setDeltaMovement(velocity.x * 0.5D, Math.min(velocity.y, -1.5D), velocity.z * 0.5D);
+            this.hasImpulse = true;
+        } else {
+            this.setDeltaMovement(velocity.x * 0.5D, velocity.y, velocity.z * 0.5D);
+        }
+        if (this.jumpAnimTicks <= 2) {
+            this.jumpAnimTicks = 3;
+        }
+    }
+
+    private void landJump() {
+        this.shockwaveApplied = true;
+        this.jumpLandingPoint = null;
+        this.playSound(AntarchySoundEvents.TORETERROR_JUMP_LAND.get(), 1.2F, 0.9F + this.random.nextFloat() * 0.15F);
+        this.applyJumpShockwave();
+        if (this.isGlimmerEcho()) {
+            this.glimmerPulseTicks = GLIMMER_PULSE_DELAY_TICKS;
+        }
+        this.jumpShakeTicks = JUMP_SHAKE_TICKS;
+        this.entityData.set(JUMP_SHAKING, true);
+    }
+
+    private void finishJump() {
+        this.jumpAnimTicks = 0;
+        this.jumpLandingPoint = null;
+        this.jumpCooldown = this.scaledCooldown(140 + this.random.nextInt(80));
+        this.beginRecovery(JUMP_RECOVERY_TICKS);
     }
 
     private void tickSpinSequence() {
@@ -705,6 +1176,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
             this.stopSpinSequence();
             this.spinCooldown = this.scaledCooldown(340 + this.random.nextInt(80));
             this.spinHitCooldowns.clear();
+            this.beginRecovery(SPIN_RECOVERY_TICKS);
         }
     }
 
@@ -836,13 +1308,17 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
     }
 
     private void lookInDirection(Vec3 direction) {
+        this.turnToward(direction, 30.0F);
+    }
+
+    private void turnToward(Vec3 direction, float maxDegrees) {
         if (direction.lengthSqr() <= 1.0E-4D) {
             return;
         }
-        float yaw = (float) (net.minecraft.util.Mth.atan2(direction.z, direction.x) * (180.0D / Math.PI)) - 90.0F;
+        float desired = (float) (net.minecraft.util.Mth.atan2(direction.z, direction.x) * (180.0D / Math.PI)) - 90.0F;
+        float yaw = net.minecraft.util.Mth.approachDegrees(this.getYRot(), desired, maxDegrees);
         this.setYRot(yaw);
         this.yBodyRot = yaw;
-        this.yHeadRot = yaw;
         this.setYHeadRot(yaw);
     }
 
@@ -934,7 +1410,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
         for (int i = 0; i < count; i++) {
             BomberEntity bomber = AntarchyObjects.BOMBER.get().create(this.level());
             if (bomber == null) continue;
-            double spreadAngle = (i - count / 2.0D) * 20.0D;
+            double spreadAngle = (i - (count - 1) / 2.0D) * 20.0D;
             double yaw = Math.toRadians(this.getYRot() + spreadAngle);
             double vx = -Math.sin(yaw) * 1.2D;
             double vy = 0.4D;
@@ -950,15 +1426,20 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
 
     private void applyJumpShockwave() {
         if (!(this.level() instanceof ServerLevel serverLevel)) return;
-        AABB shockArea = this.getBoundingBox().inflate(JUMP_SHOCKWAVE_RADIUS, 2.0D, JUMP_SHOCKWAVE_RADIUS);
+        AABB shockArea = this.getBoundingBox().inflate(JUMP_SHOCKWAVE_RADIUS, JUMP_SHOCKWAVE_HEIGHT, JUMP_SHOCKWAVE_RADIUS);
         List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, shockArea, this::canTargetEntity);
         float damage = (float) AntarchySettings.toreterrorJumpAttackDamage() * this.glimmerEchoDamageMultiplier();
+        double knockback = AntarchySettings.toreterrorJumpAttackKnockback();
         for (LivingEntity victim : victims) {
-            victim.hurt(AntarchyDamageSources.toreterrorJump(serverLevel, this), damage);
-            Vec3 knockDir = victim.position().subtract(this.position()).normalize().add(0, 0.4D, 0);
-            double knockback = AntarchySettings.toreterrorJumpAttackKnockback();
-            victim.push(knockDir.x * knockback, 0.5D, knockDir.z * knockback);
-            victim.hurtMarked = true;
+            double distance = this.horizontalDistanceTo(victim);
+            if (distance > JUMP_SHOCKWAVE_RADIUS || !this.hasLineOfSight(victim)) continue;
+            double outer = (distance - JUMP_SHOCKWAVE_FULL_RADIUS) / (JUMP_SHOCKWAVE_RADIUS - JUMP_SHOCKWAVE_FULL_RADIUS);
+            float falloff = 1.0F - (1.0F - JUMP_SHOCKWAVE_MIN_DAMAGE_FRACTION) * (float) net.minecraft.util.Mth.clamp(outer, 0.0D, 1.0D);
+            if (victim.hurt(AntarchyDamageSources.toreterrorJump(serverLevel, this), damage * falloff)) {
+                Vec3 knockDir = victim.position().subtract(this.position()).normalize().add(0, 0.4D, 0);
+                victim.push(knockDir.x * knockback, 0.5D, knockDir.z * knockback);
+                victim.hurtMarked = true;
+            }
         }
         this.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 0.75F);
         if (this.isGlimmerEcho()) {
@@ -977,7 +1458,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
         double knockback = AntarchySettings.toreterrorSpinKnockback();
         for (LivingEntity victim : victims) {
             UUID id = victim.getUUID();
-            if (this.spinHitCooldowns.getOrDefault(id, 0) > 0) continue;
+            if (this.spinHitCooldowns.getOrDefault(id, 0) > 0 || !this.hasLineOfSight(victim)) continue;
             if (victim.hurt(AntarchyDamageSources.toreterrorSpin((ServerLevel) this.level(), this), damage)) {
                 this.spinHitCooldowns.put(id, 20);
                 Vec3 knockDir = victim.position().subtract(this.position()).normalize();
@@ -995,75 +1476,132 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
         return entity instanceof Mob && entity.isAttackable();
     }
 
-    private final class ToreterrorRangedGoal extends Goal {
-        ToreterrorRangedGoal() {
+    private final class ToreterrorAttackGoal extends Goal {
+        private int pendingAction = ACTION_NONE;
+
+        ToreterrorAttackGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
         public boolean canUse() {
             LivingEntity target = ToreterrorEntity.this.getTarget();
-            if (target == null || ToreterrorEntity.this.isInAttackAnimation()) return false;
-            if (ToreterrorEntity.this.shootCooldown > 0) return false;
-            double distSqr = ToreterrorEntity.this.distanceToSqr(target);
-            return distSqr > CLOSE_RANGE_SQR && distSqr <= RANGED_MAX_RANGE_SQR
-                    && ToreterrorEntity.this.hasLineOfSight(target);
+            if (ToreterrorEntity.this.isBusy() || target == null || !ToreterrorEntity.this.canTargetEntity(target)) return false;
+            this.pendingAction = ToreterrorEntity.this.selectAction(target);
+            return this.pendingAction != ACTION_NONE;
         }
 
         @Override
         public void start() {
-            ToreterrorEntity.this.shootAnimTicks = SHOOT_TOTAL_TICKS;
-            ToreterrorEntity.this.shootBomberFired = false;
-            ToreterrorEntity.this.shootBomberFiredSecond = false;
-            ToreterrorEntity.this.shootBomberFiredThird = false;
-            ToreterrorEntity.this.rapidFireNextTick = 0;
-            float roll = ToreterrorEntity.this.random.nextFloat();
-            if (roll < 0.5F) ToreterrorEntity.this.shootAttackType = ATTACK_RAPID_FIRE;
-            else ToreterrorEntity.this.shootAttackType = ATTACK_BOMBERS;
+            LivingEntity target = ToreterrorEntity.this.getTarget();
+            if (target != null) {
+                ToreterrorEntity.this.beginAction(this.pendingAction, target);
+            }
         }
 
         @Override
         public boolean canContinueToUse() {
-            return ToreterrorEntity.this.shootAnimTicks > 0;
+            return ToreterrorEntity.this.isBusy();
         }
 
         @Override
-        public void stop() {
-            ToreterrorEntity.this.shootAnimTicks = 0;
+        public void tick() {
+            LivingEntity target = ToreterrorEntity.this.getTarget();
+            if (target != null) {
+                ToreterrorEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            }
         }
     }
 
-    private final class ToreterrorJumpGoal extends Goal {
-        ToreterrorJumpGoal() {
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
+    private final class ToreterrorChaseGoal extends Goal {
+        private int repathTicks;
+
+        ToreterrorChaseGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
         }
 
         @Override
         public boolean canUse() {
-            LivingEntity target = ToreterrorEntity.this.getTarget();
-            if (target == null || ToreterrorEntity.this.isInAttackAnimation()) return false;
-            if (ToreterrorEntity.this.jumpCooldown > 0) return false;
-            double distSqr = ToreterrorEntity.this.distanceToSqr(target);
-            return distSqr <= JUMP_RANGE_SQR && ToreterrorEntity.this.onGround();
-        }
-
-        @Override
-        public void start() {
-            ToreterrorEntity.this.jumpAnimTicks = JUMP_TOTAL_TICKS;
-            ToreterrorEntity.this.jumpLaunched = false;
-            ToreterrorEntity.this.jumpAirborne = false;
-            ToreterrorEntity.this.shockwaveApplied = false;
-            ToreterrorEntity.this.playSound(AntarchySoundEvents.TORETERROR_JUMP_UP.get(), 1.2F, 0.9F + ToreterrorEntity.this.random.nextFloat() * 0.15F);
+            return !ToreterrorEntity.this.isBusy() && ToreterrorEntity.this.canTargetEntity(ToreterrorEntity.this.getTarget());
         }
 
         @Override
         public boolean canContinueToUse() {
-            return ToreterrorEntity.this.jumpAnimTicks > 0;
+            return this.canUse();
+        }
+
+        @Override
+        public void start() {
+            this.repathTicks = 0;
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = ToreterrorEntity.this.getTarget();
+            if (target == null) {
+                return;
+            }
+            ToreterrorEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            if (ToreterrorEntity.this.distanceToSqr(target) <= CHASE_STOP_RANGE_SQR) {
+                ToreterrorEntity.this.getNavigation().stop();
+                return;
+            }
+            if (--this.repathTicks <= 0) {
+                boolean moving = ToreterrorEntity.this.getNavigation().moveTo(target, 1.0D);
+                this.repathTicks = moving ? CHASE_REPATH_TICKS : CHASE_REPATH_FAIL_TICKS;
+            }
         }
 
         @Override
         public void stop() {
-            ToreterrorEntity.this.jumpAnimTicks = 0;
+            ToreterrorEntity.this.getNavigation().stop();
+        }
+    }
+
+    private final class ToreterrorReturnGoal extends Goal {
+        private int repathTicks;
+
+        ToreterrorReturnGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            return ToreterrorEntity.this.shouldReturnHome();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return ToreterrorEntity.this.shouldReturnHome();
+        }
+
+        @Override
+        public void start() {
+            this.repathTicks = 0;
+        }
+
+        @Override
+        public void tick() {
+            BlockPos home = ToreterrorEntity.this.encounterHome;
+            if (home != null && --this.repathTicks <= 0) {
+                ToreterrorEntity.this.getNavigation().moveTo(home.getX() + 0.5D, home.getY(), home.getZ() + 0.5D, 0.8D);
+                this.repathTicks = RETURN_REPATH_TICKS;
+            }
+        }
+
+        @Override
+        public void stop() {
+            ToreterrorEntity.this.getNavigation().stop();
         }
     }
 
@@ -1086,35 +1624,6 @@ public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho 
         public void tick() {
             Vec3 vel = ToreterrorEntity.this.getDeltaMovement();
             ToreterrorEntity.this.setDeltaMovement(vel.x, Math.min(vel.y + 0.08D, 0.2D), vel.z);
-        }
-    }
-
-    private final class ToreterrorSpinGoal extends Goal {
-        ToreterrorSpinGoal() {
-            this.setFlags(EnumSet.of(Flag.MOVE));
-        }
-
-        @Override
-        public boolean canUse() {
-            LivingEntity target = ToreterrorEntity.this.getTarget();
-            if (target == null || ToreterrorEntity.this.isInAttackAnimation()) return false;
-            if (ToreterrorEntity.this.spinCooldown > 0) return false;
-            return ToreterrorEntity.this.distanceToSqr(target) <= SPIN_TRIGGER_RANGE_SQR && ToreterrorEntity.this.onGround();
-        }
-
-        @Override
-        public void start() {
-            ToreterrorEntity.this.startSpinSequence(ToreterrorEntity.this.getTarget());
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return ToreterrorEntity.this.isSpinSequenceActive();
-        }
-
-        @Override
-        public void stop() {
-            ToreterrorEntity.this.stopSpinSequence();
         }
     }
 }

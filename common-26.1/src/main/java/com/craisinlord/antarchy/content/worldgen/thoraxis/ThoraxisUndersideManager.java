@@ -33,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class ThoraxisUndersideManager {
     public static final int GRAVITY_FLIP_Y = 0;
+    public static final int MOUNTAIN_SURFACE_Y = -56;
     private static final net.minecraft.resources.Identifier THORAXIS_DIMENSION = net.minecraft.resources.Identifier.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
     private static final GravityTransition TRANSITION = new GravityTransition(12);
     private static final GravityTransition THROAT_TRANSITION = new GravityTransition(12);
@@ -66,12 +67,15 @@ public final class ThoraxisUndersideManager {
             return;
         }
 
-        TrackingState tracking = STATES.computeIfAbsent(level, ignored -> new TrackingState());
         if (level.players().isEmpty()) {
-            tracking.clear();
-            STATES.remove(level);
+            TrackingState existing = STATES.remove(level);
+            if (existing != null) {
+                existing.clear();
+            }
             return;
         }
+
+        TrackingState tracking = STATES.computeIfAbsent(level, ignored -> new TrackingState());
 
         long startNanos = System.nanoTime();
         long now = level.getGameTime();
@@ -182,7 +186,7 @@ public final class ThoraxisUndersideManager {
             for (ServerPlayer player : level.players()) {
                 AABB area = new AABB(
                         player.getX() - radius, level.getMinY(), player.getZ() - radius,
-                        player.getX() + radius, level.getMaxY() + 1, player.getZ() + radius
+                        player.getX() + radius, EXIT_UNDERSIDE_Y, player.getZ() + radius
                 );
                 entities.add(player);
                 java.util.List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, area,

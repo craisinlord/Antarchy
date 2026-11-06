@@ -1,12 +1,12 @@
 package com.craisinlord.antarchy.content.transit;
 
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.ant.AntTeleportHelper;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.network.AntTransitPayload;
-import com.craisinlord.antarchy.content.network.AntTransitSync;
 import com.craisinlord.antarchy.content.network.TransitStyle;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import java.util.Iterator;
@@ -133,7 +133,7 @@ public final class AntTransit {
             }
             if (!player.isAlive() || !tick(player, state)) {
                 if (!state.teleported && !state.waiting) {
-                    AntTransitSync.send(player, payload(player, state, AntTransitPayload.PHASE_CANCEL, state.origin, false));
+                    AntarchyNetwork.sendToPlayer(player, payload(player, state, AntTransitPayload.PHASE_CANCEL, state.origin, false));
                 }
                 iterator.remove();
             }
@@ -182,7 +182,7 @@ public final class AntTransit {
         state.waiting = false;
         state.tick = 0;
         state.origin = settle(player);
-        AntTransitSync.sendToSelfAndTracking(player, payload(player, state, AntTransitPayload.PHASE_START, state.origin, false));
+        sendToSelfAndNearby(player, payload(player, state, AntTransitPayload.PHASE_START, state.origin, false));
         playAt(player, state.origin, startSound(state.style, player), 1.0F, startPitch(state.style));
         if (state.style == TransitStyle.CAVARYN_IN) {
             player.playNotifySound(AntarchySoundEvents.CAVARYN_HEARTBEAT.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
@@ -293,7 +293,7 @@ public final class AntTransit {
     }
 
     private static void fail(ServerPlayer player, State state, String messageKey) {
-        AntTransitSync.sendToSelfAndTracking(player, payload(player, state, AntTransitPayload.PHASE_CANCEL, state.origin, false));
+        sendToSelfAndNearby(player, payload(player, state, AntTransitPayload.PHASE_CANCEL, state.origin, false));
         if (messageKey != null) {
             player.displayClientMessage(Component.translatable(messageKey), true);
         }
@@ -413,7 +413,7 @@ public final class AntTransit {
                 player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0F, 2.0F);
             }
         }
-        AntTransitSync.send(player, payload(player, state, AntTransitPayload.PHASE_ARRIVED, pos, glide));
+        AntarchyNetwork.sendToPlayer(player, payload(player, state, AntTransitPayload.PHASE_ARRIVED, pos, glide));
     }
 
     private static boolean lift(ServerPlayer player) {
@@ -527,6 +527,15 @@ public final class AntTransit {
             this.destination = destination;
             this.origin = origin;
             this.warp = warp;
+        }
+    }
+
+    private static void sendToSelfAndNearby(ServerPlayer player, AntTransitPayload payload) {
+        AntarchyNetwork.sendToPlayer(player, payload);
+        for (ServerPlayer other : player.serverLevel().players()) {
+            if (other != player && other.distanceToSqr(player) < 64.0D * 64.0D) {
+                AntarchyNetwork.sendToPlayer(other, payload);
+            }
         }
     }
 }

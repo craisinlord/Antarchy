@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
@@ -19,17 +20,28 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
+import com.geckolib.animation.RawAnimation;
 
 public class GlimmerAntBehavior implements GlimmerVariantBehavior {
     private static final Identifier REACH_BOOST_ID =
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "glimmer_ant_reach_boost");
     private static final double REACH_BOOST_AMOUNT = 1.5D;
     private static final float LARGE_ENEMY_MIN_HEALTH = 40.0F;
-    private static final int ABILITY_COOLDOWN_TICKS = 20 * 120;
+    private static final int ABILITY_COOLDOWN_TICKS = 20 * 60;
     private static final int STRENGTH_BURST_DURATION = 20 * 12;
+    private static final int ATTACK_ANIM_TICKS = 20;
+    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack");
 
     private static Identifier rl(String path) {
         return Identifier.fromNamespaceAndPath(Antarchy.MODID, path);
+    }
+
+    public static void clearReach(Player owner) {
+        AttributeInstance instance = owner.getAttribute(Attributes.ENTITY_INTERACTION_RANGE);
+        if (instance != null) {
+            instance.removeModifier(REACH_BOOST_ID);
+        }
     }
 
     @Override
@@ -83,20 +95,22 @@ public class GlimmerAntBehavior implements GlimmerVariantBehavior {
     @Override
     public void tickPassiveEveryTick(GlimmerEntity entity, Player owner) {
         AttributeInstance instance = owner.getAttribute(Attributes.ENTITY_INTERACTION_RANGE);
-        if (instance == null) {
-            return;
-        }
-        if (instance.getModifier(REACH_BOOST_ID) == null) {
+        if (instance != null && instance.getModifier(REACH_BOOST_ID) == null) {
             instance.addTransientModifier(new AttributeModifier(REACH_BOOST_ID, REACH_BOOST_AMOUNT, AttributeModifier.Operation.ADD_VALUE));
+        }
+
+        int timestamp = owner.getLastHurtMobTimestamp();
+        int lastSeen = entity.getLastOwnerHurtMobTimestamp();
+        entity.setLastOwnerHurtMobTimestamp(timestamp);
+        if (lastSeen >= 0 && timestamp != lastSeen && entity.canUseAbility()) {
+            this.tryBurst(entity, owner);
         }
     }
 
     @Override
     public void clearPassive(GlimmerEntity entity, Player owner) {
-        AttributeInstance instance = owner.getAttribute(Attributes.ENTITY_INTERACTION_RANGE);
-        if (instance != null) {
-            instance.removeModifier(REACH_BOOST_ID);
-        }
+        clearReach(owner);
+        entity.setLastOwnerHurtMobTimestamp(-1);
     }
 
     @Override
@@ -105,11 +119,12 @@ public class GlimmerAntBehavior implements GlimmerVariantBehavior {
     }
 
     @Override
-    public void tickAbilityCheck(GlimmerEntity entity, Player owner) {
-        if (owner.getLastHurtMobTimestamp() != owner.tickCount) {
-            return;
-        }
+    @Nullable
+    public RawAnimation abilityAnimation() {
+        return ATTACK_ANIM;
+    }
 
+    private void tryBurst(GlimmerEntity entity, Player owner) {
         LivingEntity target = owner.getLastHurtMob();
         if (!(target instanceof Enemy) || target.getMaxHealth() < LARGE_ENEMY_MIN_HEALTH) {
             return;
@@ -117,6 +132,9 @@ public class GlimmerAntBehavior implements GlimmerVariantBehavior {
 
         owner.addEffect(new MobEffectInstance(MobEffects.STRENGTH, STRENGTH_BURST_DURATION, 1, false, true, true));
         owner.level().playSound(null, owner.blockPosition(), SoundEvents.PLAYER_ATTACK_STRONG, owner.getSoundSource(), 1.0F, 0.8F);
+        entity.playAbilityAnimation(ATTACK_ANIM_TICKS);
+        GlimmerParticles.abilityBurst(entity);
+        GlimmerParticles.abilityBurst(owner);
         this.sendAbilityMessage(owner, Component.translatable("entity.antarchy.glimmer.ability.ant", target.getDisplayName()));
         entity.startAbilityCooldown();
     }

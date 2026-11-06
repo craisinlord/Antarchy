@@ -23,6 +23,11 @@ public final class RoyalAssailantBlackHoleEntity extends RoyalBlackHoleEntity {
     }
 
     @Override
+    protected boolean usesColumnEffects() {
+        return false;
+    }
+
+    @Override
     protected boolean risesWhileActive() {
         return true;
     }

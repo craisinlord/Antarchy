@@ -83,6 +83,7 @@ public final class AntarchyFabricEvents {
             QueenLocateCommand.register(dispatcher);
             RoyalCommand.register(dispatcher);
         com.craisinlord.antarchy.content.command.ElythiaCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.ThoraxisCommand.register(dispatcher);
         com.craisinlord.antarchy.content.command.DimensionResetCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.PortalGunCommand.register(dispatcher);
         });
@@ -99,6 +100,8 @@ public final class AntarchyFabricEvents {
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.BLUSH_MOSS_BLOCK.get().asItem(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.PRIMORDIAL_MOSS_BLOCK.get().asItem(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.PRIMORDIAL_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.BLUSH_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.HUSHWEED.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.CORNEA_EAR.get(), 0.65f);
@@ -187,6 +190,7 @@ public final class AntarchyFabricEvents {
             }
         });
 
+        net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tryStart(player, world, hand, hitResult.getBlockPos()));
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             com.craisinlord.antarchy.content.transit.AntTransit.tick(server);
             Set<UUID> activeThisTick = new HashSet<>();
@@ -201,6 +205,7 @@ public final class AntarchyFabricEvents {
                 com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
                 com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
                 com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
+                com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tick(level);
                 tickInvertedPlayers(level, activeThisTick);
                 tickIchorPlayers(level);
                 tickBloodglassRecharge(level);

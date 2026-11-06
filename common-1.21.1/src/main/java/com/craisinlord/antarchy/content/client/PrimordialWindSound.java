@@ -33,18 +33,24 @@ public final class PrimordialWindSound {
         }
         boolean exposed = nearGrass && level.canSeeSky(minecraft.player.blockPosition());
         double gust = PrimordialGrassWind.sample(level.getGameTime(), minecraft.player.getX(), minecraft.player.getZ()).gust();
-        float target = exposed ? (float) (0.018D + gust * 0.24D) : 0.0F;
+        float target = exposed ? PrimordialGrassWind.gustLoudness(gust) : 0.0F;
+        float targetPitch = 0.9F + 0.2F * (float) gust;
         if (active != null && active.isStopped()) active = null;
         if (active == null && target > 0.0F) {
             active = new WindLoop(level);
             active.target = target;
+            active.targetPitch = targetPitch;
             minecraft.getSoundManager().play(active);
-        } else if (active != null) active.target = target;
+        } else if (active != null) {
+            active.target = target;
+            active.targetPitch = targetPitch;
+        }
     }
 
     private static final class WindLoop extends AbstractTickableSoundInstance {
         private final ClientLevel level;
         private float target;
+        private float targetPitch = 0.95F;
         private int silentTicks;
 
         private WindLoop(ClientLevel level) {
@@ -69,7 +75,8 @@ public final class PrimordialWindSound {
                 stop();
                 return;
             }
-            volume += (target - volume) * 0.08F;
+            volume += (target - volume) * (target > volume ? 0.12F : 0.06F);
+            pitch += (targetPitch - pitch) * 0.05F;
             if (target == 0.0F && volume < 0.001F) {
                 if (++silentTicks > 40) stop();
             } else silentTicks = 0;

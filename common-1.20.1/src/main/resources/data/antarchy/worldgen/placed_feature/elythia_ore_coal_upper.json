@@ -1,5 +1,5 @@
 {
-  "feature": "minecraft:ore_coal",
+  "feature": "antarchy:elythia_ore_coal",
   "placement": [
     {
       "type": "minecraft:count",

@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.mixins.client;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ElythiaFog;
 import com.craisinlord.antarchy.content.client.ThrowbackClientState;
-import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
@@ -25,18 +24,20 @@ public abstract class ElythiaFogMixin {
     @Inject(method = "setupFog", at = @At("RETURN"))
     private void antarchy$elythiaFogDistance(Camera camera, int renderDistanceInChunks, DeltaTracker deltaTracker,
                                             float darkenWorldAmount, ClientLevel level, CallbackInfoReturnable<FogData> cir) {
-        if (camera.getFluidInCamera() != FogType.NONE || !level.dimension().equals(ThrowbackZones.ELYTHIA)) {
+        FogData fog = cir.getReturnValue();
+        ElythiaSkyRenderer.captureFog(fog);
+        if (camera.getFluidInCamera() != FogType.NONE) {
             return;
         }
         Entity entity = camera.entity();
-        if (entity == null || entity instanceof LivingEntity living
-                && (living.hasEffect(MobEffects.BLINDNESS) || living.hasEffect(MobEffects.DARKNESS))) {
+        if (entity == null) {
             return;
         }
         float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
         float distance = renderDistanceInChunks * 16.0F;
-        FogData fog = cir.getReturnValue();
-        if (AntarchySettings.elythiaFogEnabled() && ElythiaSkyRenderer.shouldRender(level)) {
+        if (AntarchySettings.elythiaFogEnabled() && ElythiaSkyRenderer.shouldRender(level)
+                && !(entity instanceof LivingEntity living
+                && (living.hasEffect(MobEffects.BLINDNESS) || living.hasEffect(MobEffects.DARKNESS)))) {
             fog.environmentalStart = ElythiaFog.start(level, distance, partialTick);
             fog.environmentalEnd = ElythiaFog.end(level, distance, partialTick);
         }

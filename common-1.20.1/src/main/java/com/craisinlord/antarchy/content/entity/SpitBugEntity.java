@@ -70,6 +70,8 @@ public class SpitBugEntity extends Monster implements GeoEntity {
     private int spitCooldownTicks;
     private int spitAnimationTicks;
     private int spitReleaseTicks;
+    private int nextChaseRepathTick;
+    private Vec3 lastChaseTargetPos;
 
     public SpitBugEntity(EntityType<? extends SpitBugEntity> entityType, Level level) {
         super(entityType, level);
@@ -126,7 +128,6 @@ public class SpitBugEntity extends Monster implements GeoEntity {
 
     @Override
     public void tick() {
-        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         super.tick();
         CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         if (this.level().isClientSide) {
@@ -192,8 +193,19 @@ public class SpitBugEntity extends Monster implements GeoEntity {
     private boolean canSpitAt(LivingEntity target) {
         return this.spitCooldownTicks <= 0
                 && this.spitAnimationTicks <= 0
-                && this.hasLineOfSight(target)
-                && this.distanceToSqr(target) <= SPIT_RANGE_SQR;
+                && this.distanceToSqr(target) <= SPIT_RANGE_SQR
+                && this.getSensing().hasLineOfSight(target);
+    }
+
+    private void chaseTarget(LivingEntity target, double speed) {
+        if (this.tickCount < this.nextChaseRepathTick
+                && this.lastChaseTargetPos != null
+                && target.distanceToSqr(this.lastChaseTargetPos) <= 1.0D) {
+            return;
+        }
+
+        this.lastChaseTargetPos = target.position();
+        this.nextChaseRepathTick = this.tickCount + (this.getNavigation().moveTo(target, speed) ? 4 : 10);
     }
 
     private void startSpitAttack() {
@@ -279,8 +291,8 @@ public class SpitBugEntity extends Monster implements GeoEntity {
                 return;
             }
 
-            if (SpitBugEntity.this.distanceToSqr(target) > 36.0D || !SpitBugEntity.this.hasLineOfSight(target)) {
-                SpitBugEntity.this.getNavigation().moveTo(target, 1.0D);
+            if (SpitBugEntity.this.distanceToSqr(target) > 36.0D || !SpitBugEntity.this.getSensing().hasLineOfSight(target)) {
+                SpitBugEntity.this.chaseTarget(target, 1.0D);
             } else {
                 SpitBugEntity.this.getNavigation().stop();
             }

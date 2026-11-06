@@ -25,6 +25,7 @@ public record QueenHavocTrailFeature() implements Feature {
     private static final Identifier SPAWN_MARKER = id("queen_trail_spawn_marker");
     private static final int CHAMBER_RADIUS = 30;
     private static final int CHAMBER_DEPTH = 20;
+    private static volatile Palette palette;
 
     @Override
     public MapCodec<QueenHavocTrailFeature> codec() {
@@ -94,7 +95,7 @@ public record QueenHavocTrailFeature() implements Feature {
                 int depth = progress > 0.78D ? 3 : progress > 0.35D ? 2 : 1;
                 double fireChance = 0.12D + progress * 0.48D;
                 placed |= carvePrintColumn(level, x, z, depth, unit(site.id(), x, z, index) < fireChance,
-                        index % 3 == 0 ? CUT_DREAM_SANDSTONE : DREAM_SANDSTONE);
+                        index % 3 == 0 ? palette().cutDreamSandstone() : palette().dreamSandstone());
             }
         }
         return placed;
@@ -109,7 +110,7 @@ public record QueenHavocTrailFeature() implements Feature {
                 double distance = square((x + 0.5D - centerX) / radius) + square((z + 0.5D - centerZ) / radius);
                 if (distance <= 1.0D && unit(site.id() ^ 0x6A09E667F3BCC909L, x, z, index) > distance * 0.35D) {
                     placed |= carvePrintColumn(level, x, z, distance < 0.32D ? 2 : 1,
-                            unit(site.id(), z, x, index + 31) < 0.35D + progress * 0.35D, DREAM_SANDSTONE);
+                            unit(site.id(), z, x, index + 31) < 0.35D + progress * 0.35D, palette().dreamSandstone());
                 }
             }
         }
@@ -155,7 +156,7 @@ public record QueenHavocTrailFeature() implements Feature {
         if (ceiling == null) {
             return false;
         }
-        Block markerBlock = block(SPAWN_MARKER, Blocks.BARRIER);
+        Block markerBlock = palette().marker();
         BlockPos markerPos = ceiling.above(4);
         level.setBlock(markerPos, markerBlock.defaultBlockState(), 2);
         BlockEntity blockEntity = level.getBlockEntity(markerPos);
@@ -169,13 +170,13 @@ public record QueenHavocTrailFeature() implements Feature {
         return true;
     }
 
-    private static boolean carvePrintColumn(WorldGenLevel level, int x, int z, int depth, boolean fire, Identifier backingId) {
+    private static boolean carvePrintColumn(WorldGenLevel level, int x, int z, int depth, boolean fire, Block backingBlock) {
         BlockPos ceiling = findCeiling(level, x, z);
         if (ceiling == null) {
             return false;
         }
         BlockPos backing = ceiling.above(depth);
-        level.setBlock(backing, block(backingId, Blocks.SANDSTONE).defaultBlockState(), 2);
+        level.setBlock(backing, backingBlock.defaultBlockState(), 2);
         for (int offset = 0; offset < depth; offset++) {
             level.setBlock(ceiling.above(offset), Blocks.AIR.defaultBlockState(), 2);
         }
@@ -188,13 +189,13 @@ public record QueenHavocTrailFeature() implements Feature {
     private static void placeCeilingFire(WorldGenLevel level, BlockPos support) {
         BlockPos firePos = support.below();
         if (level.getBlockState(firePos).isAir()) {
-            level.setBlock(firePos, block(DREAM_FIRE, Blocks.SOUL_FIRE).defaultBlockState(), 2);
+            level.setBlock(firePos, palette().fire().defaultBlockState(), 2);
         }
     }
 
     private static BlockPos findCeiling(WorldGenLevel level, int x, int z) {
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(x, -8, z);
-        int minimum = Math.max(level.getMinY() + 20, -240);
+        int minimum = Math.max(level.getMinY() + 20, ThoraxisUndersideManager.MOUNTAIN_SURFACE_Y);
         for (int y = -8; y >= minimum; y--) {
             cursor.setY(y);
             if (isDreamSurface(level.getBlockState(cursor)) && level.getBlockState(cursor.below()).isAir()) {
@@ -205,8 +206,23 @@ public record QueenHavocTrailFeature() implements Feature {
     }
 
     private static boolean isDreamSurface(BlockState state) {
-        Identifier id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        return DREAM_SAND.equals(id) || DREAM_SANDSTONE.equals(id) || CUT_DREAM_SANDSTONE.equals(id);
+        Block block = state.getBlock();
+        Palette current = palette();
+        return block == current.dreamSand() || block == current.dreamSandstone() || block == current.cutDreamSandstone();
+    }
+
+    private static Palette palette() {
+        Palette current = palette;
+        if (current == null) {
+            current = new Palette(
+                    block(DREAM_SAND, Blocks.SAND),
+                    block(DREAM_SANDSTONE, Blocks.SANDSTONE),
+                    block(CUT_DREAM_SANDSTONE, Blocks.SANDSTONE),
+                    block(DREAM_FIRE, Blocks.SOUL_FIRE),
+                    block(SPAWN_MARKER, Blocks.BARRIER));
+            palette = current;
+        }
+        return current;
     }
 
     private static boolean contains(ChunkPos chunk, int x, int z) {
@@ -235,5 +251,8 @@ public record QueenHavocTrailFeature() implements Feature {
 
     private static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(Antarchy.MODID, path);
+    }
+
+    private record Palette(Block dreamSand, Block dreamSandstone, Block cutDreamSandstone, Block fire, Block marker) {
     }
 }

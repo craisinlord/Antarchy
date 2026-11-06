@@ -2,7 +2,26 @@
   "has_precipitation": false,
   "temperature": 0.82,
   "downfall": 1.0,
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:elythia_clouds"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
   "attributes": {
+    "minecraft:visual/fog_color": "#a58dff",
+    "minecraft:visual/sky_color": "#7b5cff",
+    "minecraft:visual/water_fog_color": "#0b3c70",
     "minecraft:audio/ambient_sounds": {
       "mood": {
         "sound": "minecraft:ambient.basalt_deltas.mood",
@@ -19,8 +38,8 @@
         "replace_current_music": true
       }
     },
-    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.03,
     "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
       "argument": {
         "spawn_costs": {
           "antarchy:stratoshark": {
@@ -32,42 +51,23 @@
           "monster": [
             {
               "type": "antarchy:stratoshark",
+              "weight": 10,
               "count": {
                 "type": "minecraft:uniform",
-                "max_inclusive": 2,
-                "min_inclusive": 1
-              },
-              "weight": 10
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
             }
           ]
         }
-      },
-      "modifier": "overlay"
+      }
     },
-    "minecraft:visual/fog_color": "#7b5cff",
-    "minecraft:visual/sky_color": "#7b5cff",
-    "minecraft:visual/water_fog_color": "#0b3c70"
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.03
   },
   "effects": {
     "water_color": "#4c9ef8",
     "foliage_color": "#2bc12d",
     "grass_color": "#41ad28",
     "grass_color_modifier": "none"
-  },
-  "carvers": [],
-  "features": [
-    [],
-    [],
-    [],
-    [],
-    [
-      "antarchy:elythia_clouds"
-    ],
-    [],
-    [],
-    [],
-    [],
-    [],
-    []
-  ]
+  }
 }

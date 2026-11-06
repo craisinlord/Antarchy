@@ -114,6 +114,10 @@ public class NightmarePortalEntity extends Entity implements GeoEntity {
         this.fallbackDestination = other.position();
     }
 
+    public void closeNow() {
+        this.lifetimeTicks = Math.min(this.lifetimeTicks, this.ageTicks + CLOSE_TICKS);
+    }
+
     public boolean isClosing() {
         return this.getEntityData().get(CLOSING);
     }

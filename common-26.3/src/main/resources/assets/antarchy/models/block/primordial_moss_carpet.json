@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/carpet",
+  "textures": {
+    "wool": "antarchy:block/primordial_moss/primordial_moss_block"
+  }
+}

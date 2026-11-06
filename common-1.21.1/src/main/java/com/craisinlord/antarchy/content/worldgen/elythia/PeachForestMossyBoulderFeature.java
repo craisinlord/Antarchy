@@ -32,8 +32,8 @@ public class PeachForestMossyBoulderFeature extends Feature<BoulderPaletteConfig
         }
 
         BlockPos base = surfacePos.below(random.nextInt(2));
-        int height = 6 + random.nextInt(5);
-        int baseRadius = 2 * (2 + random.nextInt(2));
+        int height = 5 + random.nextInt(4);
+        int baseRadius = 3 + random.nextInt(3);
         boolean placed = false;
 
         double[] silhouetteNoise = generateSilhouetteNoise(random);

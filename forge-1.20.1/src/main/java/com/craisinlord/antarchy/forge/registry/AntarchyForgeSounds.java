@@ -36,6 +36,7 @@ public final class AntarchyForgeSounds {
     public static final RegistryObject<SoundEvent> BRUTALFLY_IDLE = registerSoundEvent("brutalfly_idle");
     public static final RegistryObject<SoundEvent> BRUTALFLY_DEATH = registerSoundEvent("brutalfly_death");
     public static final RegistryObject<SoundEvent> ELYTHIA_FIREFLY_AMBIENT = registerSoundEvent("ambient.elythia.firefly");
+    public static final RegistryObject<SoundEvent> ELYTHIA_GRASS_WIND = registerSoundEvent("ambient.elythia.grass_wind");
     public static final RegistryObject<SoundEvent> ELYTHIA_OURANWOOD_FOREST_AMBIENT = registerSoundEvent("ambient.elythia.ouranwood_forest");
     public static final RegistryObject<SoundEvent> MISSILE_SQUID_AMBIENT = registerSoundEvent("missile_squid_ambient");
     public static final RegistryObject<SoundEvent> MISSILE_SQUID_HURT = registerSoundEvent("missile_squid_hurt");

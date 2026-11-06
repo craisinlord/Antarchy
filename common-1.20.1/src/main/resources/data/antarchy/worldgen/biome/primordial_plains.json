@@ -8,7 +8,7 @@
     "water_fog_color": 736368,
     "sky_color": 8084735,
     "foliage_color": 2867501,
-    "grass_color": 5039510,
+    "grass_color": 2990969,
     "grass_color_modifier": "none",
     "mood_sound": {
       "sound": "minecraft:ambient.basalt_deltas.mood",
@@ -40,11 +40,15 @@
   "features": [
     [],
     [],
-    [],
+    [
+      "antarchy:truffled_loam",
+      "antarchy:primordial_border_blend"
+    ],
     [],
     [],
     [],
     [
+      "antarchy:elythia_geology",
       "antarchy:elythia_ore_coal_upper",
       "antarchy:elythia_ore_coal_lower",
       "antarchy:elythia_ore_iron_upper",
@@ -71,6 +75,8 @@
     [
       "antarchy:primordial_plains_large_tuff_boulders",
       "antarchy:primordial_plains_tuff_boulders",
+      "antarchy:primordial_plains_rockite_ruins",
+      "antarchy:primordial_moss_patch",
       "antarchy:primordial_plains_flora",
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",

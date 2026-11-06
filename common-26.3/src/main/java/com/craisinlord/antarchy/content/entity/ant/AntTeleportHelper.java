@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
+import net.minecraft.util.Util;
+import java.util.concurrent.CompletableFuture;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
@@ -265,7 +267,21 @@ public final class AntTeleportHelper {
     }
 
     public static void prepareArrival(ServerPlayer player, ServerLevel destination, Consumer<Vec3> onArrival) {
-        BlockPos preferredPos = ElythiaArrival.nearestPlateau(destination, preferredArrivalPos(player, destination));
+        BlockPos preferredPos = preferredArrivalPos(player, destination);
+        if (!destination.dimension().equals(ELYTHIA)) {
+            searchArrival(player, destination, preferredPos, onArrival);
+            return;
+        }
+
+        CompletableFuture.supplyAsync(() -> ElythiaArrival.nearestPlateau(destination, preferredPos), Util.backgroundExecutor())
+                .whenComplete((plateau, error) -> destination.getServer().execute(() -> {
+                    if (!player.hasDisconnected()) {
+                        searchArrival(player, destination, error != null || plateau == null ? preferredPos : plateau, onArrival);
+                    }
+                }));
+    }
+
+    private static void searchArrival(ServerPlayer player, ServerLevel destination, BlockPos preferredPos, Consumer<Vec3> onArrival) {
         AntArrivalScheduler.request(player, destination, preferredPos, ARRIVAL_SEARCH_RADIUS, () -> {
             int[] yRange = getDimensionYRange(destination);
             if (yRange == null) {

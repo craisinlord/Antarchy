@@ -30,13 +30,14 @@
       "type": "minecraft:cache",
       "input": "antarchy:elythia_shelf_warp"
     },
-    "tilt": 0.15,
+    "tilt": 0.3,
     "min_offset": -0.45,
     "max_offset": 2.4,
-    "reach": 0.16,
-    "min_thickness": 3.0,
-    "max_thickness": 12.0,
+    "min_overhang": 4.0,
+    "max_overhang": 8.0,
+    "min_thickness": 10.0,
+    "max_thickness": 16.0,
     "min_mask": 0.55,
-    "max_riser": 0.2
+    "max_riser": 0.3
   }
 }

@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.mojang.serialization.Codec;
 import java.util.Optional;
@@ -50,7 +52,10 @@ public class ThrowbackNerdPoleFeature extends Feature<NoneFeatureConfiguration> 
         }
         BlockPos top = base.above(placed);
         if (level.getBlockState(top).canBeReplaced()) {
-            level.setBlock(top, Blocks.TORCH.defaultBlockState(), 2);
+            level.setBlock(top, AntarchyObjects.REMEMBRANCE_TORCH.get().defaultBlockState(), 2);
+            if (level.getBlockEntity(top) instanceof RemembranceTorchBlockEntity torch) {
+                torch.setRadius(zone.radius());
+            }
         }
         return true;
     }

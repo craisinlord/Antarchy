@@ -7,6 +7,8 @@ import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalHead;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderer;
@@ -54,6 +56,15 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
     private static final Identifier KING_ICE_BEAM_INNER = Identifier.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_inner.png");
     private static final Identifier KING_ICE_BEAM_END_1 = Identifier.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_1.png");
     private static final Identifier KING_ICE_BEAM_END_2 = Identifier.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_2.png");
+    private static final Identifier[] GLIMMER_QUEEN_PURPLE_BEAM = glimmerBeam("queen_purple");
+    private static final Identifier[] GLIMMER_QUEEN_RED_BEAM = glimmerBeam("queen_red");
+    private static final Identifier[] GLIMMER_QUEEN_BLACK_BEAM = glimmerBeam("queen_black");
+    private static final Identifier[] GLIMMER_KING_FIRE_BEAM = glimmerBeam("king_fire");
+    private static final Identifier[] GLIMMER_KING_LIGHTNING_BEAM = glimmerBeam("king_lightning");
+    private static final Identifier[] GLIMMER_KING_ICE_BEAM = glimmerBeam("king_ice");
+    private static final int NORMAL_RENDER_COLOR = ARGB.color(255, 255, 255, 255);
+    private static final int[] QUEEN_AFTERIMAGE_COLORS = {0x66FF5F6F, 0x4DFF4D60, 0x33FF3B52, 0x1FFF2944};
+    private static final int[] KING_AFTERIMAGE_COLORS = {0x66FFD966, 0x4DFFC94D, 0x33FFB52E, 0x1FFF8C14};
     private static final DataTicket<BeamData> BEAM_DATA = DataTicket.create("antarchy_royal_boss_beam_data", BeamData.class);
     private static final DataTicket<AfterimageData> AFTERIMAGE_DATA =
             DataTicket.create("antarchy_royal_boss_afterimage_data", AfterimageData.class);
@@ -64,6 +75,19 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
         this.withRenderLayer(new RoyalAfterimageLayer(this));
         this.withRenderLayer(new RoyalGlimmerEmissiveLayer(this));
         this.withRenderLayer(new TemporalContractionGeoLayer<>(this));
+    }
+
+    private static Identifier[] glimmerBeam(String name) {
+        return new Identifier[]{
+                glimmerTexture(name + "_beam_outer"),
+                glimmerTexture(name + "_beam_inner"),
+                glimmerTexture(name + "_beam_end_1"),
+                glimmerTexture(name + "_beam_end_2")
+        };
+    }
+
+    private static Identifier glimmerTexture(String name) {
+        return Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/glimmer/" + name + "_glimmer.png");
     }
 
     private record AfterimageData(boolean active, Vec3 movement, boolean queen) {
@@ -112,9 +136,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
             Vec3 movement = data.movement();
             if (movement.lengthSqr() < 1.0E-5D) return;
             RenderType afterimageType = RenderTypes.entityTranslucent(this.getRenderer().getTextureLocation(renderPassInfo.renderState()));
-            int[] colors = data.queen()
-                    ? new int[]{0x66FF5F6F, 0x4DFF4D60, 0x33FF3B52, 0x1FFF2944}
-                    : new int[]{0x66FFD966, 0x4DFFC94D, 0x33FFB52E, 0x1FFF8C14};
+            int[] colors = data.queen() ? QUEEN_AFTERIMAGE_COLORS : KING_AFTERIMAGE_COLORS;
             float scale = RoyalBossEntity.MODEL_RENDER_SCALE;
             Matrix4f scaledObjectPose = new Matrix4f(renderPassInfo.getPreRenderMatrixState()).scale(scale);
             Matrix4f modelRelativePose = new Matrix4f(scaledObjectPose).invert().mul(renderPassInfo.getModelRenderMatrixState());
@@ -147,13 +169,16 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
 
     @Override
     public int getRenderColor(RoyalBossEntity animatable, Void relatedObject, float partialTick) {
-        int normal = ARGB.color(255, 255, 255, 255);
-        if (animatable.isRoyalAccelerated()) {
-            float pulse = 0.5F + 0.5F * (float) Math.sin((animatable.tickCount + partialTick) * 0.4F);
-            int green = 60 + Math.round(60.0F * pulse);
-            normal = ARGB.color(255, 255, green, green);
+        boolean glimmer = animatable.isGlimmerEcho();
+        if (!animatable.isRoyalAccelerated()) {
+            return GlimmerEchoRendering.renderColor(glimmer, NORMAL_RENDER_COLOR);
         }
-        return GlimmerEchoRendering.renderColor(animatable.isGlimmerEcho(), normal);
+        float pulse = 0.5F + 0.5F * (float) Math.sin((animatable.tickCount + partialTick) * 0.4F);
+        int green = 60 + Math.round(60.0F * pulse);
+        if (glimmer) {
+            return ARGB.colorFromFloat(GlimmerEchoRendering.ALPHA, 1.0F, green / 255.0F, green / 255.0F);
+        }
+        return ARGB.color(255, 255, green, green);
     }
 
     @Override
@@ -194,45 +219,70 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
         double z = Mth.lerp(partialTick, entity.zo, entity.getZ());
         Identifier outer = QUEEN_PURPLE_BEAM_OUTER;
         Identifier inner = QUEEN_PURPLE_BEAM_INNER;
-        Identifier[] endTextures = {QUEEN_PURPLE_BEAM_END_1, QUEEN_PURPLE_BEAM_END_2};
+        Identifier endFirst = QUEEN_PURPLE_BEAM_END_1;
+        Identifier endSecond = QUEEN_PURPLE_BEAM_END_2;
+        Identifier[] glimmerBeam = GLIMMER_QUEEN_PURPLE_BEAM;
         if (entity instanceof KingEntity) {
-            switch (entity.getRoyalBeamElement()) {
+            RoyalBeamElement kingElement = entity.getRoyalBeamElement(beamHead);
+            glimmerBeam = switch (kingElement) {
+                case FIRE -> GLIMMER_KING_FIRE_BEAM;
+                case ICE -> GLIMMER_KING_ICE_BEAM;
+                default -> GLIMMER_KING_LIGHTNING_BEAM;
+            };
+            switch (kingElement) {
                 case FIRE -> {
                     outer = KING_FIRE_BEAM_OUTER;
                     inner = KING_FIRE_BEAM_INNER;
-                    endTextures = new Identifier[]{KING_FIRE_BEAM_END_1, KING_FIRE_BEAM_END_2};
+                    endFirst = KING_FIRE_BEAM_END_1;
+                    endSecond = KING_FIRE_BEAM_END_2;
                 }
                 case LIGHTNING -> {
                     outer = KING_LIGHTNING_BEAM_OUTER;
                     inner = KING_LIGHTNING_BEAM_INNER;
-                    endTextures = new Identifier[]{KING_LIGHTNING_BEAM_END_1, KING_LIGHTNING_BEAM_END_2};
+                    endFirst = KING_LIGHTNING_BEAM_END_1;
+                    endSecond = KING_LIGHTNING_BEAM_END_2;
                 }
                 case ICE -> {
                     outer = KING_ICE_BEAM_OUTER;
                     inner = KING_ICE_BEAM_INNER;
-                    endTextures = new Identifier[]{KING_ICE_BEAM_END_1, KING_ICE_BEAM_END_2};
+                    endFirst = KING_ICE_BEAM_END_1;
+                    endSecond = KING_ICE_BEAM_END_2;
                 }
                 case GENERIC -> {
                 }
             }
         } else {
-            switch (entity.getRoyalBeamElement(beamHead)) {
+            RoyalBeamElement queenElement = entity.getRoyalBeamElement(beamHead);
+            glimmerBeam = switch (queenElement) {
+                case QUEEN_RED -> GLIMMER_QUEEN_RED_BEAM;
+                case QUEEN_BLACK -> GLIMMER_QUEEN_BLACK_BEAM;
+                default -> GLIMMER_QUEEN_PURPLE_BEAM;
+            };
+            switch (queenElement) {
                 case QUEEN_RED -> {
                     outer = QUEEN_RED_BEAM_OUTER;
                     inner = QUEEN_RED_BEAM_INNER;
-                    endTextures = new Identifier[]{QUEEN_RED_BEAM_END_1, QUEEN_RED_BEAM_END_2};
+                    endFirst = QUEEN_RED_BEAM_END_1;
+                    endSecond = QUEEN_RED_BEAM_END_2;
                 }
                 case QUEEN_BLACK -> {
                     outer = QUEEN_BLACK_BEAM_OUTER;
                     inner = QUEEN_BLACK_BEAM_INNER;
-                    endTextures = new Identifier[]{QUEEN_BLACK_BEAM_END_1, QUEEN_BLACK_BEAM_END_2};
+                    endFirst = QUEEN_BLACK_BEAM_END_1;
+                    endSecond = QUEEN_BLACK_BEAM_END_2;
                 }
                 default -> {
                 }
             }
         }
+        if (entity.isGlimmerEcho()) {
+            outer = glimmerBeam[0];
+            inner = glimmerBeam[1];
+            endFirst = glimmerBeam[2];
+            endSecond = glimmerBeam[3];
+        }
         float time = entity.tickCount + partialTick;
-        Identifier endTexture = endTextures[(entity.tickCount / 2) % endTextures.length];
+        Identifier endTexture = (entity.tickCount / 2) % 2 == 0 ? endFirst : endSecond;
         return new BeamSlot(new BeamAnchor(), entity.getRoyalBeamShootFrom(beamHead, partialTick), end,
                 new Vec3(x, y, z), inner, outer, endTexture, -time * 0.25F * 0.5F, -time * 0.25F);
     }

@@ -165,6 +165,8 @@ public final class AntarchyFabricEvents {
             }
         });
 
+        net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((player, world, hand, hitResult) ->
+                com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tryStart(player, world, hand, hitResult.getBlockPos()));
         net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.register((player, world, hand) -> {
             InteractionResult result = com.craisinlord.antarchy.content.item.GiantFryingPanItem.handleMainHandUse(world, player, hand);
             if (result == InteractionResult.PASS) {
@@ -209,6 +211,7 @@ public final class AntarchyFabricEvents {
                 com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
                 ThoraxisUndersideManager.tick(level);
                 com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
+                com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tick(level);
                 tickInvertedPlayers(level, activeThisTick);
                 tickIchorPlayers(level);
                 tickBloodglassRecharge(level);

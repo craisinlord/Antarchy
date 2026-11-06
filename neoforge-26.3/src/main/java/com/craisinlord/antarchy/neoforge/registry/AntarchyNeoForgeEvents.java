@@ -99,6 +99,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handlePortalGunLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipRightClickBlock);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleKrakenRitualRightClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipRightClickItem);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleGiantFryingPanRightClickItem);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedAttackEntity);
@@ -184,6 +185,7 @@ public final class AntarchyNeoForgeEvents {
     static void tickCavarynHordes(ServerTickEvent.Post event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
+            com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
             com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
             com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
@@ -909,6 +911,14 @@ public final class AntarchyNeoForgeEvents {
         event.setCanceled(true);
     }
 
+    static void handleKrakenRitualRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        InteractionResult result = com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tryStart(event.getEntity(), event.getLevel(), event.getHand(), event.getPos());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
     static void handleScorpionWhipRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
@@ -1107,7 +1117,7 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void onCommonSetup(FMLCommonSetupEvent event) {
-        BloodCrystalShardItem.SYNC_BLOODGLASS = AntarchyNeoForgeEvents::syncBloodglass;
+        BloodCrystalShardItem.setBloodglassSync(AntarchyNeoForgeEvents::syncBloodglass);
         if (com.craisinlord.antarchy.compat.infinity.InfinityCompat.get().isAvailable()) {
             com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh.refreshIfStale(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get());
         }

@@ -9,7 +9,7 @@ public record ElythiaColumnCache(DensityFunction argument) implements DensityFun
     public static final MapCodec<ElythiaColumnCache> CODEC = DensityFunction.CODEC
             .fieldOf("argument")
             .xmap(ElythiaColumnCache::new, ElythiaColumnCache::argument);
-    private static final int BITS = 5;
+    private static final int BITS = 6;
     private static final int MASK = (1 << BITS) - 1;
     private static final int SIZE = 1 << (BITS * 2);
 

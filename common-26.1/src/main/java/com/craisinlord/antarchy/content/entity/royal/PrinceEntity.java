@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import java.util.Comparator;
 import java.util.List;
+import net.minecraft.util.ARGB;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -23,10 +24,13 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.util.ARGB;
 
 public class PrinceEntity extends RoyalMountEntity {
     private static final DustParticleOptions COMMAND_DUST = new DustParticleOptions(ARGB.colorFromFloat(1.0F, 1.0F, 0.75F, 0.15F), 1.6F);
+    private static final int SIGNATURE_CHECK_INTERVAL_TICKS = 10;
+
+    private int nextSignatureCheckTick;
+    private boolean cachedSignatureUseful;
 
     public PrinceEntity(EntityType<? extends PrinceEntity> entityType, Level level) {
         super(entityType, level);
@@ -127,7 +131,11 @@ public class PrinceEntity extends RoyalMountEntity {
 
     @Override
     protected boolean isSignatureUseful(LivingEntity target) {
-        return RoyalEffectHooks.commandedHolder() != null && this.commandCandidates(this.position()).size() >= 2;
+        if (this.tickCount >= this.nextSignatureCheckTick) {
+            this.nextSignatureCheckTick = this.tickCount + SIGNATURE_CHECK_INTERVAL_TICKS;
+            this.cachedSignatureUseful = RoyalEffectHooks.commandedHolder() != null && this.commandCandidates(this.position()).size() >= 2;
+        }
+        return this.cachedSignatureUseful;
     }
 
     @Override

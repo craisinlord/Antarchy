@@ -30,6 +30,13 @@ public class AntarchyNeoforgePayloadHandlers {
                 (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.AntTransitClientState.handle(payload))
         );
         registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE,
+                com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.ElythiaEchoes.handleTest(payload.immediate())
+                )
+        );
+        registrar.playToClient(
                 com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE,
                 com.craisinlord.antarchy.content.network.ElythiaEventPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload))

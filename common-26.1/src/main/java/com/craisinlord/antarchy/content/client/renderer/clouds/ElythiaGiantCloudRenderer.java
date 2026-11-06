@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.craisinlord.antarchy.content.client.renderer.AntarchySkyDraw;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.pipeline.RenderTarget;
@@ -146,7 +147,8 @@ final class ElythiaGiantCloudRenderer {
     }
 
     static void render(Minecraft minecraft, ClientLevel level, Vec3 cloudColor, CloudStatus status, double[] wind,
-                       double camX, double camY, double camZ, float partialTick, float cloudRange, Matrix4f modelView, RenderTarget target) {
+                       double camX, double camY, double camZ, float partialTick, float terrainFogEnd, boolean soft,
+                       List<ElythiaSoftCloudPass.Draw> softDraws, Matrix4f modelView, @Nullable RenderTarget target) {
         float strength = ElythiaEventClient.strength(ElythiaEvent.TOWERING_CLOUDS, partialTick);
         long seed = ElythiaEventClient.seed();
         double now = level.getGameTime() + partialTick;
@@ -176,17 +178,19 @@ final class ElythiaGiantCloudRenderer {
         double driftX = (wind[0] - anchorWindX) * DRIFT_SCALE;
         double driftZ = (wind[1] - anchorWindZ) * DRIFT_SCALE;
         for (Tower tower : TOWERS) {
-            AntarchySkyDraw.StaticMesh mesh = tower.buffer(true);
+            AntarchySkyDraw.StaticMesh mesh = tower.buffer(soft);
             ElythiaGiantCloud giant = tower.cloud;
             if (mesh == null || giant == null) {
                 continue;
             }
             double dx = tower.x + driftX - camX;
             double dz = tower.z + driftZ - camZ;
+            float distance = (float) Math.sqrt(dx * dx + dz * dz);
+            float fogEnd = Math.max(terrainFogEnd, distance * 1.9F + 200.0F);
             float offsetX = (float) (dx + giant.originX());
-            float offsetY = BASE_Y - (float) camY;
+            float offsetY = (float) (BASE_Y - camY);
             float offsetZ = (float) (dz + giant.originZ());
-            if (clearingCount < CLEARINGS.length / 4) {
+            if (clearingCount < ElythiaSoftCloudPass.MAX_CLEARINGS) {
                 int index = clearingCount * 4;
                 CLEARINGS[index] = (float) dx;
                 CLEARINGS[index + 1] = 0.0F;
@@ -194,10 +198,17 @@ final class ElythiaGiantCloudRenderer {
                 CLEARINGS[index + 3] = Math.max(giant.sizeX(), giant.sizeZ()) * ElythiaGiantCloud.VOXEL * 0.5F;
                 clearingCount++;
             }
+            if (tower.builtSoft) {
+                float towerHeight = giant.sizeY() * ElythiaGiantCloud.VOXEL;
+                float growthTop = offsetY + (0.3F + 0.7F * growth) * towerHeight + 40.0F;
+                softDraws.add(new ElythiaSoftCloudPass.Draw(mesh, offsetX, offsetY, offsetZ, fogEnd, strength,
+                        growthTop, false));
+                continue;
+            }
             Matrix4f transform = new Matrix4f(modelView).translate(offsetX, offsetY, offsetZ);
-            Vector4f color = new Vector4f((float) cloudColor.x * strength * growth, (float) cloudColor.y * strength * growth,
-                    (float) cloudColor.z * strength * growth, strength * growth);
-            AntarchySkyDraw.draw("Antarchy Elythia towering cloud", ElythiaCloudRenderer.CLOUD_PIPELINE, mesh, transform, color, null, target);
+            Vector4f color = new Vector4f((float) cloudColor.x, (float) cloudColor.y, (float) cloudColor.z, strength);
+            Vector3f fogRange = new Vector3f(Math.max(terrainFogEnd * 0.5F, distance * 0.55F), fogEnd, 0.0F);
+            AntarchySkyDraw.draw("Antarchy Elythia towering cloud", ElythiaCloudRenderer.CLOUD_PIPELINE, mesh, transform, color, fogRange, target);
         }
     }
 

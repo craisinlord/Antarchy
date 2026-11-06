@@ -1,0 +1,206 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "antarchy:item/snout_compass_00"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "antarchy:angle": 0
+      },
+      "model": "antarchy:item/snout_compass_00"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.015625
+      },
+      "model": "antarchy:item/snout_compass_01"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.046875
+      },
+      "model": "antarchy:item/snout_compass_02"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.078125
+      },
+      "model": "antarchy:item/snout_compass_03"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.109375
+      },
+      "model": "antarchy:item/snout_compass_04"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.140625
+      },
+      "model": "antarchy:item/snout_compass_05"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.171875
+      },
+      "model": "antarchy:item/snout_compass_06"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.203125
+      },
+      "model": "antarchy:item/snout_compass_07"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.234375
+      },
+      "model": "antarchy:item/snout_compass_08"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.265625
+      },
+      "model": "antarchy:item/snout_compass_09"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.296875
+      },
+      "model": "antarchy:item/snout_compass_10"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.328125
+      },
+      "model": "antarchy:item/snout_compass_11"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.359375
+      },
+      "model": "antarchy:item/snout_compass_12"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.390625
+      },
+      "model": "antarchy:item/snout_compass_13"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.421875
+      },
+      "model": "antarchy:item/snout_compass_14"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.453125
+      },
+      "model": "antarchy:item/snout_compass_15"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.484375
+      },
+      "model": "antarchy:item/snout_compass_16"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.515625
+      },
+      "model": "antarchy:item/snout_compass_17"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.546875
+      },
+      "model": "antarchy:item/snout_compass_18"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.578125
+      },
+      "model": "antarchy:item/snout_compass_19"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.609375
+      },
+      "model": "antarchy:item/snout_compass_20"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.640625
+      },
+      "model": "antarchy:item/snout_compass_21"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.671875
+      },
+      "model": "antarchy:item/snout_compass_22"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.703125
+      },
+      "model": "antarchy:item/snout_compass_23"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.734375
+      },
+      "model": "antarchy:item/snout_compass_24"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.765625
+      },
+      "model": "antarchy:item/snout_compass_25"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.796875
+      },
+      "model": "antarchy:item/snout_compass_26"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.828125
+      },
+      "model": "antarchy:item/snout_compass_27"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.859375
+      },
+      "model": "antarchy:item/snout_compass_28"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.890625
+      },
+      "model": "antarchy:item/snout_compass_29"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.921875
+      },
+      "model": "antarchy:item/snout_compass_30"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.953125
+      },
+      "model": "antarchy:item/snout_compass_31"
+    },
+    {
+      "predicate": {
+        "antarchy:angle": 0.984375
+      },
+      "model": "antarchy:item/snout_compass_00"
+    }
+  ]
+}

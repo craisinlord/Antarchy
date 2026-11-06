@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyOrbEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -37,6 +38,7 @@ public class BrutalflyOrbRenderer extends EntityRenderer<BrutalflyOrbEntity, Bru
     public void extractRenderState(BrutalflyOrbEntity entity, BrutalflyOrbRenderState state, float partialTick) {
         super.extractRenderState(entity, state, partialTick);
         state.lingering = entity.isLingeringOrb();
+        state.glimmer = GlimmerEchoes.isGlimmerEcho(entity);
         state.scale = state.lingering ? entity.getOrbRadius(partialTick) * 0.38F : 0.8F;
         state.poison = entity.getOrbVariant() == BrutalflyOrbEntity.OrbVariant.POISON;
     }
@@ -52,7 +54,11 @@ public class BrutalflyOrbRenderer extends EntityRenderer<BrutalflyOrbEntity, Bru
         float red;
         float green;
         float blue;
-        if (state.poison) {
+        if (state.glimmer) {
+            red = GlimmerEchoRendering.GLIMMER_RED;
+            green = GlimmerEchoRendering.GLIMMER_GREEN;
+            blue = GlimmerEchoRendering.GLIMMER_BLUE;
+        } else if (state.poison) {
             red = 0.32F;
             green = 0.92F;
             blue = 0.26F;
@@ -98,6 +104,7 @@ public class BrutalflyOrbRenderer extends EntityRenderer<BrutalflyOrbEntity, Bru
 
     public static class BrutalflyOrbRenderState extends EntityRenderState {
         public boolean lingering;
+        public boolean glimmer;
         public boolean poison = true;
         public float scale = 0.8F;
     }

@@ -35,6 +35,7 @@ public final class AntarchyConfigModuleFabric {
     }
 
     public static void init() {
+        AntarchySettings.setPrimordialGrassSaver(AntarchyConfigModuleFabric::persist);
         ConfigResetGuard.migrateIfNeeded(
                 CONFIG_DIR,
                 ConfigSection.MOBS.path,

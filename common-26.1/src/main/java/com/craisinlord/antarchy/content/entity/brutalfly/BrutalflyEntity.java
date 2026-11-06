@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.entity.brutalfly;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyObjects;
@@ -9,22 +8,26 @@ import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
@@ -37,8 +40,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
@@ -47,11 +49,13 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import com.geckolib.animatable.GeoEntity;
@@ -92,8 +96,81 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     private static final int DEATH_ANIM_TICKS = 60;
     private static final int SPIT_WINDUP_TICKS = 16;
-    private static final int SWIPE_TICKS = 18;
+    private static final int SWIPE_TICKS = 30;
+    private static final int SWIPE_LOCK_ELAPSED = 6;
+    private static final int SWIPE_HIT_ELAPSED = 12;
+    private static final int SWIPE_LUNGE_END_ELAPSED = 14;
+    private static final double SWIPE_LUNGE_DISTANCE = 2.5D;
+    private static final double SWIPE_REACH = 5.0D;
+    private static final double SWIPE_ARC_COS = 0.2588D;
+    private static final double SWIPE_REACH_BELOW = 3.0D;
+    private static final double SWIPE_REACH_ABOVE = 1.5D;
+    private static final double SWIPE_MAX_START_YAW_ERROR = 60.0D;
     private static final float SWIPE_KNOCKBACK = 2.8F;
+    private static final int DIVE_NONE = 0;
+    private static final int DIVE_TELEGRAPH = 1;
+    private static final int DIVE_ACTIVE = 2;
+    private static final int DIVE_RECOVERY = 3;
+    private static final int DIVE_TELEGRAPH_TICKS = 22;
+    private static final int DIVE_LOCK_REMAINING = 8;
+    private static final int DIVE_STRIKE_TICKS = 12;
+    private static final int DIVE_MAX_TICKS = 26;
+    private static final int DIVE_FIRST_CONTACT_TICK = 6;
+    private static final int DIVE_RECOVERY_TICKS = 26;
+    private static final int DIVE_STAGGER_TICKS = 44;
+    private static final int DIVE_RETRY_TICKS = 20;
+    private static final int DIVE_CANCEL_COOLDOWN_TICKS = 40;
+    private static final double DIVE_MIN_RANGE_SQR = 20.25D;
+    private static final double DIVE_MAX_RANGE_SQR = 256.0D;
+    private static final double DIVE_MAX_VERTICAL = 10.0D;
+    private static final double DIVE_MIN_SPEED = 0.7D;
+    private static final double DIVE_MAX_SPEED = 1.4D;
+    private static final double DIVE_OVERSHOOT = 7.0D;
+    private static final double DIVE_OVERSHOOT_RISE = 1.5D;
+    private static final double DIVE_STRIKE_HEIGHT = 0.6D;
+    private static final double DIVE_BLOCKED_MOVE_RATIO = 0.35D;
+    private static final float DIVE_DAMAGE_MULTIPLIER = 1.25F;
+    private static final float DIVE_KNOCKBACK = 1.8F;
+    private static final float PHASE_TWO_THRESHOLD = 0.70F;
+    private static final float PHASE_THREE_THRESHOLD = 0.35F;
+    private static final int PHASE_TRANSITION_TICKS = 30;
+    private static final int PHASE_TRANSITION_CLIP_TICKS = 20;
+    private static final double PHASE_SHOVE_RADIUS = 6.0D;
+    private static final float PHASE_SHOVE_STRENGTH = 1.4F;
+    private static final double FLY_SPEED_SCALE = 0.55D;
+    private static final double FLY_ACCELERATION = 0.045D;
+    private static final double FLY_ARRIVAL_RATE = 0.18D;
+    private static final float YAW_COMBAT_STEP = 8.0F;
+    private static final float YAW_COMMIT_STEP = 20.0F;
+    private static final float YAW_PATROL_STEP = 6.0F;
+    private static final float PITCH_STEP = 5.0F;
+    private static final float MAX_PITCH = 35.0F;
+    private static final int ORBIT_REFRESH_INTERVAL_TICKS = 5;
+    private static final double ORBIT_TANGENTIAL_RATIO = 0.7D;
+    private static final double ORBIT_MAX_RATE = 0.09D;
+    private static final double ORBIT_RATE_STEP = 0.004D;
+    private static final double ORBIT_RADIUS_STEP = 0.08D;
+    private static final double ORBIT_HEIGHT_STEP = 0.05D;
+    private static final double ORBIT_BOB = 0.5D;
+    private static final double ORBIT_MIN_HEIGHT = 0.6D;
+    private static final float ORBIT_FLIP_CHANCE = 0.25F;
+    private static final int ORBIT_STUCK_LIMIT = 30;
+    private static final double[] ORBIT_RADIUS_SCALES = {1.0D, 0.65D};
+    private static final double[] ORBIT_HEIGHT_OFFSETS = {0.0D, -1.2D, 1.5D};
+    private static final int SIGHT_CHECK_INTERVAL_TICKS = 5;
+    private static final int PURSUE_AFTER_UNSEEN_TICKS = 40;
+    private static final int DISENGAGE_AFTER_UNSEEN_TICKS = 240;
+    private static final int PATH_RETRY_TICKS = 20;
+    private static final int PATH_FAILED_RETRY_TICKS = 40;
+    private static final double TARGET_DROP_RANGE_SQR = 5184.0D;
+    private static final double SWIPE_BENEATH_RANGE_SQR = 16.0D;
+    private static final double SWIPE_BENEATH_BELOW = 4.0D;
+    private static final double SWIPE_BENEATH_ABOVE = 2.0D;
+    private static final int PATROL_RETARGET_TICKS = 60;
+    private static final int PATROL_FAILED_RETRY_TICKS = 20;
+    private static final int PATROL_GROUND_SCAN = 12;
+    private static final double RANGE_FALLOFF_RATIO = 1.67D;
+    private static final int RANGE_FEEDBACK_INTERVAL_TICKS = 20;
     private static final int COCOON_HIT_THRESHOLD = 5;
     private static final int COCOON_HIT_COOLDOWN_TICKS = 60;
     private static final int COCOON_HIT_ANIM_TICKS = 30;
@@ -104,10 +181,12 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final int GLIMMER_XP_REWARD = BASE_XP_REWARD * 5;
     private static final double GLIMMER_ABANDON_RANGE = 48.0D;
     private static final int GLIMMER_ABANDON_TICKS = 600;
+    private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
+            Identifier.fromNamespaceAndPath(com.craisinlord.antarchy.Antarchy.MODID, "entities/brutalfly_glimmer"));
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bossEvent =
-            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), this.getDisplayName(), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
+            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, this.getDisplayName(), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
 
     @Nullable
     private Vec3 patrolTarget;
@@ -115,13 +194,40 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     private int spitWindupTicks;
     private int spitCooldown = 50;
     private int meleeCooldown = 35;
+    private int diveCooldown = 80;
     private int deathAnimationTicks;
-    private int currentStrafeDuration = 24;
-    private int strafeTicks = this.currentStrafeDuration;
+    private int strafeTicks;
     private float orbitDirection = 1.0F;
+    private double orbitAngle;
+    private double orbitRate;
     private double currentStrafeRadius = 7.5D;
     private double currentFlightHeight = 4.0D;
-    private double currentStrafeAngleOffset = this.random.nextDouble() * (Math.PI * 2.0D);
+    private double wantedStrafeRadius = 7.5D;
+    private double wantedFlightHeight = 4.0D;
+    private int orbitTargetId = -1;
+    private int orbitStuckTicks;
+    @Nullable
+    private Vec3 orbitPoint;
+    private int noSightTicks;
+    private int pathRetryTicks;
+    private int patrolRetargetTicks;
+    private int nextPatrolSearchTick;
+    private boolean yawLocked;
+    private float lockedYaw;
+    @Nullable
+    private Vec3 swipeAnchor;
+    private int diveStage = DIVE_NONE;
+    private int diveStageTicks;
+    private int diveActiveTicks;
+    private double diveSpeed;
+    private boolean diveOvershooting;
+    private Vec3 diveStrikePoint = Vec3.ZERO;
+    private Vec3 diveOvershootPoint = Vec3.ZERO;
+    private Vec3 diveLastPosition = Vec3.ZERO;
+    private final Set<Integer> diveHits = new HashSet<>();
+    private int phaseStage;
+    private int phaseTransitionTicks;
+    private int lastRangeFeedbackTick = -RANGE_FEEDBACK_INTERVAL_TICKS;
     private boolean spawnedDeathButterflies;
 
     @Nullable
@@ -136,7 +242,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     public BrutalflyEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new FlyingMoveControl(this, 20, true);
+        this.moveControl = new BrutalflyMoveControl(this);
         this.xpReward = BASE_XP_REWARD;
     }
 
@@ -149,7 +255,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.brutalflyKnockbackResistance())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.brutalflyMovementSpeed())
                 .add(Attributes.FLYING_SPEED, AntarchySettings.brutalflyFlyingSpeed())
-                .add(Attributes.FOLLOW_RANGE, 48.0D);
+                .add(Attributes.FOLLOW_RANGE, 72.0D);
     }
 
     @Override
@@ -182,12 +288,26 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new BrutalflyHoverGoal(this));
-
         HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
         hurtByTargetGoal.setAlertOthers(BrutalflyEntity.class);
+        hurtByTargetGoal.setUnseenMemoryTicks(DISENGAGE_AFTER_UNSEEN_TICKS + 20);
         this.targetSelector.addGoal(1, hurtByTargetGoal);
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        NearestAttackableTargetGoal<Player> playerTargetGoal = new NearestAttackableTargetGoal<>(this, Player.class, true);
+        playerTargetGoal.setUnseenMemoryTicks(DISENGAGE_AFTER_UNSEEN_TICKS + 20);
+        this.targetSelector.addGoal(2, playerTargetGoal);
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (IS_COCOONED.equals(key)) {
+            this.refreshDimensions();
+        }
+    }
+
+    @Override
+    public boolean isInWall() {
+        return !this.isCocooned() && super.isInWall();
     }
 
     @Override
@@ -207,20 +327,28 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<BrutalflyEntity>("main_controller", 0, state -> state.controller().isPlayingTriggeredAnimation() ? PlayState.CONTINUE : switch (this.getAnimationState()) {
-            case ANIM_SPIT -> state.setAndContinue(SPIT_ANIM);
-            case ANIM_SWIPE -> state.setAndContinue(SWIPE_ANIM);
-            case ANIM_DEATH -> state.setAndContinue(DEATH_ANIM);
-            case ANIM_FLY -> state.setAndContinue(FLY_ANIM);
-            case ANIM_COCOON -> state.setAndContinue(COOCON_ANIM);
-            case ANIM_COCOON_HIT -> state.setAndContinue(COOCON_HIT_ANIM);
-            case ANIM_COCOON_IDLE -> state.setAndContinue(COOCON_IDLE_ANIM);
-            case ANIM_COCOON_HATCH -> state.setAndContinue(COOCON_HATCH_ANIM);
-            default -> state.setAndContinue(IDLE_ANIM);
+        controllers.add(new AnimationController<BrutalflyEntity>("main_controller", 0, state -> {
+            if (state.controller().isPlayingTriggeredAnimation()) {
+                return PlayState.CONTINUE;
+            }
+            int transitionTicks = this.isCocooned() ? 0 : 3;
+            if (state.controller().getTransitionTicks() != transitionTicks) {
+                state.controller().setTransitionTicks(transitionTicks);
+                return state.controller().getCurrentRawAnimation() == null ? PlayState.STOP : PlayState.CONTINUE;
+            }
+            return switch (this.getAnimationState()) {
+                case ANIM_SPIT -> state.setAndContinue(SPIT_ANIM);
+                case ANIM_SWIPE -> state.setAndContinue(SWIPE_ANIM);
+                case ANIM_DEATH -> state.setAndContinue(DEATH_ANIM);
+                case ANIM_FLY -> state.setAndContinue(FLY_ANIM);
+                case ANIM_COCOON -> state.setAndContinue(COOCON_ANIM);
+                case ANIM_COCOON_HIT -> state.setAndContinue(COOCON_HIT_ANIM);
+                case ANIM_COCOON_IDLE -> state.setAndContinue(COOCON_IDLE_ANIM);
+                case ANIM_COCOON_HATCH -> state.setAndContinue(COOCON_HATCH_ANIM);
+                default -> state.setAndContinue(IDLE_ANIM);
+            };
         })
                 .receiveTriggeredAnimations()
-                .triggerableAnim("spit", SPIT_ANIM)
-                .triggerableAnim("swipe", SWIPE_ANIM)
                 .triggerableAnim("death", DEATH_ANIM)
                 .triggerableAnim("Coocon", COOCON_ANIM)
                 .triggerableAnim("Coocon_hit", COOCON_HIT_ANIM)
@@ -239,7 +367,10 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         this.setNoGravity(true);
 
         if (this.level().isClientSide()) {
-            this.updateFlightRotation();
+            if (!this.isCocooned()) {
+                this.yBodyRot = this.getYRot();
+                this.yHeadRot = this.getYRot();
+            }
             return;
         }
 
@@ -271,31 +402,65 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         if (this.meleeCooldown > 0) {
             this.meleeCooldown--;
         }
+        if (this.diveCooldown > 0) {
+            this.diveCooldown--;
+        }
         if (this.postCocoonInvulnerableTicks > 0) {
             this.postCocoonInvulnerableTicks--;
         }
+
+        if (this.phaseTransitionTicks <= 0 && this.phaseStage < this.stageForHealth()) {
+            this.beginPhaseTransition();
+        }
+        if (this.phaseTransitionTicks > 0) {
+            this.tickPhaseTransition();
+            this.updateBaseAnimationState();
+            this.updateFlightRotation(this.getTarget());
+            return;
+        }
+
         if (this.spitWindupTicks > 0 && --this.spitWindupTicks == 0) {
             this.fireCurrentSpitPattern();
         }
 
         LivingEntity target = this.getTarget();
-        if ((target == null || !target.isAlive()) && this.tickCount % 10 == 0) {
+        if (target != null && !this.isValidCombatTarget(target)) {
+            this.setTarget(null);
+            target = null;
+        }
+        if (target == null && this.tickCount % 10 == 0) {
             Player nearbyPlayer = this.level().getNearestPlayer(this, 40.0D);
-            if (nearbyPlayer != null && this.canAttack(nearbyPlayer)
-                    && !nearbyPlayer.isCreative() && !nearbyPlayer.isSpectator()) {
+            if (nearbyPlayer != null && this.isValidCombatTarget(nearbyPlayer) && this.hasLineOfSight(nearbyPlayer)) {
                 this.setTarget(nearbyPlayer);
                 target = nearbyPlayer;
             }
         }
 
-        if (target != null && target.isAlive()) {
-            this.tickCombat(target);
+        if (this.diveStage != DIVE_NONE) {
+            this.tickDive(target);
+        } else if (this.getAnimationState() == ANIM_SWIPE && this.animationTicks > 0) {
+            this.tickSwipe(target);
         } else {
-            this.tickPatrol();
+            this.yawLocked = false;
+            this.swipeAnchor = null;
+            if (target != null) {
+                this.tickCombat(target);
+            } else {
+                this.resetPursuitState();
+                this.tickPatrol();
+            }
         }
 
         this.updateBaseAnimationState();
-        this.updateFlightRotation();
+        this.updateFlightRotation(target);
+    }
+
+    private boolean isValidCombatTarget(LivingEntity target) {
+        if (!target.isAlive() || target.level() != this.level() || !this.canAttack(target)
+                || this.distanceToSqr(target) > TARGET_DROP_RANGE_SQR) {
+            return false;
+        }
+        return !(target instanceof Player player) || (!player.isCreative() && !player.isSpectator());
     }
 
     private void tickCocoon() {
@@ -354,6 +519,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     private void finishHatch() {
         this.entityData.set(IS_COCOONED, false);
+        this.bossEvent.setVisible(true);
         this.isHatching = false;
         this.anchorPos = null;
         this.cocoonHits = 0;
@@ -372,6 +538,10 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         return base <= 0.0D ? 1.0F : (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) / base);
     }
 
+    public boolean isCocooned() {
+        return this.entityData.get(IS_COCOONED);
+    }
+
     @Override
     public boolean isGlimmerEcho() {
         return this.entityData.get(GLIMMER_ECHO);
@@ -384,6 +554,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         if (becameGlimmer) {
             this.spitCooldown = this.scaledCooldown(this.spitCooldown);
             this.meleeCooldown = this.scaledCooldown(this.meleeCooldown);
+            this.diveCooldown = this.scaledCooldown(this.diveCooldown);
         }
         if (glimmerEcho && this.isCocooned()) {
             this.setCocooned(false, null);
@@ -401,6 +572,15 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     @Override
     protected Component getTypeName() {
         return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.brutalfly.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected void dropFromLootTable(ServerLevel level, DamageSource damageSource, boolean causedByPlayer) {
+        if (!this.isGlimmerEcho()) {
+            super.dropFromLootTable(level, damageSource, causedByPlayer);
+            return;
+        }
+        this.dropFromLootTable(level, damageSource, causedByPlayer, GLIMMER_LOOT_TABLE);
     }
 
     private int scaledCooldown(int ticks) {
@@ -426,10 +606,6 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         return true;
     }
 
-    public boolean isCocooned() {
-        return this.entityData.get(IS_COCOONED);
-    }
-
     @Override
     public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
         if (isCocooned()) {
@@ -443,6 +619,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
             return;
         }
         this.entityData.set(IS_COCOONED, cocooned);
+        this.bossEvent.setVisible(!cocooned);
         this.anchorPos = anchor;
         this.refreshDimensions();
         if (cocooned) {
@@ -459,12 +636,13 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
             amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
         }
-        if (this.postCocoonInvulnerableTicks > 0) {
+        boolean bypassesInvulnerability = source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+        if (this.postCocoonInvulnerableTicks > 0 && !bypassesInvulnerability) {
             return false;
         }
 
-        if (this.isCocooned() && !this.isHatching) {
-            if (this.level().isClientSide() || this.cocoonHitCooldownTicks > 0) return false;
+        if (this.isCocooned() && !this.isHatching && !bypassesInvulnerability) {
+            if (this.level().isClientSide() || this.cocoonHitCooldownTicks > 0 || !(source.getEntity() instanceof LivingEntity)) return false;
             this.hurtTime = this.hurtDuration;
             this.cocoonHits++;
             this.cocoonHitCooldownTicks = COCOON_HIT_COOLDOWN_TICKS;
@@ -480,27 +658,129 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
             }
             return true;
         }
-        float preHealth = this.getHealth();
-        boolean hurt = super.hurtServer(level, source, amount);
-        if (hurt) {
-            BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
+        if (!bypassesInvulnerability) {
+            double fullRange = AntarchySettings.brutalflyDamageRange();
+            float rangeMultiplier = BossCombatUtil.damageRangeMultiplier(this, source, fullRange, fullRange * RANGE_FALLOFF_RATIO);
+            if (rangeMultiplier < 1.0F) {
+                this.playRangeResistFeedback();
+            }
+            if (rangeMultiplier <= 0.0F) {
+                return false;
+            }
+            amount *= rangeMultiplier;
         }
-        return hurt;
+        return super.hurtServer(level, source, amount);
+    }
+
+    private void playRangeResistFeedback() {
+        if (this.tickCount - this.lastRangeFeedbackTick < RANGE_FEEDBACK_INTERVAL_TICKS) {
+            return;
+        }
+        this.lastRangeFeedbackTick = this.tickCount;
+        this.playSound(SoundEvents.SHIELD_BLOCK.value(), 1.5F, 0.6F);
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.ENCHANTED_HIT), this.getX(), this.getY() + this.getBbHeight() * 0.6D, this.getZ(),
+                    10, this.getBbWidth() * 0.4D, this.getBbHeight() * 0.3D, this.getBbWidth() * 0.4D, 0.1D);
+        }
+    }
+
+    @Override
+    protected void actuallyHurt(ServerLevel level, DamageSource source, float amount) {
+        float preHealth = this.getHealth();
+        super.actuallyHurt(level, source, amount);
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) || this.phaseTransitionTicks > 0 || this.phaseStage >= 2) {
+            return;
+        }
+        float threshold = this.getMaxHealth() * (this.phaseStage == 0 ? PHASE_TWO_THRESHOLD : PHASE_THREE_THRESHOLD);
+        if (preHealth > threshold && this.getHealth() <= threshold) {
+            this.setHealth(threshold);
+            this.beginPhaseTransition();
+        }
     }
 
     @Override
     public boolean isInvulnerableTo(ServerLevel level, DamageSource source) {
-        if (this.postCocoonInvulnerableTicks > 0 || super.isInvulnerableTo(level, source)) {
+        if (super.isInvulnerableTo(level, source)) {
             return true;
         }
-        return BossCombatUtil.isOutOfDamageRange(this, AntarchySettings.brutalflyDamageRange());
+        return (this.postCocoonInvulnerableTicks > 0 || this.phaseTransitionTicks > 0)
+                && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+    }
+
+    private int stageForHealth() {
+        float healthRatio = this.getHealth() / this.getMaxHealth();
+        if (healthRatio < PHASE_THREE_THRESHOLD) {
+            return 2;
+        }
+        return healthRatio < PHASE_TWO_THRESHOLD ? 1 : 0;
+    }
+
+    private void beginPhaseTransition() {
+        this.phaseStage = Math.min(2, this.phaseStage + 1);
+        this.phaseTransitionTicks = PHASE_TRANSITION_TICKS;
+        this.cancelActions();
+        this.setAnimationState(ANIM_SPIT);
+        this.animationTicks = PHASE_TRANSITION_CLIP_TICKS;
+    }
+
+    private void cancelActions() {
+        this.diveStage = DIVE_NONE;
+        this.diveHits.clear();
+        this.yawLocked = false;
+        this.swipeAnchor = null;
+        this.spitWindupTicks = 0;
+        this.animationTicks = 0;
+        this.getNavigation().stop();
+    }
+
+    private void tickPhaseTransition() {
+        if (this.phaseTransitionTicks == PHASE_TRANSITION_TICKS) {
+            this.playSound(AntarchySoundEvents.BRUTALFLY_IDLE.get(), 3.0F, 0.6F);
+            this.playSound(SoundEvents.PHANTOM_SWOOP, 2.5F, 0.7F);
+            this.shoveNearbyEntities();
+        }
+        if (this.phaseTransitionTicks % 5 == 0 && this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.CLOUD), this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                    14, this.getBbWidth() * 0.7D, this.getBbHeight() * 0.5D, this.getBbWidth() * 0.7D, 0.06D);
+        }
+        this.phaseTransitionTicks--;
+        if (this.phaseTransitionTicks <= 0) {
+            this.spitCooldown = Math.max(this.spitCooldown, 20);
+            this.meleeCooldown = Math.max(this.meleeCooldown, 20);
+            this.diveCooldown = Math.min(this.diveCooldown, 40);
+        }
+    }
+
+    private void shoveNearbyEntities() {
+        AABB area = this.getBoundingBox().inflate(PHASE_SHOVE_RADIUS);
+        for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, area, this::isAttackableBySwing)) {
+            double dx = entity.getX() - this.getX();
+            double dz = entity.getZ() - this.getZ();
+            if (dx * dx + dz * dz > PHASE_SHOVE_RADIUS * PHASE_SHOVE_RADIUS || !this.hasLineOfSight(entity)) {
+                continue;
+            }
+            if (dx * dx + dz * dz < 1.0E-4D) {
+                dx = this.random.nextDouble() - 0.5D;
+                dz = this.random.nextDouble() - 0.5D;
+            }
+            entity.knockback(PHASE_SHOVE_STRENGTH, -dx, -dz);
+            entity.hurtMarked = true;
+        }
+    }
+
+    private boolean isAttackableBySwing(LivingEntity entity) {
+        if (!entity.isAlive() || entity == this || entity instanceof BrutalflyEntity) {
+            return false;
+        }
+        return !(entity instanceof Player player) || (!player.isCreative() && !player.isSpectator());
     }
 
     private void tickCombat(LivingEntity target) {
         FightPhase phase = this.getFightPhase();
+        this.updateTargetSight(target);
 
-        if (this.getAnimationState() == ANIM_SWIPE && this.animationTicks > 0) {
-            this.tickSwipe(target);
+        if (this.noSightTicks >= DISENGAGE_AFTER_UNSEEN_TICKS) {
+            this.disengage();
             return;
         }
 
@@ -509,10 +789,23 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
             return;
         }
 
+        if (this.noSightTicks >= PURSUE_AFTER_UNSEEN_TICKS) {
+            this.tickPursuit(target, phase);
+            return;
+        }
+
+        if (this.getNavigation().isInProgress()) {
+            this.getNavigation().stop();
+        }
         this.tickStrafeMovement(target, phase, phase.moveSpeed);
 
-        if (this.shouldSwipe(target, phase) && this.meleeCooldown <= 0) {
+        if (this.meleeCooldown <= 0 && this.shouldSwipe(target, phase)) {
             this.startSwipe();
+            return;
+        }
+
+        if (this.canStartDive(target)) {
+            this.startDive();
             return;
         }
 
@@ -521,65 +814,374 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
     }
 
+    private void updateTargetSight(LivingEntity target) {
+        if (target.getId() != this.orbitTargetId) {
+            this.orbitTargetId = target.getId();
+            this.noSightTicks = 0;
+            this.orbitPoint = null;
+            this.orbitRate = 0.0D;
+            this.orbitAngle = Math.atan2(this.getZ() - target.getZ(), this.getX() - target.getX());
+        }
+        if (this.tickCount % SIGHT_CHECK_INTERVAL_TICKS == 0) {
+            this.noSightTicks = this.hasLineOfSight(target) ? 0 : this.noSightTicks + SIGHT_CHECK_INTERVAL_TICKS;
+        }
+    }
+
+    private void tickPursuit(LivingEntity target, FightPhase phase) {
+        if (--this.pathRetryTicks <= 0) {
+            boolean started = this.getNavigation().moveTo(target, phase.moveSpeed);
+            this.pathRetryTicks = started ? PATH_RETRY_TICKS : PATH_FAILED_RETRY_TICKS;
+        }
+        if (!this.getNavigation().isInProgress()) {
+            this.tickStrafeMovement(target, phase, phase.moveSpeed);
+        }
+    }
+
+    private void disengage() {
+        this.playSound(SoundEvents.PHANTOM_AMBIENT, 2.5F, 0.7F);
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.CLOUD), this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                    12, this.getBbWidth() * 0.5D, this.getBbHeight() * 0.4D, this.getBbWidth() * 0.5D, 0.04D);
+        }
+        this.setTarget(null);
+        this.getNavigation().stop();
+        this.patrolTarget = null;
+        this.resetPursuitState();
+    }
+
+    private void resetPursuitState() {
+        this.noSightTicks = 0;
+        this.pathRetryTicks = 0;
+        this.orbitTargetId = -1;
+        this.orbitPoint = null;
+        this.orbitStuckTicks = 0;
+    }
+
     private void tickPatrol() {
-        if (this.patrolTarget == null || this.distanceToSqr(this.patrolTarget) < 4.0D || this.tickCount % 40 == 0) {
-            double targetX = this.getX() + this.random.nextDouble() * 14.0D - 7.0D;
-            double targetZ = this.getZ() + this.random.nextDouble() * 14.0D - 7.0D;
-            double targetY = this.getTerrainFollowY(targetX, targetZ, 3.5D, 5.0D);
-            this.patrolTarget = new Vec3(targetX, targetY, targetZ);
+        Vec3 destination = this.patrolTarget;
+        if (destination == null || this.distanceToSqr(destination) < 4.0D || --this.patrolRetargetTicks <= 0) {
+            destination = null;
+            this.patrolTarget = null;
+            if (this.tickCount >= this.nextPatrolSearchTick) {
+                destination = this.findPatrolPoint();
+                this.patrolTarget = destination;
+                this.patrolRetargetTicks = PATROL_RETARGET_TICKS;
+                if (destination == null) {
+                    this.nextPatrolSearchTick = this.tickCount + PATROL_FAILED_RETRY_TICKS;
+                }
+            }
         }
 
-        this.getMoveControl().setWantedPosition(this.patrolTarget.x, this.patrolTarget.y, this.patrolTarget.z, 0.8D);
+        if (destination != null) {
+            this.getMoveControl().setWantedPosition(destination.x, destination.y, destination.z, 0.8D);
+        }
+    }
+
+    @Nullable
+    private Vec3 findPatrolPoint() {
+        double x = this.getX() + this.random.nextDouble() * 14.0D - 7.0D;
+        double z = this.getZ() + this.random.nextDouble() * 14.0D - 7.0D;
+        BlockPos.MutableBlockPos cursor = BlockPos.containing(x, this.getY(), z).mutable();
+        if (!this.level().hasChunkAt(cursor)) {
+            return null;
+        }
+        double groundY = this.getY() - 3.0D;
+        for (int i = 0; i < PATROL_GROUND_SCAN; i++) {
+            if (!this.level().getBlockState(cursor).getCollisionShape(this.level(), cursor).isEmpty()) {
+                groundY = cursor.getY() + 1.0D;
+                break;
+            }
+            cursor.move(0, -1, 0);
+        }
+        double preferredY = groundY + 3.5D + this.random.nextDouble() * 1.5D;
+        if (this.isFlightPointClear(x, preferredY, z)) {
+            return new Vec3(x, preferredY, z);
+        }
+        double lowY = groundY + 1.5D;
+        return this.isFlightPointClear(x, lowY, z) ? new Vec3(x, lowY, z) : null;
+    }
+
+    private boolean isFlightPointClear(double x, double y, double z) {
+        if (!this.level().hasChunkAt(BlockPos.containing(x, y, z))) {
+            return false;
+        }
+        AABB box = this.getBoundingBox().move(x - this.getX(), y - this.getY(), z - this.getZ());
+        return this.level().noCollision(this, box);
+    }
+
+    private boolean isFlightRouteClear(Vec3 from, Vec3 to, double sampleSpacing) {
+        double distance = from.distanceTo(to);
+        int samples = Math.max(1, Math.min(14, Mth.ceil(distance / sampleSpacing)));
+        for (int i = 1; i <= samples; i++) {
+            Vec3 sample = from.lerp(to, i / (double) samples);
+            if (!this.isFlightPointClear(sample.x, sample.y, sample.z)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void tickStrafeMovement(LivingEntity target, FightPhase phase, double speed) {
-        if (this.strafeTicks <= 0) {
+        if (target.getId() != this.orbitTargetId) {
+            this.updateTargetSight(target);
+        }
+        if (--this.strafeTicks <= 0) {
             this.startNewStrafeCycle(phase);
         }
 
-        this.strafeTicks--;
-        Vec3 strafePoint = this.getStrafePoint(target);
-        this.getMoveControl().setWantedPosition(strafePoint.x, strafePoint.y, strafePoint.z, speed);
+        this.currentStrafeRadius = Mth.approach((float) this.currentStrafeRadius, (float) this.wantedStrafeRadius, (float) ORBIT_RADIUS_STEP);
+        this.currentFlightHeight = Mth.approach((float) this.currentFlightHeight, (float) this.wantedFlightHeight, (float) ORBIT_HEIGHT_STEP);
+        double tangentialSpeed = this.flightTopSpeed(speed) * ORBIT_TANGENTIAL_RATIO;
+        double wantedRate = this.orbitDirection * Math.min(ORBIT_MAX_RATE, tangentialSpeed / Math.max(1.0D, this.currentStrafeRadius));
+        this.orbitRate = Mth.approach((float) this.orbitRate, (float) wantedRate, (float) ORBIT_RATE_STEP);
+        this.orbitAngle += this.orbitRate;
 
-        if (this.random.nextFloat() < 0.02F) {
+        if ((this.horizontalCollision || (this.verticalCollision && !this.onGround())) && this.getDeltaMovement().lengthSqr() < 0.04D) {
+            this.orbitStuckTicks += 2;
+            if (this.orbitStuckTicks >= ORBIT_STUCK_LIMIT) {
+                this.orbitDirection *= -1.0F;
+                this.orbitStuckTicks = 0;
+                this.orbitPoint = null;
+            }
+        } else if (this.orbitStuckTicks > 0) {
+            this.orbitStuckTicks--;
+        }
+
+        if (this.orbitPoint == null || this.tickCount % ORBIT_REFRESH_INTERVAL_TICKS == 0) {
+            this.orbitPoint = this.findOrbitPoint(target);
+        }
+        Vec3 point = this.orbitPoint;
+        if (point != null) {
+            this.getMoveControl().setWantedPosition(point.x, point.y, point.z, speed);
+        } else {
+            this.getMoveControl().setWantedPosition(target.getX(), target.getY() + this.currentFlightHeight, target.getZ(), speed);
+        }
+    }
+
+    @Nullable
+    private Vec3 findOrbitPoint(LivingEntity target) {
+        Vec3 from = this.position();
+        Vec3 eye = target.getEyePosition();
+        Vec3 visibleless = null;
+        double bob = Mth.sin((float) (this.orbitAngle * 1.5D)) * ORBIT_BOB;
+        for (double radiusScale : ORBIT_RADIUS_SCALES) {
+            double radius = this.currentStrafeRadius * radiusScale;
+            double x = target.getX() + Math.cos(this.orbitAngle) * radius;
+            double z = target.getZ() + Math.sin(this.orbitAngle) * radius;
+            for (double heightOffset : ORBIT_HEIGHT_OFFSETS) {
+                double y = target.getY() + Math.max(ORBIT_MIN_HEIGHT, this.currentFlightHeight + heightOffset + bob);
+                if (!this.isFlightPointClear(x, y, z)) {
+                    continue;
+                }
+                Vec3 candidate = new Vec3(x, y, z);
+                if (!this.isFlightRouteClear(from, candidate, 4.0D)) {
+                    continue;
+                }
+                if (this.hasClearSightFrom(candidate, eye)) {
+                    return candidate;
+                }
+                if (visibleless == null) {
+                    visibleless = candidate;
+                }
+            }
+        }
+        return visibleless;
+    }
+
+    private boolean hasClearSightFrom(Vec3 bodyPosition, Vec3 eye) {
+        Vec3 viewpoint = bodyPosition.add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
+        return this.level().clip(new ClipContext(viewpoint, eye, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType() == HitResult.Type.MISS;
+    }
+
+    private void startNewStrafeCycle(FightPhase phase) {
+        this.strafeTicks = phase.minStrafeTicks + this.random.nextInt(phase.maxStrafeTicks - phase.minStrafeTicks + 1);
+        this.wantedStrafeRadius = phase.minRadius + this.random.nextDouble() * (phase.maxRadius - phase.minRadius);
+        this.wantedFlightHeight = phase.minHeight + this.random.nextDouble() * (phase.maxHeight - phase.minHeight);
+        if (this.random.nextFloat() < ORBIT_FLIP_CHANCE) {
             this.orbitDirection *= -1.0F;
         }
     }
 
-    private Vec3 getStrafePoint(LivingEntity target) {
-        double angle = this.tickCount * 0.13D * this.orbitDirection + this.currentStrafeAngleOffset;
-        double x = target.getX() + Math.cos(angle) * this.currentStrafeRadius;
-        double z = target.getZ() + Math.sin(angle) * this.currentStrafeRadius;
-        double y = this.getTerrainFollowY(
-                x,
-                z,
-                this.currentFlightHeight + Mth.sin((float) (angle * 1.5D)) * 0.7D,
-                this.currentFlightHeight + 1.1D
-        );
-        return new Vec3(x, y, z);
-    }
-
-    private double getTerrainFollowY(double x, double z, double minOffset, double maxOffset) {
-        int groundY = this.level().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mth.floor(x), Mth.floor(z));
-        double clampedMinOffset = Math.max(2.75D, minOffset);
-        double clampedMaxOffset = Math.max(clampedMinOffset + 0.8D, maxOffset);
-        double desiredY = groundY + clampedMinOffset + this.random.nextDouble() * (clampedMaxOffset - clampedMinOffset);
-        return Math.min(desiredY, groundY + 7.0D);
-    }
-
-    private void startNewStrafeCycle(FightPhase phase) {
-        this.currentStrafeDuration = phase.minStrafeTicks + this.random.nextInt(phase.maxStrafeTicks - phase.minStrafeTicks + 1);
-        this.strafeTicks = this.currentStrafeDuration;
-        this.currentStrafeRadius = phase.minRadius + this.random.nextDouble() * (phase.maxRadius - phase.minRadius);
-        this.currentFlightHeight = phase.minHeight + this.random.nextDouble() * (phase.maxHeight - phase.minHeight);
-        this.currentStrafeAngleOffset = this.random.nextDouble() * (Math.PI * 2.0D);
+    private double flightTopSpeed(double speedModifier) {
+        return this.getAttributeValue(Attributes.FLYING_SPEED) * speedModifier * FLY_SPEED_SCALE;
     }
 
     private boolean canStartSpit(LivingEntity target) {
-        return this.spitCooldown <= 0
-                && this.hasLineOfSight(target)
-                && this.distanceToSqr(target) >= 16.0D
-                && this.distanceToSqr(target) <= 400.0D;
+        if (this.spitCooldown > 0 || this.noSightTicks > 0) {
+            return false;
+        }
+        double distanceSqr = this.distanceToSqr(target);
+        if (distanceSqr < 16.0D || distanceSqr > 400.0D || !this.hasLineOfSight(target)) {
+            return false;
+        }
+        BlockPos muzzle = BlockPos.containing(this.getSpitOrigin());
+        return this.level().hasChunkAt(muzzle) && this.level().getBlockState(muzzle).getCollisionShape(this.level(), muzzle).isEmpty();
+    }
+
+    private boolean canStartDive(LivingEntity target) {
+        if (this.diveCooldown > 0 || this.noSightTicks > 0) {
+            return false;
+        }
+        double dx = target.getX() - this.getX();
+        double dz = target.getZ() - this.getZ();
+        double horizontalSqr = dx * dx + dz * dz;
+        if (horizontalSqr < DIVE_MIN_RANGE_SQR || horizontalSqr > DIVE_MAX_RANGE_SQR
+                || Math.abs(target.getY() - this.getY()) > DIVE_MAX_VERTICAL) {
+            return false;
+        }
+        Vec3 strike = target.position().add(0.0D, DIVE_STRIKE_HEIGHT, 0.0D);
+        if (!this.hasLineOfSight(target) || !this.isFlightRouteClear(this.position(), strike, 1.5D)) {
+            this.diveCooldown = DIVE_RETRY_TICKS;
+            return false;
+        }
+        return true;
+    }
+
+    private void startDive() {
+        this.diveStage = DIVE_TELEGRAPH;
+        this.diveStageTicks = DIVE_TELEGRAPH_TICKS;
+        this.diveCooldown = this.scaledCooldown(this.getFightPhase().nextDiveCooldown(this.random)) + DIVE_TELEGRAPH_TICKS + DIVE_MAX_TICKS;
+        this.diveHits.clear();
+        this.diveOvershooting = false;
+        this.getNavigation().stop();
+        this.playSound(SoundEvents.PHANTOM_SWOOP, 3.0F, 0.8F);
+    }
+
+    private void tickDive(@Nullable LivingEntity target) {
+        switch (this.diveStage) {
+            case DIVE_TELEGRAPH -> this.tickDiveTelegraph(target);
+            case DIVE_ACTIVE -> this.tickDiveActive();
+            default -> this.tickDiveRecovery();
+        }
+    }
+
+    private void tickDiveTelegraph(@Nullable LivingEntity target) {
+        this.diveStageTicks--;
+        if (this.diveStageTicks >= DIVE_LOCK_REMAINING && target == null) {
+            this.cancelDive();
+            return;
+        }
+        if (this.diveStageTicks == DIVE_LOCK_REMAINING && target != null) {
+            Vec3 strike = target.position().add(0.0D, DIVE_STRIKE_HEIGHT, 0.0D);
+            if (!this.isFlightRouteClear(this.position(), strike, 1.5D)) {
+                this.cancelDive();
+                return;
+            }
+            this.diveStrikePoint = strike;
+            this.yawLocked = true;
+            this.lockedYaw = this.yawTowards(strike);
+            Vec3 horizontal = new Vec3(strike.x - this.getX(), 0.0D, strike.z - this.getZ());
+            Vec3 heading = horizontal.lengthSqr() < 1.0E-4D ? this.getViewVector(0.0F) : horizontal.normalize();
+            this.diveOvershootPoint = strike.add(heading.x * DIVE_OVERSHOOT, DIVE_OVERSHOOT_RISE, heading.z * DIVE_OVERSHOOT);
+            this.playSound(SoundEvents.PHANTOM_BITE, 2.0F, 0.7F);
+        }
+        if (this.diveStageTicks % 4 == 0 && this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.CLOUD), this.getX(), this.getY() + this.getBbHeight() * 0.3D, this.getZ(),
+                    6, this.getBbWidth() * 0.5D, 0.2D, this.getBbWidth() * 0.5D, 0.02D);
+        }
+        if (this.diveStageTicks <= 0) {
+            this.diveStage = DIVE_ACTIVE;
+            this.diveActiveTicks = 0;
+            this.diveLastPosition = this.position();
+            double distance = this.position().distanceTo(this.diveStrikePoint);
+            this.diveSpeed = Mth.clamp(distance / DIVE_STRIKE_TICKS, DIVE_MIN_SPEED, DIVE_MAX_SPEED);
+            this.setAnimationState(ANIM_SWIPE);
+            this.animationTicks = SWIPE_TICKS;
+            return;
+        }
+        if (this.isFlightPointClear(this.getX(), this.getY() + 1.0D, this.getZ())) {
+            this.getMoveControl().setWantedPosition(this.getX(), this.getY() + 1.0D, this.getZ(), 0.3D);
+        }
+    }
+
+    private void cancelDive() {
+        this.diveStage = DIVE_NONE;
+        this.yawLocked = false;
+        this.diveCooldown = Math.max(this.diveCooldown - DIVE_MAX_TICKS, DIVE_CANCEL_COOLDOWN_TICKS);
+    }
+
+    private void tickDiveActive() {
+        this.diveActiveTicks++;
+        Vec3 position = this.position();
+        double moved = position.distanceTo(this.diveLastPosition);
+        if (this.diveActiveTicks > 2 && moved < this.diveSpeed * DIVE_BLOCKED_MOVE_RATIO) {
+            this.finishDive(true);
+            return;
+        }
+        Vec3 sweep = position.subtract(this.diveLastPosition);
+        this.diveLastPosition = position;
+
+        Vec3 destination = this.diveOvershooting ? this.diveOvershootPoint : this.diveStrikePoint;
+        Vec3 toDestination = destination.subtract(position);
+        double remaining = toDestination.length();
+        if (!this.diveOvershooting && remaining <= this.diveSpeed * 1.2D) {
+            this.diveOvershooting = true;
+            destination = this.diveOvershootPoint;
+            toDestination = destination.subtract(position);
+            remaining = toDestination.length();
+        }
+        if (this.diveActiveTicks >= DIVE_FIRST_CONTACT_TICK) {
+            this.performDiveContact(sweep);
+        }
+        if ((this.diveOvershooting && remaining <= this.diveSpeed) || this.diveActiveTicks >= DIVE_MAX_TICKS) {
+            this.finishDive(false);
+            return;
+        }
+        this.setDeltaMovement(toDestination.normalize().scale(this.diveSpeed));
+    }
+
+    private void performDiveContact(Vec3 sweep) {
+        AABB swept = this.getBoundingBox().expandTowards(sweep.reverse()).inflate(0.8D, 0.4D, 0.8D);
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * DIVE_DAMAGE_MULTIPLIER;
+        boolean finalPhase = this.getFightPhase() == FightPhase.PHASE_THREE;
+        Vec3 heading = this.getDeltaMovement();
+        for (LivingEntity target : this.level().getEntitiesOfClass(LivingEntity.class, swept, this::isAttackableBySwing)) {
+            if (!this.diveHits.add(target.getId())) {
+                continue;
+            }
+            if (!(this.level() instanceof ServerLevel serverLevel) || !target.hurtServer(serverLevel, this.damageSources().mobAttack(this), damage)) {
+                continue;
+            }
+            if (finalPhase) {
+                target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1, false, true));
+            }
+            target.knockback(DIVE_KNOCKBACK, -heading.x, -heading.z);
+            target.setDeltaMovement(target.getDeltaMovement().add(GravityRotationUtil.vecPlayerToWorld(0.0D, 0.3D, 0.0D, GravityApi.getGravityDirection(this))));
+            this.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.6F, 0.7F);
+        }
+    }
+
+    private void finishDive(boolean hitTerrain) {
+        this.diveStage = DIVE_RECOVERY;
+        this.diveStageTicks = hitTerrain ? DIVE_STAGGER_TICKS : DIVE_RECOVERY_TICKS;
+        this.diveHits.clear();
+        Vec3 velocity = this.getDeltaMovement();
+        this.setDeltaMovement(velocity.scale(hitTerrain ? 0.1D : 0.45D));
+        if (hitTerrain) {
+            this.playSound(SoundEvents.PHANTOM_HURT, 2.5F, 0.6F);
+            if (this.level() instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.POOF), this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                        16, this.getBbWidth() * 0.6D, this.getBbHeight() * 0.4D, this.getBbWidth() * 0.6D, 0.05D);
+            }
+        }
+    }
+
+    private void tickDiveRecovery() {
+        if (--this.diveStageTicks <= 0) {
+            this.diveStage = DIVE_NONE;
+            this.yawLocked = false;
+            this.spitCooldown = Math.max(this.spitCooldown, 10);
+            LivingEntity target = this.getTarget();
+            if (target != null) {
+                this.orbitAngle = Math.atan2(this.getZ() - target.getZ(), this.getX() - target.getX());
+                this.orbitRate = 0.0D;
+                this.orbitPoint = null;
+            }
+            return;
+        }
+        if (this.diveStageTicks <= DIVE_RECOVERY_TICKS && this.isFlightPointClear(this.getX(), this.getY() + 0.6D, this.getZ())) {
+            this.getMoveControl().setWantedPosition(this.getX(), this.getY() + 0.6D, this.getZ(), 0.3D);
+        }
     }
 
     private void startSpit() {
@@ -678,24 +1280,47 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     private boolean shouldSwipe(LivingEntity target, FightPhase phase) {
-        double horizontalDistanceSqr = new Vec3(target.getX() - this.getX(), 0.0D, target.getZ() - this.getZ()).lengthSqr();
         Vec3 localDelta = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), GravityApi.getGravityDirection(this));
-        horizontalDistanceSqr = new Vec3(localDelta.x, 0.0D, localDelta.z).lengthSqr();
-        boolean beneathBoss = horizontalDistanceSqr <= 16.0D && localDelta.y <= 2.0D;
-        return beneathBoss || this.distanceToSqr(target) <= phase.swipeRangeSqr;
+        double horizontalDistanceSqr = new Vec3(localDelta.x, 0.0D, localDelta.z).lengthSqr();
+        boolean beneathBoss = horizontalDistanceSqr <= SWIPE_BENEATH_RANGE_SQR
+                && localDelta.y >= -SWIPE_BENEATH_BELOW
+                && localDelta.y <= SWIPE_BENEATH_ABOVE;
+        if (!beneathBoss && this.distanceToSqr(target) > phase.swipeRangeSqr) {
+            return false;
+        }
+        return Math.abs(Mth.degreesDifference(this.getYRot(), this.yawTowards(target.position()))) <= SWIPE_MAX_START_YAW_ERROR
+                && this.hasLineOfSight(target);
+    }
+
+    private float yawTowards(Vec3 point) {
+        return (float) (Mth.atan2(point.z - this.getZ(), point.x - this.getX()) * (180.0F / Math.PI)) - 90.0F;
     }
 
     private void startSwipe() {
         this.setAnimationState(ANIM_SWIPE);
         this.animationTicks = SWIPE_TICKS;
-        this.meleeCooldown = this.scaledCooldown(this.getFightPhase().nextMeleeCooldown(this.random));
+        this.meleeCooldown = SWIPE_TICKS + this.scaledCooldown(this.getFightPhase().nextMeleeCooldown(this.random));
+        this.swipeAnchor = null;
+        this.getNavigation().stop();
     }
 
-    private void tickSwipe(LivingEntity target) {
-        Vec3 divePoint = target.position().add(GravityRotationUtil.vecPlayerToWorld(0.0D, 1.0D, 0.0D, GravityApi.getGravityDirection(this)));
-        this.getMoveControl().setWantedPosition(divePoint.x, divePoint.y, divePoint.z, 1.45D);
+    private void tickSwipe(@Nullable LivingEntity target) {
+        int elapsed = SWIPE_TICKS - this.animationTicks;
+        if (elapsed == SWIPE_LOCK_ELAPSED) {
+            this.lockedYaw = target != null ? this.yawTowards(target.position()) : this.getYRot();
+            this.yawLocked = true;
+            Vec3 heading = Vec3.directionFromRotation(0.0F, this.lockedYaw);
+            double lift = target != null ? Mth.clamp(target.getY() - this.getY(), -1.5D, 1.5D) : 0.0D;
+            Vec3 anchor = this.position().add(heading.x * SWIPE_LUNGE_DISTANCE, lift, heading.z * SWIPE_LUNGE_DISTANCE);
+            this.swipeAnchor = this.isFlightPointClear(anchor.x, anchor.y, anchor.z) ? anchor : null;
+        }
 
-        if (this.animationTicks == 8) {
+        Vec3 anchor = this.swipeAnchor;
+        if (anchor != null && elapsed >= SWIPE_LOCK_ELAPSED && elapsed < SWIPE_LUNGE_END_ELAPSED) {
+            this.getMoveControl().setWantedPosition(anchor.x, anchor.y, anchor.z, 1.45D);
+        }
+
+        if (elapsed == SWIPE_HIT_ELAPSED) {
             this.performSwipeHit();
         }
     }
@@ -703,18 +1328,27 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     private void performSwipeHit() {
         float swipeDamage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         boolean finalPhase = this.getFightPhase() == FightPhase.PHASE_THREE;
-        AABB attackBox = this.getBoundingBox().inflate(4.8D, 2.4D, 4.8D).expandTowards(0.0D, -2.5D, 0.0D);
-        for (LivingEntity target : this.level().getEntitiesOfClass(
-                LivingEntity.class,
-                attackBox,
-                entity -> entity.isAlive() && entity != this
-        )) {
-            if (!this.hasLineOfSight(target)) {
+        Vec3 forward = Vec3.directionFromRotation(0.0F, this.yawLocked ? this.lockedYaw : this.getYRot());
+        AABB attackBox = this.getBoundingBox().inflate(SWIPE_REACH, SWIPE_REACH_BELOW, SWIPE_REACH);
+        this.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.6F, 0.8F);
+        for (LivingEntity target : this.level().getEntitiesOfClass(LivingEntity.class, attackBox, this::isAttackableBySwing)) {
+            double offsetX = target.getX() - this.getX();
+            double offsetZ = target.getZ() - this.getZ();
+            double horizontal = Math.sqrt(offsetX * offsetX + offsetZ * offsetZ);
+            if (horizontal - target.getBbWidth() * 0.5D > SWIPE_REACH) {
+                continue;
+            }
+            if (horizontal > 1.0E-3D && (offsetX * forward.x + offsetZ * forward.z) / horizontal < SWIPE_ARC_COS) {
+                continue;
+            }
+            if (target.getBoundingBox().maxY < this.getY() - SWIPE_REACH_BELOW
+                    || target.getBoundingBox().minY > this.getBoundingBox().maxY + SWIPE_REACH_ABOVE
+                    || !this.hasLineOfSight(target)) {
                 continue;
             }
 
-            if (this.level() instanceof ServerLevel serverLevel) {
-                target.hurtServer(serverLevel, this.damageSources().mobAttack(this), swipeDamage);
+            if (!(this.level() instanceof ServerLevel serverLevel) || !target.hurtServer(serverLevel, this.damageSources().mobAttack(this), swipeDamage)) {
+                continue;
             }
             if (finalPhase) {
                 target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1, false, true));
@@ -732,14 +1366,11 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     private FightPhase getFightPhase() {
-        float healthRatio = this.getHealth() / this.getMaxHealth();
-        if (healthRatio > 0.70F) {
-            return FightPhase.PHASE_ONE;
-        }
-        if (healthRatio > 0.35F) {
-            return FightPhase.PHASE_TWO;
-        }
-        return FightPhase.PHASE_THREE;
+        return switch (this.phaseStage) {
+            case 0 -> FightPhase.PHASE_ONE;
+            case 1 -> FightPhase.PHASE_TWO;
+            default -> FightPhase.PHASE_THREE;
+        };
     }
 
     private int getAnimationState() {
@@ -751,8 +1382,6 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         if (previous != animationState) {
             this.entityData.set(ANIMATION_STATE, animationState);
             String trigger = switch (animationState) {
-                case ANIM_SPIT -> "spit";
-                case ANIM_SWIPE -> "swipe";
                 case ANIM_DEATH -> "death";
                 case ANIM_COCOON -> "Coocon";
                 case ANIM_COCOON_HIT -> "Coocon_hit";
@@ -765,6 +1394,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
             }
             if (previous == ANIM_COCOON_IDLE && animationState != ANIM_COCOON_IDLE) {
                 this.stopTriggeredAnim("main_controller", "Coocon_idle");
+            }
+            if (previous == ANIM_COCOON_HATCH && animationState != ANIM_COCOON_HATCH) {
+                this.stopTriggeredAnim("main_controller", "Coocon_hatch");
             }
         }
     }
@@ -786,24 +1418,35 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
     }
 
-    private void updateFlightRotation() {
+    private void updateFlightRotation(@Nullable LivingEntity target) {
         Vec3 movement = this.getDeltaMovement();
-        if (movement.lengthSqr() < 1.0E-5D) {
-            return;
+        float yaw = this.getYRot();
+        if (this.yawLocked) {
+            yaw = Mth.approachDegrees(yaw, this.lockedYaw, YAW_COMMIT_STEP);
+        } else if (target != null) {
+            yaw = Mth.approachDegrees(yaw, this.yawTowards(target.position()), YAW_COMBAT_STEP);
+        } else if (movement.horizontalDistanceSqr() > 1.0E-3D) {
+            float travelYaw = (float) (Mth.atan2(movement.z, movement.x) * (180.0F / Math.PI)) - 90.0F;
+            yaw = Mth.approachDegrees(yaw, travelYaw, YAW_PATROL_STEP);
         }
+        this.setYRot(yaw);
+        this.yBodyRot = yaw;
+        this.yHeadRot = yaw;
 
-        double horizontal = Math.sqrt(movement.x * movement.x + movement.z * movement.z);
-        this.setYRot((float) (Mth.atan2(movement.z, movement.x) * (180.0F / Math.PI)) - 90.0F);
-        this.setXRot((float) (-(Mth.atan2(movement.y, horizontal) * (180.0F / Math.PI))));
-        this.yBodyRot = this.getYRot();
-        this.yHeadRot = this.getYRot();
+        float travelPitch = movement.lengthSqr() < 4.0E-4D
+                ? 0.0F
+                : (float) (-(Mth.atan2(movement.y, movement.horizontalDistance()) * (180.0F / Math.PI)));
+        this.setXRot(Mth.approachDegrees(this.getXRot(), Mth.clamp(travelPitch, -MAX_PITCH, MAX_PITCH), PITCH_STEP));
     }
 
     @Override
     protected void tickDeath() {
         this.deathAnimationTicks++;
-        this.setAnimationState(ANIM_DEATH);
         this.setDeltaMovement(Vec3.ZERO);
+        if (this.level().isClientSide()) {
+            return;
+        }
+        this.setAnimationState(ANIM_DEATH);
 
         if (!this.spawnedDeathButterflies && this.deathAnimationTicks >= DEATH_ANIM_TICKS - 10) {
             this.spawnDeathButterflies();
@@ -811,6 +1454,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
 
         if (this.deathAnimationTicks >= DEATH_ANIM_TICKS) {
+            this.level().broadcastEntityEvent(this, (byte) 60);
             this.remove(Entity.RemovalReason.KILLED);
             this.gameEvent(GameEvent.ENTITY_DIE);
         }
@@ -874,12 +1518,18 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public void addAdditionalSaveData(ValueOutput tag) {
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         tag.putBoolean("IsCocooned", this.isCocooned());
         tag.putInt("CocoonHits", this.cocoonHits);
         tag.putInt("CocoonHitCooldown", this.cocoonHitCooldownTicks);
+        tag.putBoolean("IsHatching", this.isHatching);
+        tag.putBoolean("PendingHatchAnim", this.pendingHatchAnim);
+        tag.putInt("CocoonAnimTicks", this.cocoonAnimTicks);
+        tag.putInt("PostCocoonInvulnerableTicks", this.postCocoonInvulnerableTicks);
+        tag.putInt("PhaseStage", this.phaseStage);
+        tag.putInt("PhaseTransitionTicks", this.phaseTransitionTicks);
         if (this.anchorPos != null) {
             tag.putInt("AnchorX", this.anchorPos.getX());
             tag.putInt("AnchorY", this.anchorPos.getY());
@@ -888,10 +1538,13 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public void readAdditionalSaveData(ValueInput tag) {
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
         this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
-        if (tag.getBooleanOr("IsCocooned", false)) {
+        this.phaseStage = tag.getInt("PhaseStage").isPresent() ? Mth.clamp(tag.getIntOr("PhaseStage", 0), 0, 2) : this.stageForHealth();
+        this.phaseTransitionTicks = Mth.clamp(tag.getIntOr("PhaseTransitionTicks", 0), 0, PHASE_TRANSITION_TICKS);
+        this.postCocoonInvulnerableTicks = Math.max(0, tag.getIntOr("PostCocoonInvulnerableTicks", 0));
+        if (tag.getBooleanOr("IsCocooned", false) && !this.isGlimmerEcho()) {
             BlockPos anchor = null;
             if (tag.getInt("AnchorX").isPresent()) {
                 anchor = new BlockPos(tag.getIntOr("AnchorX", 0), tag.getIntOr("AnchorY", 0), tag.getIntOr("AnchorZ", 0));
@@ -899,6 +1552,12 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
             this.setCocooned(true, anchor);
             this.cocoonHits = tag.getIntOr("CocoonHits", 0);
             this.cocoonHitCooldownTicks = tag.getIntOr("CocoonHitCooldown", 0);
+            if (tag.getBooleanOr("IsHatching", false)) {
+                this.isHatching = true;
+                this.pendingHatchAnim = tag.getBooleanOr("PendingHatchAnim", false);
+                this.cocoonAnimTicks = Math.max(0, tag.getIntOr("CocoonAnimTicks", 0));
+                this.setAnimationState(this.pendingHatchAnim ? ANIM_COCOON_HIT : ANIM_COCOON_HATCH);
+            }
         }
     }
 
@@ -962,32 +1621,51 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
                 case PHASE_THREE -> 20 + random.nextInt(7);
             };
         }
+
+        int nextDiveCooldown(RandomSource random) {
+            return switch (this) {
+                case PHASE_ONE -> 180 + random.nextInt(61);
+                case PHASE_TWO -> 130 + random.nextInt(41);
+                case PHASE_THREE -> 90 + random.nextInt(31);
+            };
+        }
     }
 
-    private static final class BrutalflyHoverGoal extends Goal {
+    private static final class BrutalflyMoveControl extends MoveControl {
         private final BrutalflyEntity brutalfly;
 
-        private BrutalflyHoverGoal(BrutalflyEntity brutalfly) {
+        private BrutalflyMoveControl(BrutalflyEntity brutalfly) {
+            super(brutalfly);
             this.brutalfly = brutalfly;
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-        }
-
-        @Override
-        public boolean canUse() {
-            return true;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return true;
         }
 
         @Override
         public void tick() {
-            LivingEntity target = this.brutalfly.getTarget();
-            if (target != null) {
-                this.brutalfly.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            this.brutalfly.setYya(0.0F);
+            this.brutalfly.setZza(0.0F);
+            if (this.brutalfly.isCocooned() || this.brutalfly.diveStage == DIVE_ACTIVE) {
+                this.operation = Operation.WAIT;
+                return;
             }
+
+            Vec3 velocity = this.brutalfly.getDeltaMovement();
+            Vec3 wanted = Vec3.ZERO;
+            if (this.operation == Operation.MOVE_TO) {
+                this.operation = Operation.WAIT;
+                Vec3 offset = new Vec3(this.wantedX, this.wantedY, this.wantedZ).subtract(this.brutalfly.position());
+                double distance = offset.length();
+                if (distance > 0.1D) {
+                    double speed = Math.min(this.brutalfly.flightTopSpeed(this.speedModifier), distance * FLY_ARRIVAL_RATE);
+                    wanted = offset.scale(speed / distance);
+                }
+            }
+
+            Vec3 change = wanted.subtract(velocity);
+            double changeLength = change.length();
+            if (changeLength > FLY_ACCELERATION) {
+                change = change.scale(FLY_ACCELERATION / changeLength);
+            }
+            this.brutalfly.setDeltaMovement(velocity.add(change));
         }
     }
 }

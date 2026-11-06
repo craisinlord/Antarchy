@@ -43,7 +43,7 @@ public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
             float ringSpin = spinDirection * age * (0.13F + progress * 0.045F) + ring * 0.47F;
             float alpha = alphaMultiplier;
             float halfSide = radius * 0.92F;
-            float lineThickness = Math.max(0.045F, radius * 0.12F);
+            float lineThickness = 0.055F + progress * 0.018F;
             int red = push ? 70 : 64;
             int green = push ? 220 : 255;
             int blue = push ? 255 : 56;

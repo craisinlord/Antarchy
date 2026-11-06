@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -9,30 +9,41 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class PeachForestMossyBoulderFeature implements Feature {
-    public static final MapCodec<PeachForestMossyBoulderFeature> CODEC = MapCodec.unit(PeachForestMossyBoulderFeature::new);
+    public static final MapCodec<PeachForestMossyBoulderFeature> CODEC = BoulderPaletteConfiguration.CODEC.xmap(PeachForestMossyBoulderFeature::new, PeachForestMossyBoulderFeature::config);
 
-    @Override
-    public MapCodec<PeachForestMossyBoulderFeature> codec() { return CODEC; }
+    private final BoulderPaletteConfiguration config;
+
     private static final int ANGLE_SAMPLES = 16;
 
+    public PeachForestMossyBoulderFeature(BoulderPaletteConfiguration config) {
+        this.config = config;
+    }
+
+    public BoulderPaletteConfiguration config() {
+        return this.config;
+    }
+
+    @Override
+    public MapCodec<PeachForestMossyBoulderFeature> codec() {
+        return CODEC;
+    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
+        BoulderPaletteConfiguration.Palette palette = this.config.resolve();
         BlockPos surfacePos = new BlockPos(origin.getX(), level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, origin.getX(), origin.getZ()) - 1, origin.getZ());
         if (!isSoil(level.getBlockState(surfacePos))) {
             return false;
         }
 
         BlockPos base = surfacePos.below(random.nextInt(2));
-        int height = 6 + random.nextInt(5);
-        int baseRadius = 2 * (2 + random.nextInt(2));
+        int height = 5 + random.nextInt(4);
+        int baseRadius = 3 + random.nextInt(3);
         boolean placed = false;
 
         double[] silhouetteNoise = generateSilhouetteNoise(random);
@@ -53,13 +64,13 @@ public class PeachForestMossyBoulderFeature implements Feature {
             int driftZ = (int) Math.round(Math.sin(leanAngle) * leanMagnitude * heightFraction + Math.sin(leanAngle + Math.PI * 0.5D) * wobble);
             BlockPos levelCenter = base.above(y).offset(driftX, 0, driftZ);
 
-            placed |= this.placeDisk(level, levelCenter, radius, heightFraction, silhouetteNoise, random);
+            placed |= this.placeDisk(level, levelCenter, radius, heightFraction, silhouetteNoise, random, palette);
             topCenter = levelCenter;
             topRadius = radius;
         }
 
         if (placed) {
-            this.softCapWithSlabs(level, topCenter, topRadius, random);
+            this.softCapWithSlabs(level, topCenter, topRadius, random, palette);
         }
 
         return placed;
@@ -86,7 +97,7 @@ public class PeachForestMossyBoulderFeature implements Feature {
         return Mth.lerp(t, noise[index0], noise[index1]);
     }
 
-    private boolean placeDisk(WorldGenLevel level, BlockPos center, int radius, double heightFraction, double[] silhouetteNoise, RandomSource random) {
+    private boolean placeDisk(WorldGenLevel level, BlockPos center, int radius, double heightFraction, double[] silhouetteNoise, RandomSource random, BoulderPaletteConfiguration.Palette palette) {
         boolean placed = false;
         double rr = radius * radius;
         for (int x = -radius; x <= radius; x++) {
@@ -100,7 +111,7 @@ public class PeachForestMossyBoulderFeature implements Feature {
                 BlockPos targetPos = center.offset(x, 0, z);
                 BlockState targetState = level.getBlockState(targetPos);
                 if (targetState.isAir() || targetState.canBeReplaced() || isSoil(targetState)) {
-                    level.setBlock(targetPos, pickBlockState(heightFraction, random), 2);
+                    level.setBlock(targetPos, palette.block(), 2);
                     placed = true;
                 }
             }
@@ -108,16 +119,19 @@ public class PeachForestMossyBoulderFeature implements Feature {
         return placed;
     }
 
-    private void softCapWithSlabs(WorldGenLevel level, BlockPos center, int radius, RandomSource random) {
+    private void softCapWithSlabs(WorldGenLevel level, BlockPos center, int radius, RandomSource random, BoulderPaletteConfiguration.Palette palette) {
+        if (palette.slab() == null) {
+            return;
+        }
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
                 BlockPos topPos = center.offset(x, 0, z);
-                while (topPos.getY() < (level.getMaxY() + 1) - 1 && isBoulderBlock(level.getBlockState(topPos.above()))) {
+                while (topPos.getY() < level.getMaxY() && isBoulderBlock(level.getBlockState(topPos.above()), palette)) {
                     topPos = topPos.above();
                 }
 
                 BlockState topState = level.getBlockState(topPos);
-                if (!isBoulderBlock(topState)) {
+                if (!isBoulderBlock(topState, palette)) {
                     continue;
                 }
 
@@ -128,7 +142,7 @@ public class PeachForestMossyBoulderFeature implements Feature {
 
                 int openSides = 0;
                 for (Direction direction : Direction.Plane.HORIZONTAL) {
-                    if (!isBoulderBlock(level.getBlockState(topPos.relative(direction)))) {
+                    if (!isBoulderBlock(level.getBlockState(topPos.relative(direction)), palette)) {
                         openSides++;
                     }
                 }
@@ -137,26 +151,17 @@ public class PeachForestMossyBoulderFeature implements Feature {
                     continue;
                 }
 
-                BlockState slabState = (random.nextFloat() < 0.55F ? Blocks.MOSSY_COBBLESTONE_SLAB : Blocks.COBBLESTONE_SLAB)
-                        .defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
+                BlockState slabState = palette.slab();
                 level.setBlock(slabPos, slabState, 2);
             }
         }
     }
 
-    private static BlockState pickBlockState(double heightFraction, RandomSource random) {
-        if (heightFraction < 0.35D) {
-            return Blocks.TUFF.defaultBlockState();
-        }
-
-        return random.nextFloat() < 0.55F ? Blocks.MOSSY_COBBLESTONE.defaultBlockState() : Blocks.COBBLESTONE.defaultBlockState();
-    }
-
-    private static boolean isBoulderBlock(BlockState state) {
-        return state.is(Blocks.TUFF) || state.is(Blocks.COBBLESTONE) || state.is(Blocks.MOSSY_COBBLESTONE);
+    private static boolean isBoulderBlock(BlockState state, BoulderPaletteConfiguration.Palette palette) {
+        return palette.matches(state);
     }
 
     private static boolean isSoil(BlockState state) {
-        return state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MOSS_BLOCK) || state.is(Blocks.ROOTED_DIRT);
+        return state.is(ElythiaGeologyFeature.NATURAL_STONE) || state.is(BlockTags.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MOSS_BLOCK) || state.is(Blocks.ROOTED_DIRT);
     }
 }

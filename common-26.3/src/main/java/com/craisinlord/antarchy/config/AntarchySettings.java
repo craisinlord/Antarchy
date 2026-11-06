@@ -150,7 +150,7 @@ public final class AntarchySettings {
     private static double mantisMovementSpeed = 0.42D;
     private static double mantisFlyingSpeed = 0.77D;
     private static boolean mantisIgnoreLightLevel = false;
-    private static double alphaMantisHealth = 380.0D;
+    private static double alphaMantisHealth = 420.0D;
     private static double alphaMantisAttackDamage = 18.0D;
     private static double alphaMantisMovementSpeed = 0.546D;
     private static double alphaMantisFlyingSpeed = 0.77D;
@@ -165,6 +165,8 @@ public final class AntarchySettings {
     private static double rollyPollyArmor = 2.0D;
     private static double rollyPollyRolledArmorBonus = 16.0D;
     private static boolean krakenSquidSpawnEnabled = true;
+    private static boolean krakenRitualEnabled = true;
+    private static int krakenRitualInkCost = 8;
     private static boolean krakenMassSpawnEnabled = true;
     private static boolean krakenRequireBadOmenToSummon = true;
     private static double squidzookaCooldownSeconds = 1.0D;
@@ -200,6 +202,7 @@ public final class AntarchySettings {
     private static int americanRegenerationAmplifier = 0;
     private static boolean entitySpecificFireOverlayEnabled = true;
     private static double dreamSandFallingBlockGravityMultiplier = 0.4D;
+    private static double giantLilyPadLaunchDistance = 4.0D;
     private static boolean ichorWitherEnabled = true;
     private static int nightmareHelmetArmorValue = 4;
     private static int nightmareChestplateArmorValue = 9;
@@ -429,17 +432,17 @@ public final class AntarchySettings {
     private static double emperorScorpionFollowRange = 80.0D;
     private static int emperorScorpionXpReward = 25;
     private static int emperorScorpionClawAnimTicks = 23;
-    private static int emperorScorpionClawHitTick = 12;
+    private static int emperorScorpionClawHitTick = 6;
     private static int emperorScorpionClawCooldownTicks = 28;
     private static int emperorScorpionStingAnimTicks = 25;
-    private static int emperorScorpionStingHitTick = 13;
+    private static int emperorScorpionStingHitTick = 9;
     private static int emperorScorpionStingCooldownTicks = 60;
     private static int emperorScorpionPoisonTicks = 300;
     private static int emperorScorpionWeaknessTicks = 120;
     private static int emperorScorpionSummonIntervalTicks = 140;
     private static int emperorScorpionMaxSummonedScorpions = 4;
     private static int emperorScorpionMaxNearbyScorpions = 4;
-    private static int emperorScorpionHardenCooldownTicks = 2400;
+    private static int emperorScorpionHardenCooldownTicks = 1200;
     private static double emperorScorpionDamageRange = 25.0D;
     private static int emperorScorpionMinDespawnTicks = 6000;
     private static double scorpionHealth = 30.0D;
@@ -474,7 +477,7 @@ public final class AntarchySettings {
     private static double herculesBeetleDamageRange = 25.0D;
     private static double toreterrorDamageRange = 25.0D;
     private static double brutalflyDamageRange = 25.0D;
-    private static double alphaMantisDamageRange = 25.0D;
+    private static double alphaMantisDamageRange = 48.0D;
     private static float krakenLightningDamagePhaseOne = 6.0F;
     private static double lucidHealth = 70.0D;
     private static double lucidAttackDamage = 4.0D;
@@ -1265,6 +1268,8 @@ public final class AntarchySettings {
         return bomberExplosionRadius;
     }
 
+    public static boolean krakenRitualEnabled() { return krakenRitualEnabled; }
+    public static int krakenRitualInkCost() { return krakenRitualInkCost; }
     public static boolean krakenSquidSpawnEnabled() {
         return krakenSquidSpawnEnabled;
     }
@@ -1895,6 +1900,8 @@ public final class AntarchySettings {
         rollyPollyRolledArmorBonus = value;
     }
 
+    public static void setKrakenRitualEnabled(boolean value) { krakenRitualEnabled = value; }
+    public static void setKrakenRitualInkCost(int value) { krakenRitualInkCost = value; }
     public static void setKrakenSquidSpawnEnabled(boolean value) {
         krakenSquidSpawnEnabled = value;
     }
@@ -2040,6 +2047,14 @@ public final class AntarchySettings {
 
     public static void setEntitySpecificFireOverlayEnabled(boolean value) {
         entitySpecificFireOverlayEnabled = value;
+    }
+
+    public static double giantLilyPadLaunchDistance() {
+        return giantLilyPadLaunchDistance;
+    }
+
+    public static void setGiantLilyPadLaunchDistance(double value) {
+        giantLilyPadLaunchDistance = value;
     }
 
     public static double dreamSandFallingBlockGravityMultiplier() {
@@ -3301,6 +3316,13 @@ public final class AntarchySettings {
     public static int bossMagicWardTriggerBreaches() { return bossMagicWardTriggerBreaches; }
     public static java.util.List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
     private static boolean throwbackZonesEnabled = true;
+    private static int throwbackTorchRadius = 24;
+    private static boolean elythiaGrassWindEnabled = true;
+    private static boolean elythiaWindSoundsEnabled = true;
+    private static boolean elythiaWindLinesEnabled = true;
+    private static int primordialGrassDrawDistance = 96;
+    private static boolean primordialGrassDynamic = true;
+    private static int primordialGrassQuality = 1;
     private static boolean fossilsEnabled = true;
     private static final String DEFAULT_FOSSIL_ENTITY_BLACKLIST = "minecraft:ender_dragon,minecraft:wither,minecraft:elder_guardian,minecraft:warden,antarchy:alpha_mantis,antarchy:brutalfly,antarchy:emperor_scorpion,antarchy:hercules_beetle,antarchy:kraken,antarchy:toreterror,antarchy:king,antarchy:queen,antarchy:prince,antarchy:princess";
     private static String fossilEntityBlacklist = DEFAULT_FOSSIL_ENTITY_BLACKLIST;
@@ -3311,9 +3333,32 @@ public final class AntarchySettings {
     public static java.util.List<String> fossilEntityBlacklistEntries() { return fossilEntityBlacklistEntries; }
     public static String defaultFossilEntityBlacklist() { return DEFAULT_FOSSIL_ENTITY_BLACKLIST; }
     public static void setFossilEntityBlacklist(String value) { fossilEntityBlacklist = value == null ? "" : value; fossilEntityBlacklistEntries = parseEntryList(fossilEntityBlacklist); }
-    private static java.util.List<String> parseEntryList(String value) { return java.util.Arrays.stream(value.split(",")).map(String::trim).filter(entry -> !entry.isEmpty()).toList(); }
+    private static java.util.List<String> parseEntryList(String value) {
+        java.util.List<String> entries = new java.util.ArrayList<>();
+        for (String part : value.split(",")) {
+            String entry = part.trim().toLowerCase(java.util.Locale.ROOT);
+            if (!entry.isEmpty()) {
+                entries.add(entry);
+            }
+        }
+        return java.util.List.copyOf(entries);
+    }
     public static boolean throwbackZonesEnabled() { return throwbackZonesEnabled; }
     public static void setThrowbackZonesEnabled(boolean value) { throwbackZonesEnabled = value; }
+    public static int throwbackTorchRadius() { return throwbackTorchRadius; }
+    public static void setThrowbackTorchRadius(int value) { throwbackTorchRadius = value; }
+    public static boolean elythiaGrassWindEnabled() { return elythiaGrassWindEnabled; }
+    public static void setElythiaGrassWindEnabled(boolean value) { elythiaGrassWindEnabled = value; }
+    public static boolean elythiaWindSoundsEnabled() { return elythiaWindSoundsEnabled; }
+    public static void setElythiaWindSoundsEnabled(boolean value) { elythiaWindSoundsEnabled = value; }
+    public static boolean elythiaWindLinesEnabled() { return elythiaWindLinesEnabled; }
+    public static void setElythiaWindLinesEnabled(boolean value) { elythiaWindLinesEnabled = value; }
+    public static int primordialGrassDrawDistance() { return primordialGrassDrawDistance; }
+    public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(32, Math.min(512, value)); }
+    public static boolean primordialGrassDynamic() { return primordialGrassDynamic; }
+    public static void setPrimordialGrassDynamic(boolean value) { primordialGrassDynamic = value; }
+    public static int primordialGrassQuality() { return primordialGrassQuality; }
+    public static void setPrimordialGrassQuality(int value) { primordialGrassQuality = Math.max(0, Math.min(2, value)); }
     private static boolean throwbackNoAttackCooldown = true;
     public static boolean throwbackNoAttackCooldown() { return throwbackNoAttackCooldown; }
     public static void setThrowbackNoAttackCooldown(boolean value) { throwbackNoAttackCooldown = value; }
@@ -3338,11 +3383,14 @@ public final class AntarchySettings {
     private static boolean throwbackAfterimages = true;
     public static boolean throwbackAfterimages() { return throwbackAfterimages; }
     public static void setThrowbackAfterimages(boolean value) { throwbackAfterimages = value; }
-    private static int throwbackStructureZoneRadius = 10;
-    public static int throwbackStructureZoneRadius() { return throwbackStructureZoneRadius; }
-    public static void setThrowbackStructureZoneRadius(int value) { throwbackStructureZoneRadius = value; }
+    private static int throwbackWildZoneMinRadius = 48;
+    private static int throwbackWildZoneMaxRadius = 72;
+    public static int throwbackWildZoneMinRadius() { return throwbackWildZoneMinRadius; }
+    public static void setThrowbackWildZoneMinRadius(int value) { throwbackWildZoneMinRadius = value; }
+    public static int throwbackWildZoneMaxRadius() { return throwbackWildZoneMaxRadius; }
+    public static void setThrowbackWildZoneMaxRadius(int value) { throwbackWildZoneMaxRadius = value; }
 
-    private static double throwbackWildZoneChance = 0.35D;
+    private static double throwbackWildZoneChance = 0.25D;
     public static double throwbackWildZoneChance() { return throwbackWildZoneChance; }
     public static void setThrowbackWildZoneChance(double value) { throwbackWildZoneChance = value; }
 
@@ -3366,9 +3414,13 @@ public final class AntarchySettings {
     public static void setElythiaFogEnabled(boolean value) { elythiaFogEnabled = value; }
 
     private static boolean elythiaGroundMistEnabled = true;
+    public static void setPrimordialGrassSaver(Runnable saver) { primordialGrassSaver = saver; }
+    public static void savePrimordialGrass() { primordialGrassSaver.run(); }
+
     public static boolean elythiaGroundMistEnabled() { return elythiaGroundMistEnabled; }
     public static void setElythiaGroundMistEnabled(boolean value) { elythiaGroundMistEnabled = value; }
 
+    private static Runnable primordialGrassSaver = () -> {};
     private static boolean elythiaSoftCloudsEnabled = true;
     public static boolean elythiaSoftCloudsEnabled() { return elythiaSoftCloudsEnabled; }
     public static void setElythiaSoftCloudsEnabled(boolean value) { elythiaSoftCloudsEnabled = value; }

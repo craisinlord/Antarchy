@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "wooden_button",
+  "ingredients": [
+    {
+      "item": "antarchy:cranberry_planks"
+    }
+  ],
+  "result": {
+    "item": "antarchy:cranberry_button",
+    "count": 1
+  }
+}

@@ -30,18 +30,18 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
         DensitySampler depthSampler = this.depth.compileSampler(context);
         Noise noiseSampler = context.createNoiseSampler(this.noise);
         long salt = saltFor(noiseSampler.get(1234.567, 89.123, -456.789), noiseSampler.get(-987.654, 12.345, 654.321));
-        CavarynCavityGrid grid = CavarynCavityGrid.create(this.kind, salt, (x, y, z) -> {
+        String biome = this.kind.biome();
+        CavarynCavityGrid grid = CavarynCavityGrid.create(this.kind, salt, biome == null ? (x, y, z) -> true : (x, y, z) -> {
             int bx = Mth.floor(x);
             int by = Mth.floor(y);
             int bz = Mth.floor(z);
             SamplerContext samplerContext = SamplerContext.EMPTY_UNCACHED;
             double h = humiditySampler.sampleValue(samplerContext, bx, by, bz);
             double w = weirdnessSampler.sampleValue(samplerContext, bx, by, bz);
-            if (CavarynBiomeTable.excludedByClimate(this.kind.biome(), h, w)) {
+            if (CavarynBiomeTable.excludedByClimate(biome, h, w)) {
                 return false;
             }
             double d = depthSampler.sampleValue(samplerContext, bx, by, bz);
-            String biome = this.kind.biome();
             return this.kind.strict()
                     ? CavarynBiomeTable.isOnly(biome, h, w, d)
                     : CavarynBiomeTable.isAmongBest(biome, h, w, d);

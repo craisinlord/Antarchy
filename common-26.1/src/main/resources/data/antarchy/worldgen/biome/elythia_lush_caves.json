@@ -46,7 +46,9 @@
     [],
     [],
     [],
-    [],
+    [
+      "antarchy:elythia_geology"
+    ],
     [
       "antarchy:elythia_large_dripstone",
       "antarchy:elythia_pointed_dripstone",

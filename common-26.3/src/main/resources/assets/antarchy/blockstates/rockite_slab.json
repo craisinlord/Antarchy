@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/rockite"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/rockite_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/rockite_slab_top"
+    }
+  }
+}
+

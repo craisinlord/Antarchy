@@ -40,7 +40,9 @@
   "features": [
     [],
     [],
-    [],
+    [
+      "antarchy:truffled_loam"
+    ],
     [],
     [],
     [],
@@ -60,7 +62,8 @@
       "antarchy:elythia_ore_diamond_buried",
       "antarchy:elythia_ore_lapis",
       "antarchy:elythia_ore_lapis_buried",
-      "antarchy:elythia_ore_copper"
+      "antarchy:elythia_ore_copper",
+      "antarchy:elythia_geology"
     ],
     [
       "antarchy:elythia_underground",

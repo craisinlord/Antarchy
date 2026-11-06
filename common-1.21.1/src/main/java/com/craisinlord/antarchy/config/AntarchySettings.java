@@ -156,6 +156,8 @@ public final class AntarchySettings {
     private static boolean krakenSquidSpawnEnabled = true;
     private static boolean krakenMassSpawnEnabled = true;
     private static boolean krakenRequireBadOmenToSummon = true;
+    private static boolean krakenRitualEnabled = true;
+    private static int krakenRitualInkCost = 8;
     private static double squidzookaCooldownSeconds = 1.0D;
     private static double squidzookaLaunchVelocity = 2.1D;
     private static double rpoLauncherCooldownSeconds = 1.0D;
@@ -189,6 +191,7 @@ public final class AntarchySettings {
     private static int americanRegenerationAmplifier = 0;
     private static boolean entitySpecificFireOverlayEnabled = true;
     private static double dreamSandFallingBlockGravityMultiplier = 0.4D;
+    private static double giantLilyPadLaunchDistance = 4.0D;
     private static boolean ichorWitherEnabled = true;
     private static int nightmareHelmetArmorValue = 4;
     private static int nightmareChestplateArmorValue = 9;
@@ -576,7 +579,11 @@ public final class AntarchySettings {
     private static boolean elythiaGroundMistEnabled = true;
     private static boolean elythiaGrassWindEnabled = true;
     private static boolean elythiaWindSoundsEnabled = true;
-    private static int primordialGrassDrawDistance = 192;
+    private static boolean elythiaWindLinesEnabled = true;
+    private static int primordialGrassDrawDistance = 96;
+    private static boolean primordialGrassDynamic = true;
+    private static int primordialGrassQuality = 1;
+    private static Runnable primordialGrassSaver = () -> {};
     private static boolean elythiaSoftCloudsEnabled = true;
     private static boolean boatsClimbWaterSteps = true;
     private static double boatWaterStepMaxHeight = 1.0D;
@@ -1292,6 +1299,14 @@ public final class AntarchySettings {
         return krakenRequireBadOmenToSummon;
     }
 
+    public static boolean krakenRitualEnabled() {
+        return krakenRitualEnabled;
+    }
+
+    public static int krakenRitualInkCost() {
+        return krakenRitualInkCost;
+    }
+
     public static double squidzookaCooldownSeconds() {
         return squidzookaCooldownSeconds;
     }
@@ -1929,6 +1944,14 @@ public final class AntarchySettings {
         krakenRequireBadOmenToSummon = value;
     }
 
+    public static void setKrakenRitualEnabled(boolean value) {
+        krakenRitualEnabled = value;
+    }
+
+    public static void setKrakenRitualInkCost(int value) {
+        krakenRitualInkCost = value;
+    }
+
     public static void setSquidzookaCooldownSeconds(double value) {
         squidzookaCooldownSeconds = value;
     }
@@ -2062,6 +2085,14 @@ public final class AntarchySettings {
 
     public static void setEntitySpecificFireOverlayEnabled(boolean value) {
         entitySpecificFireOverlayEnabled = value;
+    }
+
+    public static double giantLilyPadLaunchDistance() {
+        return giantLilyPadLaunchDistance;
+    }
+
+    public static void setGiantLilyPadLaunchDistance(double value) {
+        giantLilyPadLaunchDistance = value;
     }
 
     public static double dreamSandFallingBlockGravityMultiplier() {
@@ -3113,8 +3144,16 @@ public final class AntarchySettings {
     public static void setElythiaGrassWindEnabled(boolean value) { elythiaGrassWindEnabled = value; }
     public static boolean elythiaWindSoundsEnabled() { return elythiaWindSoundsEnabled; }
     public static void setElythiaWindSoundsEnabled(boolean value) { elythiaWindSoundsEnabled = value; }
+    public static boolean elythiaWindLinesEnabled() { return elythiaWindLinesEnabled; }
+    public static void setElythiaWindLinesEnabled(boolean value) { elythiaWindLinesEnabled = value; }
     public static int primordialGrassDrawDistance() { return primordialGrassDrawDistance; }
     public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(32, Math.min(512, value)); }
+    public static boolean primordialGrassDynamic() { return primordialGrassDynamic; }
+    public static void setPrimordialGrassDynamic(boolean value) { primordialGrassDynamic = value; }
+    public static int primordialGrassQuality() { return primordialGrassQuality; }
+    public static void setPrimordialGrassQuality(int value) { primordialGrassQuality = Math.max(0, Math.min(2, value)); }
+    public static void setPrimordialGrassSaver(Runnable saver) { primordialGrassSaver = saver; }
+    public static void savePrimordialGrass() { primordialGrassSaver.run(); }
 
     public static boolean elythiaGroundMistEnabled() { return elythiaGroundMistEnabled; }
     public static void setElythiaGroundMistEnabled(boolean value) { elythiaGroundMistEnabled = value; }

@@ -23,16 +23,7 @@
       "replace_current_music": true
     }
   },
-  "spawn_costs": {
-    "antarchy:alpha_mantis": {
-      "energy_budget": 0.1,
-      "charge": 18
-    },
-    "antarchy:mantis": {
-      "energy_budget": 0.1,
-      "charge": 15
-    }
-  },
+  "spawn_costs": {},
   "carvers": {
     "air": [],
     "liquid": []
@@ -65,65 +56,24 @@
     ],
     [
       "antarchy:elythia_underground",
-      "antarchy:elythia_large_dripstone",
-      "antarchy:elythia_pointed_dripstone"
+      "antarchy:zebra_scarps_large_dripstone",
+      "antarchy:zebra_scarps_pointed_dripstone"
     ],
     [],
     [
       "antarchy:zebra_scarps_tors",
-      "antarchy:zebra_scarps_large_boulders",
-      "antarchy:zebra_scarps_boulders",
+      "antarchy:zebra_scarps_outcrops",
       "antarchy:zebra_scarps_ruins",
-      "antarchy:primordial_plains_flora",
-      "antarchy:elythia_brown_ant_nests",
-      "antarchy:throwback_nerd_pole"
+      "minecraft:seagrass_warm",
+      "minecraft:sea_pickle"
     ],
     []
   ],
-  "creature_spawn_probability": 0.2,
+  "creature_spawn_probability": 0.04,
   "spawners": {
-    "creature": [
-      {
-        "type": "antarchy:caterpillar",
-        "weight": 24,
-        "minCount": 1,
-        "maxCount": 1
-      },
-      {
-        "type": "minecraft:rabbit",
-        "weight": 16,
-        "minCount": 1,
-        "maxCount": 3
-      },
-      {
-        "type": "antarchy:glimmer",
-        "weight": 2,
-        "minCount": 1,
-        "maxCount": 1
-      }
-    ],
-    "ambient": [
-      {
-        "type": "antarchy:butterfly",
-        "weight": 48,
-        "minCount": 2,
-        "maxCount": 4
-      }
-    ],
-    "monster": [
-      {
-        "type": "antarchy:mantis",
-        "weight": 20,
-        "minCount": 1,
-        "maxCount": 1
-      },
-      {
-        "type": "antarchy:alpha_mantis",
-        "weight": 1,
-        "minCount": 1,
-        "maxCount": 1
-      }
-    ],
+    "creature": [],
+    "ambient": [],
+    "monster": [],
     "axolotls": [],
     "underground_water_creature": [],
     "water_creature": [

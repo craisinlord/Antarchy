@@ -7,12 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -51,16 +55,17 @@ final class ReefPlanner {
     }
 
     private static final class CellPlan {
+        private final AtomicBoolean queued = new AtomicBoolean();
         private volatile List<ReefPiece> pieces;
 
-        List<ReefPiece> resolve(WorldGenLevel level, ChunkGenerator generator, CellKey key) {
+        List<ReefPiece> resolve(LevelHeightAccessor heightAccessor, RandomState randomState, ChunkGenerator generator, CellKey key) {
             List<ReefPiece> resolved = this.pieces;
             if (resolved != null) {
                 return resolved;
             }
             synchronized (this) {
                 if (this.pieces == null) {
-                    this.pieces = build(level, generator, key.seed(), key.cellX(), key.cellZ());
+                    this.pieces = build(heightAccessor, randomState, generator, key.seed(), key.cellX(), key.cellZ());
                 }
                 return this.pieces;
             }
@@ -85,6 +90,20 @@ final class ReefPlanner {
 
     static List<ReefPiece> pieces(WorldGenLevel level, ChunkGenerator generator, int cellX, int cellZ) {
         CellKey key = new CellKey(level.getSeed(), cellX, cellZ);
+        return plan(key).resolve(level, level.getLevel().getChunkSource().randomState(), generator, key);
+    }
+
+    static void prepare(ServerLevel level, ChunkGenerator generator, int cellX, int cellZ) {
+        CellKey key = new CellKey(level.getSeed(), cellX, cellZ);
+        CellPlan plan = plan(key);
+        if (plan.pieces != null || !plan.queued.compareAndSet(false, true)) {
+            return;
+        }
+        RandomState randomState = level.getChunkSource().randomState();
+        Util.backgroundExecutor().execute(() -> plan.resolve(level, randomState, generator, key));
+    }
+
+    private static CellPlan plan(CellKey key) {
         CellPlan plan = PLANS.get(key);
         if (plan == null) {
             if (PLANS.size() > CACHE_LIMIT) {
@@ -92,15 +111,14 @@ final class ReefPlanner {
             }
             plan = PLANS.computeIfAbsent(key, ignored -> new CellPlan());
         }
-        return plan.resolve(level, generator, key);
+        return plan;
     }
 
-    private static List<ReefPiece> build(WorldGenLevel level, ChunkGenerator generator, long seed, int cellX, int cellZ) {
+    private static List<ReefPiece> build(LevelHeightAccessor heightAccessor, RandomState randomState, ChunkGenerator generator, long seed, int cellX, int cellZ) {
         RandomSource random = RandomSource.create(seed ^ cellX * 0x9E3779B97F4A7C15L ^ cellZ * 0xC2B2AE3D27D4EB4FL ^ 0x5EEDC0A1L);
-        RandomState randomState = level.getLevel().getChunkSource().randomState();
         int sea = generator.getSeaLevel();
         ReefFloorGrid grid = new ReefFloorGrid(cellX * CELL, cellZ * CELL, CELL, sea);
-        ReefFloorGrid.Sampler sampler = new ReefFloorGrid.Sampler(generator, level, randomState);
+        ReefFloorGrid.Sampler sampler = new ReefFloorGrid.Sampler(generator, heightAccessor, randomState);
         if (!survey(grid, sampler)) {
             return List.of();
         }
@@ -390,6 +408,7 @@ final class ReefPlanner {
                 return false;
             }
         }
+        grid.fetchDisc(sampler, centerX, centerZ, limit);
         for (int i = 0; i < grid.size(); i++) {
             for (int j = 0; j < grid.size(); j++) {
                 long dx = grid.pointX(i) - centerX;

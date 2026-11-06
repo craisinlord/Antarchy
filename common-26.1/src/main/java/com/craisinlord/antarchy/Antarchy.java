@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy;
 
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.computer.AntarchyArchiveLocators;
 import com.craisinlord.antarchy.content.AntarchyAnthologyHooks;
 import com.craisinlord.antarchy.content.util.AttributeRangeInit;
@@ -15,6 +16,7 @@ public class Antarchy {
     public static volatile boolean physicalClient;
 
     public static void init() {
+        AntarchyNetwork.verifyServerBound();
         AttributeRangeInit.apply();
         AntarchyArchiveLocators.register();
         AntarchyAnthologyHooks.register();

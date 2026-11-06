@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "type": "minecraft:weighted",
+    "entries": [
+      {
+        "data": {
+          "id": "antarchy:primordial_moss_carpet"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "id": "antarchy:primordial_grass"
+        },
+        "weight": 2
+      }
+    ]
+  }
+}

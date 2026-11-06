@@ -83,8 +83,7 @@
     "subtitle": "subtitles.antarchy.size_ray_charge",
     "sounds": [
       {
-        "name": "antarchy:item/size_ray/shrinkrayloop",
-        "stream": true
+        "name": "antarchy:item/size_ray/shrinkrayloop"
       }
     ]
   },
@@ -100,8 +99,7 @@
     "subtitle": "subtitles.antarchy.size_ray_charge",
     "sounds": [
       {
-        "name": "antarchy:item/size_ray/growrayloop",
-        "stream": true
+        "name": "antarchy:item/size_ray/growrayloop"
       }
     ]
   },
@@ -391,12 +389,10 @@
     "subtitle": "subtitles.antarchy.kraken_flying_loop",
     "sounds": [
       {
-        "name": "antarchy:mob/kraken/kraken_flying_loop1",
-        "stream": true
+        "name": "antarchy:mob/kraken/kraken_flying_loop1"
       },
       {
-        "name": "antarchy:mob/kraken/kraken_flying_loop2",
-        "stream": true
+        "name": "antarchy:mob/kraken/kraken_flying_loop2"
       }
     ]
   },
@@ -404,12 +400,10 @@
     "subtitle": "subtitles.antarchy.kraken_flying_sideways_loop",
     "sounds": [
       {
-        "name": "antarchy:mob/kraken/kraken_flying_sideways_loop1",
-        "stream": true
+        "name": "antarchy:mob/kraken/kraken_flying_sideways_loop1"
       },
       {
-        "name": "antarchy:mob/kraken/kraken_flying_sideways_loop2",
-        "stream": true
+        "name": "antarchy:mob/kraken/kraken_flying_sideways_loop2"
       }
     ]
   },
@@ -468,12 +462,10 @@
     "subtitle": "subtitles.antarchy.basilisk_idle_loop",
     "sounds": [
       {
-        "name": "antarchy:mob/basilisk/basilisk_idle_loop1",
-        "stream": true
+        "name": "antarchy:mob/basilisk/basilisk_idle_loop1"
       },
       {
-        "name": "antarchy:mob/basilisk/basilisk_idle_loop2",
-        "stream": true
+        "name": "antarchy:mob/basilisk/basilisk_idle_loop2"
       }
     ]
   },
@@ -481,12 +473,10 @@
     "subtitle": "subtitles.antarchy.basilisk_slither_loop",
     "sounds": [
       {
-        "name": "antarchy:mob/basilisk/basilisk_slither_loop1",
-        "stream": true
+        "name": "antarchy:mob/basilisk/basilisk_slither_loop1"
       },
       {
-        "name": "antarchy:mob/basilisk/basilisk_slither_loop2",
-        "stream": true
+        "name": "antarchy:mob/basilisk/basilisk_slither_loop2"
       }
     ]
   },
@@ -1382,8 +1372,7 @@
     "subtitle": "subtitles.antarchy.lucid_ambient",
     "sounds": [
       {
-        "name": "antarchy:mob/lucid/lucid_ambience",
-        "stream": true
+        "name": "antarchy:mob/lucid/lucid_ambience"
       }
     ]
   },
@@ -1391,8 +1380,7 @@
     "subtitle": "subtitles.antarchy.lucid_flying",
     "sounds": [
       {
-        "name": "antarchy:mob/lucid/lucid_flying",
-        "stream": true
+        "name": "antarchy:mob/lucid/lucid_flying"
       }
     ]
   },
@@ -1803,8 +1791,7 @@
     "subtitle": "subtitles.antarchy.mantis_fly_loop",
     "sounds": [
       {
-        "name": "antarchy:mob/mantis/mantis_fly_loop",
-        "stream": true
+        "name": "antarchy:mob/mantis/mantis_fly_loop"
       }
     ]
   },

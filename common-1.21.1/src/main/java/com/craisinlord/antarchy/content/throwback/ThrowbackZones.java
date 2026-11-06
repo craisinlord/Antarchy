@@ -87,12 +87,13 @@ public final class ThrowbackZones {
             return Influence.NONE;
         }
         int reach = radius + APPROACH_DISTANCE;
-        int dx = pos.getX() - torch.getX();
-        int dz = pos.getZ() - torch.getZ();
-        float distance = Mth.sqrt(dx * dx + dz * dz);
-        if (distance > reach) {
+        long dx = pos.getX() - torch.getX();
+        long dz = pos.getZ() - torch.getZ();
+        long distanceSquared = dx * dx + dz * dz;
+        if (distanceSquared > (long) reach * reach) {
             return Influence.NONE;
         }
+        float distance = Mth.sqrt((float) distanceSquared);
         return new Influence(strengthFor(distance, radius / 2.0F, reach), distance <= radius);
     }
 

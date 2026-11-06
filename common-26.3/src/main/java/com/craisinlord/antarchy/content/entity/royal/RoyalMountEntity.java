@@ -9,6 +9,8 @@ import com.craisinlord.anthology.beam.BeamTerrainMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -59,8 +61,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -68,8 +68,8 @@ import org.jetbrains.annotations.Nullable;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
 import com.geckolib.animation.object.LoopType;
+import com.geckolib.animation.AnimationController;
 import com.geckolib.animation.state.AnimationTest;
 import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
@@ -338,30 +338,30 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     }
 
     @Override
-    public void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        output.putBoolean("Saddled", this.isSaddled());
-        output.putBoolean("Flying", this.isFlying());
-        output.putInt("BeamCooldown", this.beamCooldownTicks);
-        output.putInt("SignatureCooldown", this.signatureCooldownTicks);
-        output.putFloat("GrowthProgress", this.getGrowthProgress());
+    public void addAdditionalSaveData(ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("Saddled", this.isSaddled());
+        tag.putBoolean("Flying", this.isFlying());
+        tag.putInt("BeamCooldown", this.beamCooldownTicks);
+        tag.putInt("SignatureCooldown", this.signatureCooldownTicks);
+        tag.putFloat("GrowthProgress", this.getGrowthProgress());
     }
 
     @Override
-    public void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
-        this.setSaddled(input.getBooleanOr("Saddled", false));
+    public void readAdditionalSaveData(ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        this.setSaddled(tag.getBooleanOr("Saddled", false));
         this.clearAction();
         this.biteCooldownTicks = 0;
         this.spitCooldownTicks = 0;
         this.actionRecoveryTicks = 0;
-        this.beamCooldownTicks = Math.max(0, input.getIntOr("BeamCooldown", 0));
-        int signatureCooldown = input.getInt("SignatureCooldown")
-                .orElseGet(() -> Math.max(input.getIntOr("CommandCooldown", 0), input.getIntOr("TimeFieldCooldown", 0)));
+        this.beamCooldownTicks = Math.max(0, tag.getIntOr("BeamCooldown", 0));
+        int signatureCooldown = tag.getInt("SignatureCooldown")
+                .orElseGet(() -> Math.max(tag.getIntOr("CommandCooldown", 0), tag.getIntOr("TimeFieldCooldown", 0)));
         this.signatureCooldownTicks = Math.max(0, signatureCooldown);
-        this.setGrowthProgress(input.getFloatOr("GrowthProgress", 0.0F));
-        input.read("Health", com.mojang.serialization.Codec.FLOAT).ifPresent(this::setHealth);
-        this.setFlying(input.getBooleanOr("Flying", false) && this.canFly());
+        this.setGrowthProgress(tag.getFloatOr("GrowthProgress", 0.0F));
+        tag.read("Health", com.mojang.serialization.Codec.FLOAT).ifPresent(this::setHealth);
+        this.setFlying(tag.getBooleanOr("Flying", false) && this.canFly());
     }
 
     @Override

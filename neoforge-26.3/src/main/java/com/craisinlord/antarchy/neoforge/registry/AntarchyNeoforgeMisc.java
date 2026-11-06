@@ -133,6 +133,7 @@ public final class AntarchyNeoforgeMisc {
     private static final DeferredRegister<MapCodec<? extends Feature>> FEATURES = DeferredRegister.create(Registries.FEATURE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends BiomeSource>> BIOME_SOURCES = DeferredRegister.create(Registries.BIOME_SOURCE, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Antarchy.MODID);
+    private static final DeferredRegister<MapCodec<? extends net.minecraft.world.level.levelgen.material.rule.MaterialRule>> MATERIAL_RULES = DeferredRegister.create(Registries.MATERIAL_RULE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<com.mojang.serialization.Codec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, Antarchy.MODID);
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, Antarchy.MODID);
@@ -205,6 +206,7 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MobEffect, DreadMobEffect> DREAD = MOB_EFFECTS.register("dread", DreadMobEffect::new);
     public static final DeferredHolder<MobEffect, BleedingMobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
     public static final DeferredHolder<MobEffect, BloodMoonMobEffect> BLOOD_MOON = MOB_EFFECTS.register("blood_moon", BloodMoonMobEffect::new);
+    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.SaucedMobEffect> SAUCED = MOB_EFFECTS.register("sauced", com.craisinlord.antarchy.content.effect.SaucedMobEffect::new);
     public static final DeferredHolder<MobEffect, ParalyzedMobEffect> PARALYZED = MOB_EFFECTS.register("paralyzed", ParalyzedMobEffect::new);
     public static final DeferredHolder<MobEffect, CommandedMobEffect> COMMANDED = MOB_EFFECTS.register("commanded", CommandedMobEffect::new);
     public static final DeferredHolder<MobEffect, StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
@@ -280,6 +282,12 @@ public final class AntarchyNeoforgeMisc {
             () -> new BaseFlowingFluid.Flowing(lumenProperties()));
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
+            () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> WIND_LINE = PARTICLE_TYPES.register("wind_line",
+            () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> REMEMBRANCE_FLAME = PARTICLE_TYPES.register("remembrance_flame",
+            () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> REMEMBRANCE_MOTE = PARTICLE_TYPES.register("remembrance_mote",
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BUG_SPRAY_PARTICLE = PARTICLE_TYPES.register("bug_spray",
             () -> new SimpleParticleType(true));
@@ -410,6 +418,17 @@ public final class AntarchyNeoforgeMisc {
             () -> LumenStreamFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<LumenSpireFeature>> LUMEN_SPIRE = FEATURES.register("lumen_spires",
             () -> LumenSpireFeature.CODEC);
+    // Register codec-backed geology features used by the restored Elythia biome data.
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature>> ELYTHIA_GEOLOGY = FEATURES.register("elythia_geology",
+            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature>> ELYTHIA_MOUNTAIN_SCREE = FEATURES.register("elythia_mountain_scree",
+            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRockFormationFeature>> ELYTHIA_ROCK_FORMATION = FEATURES.register("elythia_rock_formation",
+            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRockFormationFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneTorFeature>> ELYTHIA_STONE_TOR = FEATURES.register("elythia_stone_tor",
+            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneTorFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneRuinFeature>> ELYTHIA_STONE_RUIN = FEATURES.register("elythia_stone_ruin",
+            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneRuinFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaTuffBoulderFeature>> ELYTHIA_TUFF_BOULDER = FEATURES.register("elythia_tuff_boulder",
             () -> ElythiaTuffBoulderFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaLargeTuffBoulderFeature>> ELYTHIA_LARGE_TUFF_BOULDER = FEATURES.register("elythia_large_tuff_boulder",
@@ -493,6 +512,8 @@ public final class AntarchyNeoforgeMisc {
             () -> ElythiaBiomeSource.CODEC);
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<ThoraxisBiomeSource>> THORAXIS_BIOME_SOURCE = BIOME_SOURCES.register("thoraxis_biome_source",
             () -> ThoraxisBiomeSource.CODEC);
+    public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource>> CAVARYN_BIOME_SOURCE = BIOME_SOURCES.register("cavaryn_biome_source",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource.CODEC);
 
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
             () -> ElythiaRiverCarveFunction.CODEC);
@@ -512,6 +533,7 @@ public final class AntarchyNeoforgeMisc {
         FEATURES.register(modEventBus);
         BIOME_SOURCES.register(modEventBus);
         DENSITY_FUNCTION_TYPES.register(modEventBus);
+        MATERIAL_RULES.register(modEventBus);
         ENTITY_SUB_PREDICATES.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
         MENU_TYPES.register(modEventBus);
@@ -576,6 +598,10 @@ public final class AntarchyNeoforgeMisc {
             () -> CavarynWormBoreFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynCavityFunction>> CAVARYN_CAVITY = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity",
             () -> CavarynCavityFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireFunction>> CAVARYN_SPIRES = DENSITY_FUNCTION_TYPES.register("cavaryn_spires",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageFunction>> CAVARYN_RIBCAGE = DENSITY_FUNCTION_TYPES.register("cavaryn_ribcage",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynCavityUnionFunction>> CAVARYN_CAVITY_UNION = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity_union",
             () -> CavarynCavityUnionFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynWormBoreDressingFeature>> CAVARYN_WORM_BORE_DRESSING = FEATURES.register("cavaryn_worm_bore_dressing",
@@ -590,6 +616,10 @@ public final class AntarchyNeoforgeMisc {
             () -> CavarynMolewormWarrenDressingFeature.CODEC);;
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynCarapaceRiftDressingFeature>> CAVARYN_CARAPACE_RIFT_DRESSING = FEATURES.register("cavaryn_carapace_rift_dressing",
             () -> CavarynCarapaceRiftDressingFeature.CODEC);;
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature>> CAVARYN_SPIRE_DRESSING = FEATURES.register("cavaryn_spire_dressing",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature>> CAVARYN_RIBCAGE_DRESSING = FEATURES.register("cavaryn_ribcage_dressing",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynBiowartGutDressingFeature>> CAVARYN_BIOWART_GUT_DRESSING = FEATURES.register("cavaryn_biowart_gut_dressing",
             () -> CavarynBiowartGutDressingFeature.CODEC);;
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.reef.ElythiaReefFeature>> ELYTHIA_REEF = FEATURES.register("elythia_reef",
@@ -603,6 +633,10 @@ public final class AntarchyNeoforgeMisc {
 
 
 
+    public static final DeferredHolder<MapCodec<? extends net.minecraft.world.level.levelgen.material.rule.MaterialRule>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeDispatchRule.Source>> ELYTHIA_BIOME_DISPATCH = MATERIAL_RULES.register("elythia_biome_dispatch",
+            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeDispatchRule.Source.CODEC);
+    public static final DeferredHolder<MapCodec<? extends net.minecraft.world.level.levelgen.material.rule.MaterialRule>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaSurfaceBuilder.Root>> ELYTHIA_SURFACE_ROOT = MATERIAL_RULES.register("elythia_surface_root",
+            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaSurfaceBuilder.Root.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaShared>> ELYTHIA_SHARED = DENSITY_FUNCTION_TYPES.register("elythia_shared",
             () -> ElythiaShared.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverProject>> ELYTHIA_RIVER_PROJECT = DENSITY_FUNCTION_TYPES.register("elythia_river_project",
@@ -631,4 +665,8 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<RiverLogBridgeFeature>> RIVER_LOG_BRIDGE = FEATURES.register("river_log_bridge", () -> RiverLogBridgeFeature.CODEC);
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> GROUND_MIST = PARTICLE_TYPES.register("ground_mist", () -> new SimpleParticleType(true) {});
 
-}
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaTidePoolFeature>> ELYTHIA_TIDE_POOLS = FEATURES.register("elythia_tide_pools", () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaTidePoolFeature.CODEC);
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature>> TRUFFLED_LOAM_FEATURE = FEATURES.register("truffled_loam", () -> com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature.CODEC);
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.PrimordialBorderBlendFeature>> PRIMORDIAL_BORDER_BLEND = FEATURES.register("primordial_border_blend", () -> com.craisinlord.antarchy.content.worldgen.elythia.PrimordialBorderBlendFeature.CODEC);
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature>> CRANBERRY_TREE_FEATURE = FEATURES.register("cranberry_tree", () -> com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature.CODEC);
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.CranberryGroveFeature>> CRANBERRY_GROVE_FEATURE = FEATURES.register("cranberry_grove", () -> com.craisinlord.antarchy.content.worldgen.elythia.CranberryGroveFeature.CODEC);}

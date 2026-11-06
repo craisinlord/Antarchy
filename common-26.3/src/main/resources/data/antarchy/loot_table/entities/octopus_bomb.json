@@ -12,16 +12,8 @@
           "type": "minecraft:item",
           "name": "minecraft:ink_sac"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "nbt": "{GlimmerEcho:false}"
-          }
-        }
       ]
     }
   ]
 }
+                                                                                                                                                                                         

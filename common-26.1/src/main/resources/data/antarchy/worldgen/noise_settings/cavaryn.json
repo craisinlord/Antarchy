@@ -44,13 +44,12 @@
       "xz_scale": 1,
       "y_scale": 1
     },
-    "temperature": 0,
+    "temperature": "antarchy:cavaryn/surface_temperature",
     "vegetation": "antarchy:cavaryn/humidity",
     "continents": 0,
-    "erosion": 0,
+    "erosion": "antarchy:cavaryn/surface_erosion",
     "depth": "minecraft:overworld/depth",
     "ridges": "antarchy:cavaryn/weirdness",
-    "preliminary_surface_level": 0,
     "final_density": {
       "type": "minecraft:max",
       "argument1": {
@@ -100,7 +99,8 @@
     },
     "vein_toggle": 0,
     "vein_ridged": 0,
-    "vein_gap": 0
+    "vein_gap": 0,
+    "preliminary_surface_level": 0
   },
   "spawn_target": [
     {

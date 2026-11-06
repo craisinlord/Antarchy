@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
+import com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
@@ -7,7 +9,6 @@ import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.content.network.KingJudgmentFlashSync;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerSite;
 import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
@@ -2684,7 +2685,7 @@ public class KingEntity extends RoyalBossEntity {
                                 level.sendParticles(KingEntity.this.royalParticle(ParticleTypes.END_ROD), targetFlash.x, targetFlash.y, targetFlash.z,
                                         32, 0.45D, 0.55D, 0.45D, 0.05D);
                                 if (target instanceof ServerPlayer player) {
-                                    KingJudgmentFlashSync.send(player, 12);
+                                    AntarchyNetwork.sendToPlayer(player, new KingJudgmentFlashPayload(12));
                                     player.playNotifySound(SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 0.8F, 1.65F);
                                 }
                                 target.hurt(KingEntity.this.damageSources().magic(),

@@ -158,7 +158,10 @@ public final class AntarchyConfigCatalog {
                 || name.equals("elythiaGroundMistEnabled")
                 || name.equals("elythiaGrassWindEnabled")
                 || name.equals("elythiaWindSoundsEnabled")
+                || name.equals("elythiaWindLinesEnabled")
                 || name.equals("primordialGrassDrawDistance")
+                || name.equals("primordialGrassDynamic")
+                || name.equals("primordialGrassQuality")
                 || name.equals("elythiaSoftCloudsEnabled")
                 || name.equals("boatsClimbWaterSteps")
                 || name.equals("boatWaterStepMaxHeight")
@@ -170,6 +173,7 @@ public final class AntarchyConfigCatalog {
                 || name.equals("unlockAllArchives")
                 || name.equals("entitySpecificFireOverlayEnabled")
                 || name.startsWith("dreamSand")
+                || name.startsWith("giantLilyPad")
                 || name.equals("ichorWitherEnabled")
                 || name.startsWith("diamondMinecart")
                 || name.startsWith("hoverboard");

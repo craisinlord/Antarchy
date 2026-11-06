@@ -23,6 +23,7 @@ public final class ElythiaAquifer implements Aquifer {
     private static final double LUMEN_THRESHOLD = 0.75D;
     private static final int RIVER_DEPTH_BAND = 8;
     private static final int BANK_BAND = 3;
+    private static final int LIP_HEIGHT = 3;
     private static final int UNDERGROUND_DEPTH = 16;
     private static final int COLUMNS = 256;
     private static final int UNSET = Integer.MIN_VALUE;
@@ -65,18 +66,27 @@ public final class ElythiaAquifer implements Aquifer {
         double reserve = this.reserves[column];
         if (reserve < RIVER_RESERVE_LIMIT && this.valley(column, context) > VALLEY_THRESHOLD) {
             int level = this.level(column, context);
-            boolean wet = this.wet(column, context);
-            if (y >= this.floor(column, context) && y < this.lip(column, context) && !wet) {
-                this.shouldScheduleFluidUpdate = false;
-                return null;
-            }
-            if (wet || this.floor(column, context) >= level) {
-                if (y < level + BANK_BAND && y >= level - RIVER_DEPTH_BAND) {
-                    return this.river(column, context, y, level, reserve);
-                }
-                if (y < level - RIVER_DEPTH_BAND && y >= this.floor(column, context)) {
-                    this.shouldScheduleFluidUpdate = false;
-                    return null;
+            if (level > this.hydrology.seaLevel()) {
+                int floor = this.floor(column, context);
+                if (this.wet(column, context)) {
+                    if (y < level + BANK_BAND && y >= level - RIVER_DEPTH_BAND) {
+                        return this.river(column, context, y, level, reserve);
+                    }
+                    if (y < level - RIVER_DEPTH_BAND && y >= floor) {
+                        this.shouldScheduleFluidUpdate = false;
+                        return null;
+                    }
+                } else {
+                    int lip = this.lip(column, context);
+                    if (lip != NO_LIP && lip - floor <= LIP_HEIGHT) {
+                        if (y >= floor && y < lip) {
+                            this.shouldScheduleFluidUpdate = false;
+                            return null;
+                        }
+                        if (floor >= level && y < level + BANK_BAND && y >= level - RIVER_DEPTH_BAND) {
+                            return this.river(column, context, y, level, reserve);
+                        }
+                    }
                 }
             }
         }
@@ -184,14 +194,18 @@ public final class ElythiaAquifer implements Aquifer {
         return this.reserves[column] < RIVER_RESERVE_LIMIT
                 && this.valley(column, context) > VALLEY_THRESHOLD
                 && this.channel(column, context) > CHANNEL_THRESHOLD
+                && this.level(column, context) > this.hydrology.seaLevel()
                 && this.floor(column, context) < this.level(column, context);
     }
 
     private boolean wet(DensityFunction.FunctionContext point) {
-        return this.hydrology.reserve().compute(point) < RIVER_RESERVE_LIMIT
-                && this.hydrology.valley().compute(point) > VALLEY_THRESHOLD
-                && this.hydrology.riverChannel().compute(point) > CHANNEL_THRESHOLD
-                && Mth.ceil(this.hydrology.floor().compute(point)) < level(this.hydrology.riverLevel().compute(point));
+        if (this.hydrology.reserve().compute(point) >= RIVER_RESERVE_LIMIT
+                || this.hydrology.valley().compute(point) <= VALLEY_THRESHOLD
+                || this.hydrology.riverChannel().compute(point) <= CHANNEL_THRESHOLD) {
+            return false;
+        }
+        int level = level(this.hydrology.riverLevel().compute(point));
+        return level > this.hydrology.seaLevel() && Mth.ceil(this.hydrology.floor().compute(point)) < level;
     }
 
     private double channel(int column, DensityFunction.FunctionContext context) {

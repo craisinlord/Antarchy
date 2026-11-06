@@ -7,7 +7,9 @@
     "item.BucketItemThoraxisWaterMixin",
     "entity.ParalyzedMobFreezeMixin"
   ],
-  "client": [],
+  "client": [
+    "compat.AppleSkinOverlayMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

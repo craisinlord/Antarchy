@@ -7,7 +7,11 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public class GlimmerFrogModel extends EntityModel<GlimmerFrogModel.State> {
+    private static final float TONGUE_LENGTH_BLOCKS = 7.0F / 16.0F;
+    private static final float MOUTH_OPEN_RADIANS = 0.6F;
+
     private final ModelPart head;
+    private final ModelPart tongue;
     private final ModelPart leftArm;
     private final ModelPart rightArm;
     private final ModelPart leftLeg;
@@ -17,6 +21,7 @@ public class GlimmerFrogModel extends EntityModel<GlimmerFrogModel.State> {
         super(bakeRoot.getChild("root"));
         ModelPart body = this.root.getChild("body");
         this.head = body.getChild("head");
+        this.tongue = body.getChild("tongue");
         this.leftArm = body.getChild("left_arm");
         this.rightArm = body.getChild("right_arm");
         this.leftLeg = this.root.getChild("left_leg");
@@ -33,6 +38,16 @@ public class GlimmerFrogModel extends EntityModel<GlimmerFrogModel.State> {
         this.rightLeg.xRot = -legSwing;
         this.leftArm.xRot = -legSwing;
         this.rightArm.xRot = legSwing;
+
+        this.tongue.xRot = 0.0F;
+        this.tongue.zScale = 1.0F;
+        if (state.hasTongueTarget) {
+            float reach = state.tongueTargetDistance / Math.max(0.1F, state.growth);
+            this.tongue.zScale = Math.max(1.0F, reach / TONGUE_LENGTH_BLOCKS);
+            this.tongue.xRot = state.tongueTargetPitch;
+            this.head.yRot = 0.0F;
+            this.head.xRot = -MOUTH_OPEN_RADIANS;
+        }
     }
 
     public static class State extends EntityRenderState {
@@ -45,5 +60,8 @@ public class GlimmerFrogModel extends EntityModel<GlimmerFrogModel.State> {
         public int color = -1;
         public Identifier texture;
         public Identifier emissiveTexture;
+        public boolean hasTongueTarget;
+        public float tongueTargetDistance;
+        public float tongueTargetPitch;
     }
 }

@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.weather;
 
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.OuranwoodDeerMigration;
 import com.craisinlord.antarchy.content.network.ElythiaEventPayload;
-import com.craisinlord.antarchy.content.network.ElythiaEventSync;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import java.util.HashMap;
 import java.util.Map;
@@ -238,7 +238,7 @@ public final class ElythiaEvents extends SavedData {
             if (payload == null) {
                 payload = new ElythiaEventPayload(this.event.ordinal(), this.seed);
             }
-            ElythiaEventSync.send(player, payload);
+            AntarchyNetwork.sendToPlayer(player, payload);
             this.syncedVersions.put(player.getUUID(), this.version);
         }
         if (this.syncedVersions.size() > players) {

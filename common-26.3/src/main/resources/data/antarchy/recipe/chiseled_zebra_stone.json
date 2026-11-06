@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": "antarchy:polished_zebra_stone_slab"
+  },
+  "result": {
+    "id": "antarchy:chiseled_zebra_stone"
+  }
+}

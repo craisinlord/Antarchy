@@ -141,11 +141,16 @@ public class SizeRayProjectileEntity extends AbstractArrow {
 
     private void applyScaleChange(LivingEntity livingEntity, int chargeLevel) {
         virtuoel.pehkui.api.ScaleData scaleData = virtuoel.pehkui.api.ScaleTypes.BASE.getScaleData(livingEntity);
-        double current = scaleData.getTargetScale();
-        double delta = AntarchySettings.sizeRayDeltaPerHit() * chargeLevel;
-        double next = this.sizeRayType == SizeRayType.SHRINK ? current - delta : current + delta;
-        next = Mth.clamp(next, AntarchySettings.sizeRayMinScale(), AntarchySettings.sizeRayMaxScale());
-        scaleData.setTargetScale((float) next);
+        double current = scaleData.getTargetScale() - 1.0D;
+        double delta = AntarchySettings.sizeRayDeltaPerHit();
+        double snappedCurrent = Math.round(current / delta) * delta;
+        double next = this.sizeRayType == SizeRayType.SHRINK
+                ? snappedCurrent - delta * chargeLevel
+                : snappedCurrent + delta * chargeLevel;
+        double minOffset = AntarchySettings.sizeRayMinScale() - 1.0D;
+        double maxOffset = AntarchySettings.sizeRayMaxScale() - 1.0D;
+        next = Mth.clamp(next, minOffset, maxOffset);
+        scaleData.setTargetScale((float) (1.0D + next));
     }
 
     public int getMaximumUsefulChargeLevel() {

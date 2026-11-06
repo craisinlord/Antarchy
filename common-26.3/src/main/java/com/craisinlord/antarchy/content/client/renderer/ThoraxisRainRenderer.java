@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -36,7 +35,7 @@ public final class ThoraxisRainRenderer {
         long ticks = minecraft.level.getGameTime();
         int centerX = ThoraxisEventClient.rainCenterX();
         int centerZ = ThoraxisEventClient.rainCenterZ();
-        collector.submitCustomGeometry(poseStack, RenderTypes.entityTranslucent(RAIN_TEXTURE), (pose, consumer) -> {
+        collector.submitCustomGeometry(poseStack, AntarchySkyDraw.additiveTexture(RAIN_TEXTURE), (pose, consumer) -> {
             Matrix4f matrix = pose.pose();
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dz = -radius; dz <= radius; dz++) {

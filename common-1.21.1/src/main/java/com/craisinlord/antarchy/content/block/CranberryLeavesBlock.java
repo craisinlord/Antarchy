@@ -79,7 +79,7 @@ public class CranberryLeavesBlock extends LeavesBlock implements BonemealableBlo
             return InteractionResult.PASS;
         }
         if (!level.isClientSide) {
-            Block.popResource(level, pos, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("antarchy", "cranberry")), 1 + level.random.nextInt(2)));
+            Block.popResource(level, pos, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("antarchy", "cranberry")), 2 + level.random.nextInt(3)));
             level.setBlock(pos, state.setValue(FRUITING, false), Block.UPDATE_CLIENTS);
             level.playSound(null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F);
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);

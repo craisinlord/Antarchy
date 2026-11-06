@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:rockite",
+  "result": {
+    "id": "antarchy:chiseled_rockite_bricks",
+    "count": 1
+  }
+}

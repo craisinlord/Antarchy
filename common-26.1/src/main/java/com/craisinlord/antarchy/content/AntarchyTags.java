@@ -106,6 +106,7 @@ public final class AntarchyTags {
     }
 
     public static final class Items {
+        public static final TagKey<Item> MOLE_TRUFFLES = TagKey.create(Registries.ITEM, id("mole_truffles"));
         public static final TagKey<Item> EASTER_BUNNY_SPAWN_EGG_BLACKLIST = TagKey.create(Registries.ITEM, id("easter_bunny_spawn_egg_blacklist"));
         public static final TagKey<Item> DUCT_TAPE_BLACKLIST = TagKey.create(Registries.ITEM, id("duct_tape_blacklist"));
         public static final TagKey<Item> BROWN_ANT_ACTIVATION_ITEMS = TagKey.create(Registries.ITEM, id("brown_ant_activation_items"));

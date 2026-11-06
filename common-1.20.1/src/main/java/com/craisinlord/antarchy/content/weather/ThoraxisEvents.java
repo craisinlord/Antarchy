@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.weather;
 
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload;
 import com.craisinlord.antarchy.content.network.ThoraxisEventPayload;
-import com.craisinlord.antarchy.content.network.ThoraxisEventSync;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import java.util.ArrayList;
@@ -446,7 +446,7 @@ public final class ThoraxisEvents extends SavedData {
         ThoraxisBubbleUpdatePayload payload = new ThoraxisBubbleUpdatePayload(this.seed, List.copyOf(updated));
         for (ServerPlayer player : level.players()) {
             if (this.syncedVersions.containsKey(player.getUUID())) {
-                ThoraxisEventSync.send(player, payload);
+                AntarchyNetwork.sendToPlayer(player, payload);
             }
         }
     }
@@ -599,7 +599,7 @@ public final class ThoraxisEvents extends SavedData {
                 payload = new ThoraxisEventPayload(this.event.ordinal(), this.phase.ordinal(), this.phaseStart, this.phaseEnd,
                         this.seed, List.copyOf(this.bubbles));
             }
-            ThoraxisEventSync.send(player, payload);
+            AntarchyNetwork.sendToPlayer(player, payload);
             this.syncedVersions.put(player.getUUID(), this.version);
         }
         if (this.syncedVersions.size() > players) {

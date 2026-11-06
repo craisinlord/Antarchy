@@ -2,7 +2,7 @@
   "sea_level": 100,
   "disable_mob_generation": false,
   "legacy_random_source": false,
-  "default_block": "minecraft:stone",
+  "default_block": "antarchy:rockite",
   "default_fluid": {
     "id": "minecraft:water",
     "properties": {
@@ -44,7 +44,7 @@
       "input": "antarchy:elythia_erosion"
     },
     "depth": "antarchy:elythia_depth",
-    "ridges": "minecraft:overworld/ridges",
+    "ridges": "antarchy:elythia_biome_weirdness",
     "chunk_surface_level": {
       "type": "minecraft:interpolated",
       "cell_size_xz": 4,

@@ -6,6 +6,11 @@
     "antarchy:alpha_mantis",
     "antarchy:brutalfly",
     "antarchy:king",
-    "antarchy:queen"
+    "antarchy:queen",
+    "antarchy:basilisk",
+    "antarchy:nightmare",
+    "antarchy:manticore",
+    "minecraft:warden",
+    "minecraft:elder_guardian"
   ]
 }

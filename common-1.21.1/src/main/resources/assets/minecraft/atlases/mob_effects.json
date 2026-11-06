@@ -1,9 +1,0 @@
-{
-  "sources": [
-    {
-      "type": "single",
-      "resource": "minecraft:block/torch",
-      "sprite": "antarchy:remembrance"
-    }
-  ]
-}

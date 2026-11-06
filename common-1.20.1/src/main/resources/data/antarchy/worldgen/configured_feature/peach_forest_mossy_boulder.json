@@ -1,4 +1,7 @@
 {
   "type": "antarchy:peach_forest_mossy_boulder",
-  "config": {}
+  "config": {
+    "block": "antarchy:arkrose",
+    "slab": "antarchy:arkrose_slab"
+  }
 }

@@ -185,6 +185,7 @@ public final class ElythiaEchoes {
         model.renderToBuffer(poseStack, buffers.getBuffer(renderType), light, OverlayTexture.NO_OVERLAY,
                 ARGB.colorFromFloat(alpha, (TINT >> 16 & 0xFF) / 255.0F, (TINT >> 8 & 0xFF) / 255.0F, (TINT & 0xFF) / 255.0F));
         poseStack.popPose();
+        buffers.endBatch(renderType);
     }
 
     private static void record(LocalPlayer player) {

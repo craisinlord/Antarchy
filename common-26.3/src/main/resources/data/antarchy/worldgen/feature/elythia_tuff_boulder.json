@@ -1,3 +1,5 @@
 {
-  "type": "antarchy:elythia_tuff_boulder"
+  "type": "antarchy:elythia_tuff_boulder",
+  "block": "antarchy:rockite",
+  "slab": "antarchy:rockite_slab"
 }

@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.content.network.WormHookTetherPayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
 import com.craisinlord.anthology.gravity.GravityApi;
@@ -47,7 +49,7 @@ public final class WormHookTetherManager {
     public static void launch(ServerPlayer player, WormHookProjectileEntity hook) {
         clear(player);
         TETHERS.put(player.getUUID(), new TetherState(hook.getId()));
-        WormHookTetherSync.send(player, hook.getId());
+        AntarchyNetwork.sendToTrackingAndSelf(player, new WormHookTetherPayload(player.getId(), hook.getId()));
     }
 
     public static boolean attach(ServerPlayer player, WormHookProjectileEntity hook) {
@@ -79,7 +81,7 @@ public final class WormHookTetherManager {
     private static void clear(ServerPlayer player) {
         TetherState removed = TETHERS.remove(player.getUUID());
         if (removed != null) {
-            WormHookTetherSync.send(player, -1);
+            AntarchyNetwork.sendToTrackingAndSelf(player, new WormHookTetherPayload(player.getId(), -1));
         }
     }
 

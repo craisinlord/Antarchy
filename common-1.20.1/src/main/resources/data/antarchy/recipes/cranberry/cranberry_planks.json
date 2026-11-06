@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    {
+      "tag": "antarchy:cranberry_logs"
+    }
+  ],
+  "result": {
+    "item": "antarchy:cranberry_planks",
+    "count": 4
+  }
+}

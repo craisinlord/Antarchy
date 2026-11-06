@@ -1,7 +1,8 @@
 package com.craisinlord.antarchy.content.command;
 
+import com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.network.ElythiaEchoTestSync;
 import com.craisinlord.antarchy.content.weather.ElythiaEvent;
 import com.craisinlord.antarchy.content.weather.ElythiaEvents;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGenProfiler;
@@ -103,7 +104,7 @@ public final class ElythiaCommand {
     }
 
     private static int echo(CommandContext<CommandSourceStack> context, boolean immediate) throws CommandSyntaxException {
-        ElythiaEchoTestSync.send(context.getSource().getPlayerOrException(), immediate);
+        AntarchyNetwork.sendToPlayer(context.getSource().getPlayerOrException(), new ElythiaEchoTestPayload(immediate));
         return 1;
     }
 
@@ -218,7 +219,6 @@ public final class ElythiaCommand {
     private static void report(CommandSourceStack source, ElythiaTerrainMap.Result result) {
         double microsPerColumn = result.elapsedMillis() * 1000.0D / result.columns();
         String biomes = result.biomeCounts().stream()
-                .limit(8)
                 .map(entry -> shortName(entry) + " " + percent(entry.getValue() / (double) result.columns()))
                 .collect(Collectors.joining(", "));
         source.sendSuccess(() -> Component.literal(result.columns() + " columns in " + result.elapsedMillis() + " ms ("

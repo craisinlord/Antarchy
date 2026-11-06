@@ -2,14 +2,8 @@ package com.craisinlord.antarchy.neoforge;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.config.ConfigResetGuard;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
-import com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload;
-import com.craisinlord.antarchy.content.network.KingJudgmentFlashSync;
-import com.craisinlord.antarchy.content.network.HordeIntensitySync;
 import java.nio.file.Path;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -18,6 +12,8 @@ public final class AntarchyConfigModuleNeoforge {
     private AntarchyConfigModuleNeoforge() {}
 
     public static void init(ModContainer modContainer) {
+        AntarchySettings.setPrimordialGrassSaver(() -> AntarchyMiscConfig.savePrimordialGrass(
+                AntarchySettings.primordialGrassDynamic(), AntarchySettings.primordialGrassQuality()));
         Path configDir = FMLPaths.CONFIGDIR.get().resolve("antarchy");
         ConfigResetGuard.migrateIfNeeded(
                 configDir,
@@ -28,14 +24,6 @@ public final class AntarchyConfigModuleNeoforge {
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyMobsConfig.SPEC,  "antarchy/antarchy_mobs.toml");
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyToolsConfig.SPEC, "antarchy/antarchy_tools.toml");
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyMiscConfig.SPEC,  "antarchy/antarchy_misc.toml");
-        HerculesBeetleImpactShakeSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new HerculesBeetleImpactShakePayload(ticks)));
-        KingJudgmentFlashSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new KingJudgmentFlashPayload(ticks)));
-        HordeIntensitySync.setSink(PacketDistributor::sendToPlayer);
-        com.craisinlord.antarchy.content.network.ThrowbackZoneSync.setSink(PacketDistributor::sendToPlayer);
-        com.craisinlord.antarchy.content.network.AntTransitSync.setSink(PacketDistributor::sendToPlayer);
-        com.craisinlord.antarchy.content.network.ElythiaEchoTestSync.setSink(PacketDistributor::sendToPlayer);
-        com.craisinlord.antarchy.content.network.ElythiaEventSync.setSink(PacketDistributor::sendToPlayer);
-        com.craisinlord.antarchy.content.network.ThoraxisEventSync.setSink((player, payload) -> PacketDistributor.sendToPlayer(player, payload));
         AntarchyNeoforge.modEventBusTempHolder.addListener(AntarchyConfigModuleNeoforge::onConfigChange);
     }
 
@@ -139,6 +127,8 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKrakenSquidSpawnEnabled(AntarchyMobsConfig.krakenSquidSpawnEnabled());
         AntarchySettings.setKrakenMassSpawnEnabled(AntarchyMobsConfig.krakenMassSpawnEnabled());
         AntarchySettings.setKrakenRequireBadOmenToSummon(AntarchyMobsConfig.krakenRequireBadOmenToSummon());
+        AntarchySettings.setKrakenRitualEnabled(AntarchyMobsConfig.krakenRitualEnabled());
+        AntarchySettings.setKrakenRitualInkCost(AntarchyMobsConfig.krakenRitualInkCost());
         AntarchySettings.setKrakenFollowRange(AntarchyMobsConfig.krakenFollowRange());
         AntarchySettings.setKrakenDamageRange(AntarchyMobsConfig.krakenDamageRange());
         AntarchySettings.setKrakenArmor(AntarchyMobsConfig.krakenArmor());
@@ -720,7 +710,10 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setElythiaGroundMistEnabled(AntarchyMiscConfig.elythiaGroundMistEnabled());
         AntarchySettings.setElythiaGrassWindEnabled(AntarchyMiscConfig.elythiaGrassWindEnabled());
         AntarchySettings.setElythiaWindSoundsEnabled(AntarchyMiscConfig.elythiaWindSoundsEnabled());
+        AntarchySettings.setElythiaWindLinesEnabled(AntarchyMiscConfig.elythiaWindLinesEnabled());
         AntarchySettings.setPrimordialGrassDrawDistance(AntarchyMiscConfig.primordialGrassDrawDistance());
+        AntarchySettings.setPrimordialGrassDynamic(AntarchyMiscConfig.primordialGrassDynamic());
+        AntarchySettings.setPrimordialGrassQuality(AntarchyMiscConfig.primordialGrassQuality());
         AntarchySettings.setElythiaSoftCloudsEnabled(AntarchyMiscConfig.elythiaSoftCloudsEnabled());
         AntarchySettings.setElythiaDreamShadowsEnabled(AntarchyMiscConfig.elythiaDreamShadowsEnabled());
         AntarchySettings.setElythiaDreamShadowsStrength(AntarchyMiscConfig.elythiaDreamShadowsStrength());
@@ -750,6 +743,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setThrowbackAfterimages(AntarchyMiscConfig.throwbackAfterimages());
 
         AntarchySettings.setDreamSandFallingBlockGravityMultiplier(AntarchyMiscConfig.dreamSandFallingBlockGravityMultiplier());
+        AntarchySettings.setGiantLilyPadLaunchDistance(AntarchyMiscConfig.giantLilyPadLaunchDistance());
 
         AntarchySettings.setIchorWitherEnabled(AntarchyMiscConfig.ichorWitherEnabled());
 

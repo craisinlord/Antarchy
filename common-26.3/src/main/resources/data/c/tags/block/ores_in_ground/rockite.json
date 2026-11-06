@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:rockite_coal_ore",
+    "antarchy:rockite_copper_ore",
+    "antarchy:rockite_iron_ore",
+    "antarchy:rockite_gold_ore",
+    "antarchy:rockite_redstone_ore",
+    "antarchy:rockite_lapis_ore",
+    "antarchy:rockite_diamond_ore",
+    "antarchy:rockite_titanium_ore",
+    "antarchy:rockite_uranium_ore"
+  ]
+}

@@ -11,7 +11,7 @@
       "step": "antarchy:elythia_shelf_step",
       "riser": "antarchy:elythia_shelf_riser",
       "warp": "antarchy:elythia_shelf_warp",
-      "tilt": 0.15,
+      "tilt": 0.3,
       "min_offset": -0.45,
       "max_offset": 2.4
     }

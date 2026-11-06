@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "antarchy:loam"
+    },
+    {
+      "item": "antarchy:primordial_moss_block"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "antarchy:primordial_loam"
+  }
+}

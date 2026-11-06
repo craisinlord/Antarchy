@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "group": "titanium_nugget",
+  "ingredient": {
+    "item": "antarchy:rockite_titanium_ore"
+  },
+  "result": "antarchy:titanium_nugget",
+  "experience": 2,
+  "cookingtime": 200
+}

@@ -39,6 +39,9 @@ final class SquirrelBlockReader {
             return this.level.getBlockState(new BlockPos(x, y, z));
         }
         LevelChunkSection levelSection = this.sectionAt(x, y, z);
+        if (levelSection == null) {
+            return VOID_AIR;
+        }
         return levelSection.hasOnlyAir() ? AIR : levelSection.getBlockState(x & 15, y & 15, z & 15);
     }
 
@@ -57,7 +60,8 @@ final class SquirrelBlockReader {
         if (this.direct) {
             return false;
         }
-        return this.sectionAt(x, y, z).hasOnlyAir();
+        LevelChunkSection levelSection = this.sectionAt(x, y, z);
+        return levelSection == null || levelSection.hasOnlyAir();
     }
 
     boolean sectionMayContain(int x, int y, int z, Predicate<BlockState> predicate) {
@@ -68,12 +72,16 @@ final class SquirrelBlockReader {
             return true;
         }
         LevelChunkSection levelSection = this.sectionAt(x, y, z);
+        if (levelSection == null) {
+            return predicate.test(VOID_AIR);
+        }
         if (levelSection.hasOnlyAir()) {
             return predicate.test(AIR);
         }
         return levelSection.maybeHas(predicate);
     }
 
+    @Nullable
     private LevelChunkSection sectionAt(int x, int y, int z) {
         int sx = x >> 4;
         int sy = y >> 4;
@@ -84,7 +92,10 @@ final class SquirrelBlockReader {
         }
         LevelChunk levelChunk = this.chunk;
         if (levelChunk == null || sx != this.chunkX || sz != this.chunkZ) {
-            levelChunk = this.level.getChunk(sx, sz);
+            levelChunk = this.level.getChunkSource().getChunkNow(sx, sz);
+            if (levelChunk == null) {
+                return null;
+            }
             this.chunk = levelChunk;
             this.chunkX = sx;
             this.chunkZ = sz;

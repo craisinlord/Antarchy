@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:rockite"
+  },
+  "result": "antarchy:polished_rockite",
+  "count": 1
+}

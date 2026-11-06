@@ -60,7 +60,7 @@ public record BedBugSurfaceClusterFeature() implements Feature {
             int x = origin.getX() + random.nextInt(SURFACE_SAMPLE_RADIUS * 2 + 1) - SURFACE_SAMPLE_RADIUS;
             int z = origin.getZ() + random.nextInt(SURFACE_SAMPLE_RADIUS * 2 + 1) - SURFACE_SAMPLE_RADIUS;
             int startY = origin.getY() + random.nextInt(FLOOR_SCAN_RANGE * 2 + 1) - FLOOR_SCAN_RANGE;
-            startY = Math.max(level.getMinY() + 2, Math.min(level.getMaxY() - 2, startY));
+            startY = Math.max(level.getMinY() + 2, Math.min((level.getMaxY() + 1) - 3, startY));
 
             for (int y = startY; y >= Math.max(level.getMinY() + 1, startY - FLOOR_SCAN_RANGE); y--) {
                 mutable.set(x, y, z);
@@ -103,7 +103,7 @@ public record BedBugSurfaceClusterFeature() implements Feature {
             level.setBlock(
                     eggPos,
                     AntarchyObjects.BED_BUG_EGG.get().defaultBlockState().setValue(BedBugEggBlock.EGGS, eggs),
-                    Block.UPDATE_ALL
+                    Block.UPDATE_CLIENTS
             );
             eggSpots.add(eggPos.immutable());
         }

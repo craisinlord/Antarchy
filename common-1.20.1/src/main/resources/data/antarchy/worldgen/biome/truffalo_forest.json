@@ -45,6 +45,7 @@
     [],
     [],
     [
+      "antarchy:elythia_geology",
       "antarchy:elythia_ore_coal_upper",
       "antarchy:elythia_ore_coal_lower",
       "antarchy:elythia_ore_iron_upper",
@@ -71,8 +72,8 @@
     [
       "antarchy:truffalo_forest_trees",
       "antarchy:truffalo_large_forest_trees",
-      "antarchy:elythia_meadow_large_tuff_boulders",
-      "antarchy:elythia_meadow_tuff_boulders",
+      "antarchy:elythia_large_tuff_boulders",
+      "antarchy:elythia_tuff_boulders",
       "antarchy:elythia_meadow_flora",
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",

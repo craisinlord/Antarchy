@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "antarchy:block/polished_arkrose",
+    "side": "antarchy:block/polished_arkrose",
+    "top": "antarchy:block/polished_arkrose"
+  }
+}
+

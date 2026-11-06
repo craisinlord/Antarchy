@@ -292,6 +292,7 @@ public abstract class AppleCowEntity extends Cow implements GeoEntity, Shearable
                 && !this.isVehicle()
                 && !this.isInLove()
                 && this.getTarget() == null
+                && !this.isPanicking()
                 && !this.isMovingForAnimation();
     }
 
@@ -415,5 +416,14 @@ public abstract class AppleCowEntity extends Cow implements GeoEntity, Shearable
         public void tick() {
             AppleCowEntity.this.applySleepStillness();
         }
+    }
+
+    private boolean isPanicking() {
+        for (net.minecraft.world.entity.ai.goal.WrappedGoal goal : this.goalSelector.getAvailableGoals()) {
+            if (goal.isRunning() && goal.getGoal() instanceof net.minecraft.world.entity.ai.goal.PanicGoal) {
+                return true;
+            }
+        }
+        return false;
     }
 }

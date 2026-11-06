@@ -11,6 +11,8 @@ import net.minecraft.world.entity.Mob;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.entity.Entity;
 
 public final class BossCombatUtil {
     private BossCombatUtil() {}
@@ -29,6 +31,28 @@ public final class BossCombatUtil {
             return false;
         }
         return boss.level().getNearestPlayer(boss, range) == null;
+    }
+
+    public static float damageRangeMultiplier(LivingEntity boss, DamageSource source, double fullRange, double zeroRange) {
+        Entity attacker = source.getEntity();
+        if (fullRange <= 0.0D || attacker == null || source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return 1.0F;
+        }
+        double distance = attacker.distanceTo(boss);
+        if (distance <= fullRange) {
+            return 1.0F;
+        }
+        if (distance >= zeroRange) {
+            return 0.0F;
+        }
+        return (float) ((zeroRange - distance) / (zeroRange - fullRange));
+    }
+
+    public static void clampHalfHealthCrossing(LivingEntity boss, float preHitHealth, DamageSource source) {
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return;
+        }
+        clampHalfHealthCrossing(boss, preHitHealth);
     }
 
     public static void clampHalfHealthCrossing(LivingEntity boss, float preHitHealth) {

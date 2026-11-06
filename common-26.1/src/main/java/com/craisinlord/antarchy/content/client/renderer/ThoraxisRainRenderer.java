@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -36,7 +35,7 @@ public final class ThoraxisRainRenderer {
         long ticks = minecraft.level.getGameTime();
         int centerX = ThoraxisEventClient.rainCenterX();
         int centerZ = ThoraxisEventClient.rainCenterZ();
-        VertexConsumer consumer = buffers.getBuffer(RenderTypes.entityTranslucent(RAIN_TEXTURE));
+        VertexConsumer consumer = buffers.getBuffer(AntarchySkyDraw.additiveTexture(RAIN_TEXTURE));
         Matrix4f matrix = poseStack.last().pose();
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
@@ -76,6 +75,7 @@ public final class ThoraxisRainRenderer {
                 addQuad(consumer, matrix, baseX, baseZ, sideX, sideZ, lowY, highY, topV, bottomV, alpha);
             }
         }
+        buffers.endBatch(AntarchySkyDraw.additiveTexture(RAIN_TEXTURE));
     }
 
     private static void addQuad(VertexConsumer consumer, Matrix4f matrix, float x, float z, float sideX, float sideZ,

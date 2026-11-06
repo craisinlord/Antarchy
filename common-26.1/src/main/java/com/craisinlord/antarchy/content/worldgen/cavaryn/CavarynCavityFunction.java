@@ -99,7 +99,7 @@ public final class CavarynCavityFunction implements DensityFunction, CavarynColu
             long salt = CavarynWormBoreFunction.saltFor(mappedNoise.getValue(1234.567, 89.123, -456.789), mappedNoise.getValue(-987.654, 12.345, 654.321));
             String biome = this.kind.biome();
             boolean strict = this.kind.strict();
-            mappedGrid = CavarynCavityGrid.create(this.kind, salt, (x, y, z) -> {
+            mappedGrid = CavarynCavityGrid.create(this.kind, salt, biome == null ? (x, y, z) -> true : (x, y, z) -> {
                 SinglePointContext point = new SinglePointContext(Mth.floor(x), Mth.floor(y), Mth.floor(z));
                 double humidity = mappedHumidity.compute(point);
                 double weirdness = mappedWeirdness.compute(point);

@@ -21,7 +21,7 @@ public record ElythiaRiverProject(DensityFunction argument, DensityFunction guid
     private static final int GRID_SHIFT = 2;
     private static final int GRID_SIZE = 1 << GRID_SHIFT;
     private static final int GRID_MASK = ~(GRID_SIZE - 1);
-    private static final int SLOT_BITS = 5;
+    private static final int SLOT_BITS = 6;
     private static final int SLOT_MASK = (1 << SLOT_BITS) - 1;
     private static final int SLOTS = 1 << (SLOT_BITS * 2);
 

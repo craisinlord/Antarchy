@@ -2,6 +2,10 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
+import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderPass;
@@ -13,7 +17,12 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -26,6 +35,17 @@ import org.jetbrains.annotations.Nullable;
 
 public final class AntarchySkyDraw {
     static final Vector4fc WHITE = new Vector4f(1.0F, 1.0F, 1.0F, 1.0F);
+    private static final RenderPipeline ADDITIVE_TEXTURE_PIPELINE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            .withLocation(Identifier.fromNamespaceAndPath("antarchy", "pipeline/additive_texture"))
+            .withVertexShader("core/position_tex_color")
+            .withFragmentShader("core/position_tex_color")
+            .withSampler("Sampler0")
+            .withCull(false)
+            .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
+            .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+            .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
+            .build();
+    private static final Map<Identifier, RenderType> ADDITIVE_TEXTURE_TYPES = new HashMap<>();
 
     @Nullable
     private static StaticMesh topSkyDisc;
@@ -36,6 +56,12 @@ public final class AntarchySkyDraw {
     }
 
     public record StaticMesh(GpuBuffer vertices, int indexCount, VertexFormat.Mode mode) {
+    }
+
+    public static RenderType additiveTexture(Identifier texture) {
+        return ADDITIVE_TEXTURE_TYPES.computeIfAbsent(texture, id -> RenderType.create(
+                "antarchy_additive_texture",
+                RenderSetup.builder(ADDITIVE_TEXTURE_PIPELINE).withTexture("Sampler0", id).createRenderSetup()));
     }
 
     public static StaticMesh upload(String label, MeshData mesh) {
@@ -88,6 +114,10 @@ public final class AntarchySkyDraw {
         draw(label, pipeline, mesh.vertices(), mesh.indexCount(), mesh.mode(), modelView, color, texture, target);
     }
 
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, Vector3f modelOffset, @Nullable RenderTarget target) {
+        draw(label, pipeline, mesh.vertices(), mesh.indexCount(), mesh.mode(), modelView, color, modelOffset, null, target);
+    }
+
     private static void draw(
             String label,
             RenderPipeline pipeline,
@@ -99,12 +129,27 @@ public final class AntarchySkyDraw {
             @Nullable Identifier texture,
             @Nullable RenderTarget target
     ) {
+        draw(label, pipeline, vertices, indexCount, mode, modelView, color, new Vector3f(), texture, target);
+    }
+
+    private static void draw(
+            String label,
+            RenderPipeline pipeline,
+            GpuBuffer vertices,
+            int indexCount,
+            VertexFormat.Mode mode,
+            Matrix4fc modelView,
+            Vector4fc color,
+            Vector3f modelOffset,
+            @Nullable Identifier texture,
+            @Nullable RenderTarget target
+    ) {
         if (indexCount <= 0) {
             return;
         }
         RenderSystem.AutoStorageIndexBuffer indices = RenderSystem.getSequentialBuffer(mode);
         GpuBuffer indexBuffer = indices.getBuffer(indexCount);
-        GpuBufferSlice transforms = RenderSystem.getDynamicUniforms().writeTransform(modelView, color, new Vector3f(), new Matrix4f());
+        GpuBufferSlice transforms = RenderSystem.getDynamicUniforms().writeTransform(modelView, color, modelOffset, new Matrix4f());
         AbstractTexture abstractTexture = texture != null ? Minecraft.getInstance().getTextureManager().getTexture(texture) : null;
         if (target == null) {
             target = Minecraft.getInstance().getMainRenderTarget();

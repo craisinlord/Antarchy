@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "antarchy:block/primordial_moss_block",
+        "y": 0
+      },
+      {
+        "model": "antarchy:block/primordial_moss_block",
+        "y": 90
+      },
+      {
+        "model": "antarchy:block/primordial_moss_block",
+        "y": 180
+      },
+      {
+        "model": "antarchy:block/primordial_moss_block",
+        "y": 270
+      }
+    ]
+  }
+}

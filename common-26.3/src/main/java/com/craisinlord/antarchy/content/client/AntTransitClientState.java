@@ -131,7 +131,7 @@ public final class AntTransitClientState {
     }
 
     private static boolean loaded(Minecraft minecraft, LocalPlayer player) {
-        if (minecraft.level == null) {
+        if (minecraft.gui.screen() instanceof net.minecraft.client.gui.screens.LevelLoadingScreen) {
             return false;
         }
         BlockPos pos = player.blockPosition();

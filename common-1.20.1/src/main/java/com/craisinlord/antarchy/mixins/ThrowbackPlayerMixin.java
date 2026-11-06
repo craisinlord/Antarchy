@@ -22,6 +22,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
 public abstract class ThrowbackPlayerMixin {
+    @Unique
+    private static final int ANTARCHY$FOOD_HEAL_INTERVAL_TICKS = 10;
+    @Unique
+    private static final float ANTARCHY$FOOD_HEAL_STEP = 1.0F;
+
+    @Unique
+    private float antarchy$pendingFoodHealing;
+
     @ModifyReturnValue(method = "getAttackStrengthScale", at = @At("RETURN"))
     private float antarchy$throwbackNoAttackCooldown(float scale) {
         if (AntarchySettings.throwbackNoAttackCooldown() && this.antarchy$hasRemembrance()) {
@@ -55,8 +63,25 @@ public abstract class ThrowbackPlayerMixin {
         }
         Player player = (Player) (Object) this;
         FoodProperties food = stack.getFoodProperties(player);
-        if (item.isEdible() && food != null) {
-            player.heal(food.getNutrition());
+        if (!player.level().isClientSide && item.isEdible() && food != null) {
+            this.antarchy$pendingFoodHealing += food.getNutrition();
+        }
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void antarchy$throwbackHealOverTime(CallbackInfo ci) {
+        if (this.antarchy$pendingFoodHealing <= 0.0F) {
+            return;
+        }
+        Player player = (Player) (Object) this;
+        if (!this.antarchy$classicFood() || !player.isAlive() || player.getHealth() >= player.getMaxHealth()) {
+            this.antarchy$pendingFoodHealing = 0.0F;
+            return;
+        }
+        if (player.tickCount % ANTARCHY$FOOD_HEAL_INTERVAL_TICKS == 0) {
+            float amount = Math.min(ANTARCHY$FOOD_HEAL_STEP, this.antarchy$pendingFoodHealing);
+            player.heal(amount);
+            this.antarchy$pendingFoodHealing -= amount;
         }
     }
 

@@ -136,7 +136,8 @@ public class ElythiaUndergroundFeature extends Feature<NoneFeatureConfiguration>
     }
 
     private static boolean isSolidCaveBlock(BlockState state) {
-        return state.is(Blocks.DIRT)
+        return state.is(ElythiaGeologyFeature.NATURAL_STONE)
+                || state.is(Blocks.DIRT)
                 || state.is(Blocks.GRASS_BLOCK)
                 || state.is(Blocks.COARSE_DIRT)
                 || state.is(Blocks.PACKED_MUD)

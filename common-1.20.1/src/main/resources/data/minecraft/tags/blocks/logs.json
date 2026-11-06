@@ -23,6 +23,10 @@
     "antarchy:truffalo_log",
     "antarchy:truffalo_wood",
     "antarchy:stripped_truffalo_log",
-    "antarchy:stripped_truffalo_wood"
+    "antarchy:stripped_truffalo_wood",
+    "antarchy:cranberry_log",
+    "antarchy:cranberry_wood",
+    "antarchy:stripped_cranberry_log",
+    "antarchy:stripped_cranberry_wood"
   ]
 }

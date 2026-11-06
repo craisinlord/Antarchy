@@ -1,0 +1,60 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:min",
+      "left": {
+        "type": "minecraft:add",
+        "left": {
+          "type": "minecraft:noise",
+          "noise": "antarchy:elythia_barren_patch",
+          "xz_scale": 1.0,
+          "y_scale": 0.0
+        },
+        "right": -0.66
+      },
+      "right": {
+        "type": "minecraft:min",
+        "left": {
+          "type": "minecraft:min",
+          "left": {
+            "type": "minecraft:add",
+            "left": "antarchy:elythia_biome_continents",
+            "right": 0.33
+          },
+          "right": {
+            "type": "minecraft:add",
+            "left": {
+              "type": "minecraft:mul",
+              "left": -1.0,
+              "right": "antarchy:elythia_biome_continents"
+            },
+            "right": 0.05
+          }
+        },
+        "right": {
+          "type": "minecraft:min",
+          "left": {
+            "type": "minecraft:add",
+            "left": {
+              "type": "minecraft:mul",
+              "left": -1.0,
+              "right": "minecraft:overworld/ridges"
+            },
+            "right": -0.05
+          },
+          "right": {
+            "type": "minecraft:add",
+            "left": {
+              "type": "minecraft:mul",
+              "left": -1.0,
+              "right": "antarchy:elythia_erosion"
+            },
+            "right": 0.65
+          }
+        }
+      }
+    }
+  }
+}

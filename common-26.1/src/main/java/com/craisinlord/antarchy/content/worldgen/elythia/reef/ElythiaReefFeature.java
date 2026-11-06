@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.worldgen.elythia.reef;
 import com.craisinlord.antarchy.content.worldgen.ocean.StarCoralPatchFeature;
 import com.mojang.serialization.Codec;
 import java.util.List;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -56,6 +58,12 @@ public final class ElythiaReefFeature extends Feature<NoneFeatureConfiguration> 
         }
         scatter(context, chunk, pieces);
         return true;
+    }
+
+    public static void prepare(ServerLevel level, ChunkGenerator generator, ChunkPos chunk) {
+        ReefPlanner.prepare(level, generator,
+                Math.floorDiv(chunk.getMinBlockX(), ReefPlanner.CELL),
+                Math.floorDiv(chunk.getMinBlockZ(), ReefPlanner.CELL));
     }
 
     private static boolean overlaps(ChunkPos chunk, int x, int z, int radius) {

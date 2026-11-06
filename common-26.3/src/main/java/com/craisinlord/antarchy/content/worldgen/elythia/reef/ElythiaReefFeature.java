@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import java.util.List;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -60,6 +61,12 @@ public final class ElythiaReefFeature implements Feature {
         }
         scatter(level, chunkGenerator, random, chunk, pieces);
         return true;
+    }
+
+    public static void prepare(ServerLevel level, ChunkGenerator generator, ChunkPos chunk) {
+        ReefPlanner.prepare(level, generator,
+                Math.floorDiv(chunk.getMinBlockX(), ReefPlanner.CELL),
+                Math.floorDiv(chunk.getMinBlockZ(), ReefPlanner.CELL));
     }
 
     private static boolean overlaps(ChunkPos chunk, int x, int z, int radius) {

@@ -90,12 +90,12 @@ public record NadirTreeFeature(
             if (state.hasProperty(RotatedPillarBlock.AXIS)) {
                 state = state.setValue(RotatedPillarBlock.AXIS, entry.getValue());
             }
-            setBlock(level, pos, state);
+            level.setBlock(pos, state, 2);
         }
 
         for (BlockPos pos : foliage) {
             if (!logs.containsKey(pos)) {
-                setBlock(level, pos, this.foliageProvider().value().getState(level, random, pos));
+                level.setBlock(pos, this.foliageProvider().value().getState(level, random, pos), 2);
             }
         }
 

@@ -1,21 +1,24 @@
 package com.craisinlord.antarchy.content.entity;
 
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
-import java.util.ArrayDeque;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,12 +26,13 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.advancements.triggers.CriteriaTriggers;
@@ -75,9 +79,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.Pose;
@@ -92,7 +96,6 @@ import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
 
 public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, GlimmerEcho {
-    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(HerculesBeetleEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(HerculesBeetleEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SADDLED =
@@ -103,6 +106,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
             SynchedEntityData.defineId(HerculesBeetleEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> MOUNTED_CHARGE =
             SynchedEntityData.defineId(HerculesBeetleEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(HerculesBeetleEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final int ANIM_IDLE = 0;
     private static final int ANIM_WALK = 1;
@@ -148,17 +153,6 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     private static final int MIN_MOUNTED_CHARGE_TICKS = 40;
     private static final int MAX_CHARGE_TICKS = 200;
     private static final int CHARGE_COOLDOWN_TICKS = 200;
-    private static final int GLIMMER_XP_REWARD = 250;
-    private static final int BASE_XP_REWARD = 50;
-    private static final int GLIMMER_ABANDON_RANGE = 48;
-    private static final int GLIMMER_ABANDON_TICKS = 600;
-    private static final int GLIMMER_TRAIL_RECORD_INTERVAL = 2;
-    private static final int GLIMMER_TRAIL_LINGER_TICKS = 40;
-    private static final int GLIMMER_TRAIL_MAX_POINTS = 32;
-    private static final int GLIMMER_TRAIL_HIT_INTERVAL = 10;
-    private static final int GLIMMER_FOLLOW_UP_RANGE = 36;
-    private static final double GLIMMER_TRAIL_RADIUS = 1.5D;
-    private static final float GLIMMER_TRAIL_DAMAGE = 2.0F;
     private static final int REGULAR_ATTACK_COOLDOWN_TICKS = 18;
     private static final int CRY_COOLDOWN_TICKS = 120;
     private static final int COMBAT_RESET_TICKS = 60;
@@ -177,12 +171,23 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     private static final double MOUNTED_FLYING_SPEED_MULTIPLIER = 0.052D;
     private static final double MOUNTED_GROUND_BRAKE = 0.6D;
     private static final double MOUNTED_FLIGHT_LIFT = 0.36D;
+    private static final int BASE_XP_REWARD = 50;
+    private static final int GLIMMER_XP_REWARD = 250;
+    private static final double GLIMMER_ABANDON_RANGE = 48.0D;
+    private static final int GLIMMER_ABANDON_TICKS = 600;
+    private static final int GLIMMER_TRAIL_RECORD_INTERVAL = 2;
+    private static final int GLIMMER_TRAIL_LINGER_TICKS = 40;
+    private static final int GLIMMER_TRAIL_MAX_POINTS = 32;
+    private static final double GLIMMER_TRAIL_RADIUS = 1.5D;
+    private static final float GLIMMER_TRAIL_DAMAGE = 2.0F;
+    private static final int GLIMMER_TRAIL_HIT_INTERVAL = 10;
+    private static final double GLIMMER_FOLLOW_UP_RANGE = 36.0D;
+    private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
+            Identifier.fromNamespaceAndPath(com.craisinlord.antarchy.Antarchy.MODID, "entities/hercules_beetle_glimmer"));
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bossEvent =
-            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.hercules_beetle"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
-    private final ArrayDeque<Vec3> glimmerTrail = new ArrayDeque<>();
-    private final Map<UUID, Integer> glimmerTrailHits = new HashMap<>();
+            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, Component.translatable("entity.antarchy.hercules_beetle"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 
     private int actionTicks;
     private int actionHitTick;
@@ -205,19 +210,21 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     private boolean pendingMountedCharge;
     private boolean groundedMountedCharge;
     private int pendingChargeDuration;
-    private int glimmerAbandonTicks;
-    private int glimmerTrailTicks;
-    private boolean glimmerFollowUpCharge;
     @Nullable
     private UUID attackTargetId;
     private Vec3 chargeDirection = Vec3.ZERO;
+    private int glimmerAbandonTicks;
+    private int glimmerTrailTicks;
+    private boolean glimmerFollowUpCharge;
+    private final List<Vec3> glimmerTrail = new ArrayList<>();
+    private final Map<UUID, Integer> glimmerTrailHits = new HashMap<>();
 
     public HerculesBeetleEntity(EntityType<? extends HerculesBeetleEntity> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
         this.setPathfindingMalus(PathType.WATER, -1.0F);
         this.setPathfindingMalus(PathType.LAVA, -1.0F);
-        this.xpReward = 50;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -235,7 +242,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     @Override
     public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
             EntitySpawnReason spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
-        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.herculesBeetleHealth());
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, this.configuredHealth());
+        Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(this.configuredAttackDamage());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
 
@@ -297,17 +305,16 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
-        builder.define(GLIMMER_ECHO, false);
         builder.define(SADDLED, false);
         builder.define(FLYING, false);
         builder.define(KNOCKED_DOWN, false);
         builder.define(MOUNTED_CHARGE, 0);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<HerculesBeetleEntity>("main_controller", 0, this::mainAnimController)
-                .receiveTriggeredAnimations()
                 .triggerableAnim("cry", CRY_ANIM)
                 .triggerableAnim("attack", ATTACK_ANIM)
                 .triggerableAnim("charge_start", CHARGE_START_ANIM));
@@ -315,9 +322,6 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     }
 
     private PlayState mainAnimController(AnimationTest<HerculesBeetleEntity> state) {
-        if (state.controller().isPlayingTriggeredAnimation()) {
-            return PlayState.CONTINUE;
-        }
         if (this.isFlying() && (this.getAnimationState() == ANIM_CHARGE_START || this.getAnimationState() == ANIM_CHARGE)) {
             return state.setAndContinue(FLY_ANIM);
         }
@@ -382,6 +386,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
                 }
             } else {
                 GlimmerEchoes.tickAmbient(this, 10, 2);
+                this.glimmerAbandonTicks = 0;
             }
         }
 
@@ -412,7 +417,6 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
         }
 
         this.tickMountedCharge();
-        this.tickGlimmerTrail();
 
         if (this.isDeadOrDying()) {
             this.noPhysics = false;
@@ -420,6 +424,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
             this.bossEvent.setProgress(0.0F);
             return;
         }
+
+        this.tickGlimmerTrail();
 
         if (this.flightCooldown > 0) {
             this.flightCooldown--;
@@ -434,6 +440,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
         } else if (this.isLeashed()) {
             if (this.chargeTicksRemaining > 0 || this.isChargeAnimationActive()) {
                 this.endChargeState();
+                this.glimmerFollowUpCharge = false;
             }
             this.getNavigation().stop();
             this.setTarget(null);
@@ -458,7 +465,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
         }
 
         if (this.shouldShowBossBar()) {
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+            this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         } else {
             this.bossEvent.removeAllPlayers();
         }
@@ -529,13 +536,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     private void tickCharge() {
         if (this.chargeTicksRemaining <= 0) {
             this.endChargeState();
+            this.glimmerFollowUpCharge = false;
             return;
         }
         if (this.getAnimationState() != ANIM_CHARGE) {
             this.setAnimationState(ANIM_CHARGE);
-        }
-        if (this.isEmpoweredGlimmer() && this.chargeTicksRemaining % GLIMMER_TRAIL_RECORD_INTERVAL == 0) {
-            this.recordGlimmerTrailPoint();
         }
         if (!this.groundedMountedCharge) {
             this.setFlying(true);
@@ -566,6 +571,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
 
         this.chargeDistanceTravelled += move.length();
         this.chargeTicksRemaining--;
+        if (this.isEmpoweredGlimmer() && this.chargeTicksRemaining % GLIMMER_TRAIL_RECORD_INTERVAL == 0) {
+            this.recordGlimmerTrailPoint();
+        }
         if (this.chargeDistanceTravelled >= this.chargeDistanceTarget || this.chargeTicksRemaining <= 0) {
             this.finishChargeImpact();
         }
@@ -702,6 +710,15 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
         return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.hercules_beetle.glimmer") : super.getTypeName();
     }
 
+    @Override
+    protected void dropFromLootTable(ServerLevel level, DamageSource damageSource, boolean causedByPlayer) {
+        if (this.isEmpoweredGlimmer()) {
+            this.dropFromLootTable(level, damageSource, causedByPlayer, GLIMMER_LOOT_TABLE);
+            return;
+        }
+        super.dropFromLootTable(level, damageSource, causedByPlayer);
+    }
+
     private float chargeRollChance() {
         if (!this.isEmpoweredGlimmer()) {
             return 0.015F;
@@ -711,7 +728,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     }
 
     private int scaledCooldown(int ticks) {
-        return this.isEmpoweredGlimmer() ? Math.max(10, (int) Math.round(ticks * AntarchySettings.glimmerHerculesBeetleCooldownMultiplier())) : ticks;
+        if (!this.isEmpoweredGlimmer()) {
+            return ticks;
+        }
+        return Math.max(10, (int) Math.round(ticks * AntarchySettings.glimmerHerculesBeetleCooldownMultiplier()));
     }
 
     private boolean tickGlimmerAbandonment() {
@@ -750,9 +770,13 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
         if (this.chargeTicksRemaining <= 0) {
             this.glimmerTrailTicks--;
         }
+
         if (this.tickCount % 4 == 0) {
-            this.sendGlimmerTrailParticles(serverLevel);
+            int half = (this.glimmerTrail.size() + 1) / 2;
+            this.sendGlimmerTrailParticles(serverLevel, 0, half);
+            this.sendGlimmerTrailParticles(serverLevel, half, this.glimmerTrail.size());
         }
+
         float damage = GLIMMER_TRAIL_DAMAGE * this.glimmerEchoDamageMultiplier();
         for (ServerPlayer player : serverLevel.players()) {
             if (!this.canHarm(player) || player.distanceToSqr(this) > 64.0D * 64.0D) {
@@ -771,28 +795,38 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
                 }
             }
         }
+
         if (this.glimmerTrailTicks <= 0) {
             this.glimmerTrail.clear();
             this.glimmerTrailHits.clear();
         }
     }
 
-    private void sendGlimmerTrailParticles(ServerLevel serverLevel) {
-        Vec3 min = null;
-        Vec3 max = null;
-        for (Vec3 point : this.glimmerTrail) {
-            if (min == null) {
-                min = point;
-                max = point;
-            } else {
-                min = new Vec3(Math.min(min.x, point.x), Math.min(min.y, point.y), Math.min(min.z, point.z));
-                max = new Vec3(Math.max(max.x, point.x), Math.max(max.y, point.y), Math.max(max.z, point.z));
-            }
+    private void sendGlimmerTrailParticles(ServerLevel serverLevel, int from, int to) {
+        if (from >= to) {
+            return;
         }
-        if (min != null && max != null) {
-            serverLevel.sendParticles(GlimmerEchoes.dust(), (min.x + max.x) * 0.5D, (min.y + max.y) * 0.5D, (min.z + max.z) * 0.5D,
-                    this.glimmerTrail.size() * 2, Math.max(0.4D, (max.x - min.x) * 0.3D), Math.max(0.3D, (max.y - min.y) * 0.3D), Math.max(0.4D, (max.z - min.z) * 0.3D), 0.0D);
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double minZ = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        double maxZ = -Double.MAX_VALUE;
+        for (int i = from; i < to; i++) {
+            Vec3 point = this.glimmerTrail.get(i);
+            minX = Math.min(minX, point.x);
+            minY = Math.min(minY, point.y);
+            minZ = Math.min(minZ, point.z);
+            maxX = Math.max(maxX, point.x);
+            maxY = Math.max(maxY, point.y);
+            maxZ = Math.max(maxZ, point.z);
         }
+        serverLevel.sendParticles(GlimmerEchoes.dust(), (minX + maxX) * 0.5D, (minY + maxY) * 0.5D, (minZ + maxZ) * 0.5D,
+                (to - from) * 2,
+                Math.max(0.4D, (maxX - minX) * 0.3D),
+                Math.max(0.3D, (maxY - minY) * 0.3D),
+                Math.max(0.4D, (maxZ - minZ) * 0.3D),
+                0.0D);
     }
 
     private void tryGlimmerFollowUpCharge() {
@@ -800,7 +834,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
             this.glimmerFollowUpCharge = false;
             return;
         }
-        if (!this.isEmpoweredGlimmer() || this.isKnockedDown() || this.isVehicle() || this.isLeashed() || !this.isAlive()
+        if (!this.isEmpoweredGlimmer()
+                || this.isKnockedDown()
+                || this.isVehicle()
+                || this.isLeashed()
+                || !this.isAlive()
                 || this.getHealth() > this.getMaxHealth() * 0.5F) {
             return;
         }
@@ -811,7 +849,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
         }
         this.glimmerFollowUpCharge = true;
         this.startCharge(target.position().subtract(this.position()), MAX_CHARGE_TICKS, false);
-        if (this.getAnimationState() != ANIM_CHARGE_START && this.getAnimationState() != ANIM_CHARGE && this.getAnimationState() != ANIM_OPEN_WINGS) {
+        if (!this.isChargeAnimationActive() && this.getAnimationState() != ANIM_OPEN_WINGS) {
             this.glimmerFollowUpCharge = false;
         }
     }
@@ -829,16 +867,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
             amount *= 0.5F;
         }
 
-        float preHealth = this.getHealth();
-
-        if (!this.isTame() && !this.isKnockedDown() && !this.isDeadOrDying()) {
+        if (!this.level().isClientSide() && !this.isTame() && !this.isKnockedDown() && !this.isDeadOrDying()) {
             float knockThreshold = Math.max(1.0F, this.getMaxHealth() * 0.05F);
             if (this.getHealth() - amount <= knockThreshold) {
                 float allowedDamage = Math.max(0.0F, this.getHealth() - knockThreshold);
                 boolean hurt = allowedDamage <= 0.0F || super.hurtServer(level, source, allowedDamage);
-                if (hurt) {
-                    BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
-                }
                 if (hurt && this.isAlive()) {
                     this.enterKnockedDown();
                 }
@@ -846,11 +879,14 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
             }
         }
 
-        boolean hurt = super.hurtServer(level, source, amount);
-        if (hurt) {
-            BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
-        }
-        return hurt;
+        return super.hurtServer(level, source, amount);
+    }
+
+    @Override
+    protected void actuallyHurt(ServerLevel level, DamageSource source, float amount) {
+        float preHealth = this.getHealth();
+        super.actuallyHurt(level, source, amount);
+        BossCombatUtil.clampHalfHealthCrossing(this, preHealth, source);
     }
 
     @Override
@@ -874,6 +910,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
         this.noPhysics = false;
         this.pendingChargeStart = false;
         this.groundedMountedCharge = false;
+        this.glimmerFollowUpCharge = false;
         this.chargeTicksRemaining = 0;
         this.attackCooldown = 0;
         this.getNavigation().stop();
@@ -896,6 +933,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
                 if (this.random.nextInt(3) == 0) {
                     this.setTame(true, true);
                     this.setOwner(player);
+                    this.xpReward = BASE_XP_REWARD;
                     if (player instanceof ServerPlayer serverPlayer) {
                         CriteriaTriggers.TAME_ANIMAL.trigger(serverPlayer, this);
                     }
@@ -1099,6 +1137,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
             push = push.normalize().scale(horizontalKnockback);
             Vec3 worldPush = this.toWorld(push.x, 1.25D, push.z);
             target.setDeltaMovement(target.getDeltaMovement().add(worldPush.x, worldPush.y, worldPush.z));
+            target.needsSync = true;
         }
         return hurt;
     }
@@ -1177,12 +1216,14 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
                 horizontal = horizontal.normalize();
                 Vec3 worldPush = this.toWorld(horizontal.x * 1.25D, 0.9D, horizontal.z * 1.25D);
                 victim.setDeltaMovement(victim.getDeltaMovement().add(worldPush.x, worldPush.y, worldPush.z));
+                victim.needsSync = true;
             }
         }
 
         if (!this.isEmpoweredGlimmer()) {
             this.breakBlocksForChargeImpact(serverLevel);
-        } else {
+        }
+        if (this.isEmpoweredGlimmer()) {
             this.recordGlimmerTrailPoint();
         }
         this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.6F, 0.75F);
@@ -1223,10 +1264,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
                 break;
             }
             BlockState state = level.getBlockState(pos);
-            BlockEntity blockEntity = level.getBlockEntity(pos);
             if (state.isAir()
                     || state.is(AntarchyTags.Blocks.HERCULES_BEETLE_CHARGE_IMMUNE_BLOCKS)
-                    || blockEntity != null
+                    || level.getBlockEntity(pos) != null
                     || state.getDestroySpeed(level, pos) < 0.0F) {
                 continue;
             }
@@ -1251,10 +1291,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
                 break;
             }
             BlockState state = serverLevel.getBlockState(pos);
-            BlockEntity blockEntity = serverLevel.getBlockEntity(pos);
             if (state.isAir()
                     || state.is(AntarchyTags.Blocks.HERCULES_BEETLE_CHARGE_IMMUNE_BLOCKS)
-                    || blockEntity != null
+                    || serverLevel.getBlockEntity(pos) != null
                     || state.getDestroySpeed(serverLevel, pos) < 0.0F) {
                 continue;
             }
@@ -1279,10 +1318,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
                 break;
             }
             BlockState state = serverLevel.getBlockState(pos);
-            BlockEntity blockEntity = serverLevel.getBlockEntity(pos);
             if (state.isAir()
                     || state.is(AntarchyTags.Blocks.HERCULES_BEETLE_CHARGE_IMMUNE_BLOCKS)
-                    || blockEntity != null
+                    || serverLevel.getBlockEntity(pos) != null
                     || state.getDestroySpeed(serverLevel, pos) < 0.0F) {
                 continue;
             }
@@ -1321,7 +1359,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     private void broadcastImpactShake(ServerLevel level) {
         for (ServerPlayer player : level.players()) {
             if (player.distanceToSqr(this) <= 48.0D * 48.0D) {
-                HerculesBeetleImpactShakeSync.send(player, IMPACT_SHAKE_TICKS);
+                AntarchyNetwork.sendToPlayer(player, new HerculesBeetleImpactShakePayload(IMPACT_SHAKE_TICKS));
             }
         }
     }
@@ -1624,29 +1662,29 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     }
 
     @Override
-    public void addAdditionalSaveData(ValueOutput tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putBoolean("Saddled", this.hasSaddle());
-        tag.putBoolean("KnockedDown", this.isKnockedDown());
-        tag.putBoolean("Flying", this.isFlying());
-        tag.putInt("AnimationState", this.getAnimationState());
-        tag.putInt("ChargeCooldown", this.chargeCooldown);
-        tag.putInt("AttackCooldown", this.attackCooldown);
-        tag.putBoolean("CombatCryDone", this.combatCryDone);
-        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putBoolean("Saddled", this.hasSaddle());
+        output.putBoolean("KnockedDown", this.isKnockedDown());
+        output.putBoolean("Flying", this.isFlying());
+        output.putInt("AnimationState", this.getAnimationState());
+        output.putInt("ChargeCooldown", this.chargeCooldown);
+        output.putInt("AttackCooldown", this.attackCooldown);
+        output.putBoolean("CombatCryDone", this.combatCryDone);
+        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
     }
 
     @Override
-    public void readAdditionalSaveData(ValueInput tag) {
-        super.readAdditionalSaveData(tag);
-        this.setSaddled(tag.getBooleanOr("Saddled", false));
-        this.setKnockedDown(tag.getBooleanOr("KnockedDown", false));
-        this.setFlying(tag.getBooleanOr("Flying", false));
-        this.setAnimationState(tag.getIntOr("AnimationState", ANIM_IDLE));
-        this.chargeCooldown = tag.getIntOr("ChargeCooldown", 0);
-        this.attackCooldown = tag.getIntOr("AttackCooldown", 0);
-        this.combatCryDone = tag.getBooleanOr("CombatCryDone", false);
-        this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.setSaddled(input.getBooleanOr("Saddled", false));
+        this.setKnockedDown(input.getBooleanOr("KnockedDown", false));
+        this.setFlying(input.getBooleanOr("Flying", false));
+        this.setAnimationState(input.getIntOr("AnimationState", ANIM_IDLE));
+        this.chargeCooldown = input.getIntOr("ChargeCooldown", 0);
+        this.attackCooldown = input.getIntOr("AttackCooldown", 0);
+        this.combatCryDone = input.getBooleanOr("CombatCryDone", false);
+        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
         if (this.isChargeAnimationActive()) {
             this.setAnimationState(this.isFlying() ? ANIM_FLY : ANIM_IDLE);
         }
@@ -1723,8 +1761,36 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
     }
 
     private final class HerculesCombatGoal extends Goal {
+        private static final int REPATH_INTERVAL_TICKS = 4;
+        private static final int REPATH_FAILURE_INTERVAL_TICKS = 10;
+        private static final double REPATH_TARGET_MOVED_SQR = 1.0D;
+
+        private long nextRepathTick;
+        private boolean lastRepathStarted;
+        private boolean lastRepathFlying;
+        private Vec3 lastRepathTargetPos = Vec3.ZERO;
+
         HerculesCombatGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public void start() {
+            this.nextRepathTick = 0L;
+        }
+
+        private void repathToTarget(LivingEntity target) {
+            boolean flying = HerculesBeetleEntity.this.isFlying();
+            long gameTime = HerculesBeetleEntity.this.level().getGameTime();
+            boolean targetMoved = target.position().distanceToSqr(this.lastRepathTargetPos) > REPATH_TARGET_MOVED_SQR;
+            boolean movedSinceSuccess = targetMoved && this.lastRepathStarted;
+            if (gameTime < this.nextRepathTick && !movedSinceSuccess && flying == this.lastRepathFlying) {
+                return;
+            }
+            this.lastRepathStarted = HerculesBeetleEntity.this.getNavigation().moveTo(target, flying ? 1.2D : 1.0D);
+            this.lastRepathFlying = flying;
+            this.lastRepathTargetPos = target.position();
+            this.nextRepathTick = gameTime + (this.lastRepathStarted ? REPATH_INTERVAL_TICKS : REPATH_FAILURE_INTERVAL_TICKS);
         }
 
         @Override
@@ -1767,6 +1833,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
             }
 
             if (HerculesBeetleEntity.this.isInBusyAnimation() || HerculesBeetleEntity.this.chargeTicksRemaining > 0) {
+                this.nextRepathTick = 0L;
                 return;
             }
 
@@ -1793,8 +1860,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Gl
                 return;
             }
 
-            double speed = HerculesBeetleEntity.this.isFlying() ? 1.2D : 1.0D;
-            HerculesBeetleEntity.this.getNavigation().moveTo(target, speed);
+            this.repathToTarget(target);
         }
     }
 }

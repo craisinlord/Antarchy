@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -64,7 +65,8 @@ public final class ThoraxisUndersideSkyRenderer {
     private static final float SKY_RED = 0.015F;
     private static final float SKY_GREEN = 0.0F;
     private static final float SKY_BLUE = 0.035F;
-    private static final Map<SkyRenderState, Boolean> STATES = new WeakHashMap<>();
+    private static float glowAlphaScale = 1.0F;
+    private static final Map<SkyRenderState, State> STATES = new WeakHashMap<>();
 
     @Nullable
     private static AntarchySkyDraw.StaticMesh[] eyeStarMeshes = null;
@@ -86,13 +88,14 @@ public final class ThoraxisUndersideSkyRenderer {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
-        boolean skip = minecraft.options.hideLightningFlash().get() || minecraft.gameRenderer.getMainCamera() != camera;
-        STATES.put(skyState, skip);
+        boolean skip = minecraft.gameRenderer.getMainCamera() != camera;
+        double time = minecraft.level == null ? 0.0D : minecraft.level.getGameTime() + partialTick;
+        STATES.put(skyState, new State(skip, time, partialTick));
     }
 
     public static void render(SkyRenderState skyState) {
-        Boolean skip = STATES.get(skyState);
-        if (skip == null || skip) {
+        State state = STATES.get(skyState);
+        if (state == null || state.skip()) {
             return;
         }
 
@@ -100,11 +103,11 @@ public final class ThoraxisUndersideSkyRenderer {
         AntarchySkyDraw.draw("Antarchy Thoraxis sky disc", RenderPipelines.SKY, AntarchySkyDraw.topSkyDisc(), modelView,
                 new Vector4f(SKY_RED, SKY_GREEN, SKY_BLUE, 1.0F), null);
 
-        renderEyeStars(modelView);
-        renderEyeSuns(modelView);
+        renderEyeStars(modelView, state.time(), state.partialTick());
+        renderEyeSuns(modelView, state.time(), state.partialTick());
     }
 
-    private static void renderEyeStars(Matrix4f modelView) {
+    private static void renderEyeStars(Matrix4f modelView, double time, float partialTick) {
         if (eyeStarMeshes == null) {
             eyeStarMeshes = buildEyeStarMeshes();
         }
@@ -112,8 +115,9 @@ public final class ThoraxisUndersideSkyRenderer {
         for (int i = 0; i < eyeStarMeshes.length; i++) {
             AntarchySkyDraw.StaticMesh mesh = eyeStarMeshes[i];
             if (mesh != null) {
+                float brightness = ThoraxisEventClient.eyeStarBrightness(i, time, partialTick);
                 AntarchySkyDraw.draw("Antarchy Thoraxis eye stars", RenderPipelines.END_SKY, mesh, modelView,
-                        AntarchySkyDraw.WHITE, EYE_STAR_TEXTURES[i]);
+                        new Vector4f(brightness, brightness, brightness, brightness), EYE_STAR_TEXTURES[i]);
             }
         }
     }
@@ -235,11 +239,14 @@ public final class ThoraxisUndersideSkyRenderer {
         return Math.atan(BODY_SIZE * 0.5F * (radius / 22.0F) / SKY_RADIUS) + 0.02D;
     }
 
-    private static void renderEyeSuns(Matrix4f modelView) {
+    private static void renderEyeSuns(Matrix4f modelView, double time, float partialTick) {
+        float open = ThoraxisEventClient.eyeOpenness(time, partialTick);
+        glowAlphaScale = open;
         for (float[] sun : EYE_SUNS) {
             renderSunGlow(modelView, sun[0], sun[1]);
-            renderSunBody(modelView, sun[0], sun[1], sun[2]);
+            renderSunBody(modelView, sun[0], sun[1], sun[2], open);
         }
+        glowAlphaScale = 1.0F;
     }
 
     private static void renderSunGlow(Matrix4f modelView, float orbitDegrees, float yawDegrees) {
@@ -261,28 +268,35 @@ public final class ThoraxisUndersideSkyRenderer {
             float cos = Mth.cos(angle);
             float nextSin = Mth.sin(nextAngle);
             float nextCos = Mth.cos(nextAngle);
-            buffer.addVertex(sin * fromRadius, SKY_RADIUS, cos * fromRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, fromAlpha);
-            buffer.addVertex(sin * toRadius, SKY_RADIUS, cos * toRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, toAlpha);
-            buffer.addVertex(nextSin * toRadius, SKY_RADIUS, nextCos * toRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, toAlpha);
-            buffer.addVertex(nextSin * fromRadius, SKY_RADIUS, nextCos * fromRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, fromAlpha);
+            buffer.addVertex(sin * fromRadius, SKY_RADIUS, cos * fromRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, Math.min(1.0F, fromAlpha * glowAlphaScale));
+            buffer.addVertex(sin * toRadius, SKY_RADIUS, cos * toRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, Math.min(1.0F, toAlpha * glowAlphaScale));
+            buffer.addVertex(nextSin * toRadius, SKY_RADIUS, nextCos * toRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, Math.min(1.0F, toAlpha * glowAlphaScale));
+            buffer.addVertex(nextSin * fromRadius, SKY_RADIUS, nextCos * fromRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, Math.min(1.0F, fromAlpha * glowAlphaScale));
         }
         AntarchySkyDraw.draw("Antarchy Thoraxis sun glow", RenderPipelines.DEBUG_QUADS, buffer.buildOrThrow(), modelView,
                 AntarchySkyDraw.WHITE, null);
     }
 
-    private static void renderSunBody(Matrix4f modelView, float orbitDegrees, float yawDegrees, float selfRotationDegrees) {
+    private static void renderSunBody(Matrix4f modelView, float orbitDegrees, float yawDegrees, float selfRotationDegrees, float open) {
+        if (open <= 0.01F) {
+            return;
+        }
         Matrix4f bodyModelView = new Matrix4f(modelView)
                 .rotateX((float) Math.toRadians(orbitDegrees))
                 .rotateZ((float) Math.toRadians(yawDegrees))
                 .rotateY((float) Math.toRadians(selfRotationDegrees));
 
         float halfSize = BODY_SIZE * 0.5F * (SUN_RADIUS / 22.0F);
+        float halfHeight = halfSize * open;
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.addVertex(-halfSize, SKY_RADIUS, -halfSize).setUv(0.0F, 0.0F);
-        buffer.addVertex(halfSize, SKY_RADIUS, -halfSize).setUv(1.0F, 0.0F);
-        buffer.addVertex(halfSize, SKY_RADIUS, halfSize).setUv(1.0F, 1.0F);
-        buffer.addVertex(-halfSize, SKY_RADIUS, halfSize).setUv(0.0F, 1.0F);
+        buffer.addVertex(-halfSize, SKY_RADIUS, -halfHeight).setUv(0.0F, 0.0F);
+        buffer.addVertex(halfSize, SKY_RADIUS, -halfHeight).setUv(1.0F, 0.0F);
+        buffer.addVertex(halfSize, SKY_RADIUS, halfHeight).setUv(1.0F, 1.0F);
+        buffer.addVertex(-halfSize, SKY_RADIUS, halfHeight).setUv(0.0F, 1.0F);
         AntarchySkyDraw.draw("Antarchy Thoraxis sun", RenderPipelines.CELESTIAL, buffer.buildOrThrow(), bodyModelView,
                 AntarchySkyDraw.WHITE, SUN_TEXTURE);
+    }
+
+    private record State(boolean skip, double time, float partialTick) {
     }
 }

@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.network;
 
 import com.craisinlord.antarchy.content.computer.AntarchyGameSavedData;
-import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -9,13 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
 public final class AntarchyGameNetworkHandler {
-    private static BiConsumer<ServerPlayer, AntarchyGameResultPayload> resultSender = (player, result) -> { };
-
     private AntarchyGameNetworkHandler() { }
-
-    public static void setResultSender(BiConsumer<ServerPlayer, AntarchyGameResultPayload> sender) {
-        resultSender = sender;
-    }
 
     public static void handle(ServerPlayer player, AntarchyGamePayload payload) {
         BlockPos pos = payload.pos();
@@ -65,7 +58,7 @@ public final class AntarchyGameNetworkHandler {
     }
 
     private static void send(ServerPlayer player, AntarchyGamePayload payload, boolean success, String data, String error) {
-        resultSender.accept(player, new AntarchyGameResultPayload(payload.pos(), success,
+        AntarchyNetwork.sendToPlayer(player, new AntarchyGameResultPayload(payload.pos(), success,
                 payload.action() + "\0" + error + "\0" + data));
     }
 }

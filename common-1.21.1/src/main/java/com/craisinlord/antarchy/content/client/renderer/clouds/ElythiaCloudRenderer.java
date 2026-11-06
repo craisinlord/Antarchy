@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.client.renderer.clouds;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ElythiaWind;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
@@ -156,14 +157,31 @@ public final class ElythiaCloudRenderer {
         float fogEnd = Math.max(terrainFogEnd, vertical + cloudRange);
         RenderSystem.setShaderFogStart(fogEnd * FOG_START_FRACTION);
         RenderSystem.setShaderFogEnd(fogEnd);
+        Uniform modelView = shader.MODEL_VIEW_MATRIX;
+        if (shader.getClass() != ShaderInstance.class || modelView == null) {
+            forEachSection(layer, sections, frustum, wind, camX, camY, camZ, Math.min(fogEnd, depthFar),
+                    (section, originX, originY, originZ) -> {
+                        poseStack.pushPose();
+                        poseStack.translate(originX, originY, originZ);
+                        section.buffer().bind();
+                        section.buffer().drawWithShader(poseStack.last().pose(), projectionMatrix, shader);
+                        poseStack.popPose();
+                    });
+            return;
+        }
+        shader.setDefaultUniforms(VertexFormat.Mode.QUADS, poseStack.last().pose(), projectionMatrix, Minecraft.getInstance().getWindow());
+        shader.apply();
         forEachSection(layer, sections, frustum, wind, camX, camY, camZ, Math.min(fogEnd, depthFar),
                 (section, originX, originY, originZ) -> {
                     poseStack.pushPose();
                     poseStack.translate(originX, originY, originZ);
-                    section.buffer().bind();
-                    section.buffer().drawWithShader(poseStack.last().pose(), projectionMatrix, shader);
+                    modelView.set(poseStack.last().pose());
+                    modelView.upload();
                     poseStack.popPose();
+                    section.buffer().bind();
+                    section.buffer().draw();
                 });
+        shader.clear();
     }
 
     private static void collectSoftDraws(

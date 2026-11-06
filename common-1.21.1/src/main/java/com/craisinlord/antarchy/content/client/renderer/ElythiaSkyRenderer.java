@@ -78,7 +78,7 @@ public final class ElythiaSkyRenderer {
             VertexBuffer starBuffer
     ) {
         setupFog.run();
-        if (isFoggy || minecraft.options.hideLightningFlash().get() || minecraft.gameRenderer.getMainCamera() != camera) {
+        if (isFoggy || minecraft.gameRenderer.getMainCamera() != camera) {
             return;
         }
 

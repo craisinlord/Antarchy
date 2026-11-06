@@ -3,7 +3,7 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
-import net.minecraft.world.damagesource.DamageSource;
+import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
@@ -15,7 +15,9 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.core.BlockPos;
@@ -33,14 +35,24 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
     private static final double SHOCKWAVE_KNOCKBACK = 1.3D;
     private static final float SHOCKWAVE_DAMAGE = 8.0F;
     private static final int IDLE_ANIMATION_CYCLE_TICKS = 60;
-    private static final int QUIRK_ANIMATION_TICKS = 40;
+    private static final int QUIRK_ANIMATION_TICKS = 80;
+    private static final int QUIRK_2_ANIMATION_TICKS = 60;
+    private static final int QUIRK_3_ANIMATION_TICKS = 80;
+    private static final int SIT_TRANSITION_TICKS = 20;
+    private static final int QUIRK_VARIANT_SECOND = 1;
+    private static final int QUIRK_VARIANT_SITTING = 2;
+    private static final int VARIANT_SIT_DOWN = 3;
+    private static final int VARIANT_GET_UP = 4;
     private static final int QUIRK_CHANCE = 60;
     private static final int SIT_MIN_TICKS = 20 * 60;
     private static final int SIT_MAX_TICKS = 20 * 60 * 3;
     private static final int SIT_COOLDOWN_TICKS = 20 * 60 * 6;
     private static final int SIT_CHECK_CHANCE_SHADE = 300;
     private static final int SIT_CHECK_CHANCE_OPEN = 1200;
-    private static final double FOLLOW_BREAK_SIT_DISTANCE_SQR = 81.0D;
+    private static final double FOLLOW_BREAK_SIT_DISTANCE_SQR = 64.0D;
+    private static final double STROLL_SPEED = 0.8D;
+    private static final RawAnimation ELKA_SIT_DOWN_ANIM = RawAnimation.begin().thenPlay("sit");
+    private static final RawAnimation ELKA_GET_UP_ANIM = RawAnimation.begin().thenPlay("get_up");
     private static final RawAnimation ELKA_WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation ELKA_IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation ELKA_SIT_IDLE_ANIM = RawAnimation.begin().thenLoop("sit_idle");
@@ -55,6 +67,19 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
     @Override
     public void registerGoals(GlimmerEntity entity) {
         entity.addGoal(0, new FloatGoal(entity));
+        entity.addGoal(5, new WaterAvoidingRandomStrollGoal(entity, STROLL_SPEED) {
+            @Override
+            public boolean canUse() {
+                return !entity.isElkaIdleSitting() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !entity.isElkaIdleSitting() && super.canContinueToUse();
+            }
+        });
+        entity.addGoal(6, new LookAtPlayerGoal(entity, Player.class, 8.0F));
+        entity.addGoal(7, new RandomLookAroundGoal(entity));
     }
 
     @Override
@@ -108,16 +133,19 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
     }
 
     @Override
-    public void tickPassiveEveryTick(GlimmerEntity entity, Player owner) {
+    public void customTick(GlimmerEntity entity) {
         this.tickIdleState(entity);
+    }
 
+    @Override
+    public void tickPassiveEveryTick(GlimmerEntity entity, Player owner) {
         if (!(owner instanceof BloodglassAccess access)) {
             return;
         }
 
         long lostNow = access.antarchy$getArmorShieldLostCount() + access.antarchy$getAppleShieldLostCount();
         long lastLost = entity.getLastOwnerShieldLostCount();
-        if (lastLost >= 0L && lostNow > lastLost && !entity.isAbilityOnCooldown()) {
+        if (lastLost >= 0L && lostNow > lastLost && entity.canUseAbility()) {
             this.shatterWard(entity, owner);
         }
         entity.setLastOwnerShieldLostCount(lostNow);
@@ -126,7 +154,6 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
     @Override
     public void clearPassive(GlimmerEntity entity, Player owner) {
         entity.setLastOwnerShieldLostCount(-1L);
-        this.stopSitting(entity);
     }
 
     @Override
@@ -145,12 +172,14 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
     public RawAnimation idleAnimation(GlimmerEntity entity) {
         if (entity.getElkaIdleQuirkTicks() > 0) {
             return switch (entity.getElkaIdleQuirkVariant()) {
-                case 1 -> ELKA_QUIRK_2_ANIM;
-                case 2 -> ELKA_QUIRK_3_ANIM;
+                case QUIRK_VARIANT_SECOND -> ELKA_QUIRK_2_ANIM;
+                case QUIRK_VARIANT_SITTING -> ELKA_QUIRK_3_ANIM;
+                case VARIANT_SIT_DOWN -> ELKA_SIT_DOWN_ANIM;
+                case VARIANT_GET_UP -> ELKA_GET_UP_ANIM;
                 default -> ELKA_QUIRK_ANIM;
             };
         }
-        if (entity.isElkaIdleSitting()) {
+        if (entity.isElkaIdleSitting() || entity.isOrderedToSit()) {
             return ELKA_SIT_IDLE_ANIM;
         }
         return ELKA_IDLE_ANIM;
@@ -166,23 +195,30 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
         entity.playAbilityAnimation(CRY_ANIM_TICKS);
         entity.playSound(SoundEvents.PANDA_CANT_BREED, 1.2F, 0.7F);
         entity.level().playSound(null, entity.blockPosition(), SoundEvents.GLASS_BREAK, entity.getSoundSource(), 1.0F, 0.6F);
+        GlimmerParticles.ring(owner, SHOCKWAVE_RADIUS);
+        GlimmerParticles.abilityBurst(entity);
 
         AABB area = owner.getBoundingBox().inflate(SHOCKWAVE_RADIUS);
         for (Entity nearby : owner.level().getEntities(owner, area)) {
             if (nearby instanceof Projectile projectile) {
-                Vec3 away = projectile.position().subtract(owner.position()).normalize();
-                projectile.setDeltaMovement(away.scale(1.5D));
+                if (projectile.getOwner() != owner) {
+                    Vec3 away = projectile.position().subtract(owner.position()).normalize();
+                    projectile.setDeltaMovement(away.scale(1.5D));
+                }
                 continue;
             }
 
-            if (nearby instanceof LivingEntity living && (nearby instanceof Enemy || living.getLastHurtByMob() == owner)) {
-                DamageSource shockwaveSource = owner.damageSources().mobAttack(entity);
-                if (nearby instanceof Enemy) {
-                    living.hurt(shockwaveSource, SHOCKWAVE_DAMAGE);
+            if (nearby instanceof LivingEntity living) {
+                boolean foe = GlimmerVariantBehavior.isValidFoe(owner, living);
+                if (!foe && living.getLastHurtByMob() != owner) {
+                    continue;
+                }
+                if (foe) {
+                    GlimmerVariantBehavior.hurtAsOwner(owner, living, SHOCKWAVE_DAMAGE);
                 }
                 Vec3 away = living.position().subtract(owner.position());
                 double horizontalDistance = Math.max(0.1D, away.horizontalDistance());
-                living.knockback(SHOCKWAVE_KNOCKBACK, -away.x / horizontalDistance, -away.z / horizontalDistance, shockwaveSource, SHOCKWAVE_DAMAGE);
+                living.knockback(SHOCKWAVE_KNOCKBACK, -away.x / horizontalDistance, -away.z / horizontalDistance, owner.damageSources().playerAttack(owner), SHOCKWAVE_DAMAGE);
             }
         }
 
@@ -207,8 +243,10 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
                 entity.setElkaIdleSitTicksRemaining(sitTicks - 1);
                 if (sitTicks - 1 <= 0) {
                     this.stopSitting(entity);
+                    return;
                 }
             }
+            this.tickIdleQuirk(entity);
             return;
         }
 
@@ -216,18 +254,21 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
             entity.setElkaIdleSitCooldownTicks(entity.getElkaIdleSitCooldownTicks() - 1);
         }
 
-        if (this.canStartSitting(entity)) {
-            int chance = this.isNearShade(entity) ? SIT_CHECK_CHANCE_SHADE : SIT_CHECK_CHANCE_OPEN;
-            if (entity.getElkaIdleSitCooldownTicks() <= 0 && entity.getRandom().nextInt(chance) == 0) {
-                this.startSitting(entity);
-                return;
-            }
+        if (entity.getElkaIdleSitCooldownTicks() <= 0
+                && this.canStartSitting(entity)
+                && entity.getRandom().nextInt(SIT_CHECK_CHANCE_SHADE) == 0
+                && (this.isNearShade(entity) || entity.getRandom().nextInt(SIT_CHECK_CHANCE_OPEN / SIT_CHECK_CHANCE_SHADE) == 0)) {
+            this.startSitting(entity);
+            return;
         }
 
         this.tickIdleQuirk(entity);
     }
 
     private void tickIdleQuirk(GlimmerEntity entity) {
+        if (entity.isOrderedToSit()) {
+            return;
+        }
         if (entity.getElkaIdleQuirkTicks() > 0
                 || entity.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4D
                 || entity.getNavigation().isInProgress()
@@ -247,11 +288,15 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
             return;
         }
 
-        entity.setElkaIdleQuirkTicks(QUIRK_ANIMATION_TICKS);
         if (entity.isElkaIdleSitting()) {
-            entity.setElkaIdleQuirkVariant(2);
+            entity.setElkaIdleQuirkVariant(QUIRK_VARIANT_SITTING);
+            entity.setElkaIdleQuirkTicks(QUIRK_3_ANIMATION_TICKS);
+        } else if (entity.getRandom().nextBoolean()) {
+            entity.setElkaIdleQuirkVariant(QUIRK_VARIANT_SECOND);
+            entity.setElkaIdleQuirkTicks(QUIRK_2_ANIMATION_TICKS);
         } else {
-            entity.setElkaIdleQuirkVariant(entity.getRandom().nextBoolean() ? 0 : 1);
+            entity.setElkaIdleQuirkVariant(0);
+            entity.setElkaIdleQuirkTicks(QUIRK_ANIMATION_TICKS);
         }
     }
 
@@ -261,6 +306,8 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
         entity.getNavigation().stop();
         entity.setDeltaMovement(0.0D, entity.getDeltaMovement().y, 0.0D);
         entity.setElkaIdleAnimationCycleTicks(0);
+        entity.setElkaIdleQuirkVariant(VARIANT_SIT_DOWN);
+        entity.setElkaIdleQuirkTicks(SIT_TRANSITION_TICKS);
     }
 
     private void stopSitting(GlimmerEntity entity) {
@@ -271,6 +318,8 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
         entity.setElkaIdleSitTicksRemaining(0);
         entity.setElkaIdleSitCooldownTicks(SIT_COOLDOWN_TICKS);
         entity.setElkaIdleAnimationCycleTicks(0);
+        entity.setElkaIdleQuirkVariant(VARIANT_GET_UP);
+        entity.setElkaIdleQuirkTicks(entity.isOrderedToSit() ? 0 : SIT_TRANSITION_TICKS);
     }
 
     private boolean canStartSitting(GlimmerEntity entity) {
@@ -287,7 +336,8 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
     }
 
     private boolean canRemainSitting(GlimmerEntity entity) {
-        if (entity.isOrderedToSit() || !entity.onGround() || entity.isInWater() || entity.isOnFire() || entity.getTarget() != null) {
+        if (entity.isOrderedToSit() || !entity.onGround() || entity.isInWater() || entity.isOnFire() || entity.getTarget() != null
+                || entity.getNavigation().isInProgress()) {
             return false;
         }
         if (entity.isFollowingOwner() && entity.getOwner() != null && entity.distanceToSqr(entity.getOwner()) > FOLLOW_BREAK_SIT_DISTANCE_SQR) {

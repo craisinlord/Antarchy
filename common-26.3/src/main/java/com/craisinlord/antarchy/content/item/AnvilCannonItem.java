@@ -117,10 +117,7 @@ public class AnvilCannonItem extends ProjectileWeaponItem implements GeoItem {
     }
 
     public static void clientTick(Player player) {
-        if (!player.level().isClientSide() || clientShakeTicks <= 0) {
-            return;
-        }
-        if (player.getMainHandItem().getItem() instanceof AnvilCannonItem || player.getOffhandItem().getItem() instanceof AnvilCannonItem) {
+        if (player.level().isClientSide() && clientShakeTicks > 0 && player.getMainHandItem().getItem() instanceof AnvilCannonItem) {
             clientShakeTicks--;
         }
     }

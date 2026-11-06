@@ -123,7 +123,7 @@ public class NyxiteSpikeFeature extends Feature<NyxiteSpikeConfiguration> {
         boolean placedAny = false;
         for (int offset = 0; offset < length; offset++) {
             BlockPos spikePos = rootStart.relative(direction, offset);
-            if (spikePos.getY() < level.getMinY() || spikePos.getY() >= level.getMaxY() + 1) {
+            if (spikePos.getY() < level.getMinY() || spikePos.getY() >= (level.getMaxY() + 1)) {
                 break;
             }
             if (!level.getBlockState(spikePos).isAir()) {
@@ -138,7 +138,7 @@ public class NyxiteSpikeFeature extends Feature<NyxiteSpikeConfiguration> {
                 break;
             }
 
-            level.setBlock(spikePos, spikeState, 3);
+            level.setBlock(spikePos, spikeState, 2);
             placedAny = true;
         }
         return placedAny;

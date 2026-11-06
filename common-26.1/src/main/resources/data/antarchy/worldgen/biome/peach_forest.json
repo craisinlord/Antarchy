@@ -16,6 +16,7 @@
     [],
     [],
     [
+      "antarchy:elythia_geology",
       "antarchy:elythia_ore_coal_upper",
       "antarchy:elythia_ore_coal_lower",
       "antarchy:elythia_ore_iron_upper",
@@ -40,6 +41,7 @@
     ],
     [],
     [
+      "antarchy:peach_forest_arkrose_ruins",
       "antarchy:peach_forest_mossy_boulders",
       "antarchy:blush_moss_patch",
       "antarchy:peach_forest_petals",

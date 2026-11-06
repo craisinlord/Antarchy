@@ -5,7 +5,6 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
-import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -14,8 +13,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -40,6 +37,9 @@ import com.geckolib.animation.state.AnimationTest;
 import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import com.mojang.serialization.Codec;
 
 public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, GlimmerEcho {
 
@@ -55,12 +55,14 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, G
     public WaterBombEntity(EntityType<? extends WaterBombEntity> entityType, Level level) {
         super(entityType, level);
         this.lifetimeTicks = AntarchySettings.waterBombLifetimeTicks();
+        this.configureProjectile();
     }
 
     public WaterBombEntity(Level level, LivingEntity owner) {
         super(AntarchyObjects.WATER_BOMB.get(), owner.getX(), owner.getEyeY() - 0.1F, owner.getZ(), level);
         this.setOwner(owner);
         this.lifetimeTicks = AntarchySettings.waterBombLifetimeTicks();
+        this.configureProjectile();
     }
 
     public WaterBombEntity(Level level, LivingEntity owner, boolean huge) {
@@ -68,10 +70,17 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, G
         this.entityData.set(HUGE, huge);
     }
 
+    private void configureProjectile() {
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(HUGE, false);
         builder.define(GLIMMER_ECHO, false);
+    }
+
+    public boolean isHuge() {
+        return this.entityData.get(HUGE);
     }
 
     @Override
@@ -82,10 +91,6 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, G
     @Override
     public void setGlimmerEcho(boolean glimmerEcho) {
         this.entityData.set(GLIMMER_ECHO, glimmerEcho);
-    }
-
-    public boolean isHuge() {
-        return this.entityData.get(HUGE);
     }
 
     @Override
@@ -121,7 +126,8 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, G
         UUID id = entity.getUUID();
         if (this.hitCooldowns.getOrDefault(id, 0) > 0) return;
 
-        float damage = (float) AntarchySettings.waterBombDamage() * (this.isHuge() ? 3.0F : 1.0F) * GlimmerEchoes.damageMultiplier(this.getOwner());
+        float damage = (float) AntarchySettings.waterBombDamage() * (this.isHuge() ? 3.0F : 1.0F)
+                * GlimmerEchoes.damageMultiplier(this.getOwner());
         if (this.level() instanceof ServerLevel serverLevel && living.hurtServer(serverLevel, AntarchyDamageSources.waterSoaked(this.level(), this, this.getOwner()), damage)) {
             this.hitCooldowns.put(id, 15);
             Vec3 knockDir = living.position().subtract(this.position()).normalize();
@@ -134,6 +140,9 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, G
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
+        if (this.level().isClientSide()) {
+            return;
+        }
         BlockPos blockPos = result.getBlockPos();
         BlockPos hitPos = blockPos.relative(result.getDirection());
         Level level = this.level();

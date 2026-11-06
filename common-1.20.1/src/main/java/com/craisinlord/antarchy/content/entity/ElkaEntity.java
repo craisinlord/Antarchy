@@ -225,8 +225,10 @@ public class ElkaEntity extends Animal implements GeoEntity {
             return;
         }
 
-        int chance = this.isNearShade() ? SIT_CHECK_CHANCE_SHADE : SIT_CHECK_CHANCE_OPEN;
-        if (this.random.nextInt(chance) == 0) {
+        if (this.random.nextInt(SIT_CHECK_CHANCE_SHADE) != 0) {
+            return;
+        }
+        if (this.isNearShade() || this.random.nextInt(SIT_CHECK_CHANCE_OPEN / SIT_CHECK_CHANCE_SHADE) == 0) {
             this.startSitting();
         }
     }

@@ -1,49 +1,53 @@
 package com.craisinlord.antarchy.content.entity.glimmer;
 
 import com.craisinlord.antarchy.Antarchy;
-import net.minecraft.world.damagesource.DamageSource;
+import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import com.geckolib.animation.RawAnimation;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public class GlimmerOuranwoodDeerBehavior implements GlimmerVariantBehavior {
     private static final int PASSIVE_REFRESH_DURATION = 20 * 4;
-    private static final int ABILITY_COOLDOWN_TICKS = 20 * 10;
+    private static final int ABILITY_COOLDOWN_TICKS = 20 * 30;
+    private static final int ABILITY_SCAN_INTERVAL_TICKS = 2;
     private static final double FOLLOW_SPEED_MODIFIER = 1.75D;
     private static final RawAnimation RUN_ANIM = RawAnimation.begin().thenLoop("run");
+    private static final RawAnimation CHARGE_ANIM = RawAnimation.begin()
+            .thenPlay("charge_start")
+            .thenPlayXTimes("charge_loop", 3)
+            .thenPlay("charge_end");
     private static final double CHARGE_RANGE = 12.0D;
     private static final double CHARGE_CONE_DOT = 0.5D;
     private static final double CHARGE_HIT_RADIUS = 1.5D;
     private static final double CHARGE_SPEED = 1.4D;
-    private static final int CHARGE_DURATION_TICKS = 14;
+    private static final double CHARGE_MAX_LANE = 18.0D;
+    private static final double CHARGE_MAX_HEIGHT_DIFFERENCE = 4.0D;
+    private static final double RECOVERY_DRAG = 0.5D;
+    private static final int WINDUP_TICKS = 8;
+    private static final int ACTIVE_TICKS = 14;
+    private static final int RECOVERY_TICKS = 10;
     private static final float CHARGE_DAMAGE = 14.0F;
     private static final double CHARGE_KNOCKBACK = 1.6D;
-    private static final int CHARGE_ANIM_TICKS = 45;
-
-    private final Map<UUID, ChargeState> activeCharges = new HashMap<>();
+    private static final int CHARGE_ANIM_TICKS = 33;
 
     private static Identifier rl(String path) {
         return Identifier.fromNamespaceAndPath(Antarchy.MODID, path);
@@ -126,28 +130,37 @@ public class GlimmerOuranwoodDeerBehavior implements GlimmerVariantBehavior {
     @Override
     @Nullable
     public RawAnimation abilityAnimation() {
-        return RawAnimation.begin().thenPlay("charge_start").thenPlay("charge_loop").thenPlay("charge_end");
+        return CHARGE_ANIM;
+    }
+
+    @Override
+    public boolean locksMovement(GlimmerEntity entity) {
+        return entity.getAbilityState(ChargeState.class) != null;
     }
 
     @Override
     public void tickAbilityCheck(GlimmerEntity entity, Player owner) {
-        if (!owner.isSprinting()) {
+        if (entity.tickCount % ABILITY_SCAN_INTERVAL_TICKS != 0 || !owner.isSprinting()) {
             return;
         }
 
         Vec3 look = owner.getLookAngle();
         LivingEntity bestTarget = null;
         double bestDistSq = CHARGE_RANGE * CHARGE_RANGE;
-        for (Entity candidate : owner.level().getEntities(owner, owner.getBoundingBox().inflate(CHARGE_RANGE))) {
-            if (!(candidate instanceof Enemy) || !(candidate instanceof LivingEntity living) || !living.isAlive()) {
+        for (LivingEntity living : owner.level().getEntitiesOfClass(LivingEntity.class, owner.getBoundingBox().inflate(CHARGE_RANGE), candidate -> candidate != owner)) {
+            if (!GlimmerVariantBehavior.isValidFoe(owner, living)) {
                 continue;
             }
-            Vec3 toTarget = candidate.position().subtract(owner.position());
+            Vec3 toTarget = living.position().subtract(owner.position());
             double distSq = toTarget.lengthSqr();
-            if (distSq > bestDistSq) {
+            if (distSq > bestDistSq || toTarget.normalize().dot(look) < CHARGE_CONE_DOT) {
                 continue;
             }
-            if (toTarget.normalize().dot(look) < CHARGE_CONE_DOT) {
+            Vec3 lane = living.position().subtract(entity.position());
+            if (lane.horizontalDistance() > CHARGE_MAX_LANE || Math.abs(lane.y) > CHARGE_MAX_HEIGHT_DIFFERENCE) {
+                continue;
+            }
+            if (!owner.hasLineOfSight(living)) {
                 continue;
             }
             bestDistSq = distSq;
@@ -155,63 +168,77 @@ public class GlimmerOuranwoodDeerBehavior implements GlimmerVariantBehavior {
         }
 
         if (bestTarget != null) {
-            this.startCharge(entity, owner, bestTarget);
+            this.startCharge(entity, owner, bestTarget, look);
         }
     }
 
-    private void startCharge(GlimmerEntity entity, Player owner, LivingEntity target) {
-        Vec3 from = entity.position();
-        Vec3 direction = target.position().subtract(from);
-        double horizontalDistance = Math.max(1.0D, direction.horizontalDistance());
+    private void startCharge(GlimmerEntity entity, Player owner, LivingEntity target, Vec3 fallbackDirection) {
+        Vec3 lane = target.position().subtract(entity.position());
+        Vec3 flat = lane.horizontalDistanceSqr() > 0.25D ? new Vec3(lane.x, 0.0D, lane.z) : new Vec3(fallbackDirection.x, 0.0D, fallbackDirection.z);
+        Vec3 direction = flat.normalize();
 
         ChargeState state = new ChargeState();
-        state.dirX = direction.x / horizontalDistance;
-        state.dirZ = direction.z / horizontalDistance;
-        state.ticksRemaining = CHARGE_DURATION_TICKS;
+        state.dirX = direction.x;
+        state.dirZ = direction.z;
+        state.yaw = (float) (Mth.atan2(direction.z, direction.x) * Mth.RAD_TO_DEG) - 90.0F;
         state.owner = owner;
-        this.activeCharges.put(entity.getUUID(), state);
+        entity.setAbilityState(state);
 
+        entity.faceYaw(state.yaw);
         entity.playAbilityAnimation(CHARGE_ANIM_TICKS);
         entity.playSound(SoundEvents.RAVAGER_ROAR, 1.0F, 1.3F);
+        GlimmerParticles.abilityBurst(entity);
         this.sendAbilityMessage(owner, Component.translatable("entity.antarchy.glimmer.ability.deer"));
         entity.startAbilityCooldown();
     }
 
     @Override
     public void customTick(GlimmerEntity entity) {
-        ChargeState state = this.activeCharges.get(entity.getUUID());
+        ChargeState state = entity.getAbilityState(ChargeState.class);
         if (state == null) {
             return;
         }
 
-        if (!entity.isAlive() || state.ticksRemaining <= 0) {
-            this.activeCharges.remove(entity.getUUID());
+        if (!entity.isAlive() || state.owner.isRemoved()) {
+            entity.setAbilityState(null);
             return;
         }
 
-        state.ticksRemaining--;
-        entity.setDeltaMovement(state.dirX * CHARGE_SPEED, entity.getDeltaMovement().y, state.dirZ * CHARGE_SPEED);
+        state.ticks++;
+        entity.faceYaw(state.yaw);
+        Vec3 motion = entity.getDeltaMovement();
+        if (state.ticks <= WINDUP_TICKS) {
+            entity.setDeltaMovement(0.0D, motion.y, 0.0D);
+        } else if (state.ticks <= WINDUP_TICKS + ACTIVE_TICKS) {
+            entity.setDeltaMovement(state.dirX * CHARGE_SPEED, motion.y, state.dirZ * CHARGE_SPEED);
+            this.hitAlongLane(entity, state);
+        } else if (state.ticks <= WINDUP_TICKS + ACTIVE_TICKS + RECOVERY_TICKS) {
+            entity.setDeltaMovement(motion.x * RECOVERY_DRAG, motion.y, motion.z * RECOVERY_DRAG);
+        } else {
+            entity.setAbilityState(null);
+        }
+    }
 
+    private void hitAlongLane(GlimmerEntity entity, ChargeState state) {
         AABB hitBox = entity.getBoundingBox().inflate(CHARGE_HIT_RADIUS);
-        for (Entity candidate : entity.level().getEntities(entity, hitBox)) {
-            if (!(candidate instanceof Enemy) || !(candidate instanceof LivingEntity living) || !living.isAlive()
-                    || state.alreadyHit.contains(candidate.getUUID())) {
+        for (LivingEntity living : entity.level().getEntitiesOfClass(LivingEntity.class, hitBox, candidate -> candidate != entity)) {
+            if (!GlimmerVariantBehavior.isValidFoe(state.owner, living) || !state.alreadyHit.add(living.getUUID())) {
                 continue;
             }
 
-            DamageSource chargeSource = state.owner.damageSources().mobAttack(entity);
-            living.hurt(chargeSource, CHARGE_DAMAGE);
+            GlimmerVariantBehavior.hurtAsOwner(state.owner, living, CHARGE_DAMAGE);
             Vec3 away = living.position().subtract(entity.position());
             double awayDistance = Math.max(0.1D, away.horizontalDistance());
-            living.knockback(CHARGE_KNOCKBACK, -away.x / awayDistance, -away.z / awayDistance, chargeSource, CHARGE_DAMAGE);
-            state.alreadyHit.add(candidate.getUUID());
+            living.knockback(CHARGE_KNOCKBACK, -away.x / awayDistance, -away.z / awayDistance, state.owner.damageSources().playerAttack(state.owner), CHARGE_DAMAGE);
+            GlimmerParticles.abilityBurst(living);
         }
     }
 
     private static final class ChargeState {
         double dirX;
         double dirZ;
-        int ticksRemaining;
+        float yaw;
+        int ticks;
         Player owner;
         final Set<UUID> alreadyHit = new HashSet<>();
     }
