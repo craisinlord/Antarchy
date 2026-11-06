@@ -903,7 +903,6 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<Block> TRUFFLED_LOAM = BLOCKS.register("truffled_loam",
             () -> new Block(DeferredRegister.copyBlockProperties(Blocks.MUD)));
 
-    // Decorative geology variants reuse the registered base stone shapes.
     public static final DeferredBlock<StairBlock> ROCKITE_STAIRS = BLOCKS.register("rockite_stairs",
             () -> new StairBlock(ROCKITE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<WallBlock> ROCKITE_WALL = BLOCKS.register("rockite_wall",

@@ -418,7 +418,6 @@ public final class AntarchyNeoforgeMisc {
             () -> LumenStreamFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<LumenSpireFeature>> LUMEN_SPIRE = FEATURES.register("lumen_spires",
             () -> LumenSpireFeature.CODEC);
-    // Register codec-backed geology features used by the restored Elythia biome data.
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature>> ELYTHIA_GEOLOGY = FEATURES.register("elythia_geology",
             () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature>> ELYTHIA_MOUNTAIN_SCREE = FEATURES.register("elythia_mountain_scree",
@@ -665,7 +664,6 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<RiverLogBridgeFeature>> RIVER_LOG_BRIDGE = FEATURES.register("river_log_bridge", () -> RiverLogBridgeFeature.CODEC);
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> GROUND_MIST = PARTICLE_TYPES.register("ground_mist", () -> new SimpleParticleType(true) {});
 
-    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaTidePoolFeature>> ELYTHIA_TIDE_POOLS = FEATURES.register("elythia_tide_pools", () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaTidePoolFeature.CODEC);
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature>> TRUFFLED_LOAM_FEATURE = FEATURES.register("truffled_loam", () -> com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature.CODEC);
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.PrimordialBorderBlendFeature>> PRIMORDIAL_BORDER_BLEND = FEATURES.register("primordial_border_blend", () -> com.craisinlord.antarchy.content.worldgen.elythia.PrimordialBorderBlendFeature.CODEC);
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature>> CRANBERRY_TREE_FEATURE = FEATURES.register("cranberry_tree", () -> com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature.CODEC);

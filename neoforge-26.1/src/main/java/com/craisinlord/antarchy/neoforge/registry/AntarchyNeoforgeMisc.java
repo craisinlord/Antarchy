@@ -417,7 +417,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new LumenStreamFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LumenSpireFeature> LUMEN_SPIRE = FEATURES.register("lumen_spires",
             () -> new LumenSpireFeature(NoneFeatureConfiguration.CODEC));
-    // These features restore the shared Elythia geological layer used by biome data.
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature> ELYTHIA_GEOLOGY = FEATURES.register("elythia_geology",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature> ELYTHIA_MOUNTAIN_SCREE = FEATURES.register("elythia_mountain_scree",
@@ -672,7 +671,6 @@ public final class AntarchyNeoforgeMisc {
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> GROUND_MIST = PARTICLE_TYPES.register("ground_mist", () -> new SimpleParticleType(true) {});
 
-    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaTidePoolFeature> ELYTHIA_TIDE_POOLS = FEATURES.register("elythia_tide_pools", () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaTidePoolFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature> TRUFFLED_LOAM_FEATURE = FEATURES.register("truffled_loam", () -> new com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.PrimordialBorderBlendFeature> PRIMORDIAL_BORDER_BLEND = FEATURES.register("primordial_border_blend",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.PrimordialBorderBlendFeature(NoneFeatureConfiguration.CODEC));

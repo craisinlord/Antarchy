@@ -623,7 +623,6 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<SkulkingFrightEggBlock> SKULKING_FRIGHT_EGG = BLOCKS.register("skulking_fright_egg",
             id -> new SkulkingFrightEggBlock(copyOf(id, Blocks.TURTLE_EGG)));
 
-    // Core Elythia geology is registered before its worldgen and ritual consumers.
     public static final DeferredBlock<Block> ROCKITE_COAL_ORE = BLOCKS.register("rockite_coal_ore",
             id -> createOre(id, Blocks.COAL_ORE, 0, 2, MapColor.COLOR_GRAY));
     public static final DeferredBlock<Block> ROCKITE_COPPER_ORE = BLOCKS.register("rockite_copper_ore",
@@ -700,7 +699,6 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<Block> TRUFFLED_LOAM = BLOCKS.register("truffled_loam",
             id -> new Block(copyOf(id, Blocks.MUD)));
 
-    // Decorative geology variants reuse the registered base stone shapes.
     public static final DeferredBlock<StairBlock> ROCKITE_STAIRS = BLOCKS.register("rockite_stairs",
             id -> new StairBlock(ROCKITE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties().setId(blockKey(id))));
     public static final DeferredBlock<WallBlock> ROCKITE_WALL = BLOCKS.register("rockite_wall",

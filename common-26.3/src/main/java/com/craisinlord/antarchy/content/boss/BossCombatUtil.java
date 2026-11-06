@@ -52,10 +52,6 @@ public final class BossCombatUtil {
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return;
         }
-        clampHalfHealthCrossing(boss, preHitHealth);
-    }
-
-    public static void clampHalfHealthCrossing(LivingEntity boss, float preHitHealth) {
         float halfHealth = boss.getMaxHealth() * 0.5F;
         if (preHitHealth > halfHealth && boss.getHealth() < halfHealth) {
             boss.setHealth(halfHealth);
