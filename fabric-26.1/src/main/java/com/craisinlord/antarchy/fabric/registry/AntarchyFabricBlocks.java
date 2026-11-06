@@ -847,132 +847,132 @@ public final class AntarchyFabricBlocks {
             () -> createOre(Blocks.EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
 
     public static final DeferredBlock<SlabBlock> ROCKITE_SLAB = BLOCKS.register("rockite_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> ZEBRA_STONE_SLAB = BLOCKS.register("zebra_stone_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> ARKROSE_SLAB = BLOCKS.register("arkrose_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> TIDESTONE_SLAB = BLOCKS.register("tidestone_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
 public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> POLISHED_ROCKITE = BLOCKS.register("polished_rockite",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> ROCKITE_BRICKS = BLOCKS.register("rockite_bricks",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> CRACKED_ROCKITE_BRICKS = BLOCKS.register("cracked_rockite_bricks",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> MOSSY_ROCKITE_BRICKS = BLOCKS.register("mossy_rockite_bricks",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> CHISELED_ROCKITE_BRICKS = BLOCKS.register("chiseled_rockite_bricks",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<RotatedPillarBlock> ROCKITE_PILLAR = BLOCKS.register("rockite_pillar",
-            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new RotatedPillarBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> ZEBRA_STONE = BLOCKS.register("zebra_stone",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> POLISHED_ZEBRA_STONE = BLOCKS.register("polished_zebra_stone",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> ZEBRA_STONE_BRICKS = BLOCKS.register("zebra_stone_bricks",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> CHISELED_ZEBRA_STONE = BLOCKS.register("chiseled_zebra_stone",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<RotatedPillarBlock> ZEBRA_STONE_PILLAR = BLOCKS.register("zebra_stone_pillar",
-            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new RotatedPillarBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> ARKROSE = BLOCKS.register("arkrose",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> POLISHED_ARKROSE = BLOCKS.register("polished_arkrose",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> ARKROSE_BRICKS = BLOCKS.register("arkrose_bricks",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> CHISELED_ARKROSE = BLOCKS.register("chiseled_arkrose",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<RotatedPillarBlock> ARKROSE_PILLAR = BLOCKS.register("arkrose_pillar",
-            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new RotatedPillarBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> TIDESTONE = BLOCKS.register("tidestone",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> POLISHED_TIDESTONE = BLOCKS.register("polished_tidestone",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> TIDESTONE_BRICKS = BLOCKS.register("tidestone_bricks",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> CHISELED_TIDESTONE = BLOCKS.register("chiseled_tidestone",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<RotatedPillarBlock> TIDESTONE_PILLAR = BLOCKS.register("tidestone_pillar",
-            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new RotatedPillarBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> CONGLOMERATE = BLOCKS.register("conglomerate",
-            () -> new Block(AntarchyObjects.shellstoneProperties()));
+            () -> new Block(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<Block> TRUFFLED_LOAM = BLOCKS.register("truffled_loam",
             () -> new Block(DeferredRegister.copyBlockProperties(Blocks.MUD)));
 
     public static final DeferredBlock<StairBlock> ROCKITE_STAIRS = BLOCKS.register("rockite_stairs",
-            () -> new StairBlock(ROCKITE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(ROCKITE.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> ROCKITE_WALL = BLOCKS.register("rockite_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> POLISHED_ROCKITE_STAIRS = BLOCKS.register("polished_rockite_stairs",
-            () -> new StairBlock(POLISHED_ROCKITE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(POLISHED_ROCKITE.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> POLISHED_ROCKITE_SLAB = BLOCKS.register("polished_rockite_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> POLISHED_ROCKITE_WALL = BLOCKS.register("polished_rockite_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> ROCKITE_BRICK_STAIRS = BLOCKS.register("rockite_brick_stairs",
-            () -> new StairBlock(ROCKITE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(ROCKITE_BRICKS.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> ROCKITE_BRICK_SLAB = BLOCKS.register("rockite_brick_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> ROCKITE_BRICK_WALL = BLOCKS.register("rockite_brick_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> ZEBRA_STONE_STAIRS = BLOCKS.register("zebra_stone_stairs",
-            () -> new StairBlock(ZEBRA_STONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(ZEBRA_STONE.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> ZEBRA_STONE_WALL = BLOCKS.register("zebra_stone_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> POLISHED_ZEBRA_STONE_STAIRS = BLOCKS.register("polished_zebra_stone_stairs",
-            () -> new StairBlock(POLISHED_ZEBRA_STONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(POLISHED_ZEBRA_STONE.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> POLISHED_ZEBRA_STONE_SLAB = BLOCKS.register("polished_zebra_stone_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> POLISHED_ZEBRA_STONE_WALL = BLOCKS.register("polished_zebra_stone_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> ZEBRA_STONE_BRICK_STAIRS = BLOCKS.register("zebra_stone_brick_stairs",
-            () -> new StairBlock(ZEBRA_STONE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(ZEBRA_STONE_BRICKS.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> ZEBRA_STONE_BRICK_SLAB = BLOCKS.register("zebra_stone_brick_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> ZEBRA_STONE_BRICK_WALL = BLOCKS.register("zebra_stone_brick_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> ARKROSE_STAIRS = BLOCKS.register("arkrose_stairs",
-            () -> new StairBlock(ARKROSE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(ARKROSE.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> ARKROSE_WALL = BLOCKS.register("arkrose_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> POLISHED_ARKROSE_STAIRS = BLOCKS.register("polished_arkrose_stairs",
-            () -> new StairBlock(POLISHED_ARKROSE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(POLISHED_ARKROSE.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> POLISHED_ARKROSE_SLAB = BLOCKS.register("polished_arkrose_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> POLISHED_ARKROSE_WALL = BLOCKS.register("polished_arkrose_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> ARKROSE_BRICK_STAIRS = BLOCKS.register("arkrose_brick_stairs",
-            () -> new StairBlock(ARKROSE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(ARKROSE_BRICKS.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> ARKROSE_BRICK_SLAB = BLOCKS.register("arkrose_brick_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> ARKROSE_BRICK_WALL = BLOCKS.register("arkrose_brick_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> TIDESTONE_STAIRS = BLOCKS.register("tidestone_stairs",
-            () -> new StairBlock(TIDESTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(TIDESTONE.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> TIDESTONE_WALL = BLOCKS.register("tidestone_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> POLISHED_TIDESTONE_STAIRS = BLOCKS.register("polished_tidestone_stairs",
-            () -> new StairBlock(POLISHED_TIDESTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(POLISHED_TIDESTONE.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> POLISHED_TIDESTONE_SLAB = BLOCKS.register("polished_tidestone_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> POLISHED_TIDESTONE_WALL = BLOCKS.register("polished_tidestone_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> TIDESTONE_BRICK_STAIRS = BLOCKS.register("tidestone_brick_stairs",
-            () -> new StairBlock(TIDESTONE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(TIDESTONE_BRICKS.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> TIDESTONE_BRICK_SLAB = BLOCKS.register("tidestone_brick_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> TIDESTONE_BRICK_WALL = BLOCKS.register("tidestone_brick_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<StairBlock> MOSSY_ROCKITE_BRICK_STAIRS = BLOCKS.register("mossy_rockite_brick_stairs",
-            () -> new StairBlock(MOSSY_ROCKITE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+            () -> new StairBlock(MOSSY_ROCKITE_BRICKS.get().defaultBlockState(), DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<SlabBlock> MOSSY_ROCKITE_BRICK_SLAB = BLOCKS.register("mossy_rockite_brick_slab",
-            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new SlabBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
     public static final DeferredBlock<WallBlock> MOSSY_ROCKITE_BRICK_WALL = BLOCKS.register("mossy_rockite_brick_wall",
-            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+            () -> new WallBlock(DeferredRegister.withBlockId(AntarchyObjects.shellstoneProperties())));
 
     static {
         BiowartBlock.bindTendrils(BIOWART_TENDRILS);
@@ -1624,6 +1624,8 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     }
 
     public static void registerStripping() {
+        StrippableBlockRegistry.register(CRANBERRY_LOG.get(), STRIPPED_CRANBERRY_LOG.get());
+        StrippableBlockRegistry.register(CRANBERRY_WOOD.get(), STRIPPED_CRANBERRY_WOOD.get());
         StrippableBlockRegistry.register(OURANWOOD_LOG.get(), STRIPPED_OURANWOOD_LOG.get());
         StrippableBlockRegistry.register(OURANWOOD_WOOD.get(), STRIPPED_OURANWOOD_WOOD.get());
         StrippableBlockRegistry.register(PEACH_LOG.get(), STRIPPED_PEACH_LOG.get());
@@ -1683,8 +1685,4 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrimordialMossBlock> PRIMORDIAL_MOSS_BLOCK = BLOCKS.register("primordial_moss_block", () -> new com.craisinlord.antarchy.content.block.PrimordialMossBlock(DeferredRegister.copyBlockProperties(Blocks.MOSS_BLOCK)));
     public static final DeferredBlock<net.minecraft.world.level.block.CarpetBlock> PRIMORDIAL_MOSS_CARPET = BLOCKS.register("primordial_moss_carpet", () -> new net.minecraft.world.level.block.CarpetBlock(DeferredRegister.copyBlockProperties(Blocks.MOSS_CARPET)));
     public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_PRIMORDIAL_GRASS = BLOCKS.register("potted_primordial_grass", () -> new net.minecraft.world.level.block.FlowerPotBlock(PRIMORDIAL_GRASS.get(), DeferredRegister.copyBlockProperties(Blocks.POTTED_DANDELION)));
-    static {
-        StrippableBlockRegistry.register(CRANBERRY_LOG.get(), STRIPPED_CRANBERRY_LOG.get());
-        StrippableBlockRegistry.register(CRANBERRY_WOOD.get(), STRIPPED_CRANBERRY_WOOD.get());
-    }
 }

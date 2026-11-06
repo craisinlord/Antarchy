@@ -62,6 +62,8 @@ public final class CavarynCreatureSpawner {
             return;
         }
 
+        AREA_COOLDOWNS.values().removeIf(until -> until <= gameTime || until > gameTime + AREA_COOLDOWN_TICKS);
+
         for (ServerPlayer player : level.players()) {
             if (player.isSpectator() || player.isCreative() || !player.isAlive()) {
                 continue;

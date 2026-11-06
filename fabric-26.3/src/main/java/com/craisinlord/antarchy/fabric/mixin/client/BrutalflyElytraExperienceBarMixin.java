@@ -1,16 +1,16 @@
 package com.craisinlord.antarchy.fabric.mixin.client;
 
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.contextualbar.ContextualBar;
 import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Hud.class)
@@ -27,16 +27,16 @@ public abstract class BrutalflyElytraExperienceBarMixin {
         return Enum.valueOf((Class) info.getDeclaringClass(), "EMPTY");
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "extractHotbarAndDecorations",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/contextualbar/ContextualBar;extractExperienceLevel(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;I)V"
             )
     )
-    private void antarchy$hideExperienceLevelForBrutalfly(GuiGraphicsExtractor graphics, Font font, int experienceLevel) {
+    private void antarchy$hideExperienceLevelForBrutalfly(GuiGraphicsExtractor graphics, Font font, int experienceLevel, Operation<Void> original) {
         if (!antarchy$isBrutalflyFlying()) {
-            ContextualBar.extractExperienceLevel(graphics, font, experienceLevel);
+            original.call(graphics, font, experienceLevel);
         }
     }
 
