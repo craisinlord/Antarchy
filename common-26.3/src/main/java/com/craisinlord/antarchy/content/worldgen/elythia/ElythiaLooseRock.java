@@ -11,6 +11,7 @@ public final class ElythiaLooseRock {
     public static final int MAX_TOP_RUN = 16;
     public static final int NEEDLE_RADIUS = 3;
     public static final int NEEDLE_RISE = 4;
+    public static final int NEEDLE_MAX_DEPTH = 32;
     private static final int[][] NEIGHBORS = {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
 
     public enum Cell {

@@ -36,7 +36,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -133,7 +133,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
+        return Animal.createAnimalAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.rollyPollyHealth())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.rollyPollyMovementSpeed())
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.rollyPollyBowlingDamage())

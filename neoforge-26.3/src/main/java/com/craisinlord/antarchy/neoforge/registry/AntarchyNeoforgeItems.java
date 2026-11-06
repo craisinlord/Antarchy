@@ -1491,7 +1491,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
         defense.put(ArmorType.BODY, 0);
         return defense;
     }
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> JELLIED_CRANBERRY_BLOCK_ITEM = ITEMS.register("jellied_cranberry_block", id -> new com.craisinlord.antarchy.content.item.JelliedCranberryBlockItem(AntarchyNeoforgeBlocks.JELLIED_CRANBERRY_BLOCK.get(), itemProps(id)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> JELLIED_CRANBERRY_BLOCK_ITEM = ITEMS.register("jellied_cranberry_block", id -> new com.craisinlord.antarchy.content.item.JelliedCranberryBlockItem(AntarchyNeoforgeBlocks.JELLIED_CRANBERRY_BLOCK.get(), blockItemProps(id)));
     public static final DeferredItem<Item> ELYTHIAN_TRUFFLE = ITEMS.registerSimpleItem("elythian_truffle", props -> props.food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).build(), net.minecraft.world.item.component.Consumables.defaultFood().build()));
     public static final DeferredItem<Item> ROASTED_TRUFFLE = ITEMS.registerSimpleItem("roasted_truffle", props -> props.food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6F).build(), net.minecraft.world.item.component.Consumables.defaultFood().build()));
     public static final DeferredItem<Item> CRANBERRY = ITEMS.registerSimpleItem("cranberry", props -> props.food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build(), net.minecraft.world.item.component.Consumables.defaultFood().build()));

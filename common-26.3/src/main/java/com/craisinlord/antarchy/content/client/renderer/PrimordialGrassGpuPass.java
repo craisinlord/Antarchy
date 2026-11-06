@@ -55,7 +55,6 @@ final class PrimordialGrassGpuPass {
     private static final RenderPipeline PIPELINE = createPipeline();
     private static final Matrix4f IDENTITY = new Matrix4f();
     private static final Vector4f WHITE = new Vector4f(1.0F);
-    private static final Vector3f SECTION_OFFSET = new Vector3f();
     private static final boolean[] TIMER_PENDING = new boolean[TIMER_SLOTS];
 
     private static boolean failed;
@@ -161,7 +160,7 @@ final class PrimordialGrassGpuPass {
     }
 
     static GpuBufferSlice writeSectionTransform(float offsetX, float offsetY, float offsetZ) {
-        return RenderSystem.getDynamicUniforms().writeTransform(RenderSystem.getModelViewStack(), WHITE, SECTION_OFFSET.set(offsetX, offsetY, offsetZ), IDENTITY);
+        return RenderSystem.getDynamicUniforms().writeTransform(new Matrix4f(RenderSystem.getModelViewStack()), WHITE, new Vector3f(offsetX, offsetY, offsetZ), IDENTITY);
     }
 
     static void writeFrame(PrimordialGrassWind.ShaderFrame frame, float[] gustTable, boolean windEnabled,

@@ -64,7 +64,7 @@ public class CranberryLeavesBlock extends LeavesBlock implements BonemealableBlo
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!stack.is(Items.SHEARS) || !state.getValue(FRUITING)) {
-            return InteractionResult.PASS;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         useWithoutItem(state, level, pos, player, hitResult);
         if (!level.isClientSide()) {

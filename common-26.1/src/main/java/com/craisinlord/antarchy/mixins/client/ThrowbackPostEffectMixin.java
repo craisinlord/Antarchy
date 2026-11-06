@@ -1,25 +1,24 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.client.ThrowbackDreamRenderer;
+import com.mojang.blaze3d.resource.CrossFrameResourcePool;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.Identifier;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.List;
 
 @Mixin(GameRenderer.class)
 public abstract class ThrowbackPostEffectMixin {
-    @Inject(method = "getRequestedPostEffects", at = @At("RETURN"))
-    private void antarchy$syncThrowbackPostEffect(CallbackInfoReturnable<List<Identifier>> cir) {
-        ThrowbackDreamRenderer.syncRequestedEffects(cir.getReturnValue());
-    }
+    @Shadow @Final private Minecraft minecraft;
+    @Shadow @Final private CrossFrameResourcePool resourcePool;
 
-    @Inject(method = "applyPostEffects", at = @At("HEAD"))
-    private void antarchy$updateThrowbackUniforms(CallbackInfo ci) {
-        ThrowbackDreamRenderer.updateUniforms();
+    @Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/GameRenderer;postEffectId:Lnet/minecraft/resources/Identifier;", ordinal = 0))
+    private void antarchy$applyThrowbackPostEffect(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
+        ThrowbackDreamRenderer.process(this.minecraft.getMainRenderTarget(), this.resourcePool);
     }
 }

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import com.craisinlord.antarchy.content.worldgen.WorldgenWriteZone;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -57,6 +58,9 @@ public class PeachForestPondFeature implements Feature {
                 double noiseFactor = sampleEdgeNoise(edgeNoise, x, z);
                 double distance = ((x * x) / (double) (radiusX * radiusX) + (z * z) / (double) (radiusZ * radiusZ)) / (noiseFactor * noiseFactor);
                 BlockPos topPos = center.offset(x, 0, z);
+                if (!WorldgenWriteZone.contains(level, topPos)) {
+                    continue;
+                }
 
                 if (distance <= 1.0D) {
                     int floorY = center.getY() - (distance < 0.4D ? depth + 1 : depth);
@@ -153,6 +157,9 @@ public class PeachForestPondFeature implements Feature {
             }
 
             BlockPos padPos = center.offset(x, 1, z);
+            if (!WorldgenWriteZone.contains(level, padPos)) {
+                continue;
+            }
             if (!level.getFluidState(padPos.below()).is(FluidTags.WATER) || !level.isEmptyBlock(padPos)) {
                 continue;
             }
@@ -178,6 +185,9 @@ public class PeachForestPondFeature implements Feature {
             }
 
             BlockPos spawnPos = center.offset(x, 1, z);
+            if (!WorldgenWriteZone.contains(level, spawnPos)) {
+                continue;
+            }
             if (!level.getFluidState(spawnPos.below()).is(FluidTags.WATER) || !level.isEmptyBlock(spawnPos)) {
                 continue;
             }

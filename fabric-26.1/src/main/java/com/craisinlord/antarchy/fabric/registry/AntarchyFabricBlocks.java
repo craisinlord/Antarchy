@@ -165,19 +165,19 @@ public final class AntarchyFabricBlocks {
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RemembranceTorchBlock> REMEMBRANCE_TORCH = BLOCKS.register("remembrance_torch",
             () -> new com.craisinlord.antarchy.content.block.RemembranceTorchBlock(DeferredRegister.copyBlockProperties(Blocks.TORCH)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock> REMEMBRANCE_WALL_TORCH = BLOCKS.register("remembrance_wall_torch",
-            () -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(DeferredRegister.copyBlockProperties(Blocks.WALL_TORCH)));
+            () -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(DeferredRegister.copyBlockProperties(Blocks.WALL_TORCH).overrideLootTable(REMEMBRANCE_TORCH.get().getLootTable())));
 
     public static final DeferredBlock<net.minecraft.world.level.block.StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
             () -> new net.minecraft.world.level.block.StandingSignBlock(AntarchyWoodTypes.OURANWOOD, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallSignBlock> OURANWOOD_WALL_SIGN = BLOCKS.register("ouranwood_wall_sign",
-            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.OURANWOOD, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideDescription(OURANWOOD_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.OURANWOOD, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideLootTable(OURANWOOD_SIGN.get().getLootTable()).overrideDescription(OURANWOOD_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<net.minecraft.world.level.block.CeilingHangingSignBlock> OURANWOOD_HANGING_SIGN = BLOCKS.register("ouranwood_hanging_sign",
             () -> new net.minecraft.world.level.block.CeilingHangingSignBlock(AntarchyWoodTypes.OURANWOOD, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_HANGING_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallHangingSignBlock> OURANWOOD_WALL_HANGING_SIGN = BLOCKS.register("ouranwood_wall_hanging_sign",
-            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.OURANWOOD, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideDescription(OURANWOOD_HANGING_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.OURANWOOD, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(OURANWOOD_HANGING_SIGN.get().getLootTable()).overrideDescription(OURANWOOD_HANGING_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<RotatedPillarBlock> PEACH_LOG = BLOCKS.register("peach_log",
             () -> new RotatedPillarBlock(DeferredRegister.copyBlockProperties(Blocks.JUNGLE_LOG)));
@@ -233,13 +233,13 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.StandingSignBlock(AntarchyWoodTypes.PEACH, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallSignBlock> PEACH_WALL_SIGN = BLOCKS.register("peach_wall_sign",
-            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.PEACH, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideDescription(PEACH_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.PEACH, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideLootTable(PEACH_SIGN.get().getLootTable()).overrideDescription(PEACH_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<net.minecraft.world.level.block.CeilingHangingSignBlock> PEACH_HANGING_SIGN = BLOCKS.register("peach_hanging_sign",
             () -> new net.minecraft.world.level.block.CeilingHangingSignBlock(AntarchyWoodTypes.PEACH, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_HANGING_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallHangingSignBlock> PEACH_WALL_HANGING_SIGN = BLOCKS.register("peach_wall_hanging_sign",
-            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.PEACH, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideDescription(PEACH_HANGING_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.PEACH, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(PEACH_HANGING_SIGN.get().getLootTable()).overrideDescription(PEACH_HANGING_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<RotatedPillarBlock> NADIR_LOG = BLOCKS.register("nadir_log",
             () -> new RotatedPillarBlock(DeferredRegister.copyBlockProperties(Blocks.JUNGLE_LOG)));
@@ -292,13 +292,13 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.StandingSignBlock(AntarchyWoodTypes.NADIR, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallSignBlock> NADIR_WALL_SIGN = BLOCKS.register("nadir_wall_sign",
-            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.NADIR, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideDescription(NADIR_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.NADIR, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideLootTable(NADIR_SIGN.get().getLootTable()).overrideDescription(NADIR_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<net.minecraft.world.level.block.CeilingHangingSignBlock> NADIR_HANGING_SIGN = BLOCKS.register("nadir_hanging_sign",
             () -> new net.minecraft.world.level.block.CeilingHangingSignBlock(AntarchyWoodTypes.NADIR, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_HANGING_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallHangingSignBlock> NADIR_WALL_HANGING_SIGN = BLOCKS.register("nadir_wall_hanging_sign",
-            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.NADIR, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideDescription(NADIR_HANGING_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.NADIR, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(NADIR_HANGING_SIGN.get().getLootTable()).overrideDescription(NADIR_HANGING_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<DuplicatorSaplingBlock> DUPLICATOR_SAPLING = BLOCKS.register("duplicator_sapling",
             () -> new DuplicatorSaplingBlock(DeferredRegister.copyBlockProperties(Blocks.OAK_SAPLING).randomTicks().noCollision()));
@@ -357,13 +357,13 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.StandingSignBlock(AntarchyWoodTypes.ROYAL, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallSignBlock> ROYAL_WALL_SIGN = BLOCKS.register("royal_wall_sign",
-            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.ROYAL, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideDescription(ROYAL_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.ROYAL, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideLootTable(ROYAL_SIGN.get().getLootTable()).overrideDescription(ROYAL_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<net.minecraft.world.level.block.CeilingHangingSignBlock> ROYAL_HANGING_SIGN = BLOCKS.register("royal_hanging_sign",
             () -> new net.minecraft.world.level.block.CeilingHangingSignBlock(AntarchyWoodTypes.ROYAL, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_HANGING_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallHangingSignBlock> ROYAL_WALL_HANGING_SIGN = BLOCKS.register("royal_wall_hanging_sign",
-            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.ROYAL, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideDescription(ROYAL_HANGING_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.ROYAL, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(ROYAL_HANGING_SIGN.get().getLootTable()).overrideDescription(ROYAL_HANGING_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.TruffaloLogBlock> TRUFFALO_LOG = BLOCKS.register("truffalo_log",
             () -> new com.craisinlord.antarchy.content.block.TruffaloLogBlock(DeferredRegister.copyBlockProperties(Blocks.JUNGLE_LOG)));
@@ -413,13 +413,13 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.StandingSignBlock(AntarchyWoodTypes.TRUFFALO, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallSignBlock> TRUFFALO_WALL_SIGN = BLOCKS.register("truffalo_wall_sign",
-            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.TRUFFALO, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideDescription(TRUFFALO_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallSignBlock(AntarchyWoodTypes.TRUFFALO, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_SIGN).overrideLootTable(TRUFFALO_SIGN.get().getLootTable()).overrideDescription(TRUFFALO_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<net.minecraft.world.level.block.CeilingHangingSignBlock> TRUFFALO_HANGING_SIGN = BLOCKS.register("truffalo_hanging_sign",
             () -> new net.minecraft.world.level.block.CeilingHangingSignBlock(AntarchyWoodTypes.TRUFFALO, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_HANGING_SIGN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallHangingSignBlock> TRUFFALO_WALL_HANGING_SIGN = BLOCKS.register("truffalo_wall_hanging_sign",
-            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.TRUFFALO, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideDescription(TRUFFALO_HANGING_SIGN.get().getDescriptionId())));
+            () -> new net.minecraft.world.level.block.WallHangingSignBlock(AntarchyWoodTypes.TRUFFALO, DeferredRegister.copyBlockProperties(Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(TRUFFALO_HANGING_SIGN.get().getLootTable()).overrideDescription(TRUFFALO_HANGING_SIGN.get().getDescriptionId())));
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.TruffaloTuftBlock> TRUFFALO_TUFT_WHITE = BLOCKS.register("white_truffalo_tuft",
             () -> new com.craisinlord.antarchy.content.block.TruffaloTuftBlock(DeferredRegister.copyBlockProperties(Blocks.WHITE_WOOL)));
@@ -782,7 +782,7 @@ public final class AntarchyFabricBlocks {
             () -> new DreamTorchBlock(DeferredRegister.copyBlockProperties(Blocks.SOUL_TORCH)));
 
     public static final DeferredBlock<DreamWallTorchBlock> DREAM_WALL_TORCH = BLOCKS.register("dream_wall_torch",
-            () -> new DreamWallTorchBlock(DeferredRegister.copyBlockProperties(Blocks.SOUL_WALL_TORCH).overrideDescription(DREAM_TORCH.get().getDescriptionId())));
+            () -> new DreamWallTorchBlock(DeferredRegister.copyBlockProperties(Blocks.SOUL_WALL_TORCH).overrideLootTable(DREAM_TORCH.get().getLootTable()).overrideDescription(DREAM_TORCH.get().getDescriptionId())));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
             () -> new com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock(DeferredRegister.copyBlockProperties(Blocks.SOUL_TORCH)));
 
@@ -1331,7 +1331,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new net.minecraft.world.level.block.BaseCoralFanBlock(DeferredRegister.copyBlockProperties(Blocks.TUBE_CORAL_FAN)));
 
     public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralWallFanBlock> DEAD_STAR_CORAL_WALL_FAN = BLOCKS.register("dead_star_coral_wall_fan",
-            () -> new net.minecraft.world.level.block.BaseCoralWallFanBlock(DeferredRegister.copyBlockProperties(Blocks.TUBE_CORAL_WALL_FAN)));
+            () -> new net.minecraft.world.level.block.BaseCoralWallFanBlock(DeferredRegister.copyBlockProperties(Blocks.TUBE_CORAL_WALL_FAN).overrideLootTable(DEAD_STAR_CORAL_FAN.get().getLootTable())));
 
     public static final DeferredBlock<Block> STAR_CORAL_BLOCK = BLOCKS.register("star_coral_block",
             () -> new StarCoralBlock(DEAD_STAR_CORAL_BLOCK.get(), DeferredRegister.copyBlockProperties(Blocks.TUBE_CORAL_BLOCK).lightLevel(state -> 8)));
@@ -1343,7 +1343,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new StarCoralFanBlock(DEAD_STAR_CORAL_FAN.get(), DeferredRegister.copyBlockProperties(Blocks.TUBE_CORAL_FAN).lightLevel(state -> 8)));
 
     public static final DeferredBlock<StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
-            () -> new StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), DeferredRegister.copyBlockProperties(Blocks.TUBE_CORAL_WALL_FAN).lightLevel(state -> 8)));
+            () -> new StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), DeferredRegister.copyBlockProperties(Blocks.TUBE_CORAL_WALL_FAN).overrideLootTable(STAR_CORAL_FAN.get().getLootTable()).lightLevel(state -> 8)));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("royal_egg",
             () -> FabricBlockEntityTypeBuilder.create(

@@ -217,7 +217,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
+        return Animal.createAnimalAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.flyingSquirrelHealth())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.flyingSquirrelMovementSpeed())
                 .add(Attributes.FOLLOW_RANGE, 16.0D);

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import com.craisinlord.antarchy.content.worldgen.WorldgenWriteZone;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.PeachLeavesBlock;
@@ -358,7 +359,7 @@ public class PeachTreeFeature implements Feature {
                 continue;
             }
             BlockPos fruitPos = leafPos.below();
-            if (!level.getBlockState(fruitPos).isAir()) {
+            if (WorldgenWriteZone.contains(level, fruitPos) && !level.getBlockState(fruitPos).isAir()) {
                 continue;
             }
             if (random.nextFloat() > config.fruitChance()) {
@@ -384,7 +385,7 @@ public class PeachTreeFeature implements Feature {
 
             for (Direction direction : Direction.values()) {
                 BlockPos next = current.relative(direction);
-                if (distances.containsKey(next)) {
+                if (distances.containsKey(next) || !WorldgenWriteZone.contains(level, next)) {
                     continue;
                 }
                 BlockState state = level.getBlockState(next);
@@ -397,6 +398,9 @@ public class PeachTreeFeature implements Feature {
         }
 
         for (BlockPos pos : leafPositions) {
+            if (!WorldgenWriteZone.contains(level, pos)) {
+                continue;
+            }
             BlockState state = level.getBlockState(pos);
             if (!(state.getBlock() instanceof LeavesBlock)) {
                 continue;
@@ -459,6 +463,9 @@ public class PeachTreeFeature implements Feature {
     }
 
     private static boolean canReplace(WorldGenLevel level, BlockPos pos) {
+        if (!WorldgenWriteZone.contains(level, pos)) {
+            return true;
+        }
         BlockState state = level.getBlockState(pos);
         return state.isAir() || state.getBlock() instanceof LeavesBlock;
     }

@@ -138,6 +138,7 @@ public final class ElythiaGeologyFeature extends Feature<NoneFeatureConfiguratio
                 int x = startX + localX;
                 int z = startZ + localZ;
                 if (top - target < ElythiaLooseRock.NEEDLE_RISE
+                        || top - target > ElythiaLooseRock.NEEDLE_MAX_DEPTH
                         || !isCapped(level.getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(top), QuartPos.fromBlock(z)))
                         || cells.at(x, top, z) != ElythiaLooseRock.Cell.TERRAIN) {
                     continue;

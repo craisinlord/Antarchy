@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import com.craisinlord.antarchy.content.worldgen.WorldgenWriteZone;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.sizeablefoliage.block.BigBushBlock;
@@ -149,6 +150,9 @@ public class ElythiaFloraFeature implements Feature {
         for (int i = 0; i < attempts; i++) {
             int x = origin.getX() + random.nextInt(radius * 2 + 1) - radius;
             int z = origin.getZ() + random.nextInt(radius * 2 + 1) - radius;
+            if (!WorldgenWriteZone.contains(level, x, z)) {
+                continue;
+            }
             int y = cachedHeight(level, Heightmap.Types.WORLD_SURFACE_WG, x, z, surfaceHeightCache);
             BlockPos plantPos = new BlockPos(x, y, z);
             BlockPos groundPos = plantPos.below();
@@ -304,6 +308,9 @@ public class ElythiaFloraFeature implements Feature {
         for (int i = 0; i < bushAttempts; i++) {
             int x = origin.getX() + random.nextInt(radius * 2 + 1) - radius;
             int z = origin.getZ() + random.nextInt(radius * 2 + 1) - radius;
+            if (!WorldgenWriteZone.contains(level, x, z)) {
+                continue;
+            }
             int y = cachedHeight(level, Heightmap.Types.WORLD_SURFACE_WG, x, z, surfaceHeightCache);
             BlockPos plantPos = new BlockPos(x, y, z);
 
@@ -499,6 +506,9 @@ public class ElythiaFloraFeature implements Feature {
         for (int i = 0; i < attempts; i++) {
             int x = origin.getX() + random.nextInt(radius * 2 + 1) - radius;
             int z = origin.getZ() + random.nextInt(radius * 2 + 1) - radius;
+            if (!WorldgenWriteZone.contains(level, x, z)) {
+                continue;
+            }
             int y = cachedHeight(level, Heightmap.Types.OCEAN_FLOOR_WG, x, z, oceanFloorHeightCache);
             BlockPos seagrassPos = new BlockPos(x, y, z);
             BlockPos floorPos = seagrassPos.below();
@@ -522,6 +532,9 @@ public class ElythiaFloraFeature implements Feature {
         for (int attempt = 0; attempt < 8; attempt++) {
             int x = origin.getX() + random.nextInt(radius * 2 + 1) - radius;
             int z = origin.getZ() + random.nextInt(radius * 2 + 1) - radius;
+            if (!WorldgenWriteZone.contains(level, x, z)) {
+                continue;
+            }
             int y = cachedHeight(level, Heightmap.Types.WORLD_SURFACE_WG, x, z, surfaceHeightCache);
             BlockPos plantPos = new BlockPos(x, y, z);
             if (isValidPlantSpot(level, plantPos, plantPos.below())) {
@@ -534,6 +547,9 @@ public class ElythiaFloraFeature implements Feature {
     private static BlockPos samplePatchPos(WorldGenLevel level, BlockPos center, int radius, RandomSource random, Map<Long, Integer> surfaceHeightCache) {
         int x = center.getX() + random.nextInt(radius * 2 + 1) - radius;
         int z = center.getZ() + random.nextInt(radius * 2 + 1) - radius;
+        if (!WorldgenWriteZone.contains(level, x, z)) {
+            return null;
+        }
         int y = cachedHeight(level, Heightmap.Types.WORLD_SURFACE_WG, x, z, surfaceHeightCache);
         BlockPos plantPos = new BlockPos(x, y, z);
         return isOpenPlantSpot(level, plantPos) ? plantPos : null;
@@ -590,7 +606,7 @@ public class ElythiaFloraFeature implements Feature {
                 continue;
             }
             BlockPos spreadPos = groundPos.offset(direction.stepX, 0, direction.stepZ);
-            if (isValidGround(level, spreadPos) && !level.getBlockState(spreadPos).is(PRIMORDIAL_GROUND)) {
+            if (WorldgenWriteZone.contains(level, spreadPos) && isValidGround(level, spreadPos) && !level.getBlockState(spreadPos).is(PRIMORDIAL_GROUND)) {
                 level.setBlock(spreadPos, replacement, 2);
             }
         }
