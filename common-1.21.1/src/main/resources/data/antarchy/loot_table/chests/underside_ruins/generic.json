@@ -15,4 +15,14 @@
 {"type":"minecraft:item","name":"minecraft:potion","weight":6,"functions":[{"function":"minecraft:set_potion","id":"antarchy:time_contraction"}]},
 {"type":"minecraft:item","name":"minecraft:potion","weight":6,"functions":[{"function":"minecraft:set_potion","id":"antarchy:time_dilation"}]},
 {"type":"minecraft:item","name":"minecraft:book","weight":6,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:efficiency"]}]}
-]}],"random_sequence":"antarchy:chests/underside_ruins/generic"}
+]},
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "antarchy:inject/antroid_phone"
+        }
+      ]
+    }
+  ],"random_sequence":"antarchy:chests/underside_ruins/generic"}

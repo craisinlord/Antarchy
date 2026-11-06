@@ -2,14 +2,8 @@ package com.craisinlord.antarchy.neoforge;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.config.ConfigResetGuard;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
-import com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload;
-import com.craisinlord.antarchy.content.network.KingJudgmentFlashSync;
-import com.craisinlord.antarchy.content.network.HordeIntensitySync;
 import java.nio.file.Path;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -18,6 +12,8 @@ public final class AntarchyConfigModuleNeoforge {
     private AntarchyConfigModuleNeoforge() {}
 
     public static void init(ModContainer modContainer) {
+        AntarchySettings.setPrimordialGrassSaver(() -> AntarchyMiscConfig.savePrimordialGrass(
+                AntarchySettings.primordialGrassDynamic(), AntarchySettings.primordialGrassQuality()));
         Path configDir = FMLPaths.CONFIGDIR.get().resolve("antarchy");
         ConfigResetGuard.migrateIfNeeded(
                 configDir,
@@ -28,9 +24,6 @@ public final class AntarchyConfigModuleNeoforge {
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyMobsConfig.SPEC,  "antarchy/antarchy_mobs.toml");
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyToolsConfig.SPEC, "antarchy/antarchy_tools.toml");
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyMiscConfig.SPEC,  "antarchy/antarchy_misc.toml");
-        HerculesBeetleImpactShakeSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new HerculesBeetleImpactShakePayload(ticks)));
-        KingJudgmentFlashSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new KingJudgmentFlashPayload(ticks)));
-        HordeIntensitySync.setSink(PacketDistributor::sendToPlayer);
         AntarchyNeoforge.modEventBusTempHolder.addListener(AntarchyConfigModuleNeoforge::onConfigChange);
     }
 
@@ -134,6 +127,8 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKrakenSquidSpawnEnabled(AntarchyMobsConfig.krakenSquidSpawnEnabled());
         AntarchySettings.setKrakenMassSpawnEnabled(AntarchyMobsConfig.krakenMassSpawnEnabled());
         AntarchySettings.setKrakenRequireBadOmenToSummon(AntarchyMobsConfig.krakenRequireBadOmenToSummon());
+        AntarchySettings.setKrakenRitualEnabled(AntarchyMobsConfig.krakenRitualEnabled());
+        AntarchySettings.setKrakenRitualInkCost(AntarchyMobsConfig.krakenRitualInkCost());
         AntarchySettings.setKrakenFollowRange(AntarchyMobsConfig.krakenFollowRange());
         AntarchySettings.setKrakenDamageRange(AntarchyMobsConfig.krakenDamageRange());
         AntarchySettings.setKrakenArmor(AntarchyMobsConfig.krakenArmor());
@@ -250,6 +245,27 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setAlphaMantisSummonIntervalTicks(AntarchyMobsConfig.alphaMantisSummonIntervalTicks());
         AntarchySettings.setAlphaMantisMaxMinions(AntarchyMobsConfig.alphaMantisMaxMinions());
         AntarchySettings.setAlphaMantisDamageRange(AntarchyMobsConfig.alphaMantisDamageRange());
+        AntarchySettings.setGlimmerAlphaMantisHealthMultiplier(AntarchyMobsConfig.glimmerAlphaMantisHealthMultiplier());
+        AntarchySettings.setGlimmerAlphaMantisDamageMultiplier(AntarchyMobsConfig.glimmerAlphaMantisDamageMultiplier());
+        AntarchySettings.setGlimmerAlphaMantisCooldownMultiplier(AntarchyMobsConfig.glimmerAlphaMantisCooldownMultiplier());
+        AntarchySettings.setGlimmerEmperorScorpionHealthMultiplier(AntarchyMobsConfig.glimmerEmperorScorpionHealthMultiplier());
+        AntarchySettings.setGlimmerEmperorScorpionDamageMultiplier(AntarchyMobsConfig.glimmerEmperorScorpionDamageMultiplier());
+        AntarchySettings.setGlimmerEmperorScorpionCooldownMultiplier(AntarchyMobsConfig.glimmerEmperorScorpionCooldownMultiplier());
+        AntarchySettings.setGlimmerBrutalflyHealthMultiplier(AntarchyMobsConfig.glimmerBrutalflyHealthMultiplier());
+        AntarchySettings.setGlimmerBrutalflyDamageMultiplier(AntarchyMobsConfig.glimmerBrutalflyDamageMultiplier());
+        AntarchySettings.setGlimmerBrutalflyCooldownMultiplier(AntarchyMobsConfig.glimmerBrutalflyCooldownMultiplier());
+        AntarchySettings.setGlimmerHerculesBeetleHealthMultiplier(AntarchyMobsConfig.glimmerHerculesBeetleHealthMultiplier());
+        AntarchySettings.setGlimmerHerculesBeetleDamageMultiplier(AntarchyMobsConfig.glimmerHerculesBeetleDamageMultiplier());
+        AntarchySettings.setGlimmerHerculesBeetleCooldownMultiplier(AntarchyMobsConfig.glimmerHerculesBeetleCooldownMultiplier());
+        AntarchySettings.setGlimmerKrakenHealthMultiplier(AntarchyMobsConfig.glimmerKrakenHealthMultiplier());
+        AntarchySettings.setGlimmerKrakenDamageMultiplier(AntarchyMobsConfig.glimmerKrakenDamageMultiplier());
+        AntarchySettings.setGlimmerKrakenCooldownMultiplier(AntarchyMobsConfig.glimmerKrakenCooldownMultiplier());
+        AntarchySettings.setGlimmerKingHealthMultiplier(AntarchyMobsConfig.glimmerKingHealthMultiplier());
+        AntarchySettings.setGlimmerKingDamageMultiplier(AntarchyMobsConfig.glimmerKingDamageMultiplier());
+        AntarchySettings.setGlimmerKingCooldownMultiplier(AntarchyMobsConfig.glimmerKingCooldownMultiplier());
+        AntarchySettings.setGlimmerQueenHealthMultiplier(AntarchyMobsConfig.glimmerQueenHealthMultiplier());
+        AntarchySettings.setGlimmerQueenDamageMultiplier(AntarchyMobsConfig.glimmerQueenDamageMultiplier());
+        AntarchySettings.setGlimmerQueenCooldownMultiplier(AntarchyMobsConfig.glimmerQueenCooldownMultiplier());
 
         AntarchySettings.setRollyPollyHealth(AntarchyMobsConfig.rollyPollyHealth());
         AntarchySettings.setRollyPollyMovementSpeed(AntarchyMobsConfig.rollyPollyMovementSpeed());
@@ -386,6 +402,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setToreterrorSpinDamage(AntarchyMobsConfig.toreterrorSpinDamage());
         AntarchySettings.setToreterrorSpinKnockback(AntarchyMobsConfig.toreterrorSpinKnockback());
         AntarchySettings.setToreterrorProjectileDamageMultiplier(AntarchyMobsConfig.toreterrorProjectileDamageMultiplier());
+        AntarchySettings.setGlimmerToreterrorHealthMultiplier(AntarchyMobsConfig.glimmerToreterrorHealthMultiplier());
+        AntarchySettings.setGlimmerToreterrorDamageMultiplier(AntarchyMobsConfig.glimmerToreterrorDamageMultiplier());
+        AntarchySettings.setGlimmerToreterrorCooldownMultiplier(AntarchyMobsConfig.glimmerToreterrorCooldownMultiplier());
         AntarchySettings.setWaterBombDamage(AntarchyMobsConfig.waterBombDamage());
         AntarchySettings.setWaterBombLifetimeTicks(AntarchyMobsConfig.waterBombLifetimeTicks());
         AntarchySettings.setWaterBombGravity(AntarchyMobsConfig.waterBombGravity());
@@ -596,6 +615,12 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setRpoLauncherLaunchVelocity(AntarchyToolsConfig.rpoLauncherLaunchVelocity());
         AntarchySettings.setRpoLauncherExplosionDamage(AntarchyToolsConfig.rpoLauncherExplosionDamage());
         AntarchySettings.setRpoLauncherExplosionRadius(AntarchyToolsConfig.rpoLauncherExplosionRadius());
+        AntarchySettings.setAnvilCannonCooldownSeconds(AntarchyToolsConfig.anvilCannonCooldownSeconds());
+        AntarchySettings.setAnvilCannonLaunchVelocity(AntarchyToolsConfig.anvilCannonLaunchVelocity());
+        AntarchySettings.setAnvilCannonImpactDamage(AntarchyToolsConfig.anvilCannonImpactDamage());
+        AntarchySettings.setAnvilCannonImpactKnockback(AntarchyToolsConfig.anvilCannonImpactKnockback());
+        AntarchySettings.setAnvilCannonRecoilStrength(AntarchyToolsConfig.anvilCannonRecoilStrength());
+        AntarchySettings.setAnvilCannonDegradeOnImpact(AntarchyToolsConfig.anvilCannonDegradeOnImpact());
 
         AntarchySettings.setSizeChangingRaysEnabled(AntarchyToolsConfig.sizeChangingRaysEnabled());
         AntarchySettings.setSizeRayCooldownSeconds(AntarchyToolsConfig.sizeRayCooldownSeconds());
@@ -681,12 +706,50 @@ public final class AntarchyConfigModuleNeoforge {
 
 
         AntarchySettings.setElythiaFireflyParticlesEnabled(AntarchyMiscConfig.elythiaFireflyParticlesEnabled());
+        AntarchySettings.setElythiaFogEnabled(AntarchyMiscConfig.elythiaFogEnabled());
+        AntarchySettings.setElythiaGroundMistEnabled(AntarchyMiscConfig.elythiaGroundMistEnabled());
+        AntarchySettings.setElythiaGrassWindEnabled(AntarchyMiscConfig.elythiaGrassWindEnabled());
+        AntarchySettings.setElythiaWindSoundsEnabled(AntarchyMiscConfig.elythiaWindSoundsEnabled());
+        AntarchySettings.setElythiaWindLinesEnabled(AntarchyMiscConfig.elythiaWindLinesEnabled());
+        AntarchySettings.setPrimordialGrassDrawDistance(AntarchyMiscConfig.primordialGrassDrawDistance());
+        AntarchySettings.setPrimordialGrassDynamic(AntarchyMiscConfig.primordialGrassDynamic());
+        AntarchySettings.setPrimordialGrassQuality(AntarchyMiscConfig.primordialGrassQuality());
+        AntarchySettings.setElythiaSoftCloudsEnabled(AntarchyMiscConfig.elythiaSoftCloudsEnabled());
+        AntarchySettings.setElythiaDreamShadowsEnabled(AntarchyMiscConfig.elythiaDreamShadowsEnabled());
+        AntarchySettings.setElythiaDreamShadowsStrength(AntarchyMiscConfig.elythiaDreamShadowsStrength());
+        AntarchySettings.setElythiaAlreadyDreaming(AntarchyMiscConfig.elythiaAlreadyDreaming());
+        AntarchySettings.setElythiaClearWater(AntarchyMiscConfig.elythiaClearWater());
+        AntarchySettings.setBrownAntDescent(AntarchyMiscConfig.brownAntDescent());
+        AntarchySettings.setRedAntFlip(AntarchyMiscConfig.redAntFlip());
+        AntarchySettings.setTermiteBurrow(AntarchyMiscConfig.termiteBurrow());
+        AntarchySettings.setRainbowAntPrism(AntarchyMiscConfig.rainbowAntPrism());
+        AntarchySettings.setElythiaPurpleRain(AntarchyMiscConfig.elythiaPurpleRain());
+        AntarchySettings.setElythiaEchoes(AntarchyMiscConfig.elythiaEchoes());
+        AntarchySettings.setElythiaEvents(AntarchyMiscConfig.elythiaEvents());
+        AntarchySettings.setElythiaRainGrowth(AntarchyMiscConfig.elythiaRainGrowth());
+        AntarchySettings.setThoraxisEvents(AntarchyMiscConfig.thoraxisEvents());
+        AntarchySettings.setThrowbackZonesEnabled(AntarchyMiscConfig.throwbackZonesEnabled());
+        AntarchySettings.setThrowbackTorchRadius(AntarchyMiscConfig.throwbackTorchRadius());
+        AntarchySettings.setThrowbackWildZoneMinRadius(AntarchyMiscConfig.throwbackWildZoneMinRadius());
+        AntarchySettings.setThrowbackWildZoneMaxRadius(AntarchyMiscConfig.throwbackWildZoneMaxRadius());
+        AntarchySettings.setThrowbackWildZoneChance(AntarchyMiscConfig.throwbackWildZoneChance());
+        AntarchySettings.setThrowbackNoAttackCooldown(AntarchyMiscConfig.throwbackNoAttackCooldown());
+        AntarchySettings.setThrowbackClassicHurtSound(AntarchyMiscConfig.throwbackClassicHurtSound());
+        AntarchySettings.setThrowbackClassicFood(AntarchyMiscConfig.throwbackClassicFood());
+        AntarchySettings.setThrowbackClassicMusic(AntarchyMiscConfig.throwbackClassicMusic());
+        AntarchySettings.setThrowbackDenseFog(AntarchyMiscConfig.throwbackDenseFog());
+        AntarchySettings.setThrowbackDreamHaze(AntarchyMiscConfig.throwbackDreamHaze());
+        AntarchySettings.setThrowbackDreamStrength(AntarchyMiscConfig.throwbackDreamStrength());
+        AntarchySettings.setThrowbackAfterimages(AntarchyMiscConfig.throwbackAfterimages());
 
         AntarchySettings.setDreamSandFallingBlockGravityMultiplier(AntarchyMiscConfig.dreamSandFallingBlockGravityMultiplier());
+        AntarchySettings.setGiantLilyPadLaunchDistance(AntarchyMiscConfig.giantLilyPadLaunchDistance());
 
         AntarchySettings.setIchorWitherEnabled(AntarchyMiscConfig.ichorWitherEnabled());
 
         AntarchySettings.setDuplicatorTreeEnabled(AntarchyMiscConfig.duplicatorTreeEnabled());
+        AntarchySettings.setFossilsEnabled(AntarchyMiscConfig.fossilsEnabled());
+        AntarchySettings.setFossilEntityBlacklist(AntarchyMiscConfig.fossilEntityBlacklist());
         AntarchySettings.setGlowVinesUnderLeaves(AntarchyMiscConfig.glowVinesUnderLeaves());
         AntarchySettings.setSwingThroughGrassEnabled(AntarchyMiscConfig.swingThroughGrassEnabled());
         AntarchySettings.setFabricKeybindingConflictFixEnabled(AntarchyMiscConfig.fabricKeybindingConflictFixEnabled());

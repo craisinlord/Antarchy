@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "fruiting=false": {
+      "model": "antarchy:block/cranberry_leaves"
+    },
+    "fruiting=true": {
+      "model": "antarchy:block/fruiting_cranberry_leaves"
+    }
+  }
+}

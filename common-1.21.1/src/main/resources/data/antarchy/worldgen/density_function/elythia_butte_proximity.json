@@ -1,0 +1,13 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "antarchy:elythia_butte",
+      "output": "proximity",
+      "argument": "antarchy:elythia_shelf_offset",
+      "mask": "antarchy:elythia_butte_mask",
+      "noise": "antarchy:elythia_butte_seed"
+    }
+  }
+}

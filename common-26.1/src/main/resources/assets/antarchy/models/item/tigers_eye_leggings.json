@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "antarchy:item/tigers_eye/tigers_eye_leggings"
+  }
+}

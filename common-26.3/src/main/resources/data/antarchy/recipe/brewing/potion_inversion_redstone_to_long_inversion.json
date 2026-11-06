@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "minecraft:potion",
+    "potion_contents": {
+      "potions": "antarchy:inversion"
+    }
+  },
+  "output": {
+    "components": {
+      "minecraft:potion_contents": {
+        "potion": "antarchy:long_inversion"
+      }
+    },
+    "id": "minecraft:potion"
+  },
+  "reagent": {
+    "item": "minecraft:redstone"
+  }
+}

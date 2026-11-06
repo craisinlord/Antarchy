@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "antarchy:block/myrmite/mossy_myrmite_bricks",
+    "side": "antarchy:block/myrmite/mossy_myrmite_bricks",
+    "top": "antarchy:block/myrmite/mossy_myrmite_bricks"
+  }
+}
+

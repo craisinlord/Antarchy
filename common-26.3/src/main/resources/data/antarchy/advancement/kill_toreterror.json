@@ -1,0 +1,37 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "kill_toreterror": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:toreterror"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.kill_toreterror.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "antarchy:toreterror_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.kill_toreterror.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_toreterror"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

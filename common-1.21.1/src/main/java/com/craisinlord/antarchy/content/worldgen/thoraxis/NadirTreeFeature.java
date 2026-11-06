@@ -70,12 +70,12 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
             if (state.hasProperty(RotatedPillarBlock.AXIS)) {
                 state = state.setValue(RotatedPillarBlock.AXIS, entry.getValue());
             }
-            setBlock(level, pos, state);
+            level.setBlock(pos, state, 2);
         }
 
         for (BlockPos pos : foliage) {
             if (!logs.containsKey(pos)) {
-                setBlock(level, pos, config.foliageProvider().getState(random, pos));
+                level.setBlock(pos, config.foliageProvider().getState(random, pos), 2);
             }
         }
 

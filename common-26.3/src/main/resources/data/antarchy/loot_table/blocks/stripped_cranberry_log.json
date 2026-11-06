@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:stripped_cranberry_log"
+        }
+      ],
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ],
+  "random_sequence": "minecraft:blocks/stripped_jungle_log"
+}

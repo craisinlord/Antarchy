@@ -1,0 +1,20 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:add",
+      "left": 0.38,
+      "right": {
+        "type": "minecraft:mul",
+        "left": 0.13,
+        "right": {
+          "type": "minecraft:noise",
+          "noise": "antarchy:elythia_shelf_step",
+          "xz_scale": 1.0,
+          "y_scale": 0.0
+        }
+      }
+    }
+  }
+}

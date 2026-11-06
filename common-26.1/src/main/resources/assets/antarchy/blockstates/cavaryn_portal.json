@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "axis=x": { "model": "antarchy:block/cavaryn_portal_x" },
+    "axis=z": { "model": "antarchy:block/cavaryn_portal_z" }
+  }
+}

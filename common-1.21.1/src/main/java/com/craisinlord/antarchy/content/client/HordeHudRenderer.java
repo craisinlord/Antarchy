@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.hud.ScreenTint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.Registries;
@@ -34,6 +35,6 @@ public final class HordeHudRenderer {
         int width = minecraft.getWindow().getGuiScaledWidth();
         int height = minecraft.getWindow().getGuiScaledHeight();
         int color = (alpha << 24) | 0xD84A16;
-        guiGraphics.fill(0, 0, width, height, color);
+        ScreenTint.fill(guiGraphics, 0, 0, width, height, color);
     }
 }

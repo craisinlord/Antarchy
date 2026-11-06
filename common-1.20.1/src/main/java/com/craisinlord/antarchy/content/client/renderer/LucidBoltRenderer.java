@@ -18,7 +18,7 @@ public class LucidBoltRenderer extends GeoEntityRenderer<LucidBoltEntity> {
     protected void applyRotations(LucidBoltEntity animatable, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTick) {
         float appliedYaw = Mth.rotLerp(partialTick, animatable.yRotO, animatable.getYRot());
         float appliedPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
-        super.applyRotations(animatable, poseStack, ageInTicks, appliedYaw, partialTick);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - appliedYaw));
         poseStack.mulPose(Axis.XP.rotationDegrees(-appliedPitch));
     }
 }

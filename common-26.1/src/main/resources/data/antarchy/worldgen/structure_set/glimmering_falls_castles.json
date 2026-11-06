@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:glimmering_falls_castle",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 1840273551,
+    "spacing": 20,
+    "separation": 19
+  }
+}

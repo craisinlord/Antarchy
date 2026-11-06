@@ -1,0 +1,59 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 512,
+				"texture_height": 512,
+				"visible_bounds_width": 11,
+				"visible_bounds_height": 10,
+				"visible_bounds_offset": [0, 1, 0]
+			},
+			"bones": [
+				{
+					"name": "tear",
+					"pivot": [1.83622, 14.33358, -8.27273],
+					"cubes": [
+						{"origin": [-40, -41, 1], "size": [80, 80, 0], "uv": [0, 80]},
+						{"origin": [-40, -41, 4], "size": [80, 80, 0], "inflate": 2, "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "group",
+					"parent": "tear",
+					"pivot": [0, 4, 10],
+					"cubes": [
+						{"origin": [-75, -45, 10], "size": [150, 98, 0], "uv": [178, 14]}
+					]
+				},
+				{
+					"name": "content",
+					"parent": "tear",
+					"pivot": [13, 0, 0],
+					"cubes": [
+						{"origin": [-40, -41, -3], "size": [80, 80, 0], "uv": [0, 160]},
+						{"origin": [-60, -60, -9], "size": [80, 80, 0], "uv": [0, 160]},
+						{"origin": [-11, -6, -9], "size": [80, 80, 0], "uv": [0, 160]}
+					]
+				},
+				{
+					"name": "light_left",
+					"parent": "tear",
+					"pivot": [0, 7, 1],
+					"cubes": [
+						{"origin": [0, 6, -63], "size": [0, 2, 64], "uv": [162, 67]}
+					]
+				},
+				{
+					"name": "light_right",
+					"parent": "tear",
+					"pivot": [0, 7, 1],
+					"cubes": [
+						{"origin": [0, 6, -63], "size": [0, 2, 64], "uv": [162, 67], "mirror": true}
+					]
+				}
+			]
+		}
+	]
+}

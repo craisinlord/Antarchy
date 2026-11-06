@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "antarchy:myrmite_bricks",
+    "antarchy:amber_moss_block"
+  ],
+  "result": {
+    "count": 1,
+    "id": "antarchy:mossy_myrmite_bricks"
+  }
+}

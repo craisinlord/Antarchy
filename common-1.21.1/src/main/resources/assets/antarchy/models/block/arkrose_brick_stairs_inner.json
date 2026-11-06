@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "antarchy:block/arkrose_bricks",
+    "side": "antarchy:block/arkrose_bricks",
+    "top": "antarchy:block/arkrose_bricks"
+  }
+}
+

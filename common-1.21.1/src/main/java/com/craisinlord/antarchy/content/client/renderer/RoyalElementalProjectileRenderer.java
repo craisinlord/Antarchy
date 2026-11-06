@@ -25,7 +25,7 @@ public class RoyalElementalProjectileRenderer extends GeoEntityRenderer<RoyalEle
     public RenderType getRenderType(RoyalElementalProjectileEntity animatable, ResourceLocation texture,
                                     @Nullable MultiBufferSource bufferSource, float partialTick) {
         return animatable.isIceball()
-                ? RenderType.entityCutoutNoCull(texture)
+                ? GlimmerEchoRendering.renderType(animatable, texture, RenderType.entityCutoutNoCull(texture))
                 : RenderType.entityTranslucentEmissive(texture);
     }
 

@@ -1,0 +1,18 @@
+{
+  "type": "antarchy:fossil_blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 1.0,
+  "group": "fossil",
+  "ingredient": [
+    {
+      "item": "antarchy:myrmite_fossil"
+    },
+    {
+      "item": "antarchy:broodstone_fossil"
+    }
+  ],
+  "result": {
+    "id": "minecraft:pig_spawn_egg"
+  }
+}

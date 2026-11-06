@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_wall_hanging_sign",
+  "textures": {
+    "all": "antarchy:block/royal_hanging_sign",
+    "particle": "antarchy:block/royal/royal_planks"
+  }
+}

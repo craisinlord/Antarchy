@@ -1,0 +1,99 @@
+{
+  "type": "quiz",
+  "title": "CAVARYN FIELD EXAM",
+  "green_tint": true,
+  "questions_per_run": 5,
+  "reward_on": "perfect",
+  "reward_limit": "once",
+  "questions": [
+    {
+      "question": "How do you get to Cavaryn?",
+      "answers": [
+        "Right-click a Termite",
+        "Right-click a Brown Ant",
+        "Dig to bedrock"
+      ],
+      "correct": 0,
+      "explanation": "Right-click a Termite. If you sacrifice one in a Myrmite frame you get a portal that stays lit."
+    },
+    {
+      "question": "Which frame makes a permanent Cavaryn portal?",
+      "answers": [
+        "Myrmite",
+        "Nyxite",
+        "Mossy Ouranwood"
+      ],
+      "correct": 0,
+      "explanation": "Myrmite. Nyxite is the Thoraxis one and Mossy Ouranwood is the Elythia one.",
+      "item": "antarchy:myrmite"
+    },
+    {
+      "question": "What do Termites back away from?",
+      "answers": [
+        "Torchlight",
+        "Water",
+        "Sugar"
+      ],
+      "correct": 0,
+      "explanation": "Torchlight. They eat wood too, so keep them far away from your house.",
+      "item": "minecraft:torch"
+    },
+    {
+      "question": "What do Termites breed with?",
+      "answers": [
+        "Wood",
+        "Sugar",
+        "Dirt"
+      ],
+      "correct": 0,
+      "explanation": "Wood. Which they'll also eat, so good luck."
+    },
+    {
+      "question": "Which of these draws a horde's attention?",
+      "answers": [
+        "Staying in one spot",
+        "Sprinting",
+        "Sneaking"
+      ],
+      "correct": 0,
+      "explanation": "Hanging around in one spot. Killing stuff and breaking eggs will do it too. Keep moving and things calm down."
+    },
+    {
+      "question": "What usually arrives in a horde's last wave?",
+      "answers": [
+        "A Hercules Beetle",
+        "The Queen",
+        "A Kraken"
+      ],
+      "correct": 0,
+      "explanation": "Usually a Hercules Beetle. Big one."
+    },
+    {
+      "question": "What pacifies an injured Hercules Beetle?",
+      "answers": [
+        "Broodfruit",
+        "A golden apple",
+        "Milk"
+      ],
+      "correct": 0,
+      "explanation": "Broodfruit. Feed it after the fight and it'll stick with you.",
+      "item": "antarchy:broodfruit"
+    },
+    {
+      "question": "What ores grow through Cavaryn's broodstone?",
+      "answers": [
+        "Titanium and uranium",
+        "Gold and lapis",
+        "Emerald and quartz"
+      ],
+      "correct": 0,
+      "explanation": "Titanium and uranium. There's loads of it down there."
+    }
+  ],
+  "rewards": [
+    {
+      "type": "experience_levels",
+      "levels": 5
+    }
+  ]
+}

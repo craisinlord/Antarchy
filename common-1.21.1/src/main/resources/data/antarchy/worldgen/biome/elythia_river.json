@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.76,
   "downfall": 0.98,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 736368,
     "sky_color": 8084735,
@@ -14,7 +14,7 @@
       "sound": "minecraft:ambient.crimson_forest.mood",
       "tick_delay": 7000,
       "block_search_extent": 8,
-      "offset": 2.0
+      "offset": 2
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
@@ -33,48 +33,86 @@
     [],
     [],
     [],
-    [],
+    [
+      "antarchy:river_log_bridge",
+      "antarchy:river_stepping_stones"
+    ],
     [],
     [
-      "minecraft:ore_coal_upper",
-      "minecraft:ore_coal_lower",
-      "minecraft:ore_iron_upper",
-      "minecraft:ore_iron_middle",
-      "minecraft:ore_iron_small",
-      "minecraft:ore_gold",
-      "minecraft:ore_gold_lower",
-      "minecraft:ore_redstone",
-      "minecraft:ore_redstone_lower",
-      "minecraft:ore_diamond",
-      "minecraft:ore_diamond_medium",
-      "minecraft:ore_diamond_large",
-      "minecraft:ore_diamond_buried",
-      "minecraft:ore_lapis",
-      "minecraft:ore_lapis_buried",
-      "minecraft:ore_copper"
+      "antarchy:elythia_geology",
+      "antarchy:elythia_ore_coal_upper",
+      "antarchy:elythia_ore_coal_lower",
+      "antarchy:elythia_ore_iron_upper",
+      "antarchy:elythia_ore_iron_middle",
+      "antarchy:elythia_ore_iron_small",
+      "antarchy:elythia_ore_gold",
+      "antarchy:elythia_ore_gold_lower",
+      "antarchy:elythia_ore_redstone",
+      "antarchy:elythia_ore_redstone_lower",
+      "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
+      "antarchy:elythia_ore_diamond_large",
+      "antarchy:elythia_ore_diamond_buried",
+      "antarchy:elythia_ore_lapis",
+      "antarchy:elythia_ore_lapis_buried",
+      "antarchy:elythia_ore_copper"
     ],
     [
       "antarchy:elythia_underground",
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone"
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
     ],
     [],
     [
       "antarchy:elythia_meadow_flora",
       "minecraft:patch_sugar_cane",
-      "antarchy:giant_lily_pad_patch"
+      "antarchy:giant_lily_pad_patch_river",
+      "minecraft:seagrass_river"
     ],
     []
   ],
   "creature_spawn_probability": 0.04,
   "spawners": {
     "monster": [],
-    "creature": [],
+    "creature": [
+      {
+        "type": "antarchy:glimmer",
+        "weight": 12,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "minecraft:frog",
+        "weight": 14,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
     "ambient": [],
     "axolotls": [],
     "underground_water_creature": [],
-    "water_creature": [],
-    "water_ambient": [],
+    "water_creature": [
+      {
+        "type": "antarchy:octopus_bomb",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "water_ambient": [
+      {
+        "type": "antarchy:cheep",
+        "weight": 10,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "minecraft:tropical_fish",
+        "weight": 20,
+        "minCount": 4,
+        "maxCount": 8
+      }
+    ],
     "misc": []
   }
 }

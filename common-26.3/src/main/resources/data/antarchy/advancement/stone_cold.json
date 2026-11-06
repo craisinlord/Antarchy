@@ -1,0 +1,37 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "kill_basilisk": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:basilisk"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.stone_cold.description"
+    },
+    "frame": "task",
+    "icon": {
+      "id": "antarchy:basilisk_fang"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.stone_cold.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_basilisk"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

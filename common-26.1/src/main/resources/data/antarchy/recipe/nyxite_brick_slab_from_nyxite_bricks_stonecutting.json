@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:nyxite_bricks",
+  "result": {
+    "count": 2,
+    "id": "antarchy:nyxite_brick_slab"
+  }
+}

@@ -7,11 +7,13 @@ import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
+import com.craisinlord.antarchy.content.loot.AntarchyLootInjections;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.api.ModInitializer;
@@ -110,10 +112,14 @@ public final class AntarchyFabric implements ModInitializer {
             Registries.PLACED_FEATURE,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "red_ant_nest")
     );
+    private static final ResourceKey<PlacedFeature> ELYTHIA_URANIUM_ORE = ResourceKey.create(
+            Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia_uranium_ore"));
     private static final ResourceKey<PlacedFeature> URANIUM_ORE = ResourceKey.create(
             Registries.PLACED_FEATURE,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "uranium_ore")
     );
+    private static final ResourceKey<PlacedFeature> ELYTHIA_TITANIUM_ORE = ResourceKey.create(
+            Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia_titanium_ore"));
     private static final ResourceKey<PlacedFeature> TITANIUM_ORE = ResourceKey.create(
             Registries.PLACED_FEATURE,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "titanium_ore")
@@ -160,8 +166,13 @@ public final class AntarchyFabric implements ModInitializer {
         TigerEyeFabricManager.register();
         AntarchyAdvancementTriggers.register();
         Antarchy.init();
-        BloodCrystalShardItem.SYNC_BLOODGLASS = BloodglassManager::syncBloodglass;
+        BloodCrystalShardItem.setBloodglassSync(BloodglassManager::syncBloodglass);
         registerTradeReloadListener();
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+            if (source.isBuiltin() && AntarchyLootInjections.addsPhone(key.location())) {
+                tableBuilder.withPool(AntarchyLootInjections.phonePool());
+            }
+        });
     }
 
     private static void registerTradeReloadListener() {
@@ -290,12 +301,12 @@ public final class AntarchyFabric implements ModInitializer {
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(IS_ELYTHIA),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
-                URANIUM_ORE
+                ELYTHIA_URANIUM_ORE
         );
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(IS_ELYTHIA),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
-                TITANIUM_ORE
+                ELYTHIA_TITANIUM_ORE
         );
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(IS_ELYTHIA),

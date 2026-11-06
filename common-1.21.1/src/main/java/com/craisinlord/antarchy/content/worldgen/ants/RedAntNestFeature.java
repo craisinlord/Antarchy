@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.worldgen.ants;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,8 +19,11 @@ public class RedAntNestFeature extends BaseAntNestFeature {
 
     @Override
     protected BlockPos resolveNestPos(WorldGenLevel level, BlockPos origin) {
-        int startY = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ()) - 1;
+        int startY = Math.min(level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ()) - 1, origin.getY());
         int minY = level.getMinBuildHeight() + 1;
+        if (ThoraxisUndersideManager.isThoraxis(level.getLevel())) {
+            minY = Math.max(minY, ThoraxisUndersideManager.GRAVITY_FLIP_Y + 1);
+        }
 
         for (int y = startY; y >= minY; y--) {
             BlockPos candidate = new BlockPos(origin.getX(), y, origin.getZ());

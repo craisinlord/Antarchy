@@ -120,6 +120,9 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     private boolean preferPounceThisWindow = true;
     private float visualAlpha = 1.0F;
     private float previousVisualAlpha = 1.0F;
+    private int nextChaseRepathTick;
+    @Nullable
+    private Vec3 lastChaseTargetPos;
 
     public SpringbugEntity(EntityType<? extends SpringbugEntity> entityType, Level level) {
         super(entityType, level);
@@ -167,6 +170,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM)
                 .triggerableAnim("hanging", HANGING_ANIM)
                 .triggerableAnim("jump", JUMP_ANIM)
                 .triggerableAnim("jump_end", JUMP_END_ANIM));
@@ -214,7 +218,6 @@ public class SpringbugEntity extends Monster implements GeoEntity {
             this.visualAlpha += (targetAlpha - this.visualAlpha) * 0.25F;
         }
 
-        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         super.tick();
         CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
 
@@ -447,6 +450,17 @@ public class SpringbugEntity extends Monster implements GeoEntity {
         }
     }
 
+    private void chaseTarget(LivingEntity target, double speed) {
+        if (this.tickCount < this.nextChaseRepathTick
+                && this.lastChaseTargetPos != null
+                && target.distanceToSqr(this.lastChaseTargetPos) <= 1.0D) {
+            return;
+        }
+
+        this.lastChaseTargetPos = target.position();
+        this.nextChaseRepathTick = this.tickCount + (this.getNavigation().moveTo(target, speed) ? 4 : 10);
+    }
+
     private void updateCamouflage() {
         if (this.isPouncing() || this.isLeapingToCeiling()) {
             this.setCamouflaged(false);
@@ -460,14 +474,15 @@ public class SpringbugEntity extends Monster implements GeoEntity {
             return;
         }
 
-        boolean playerNearby = this.level().getNearestPlayer(this, CAMOUFLAGE_PLAYER_RANGE) != null;
         boolean idle = this.getTarget() == null
                 && this.recoveryTicks <= 0
                 && this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr() < 0.003D
                 && this.onGround();
         boolean movingQuickly = this.getDeltaMovement().lengthSqr() > QUICK_MOVE_SQR;
-        boolean inAmbushCover = this.findCeilingWithinRange(this.directCeilingSearchHeight()) != null;
-        if (!playerNearby || !idle || movingQuickly || !inAmbushCover) {
+        if (!idle
+                || movingQuickly
+                || this.level().getNearestPlayer(this, CAMOUFLAGE_PLAYER_RANGE) == null
+                || this.findCeilingWithinRange(this.directCeilingSearchHeight()) == null) {
             this.setCamouflaged(false);
             this.camouflageWarmupTicks = 0;
             return;
@@ -499,6 +514,8 @@ public class SpringbugEntity extends Monster implements GeoEntity {
         LivingEntity target = this.getTarget();
         int minHeight = this.minimumCeilingHeight();
         int maxHeight = minHeight + CEILING_EXTRA_SEARCH_HEIGHT;
+        int flip = this.gravityDirection().isInverted() ? -1 : 1;
+        BlockPos.MutableBlockPos candidate = new BlockPos.MutableBlockPos();
 
         for (int dx = -CEILING_HORIZONTAL_SEARCH_RANGE; dx <= CEILING_HORIZONTAL_SEARCH_RANGE; dx++) {
             for (int dz = -CEILING_HORIZONTAL_SEARCH_RANGE; dz <= CEILING_HORIZONTAL_SEARCH_RANGE; dz++) {
@@ -507,7 +524,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
                     continue;
                 }
                 for (int dy = minHeight; dy <= maxHeight; dy++) {
-                    BlockPos candidate = this.relativeLocal(origin, dx, dy, dz);
+                    candidate.set(origin.getX() + flip * dx, origin.getY() + flip * dy, origin.getZ() + dz);
                     if (!this.isUsableCeiling(candidate)) {
                         continue;
                     }
@@ -697,8 +714,11 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     private final class CloseMeleeGoal extends Goal {
         private static final double MELEE_RANGE_SQR = 5.0D * 5.0D;
         private static final double CONTINUE_RANGE_SQR = 7.0D * 7.0D;
-        private static final int ATTACK_COOLDOWN = 20;
+        private static final double HIT_RANGE_SQR = 5.5D * 5.5D;
+        private static final int ATTACK_COOLDOWN = 40;
+        private static final int SWING_HIT_TICKS = 10;
         private int attackCooldown;
+        private int swingTicks;
 
         private CloseMeleeGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -729,6 +749,17 @@ public class SpringbugEntity extends Monster implements GeoEntity {
         @Override
         public void start() {
             this.attackCooldown = 0;
+            this.swingTicks = 0;
+        }
+
+        @Override
+        public void stop() {
+            this.swingTicks = 0;
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
         }
 
         @Override
@@ -737,14 +768,32 @@ public class SpringbugEntity extends Monster implements GeoEntity {
             if (target == null) return;
 
             SpringbugEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
-            SpringbugEntity.this.getNavigation().moveTo(target, 1.1D);
 
             if (this.attackCooldown > 0) {
                 this.attackCooldown--;
             }
-            if (this.attackCooldown <= 0 && SpringbugEntity.this.distanceToSqr(target) <= MELEE_RANGE_SQR) {
-                SpringbugEntity.this.doHurtTarget(target);
+
+            if (this.swingTicks > 0) {
+                SpringbugEntity.this.getNavigation().stop();
+                if (--this.swingTicks == 0) {
+                    if (SpringbugEntity.this.distanceToSqr(target) <= HIT_RANGE_SQR
+                            && SpringbugEntity.this.hasLineOfSight(target)) {
+                        SpringbugEntity.this.doHurtTarget(target);
+                    }
+                    SpringbugEntity.this.nextChaseRepathTick = 0;
+                }
+                return;
+            }
+
+            SpringbugEntity.this.chaseTarget(target, 1.1D);
+
+            if (this.attackCooldown <= 0
+                    && SpringbugEntity.this.distanceToSqr(target) <= MELEE_RANGE_SQR
+                    && SpringbugEntity.this.hasLineOfSight(target)) {
+                this.swingTicks = SWING_HIT_TICKS;
                 this.attackCooldown = ATTACK_COOLDOWN;
+                SpringbugEntity.this.getNavigation().stop();
+                SpringbugEntity.this.triggerAnim("main_controller", "attack");
             }
         }
     }
@@ -762,7 +811,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
                     && SpringbugEntity.this.canUseAmbush()
                     && SpringbugEntity.this.pounceCooldownTicks <= 0
                     && SpringbugEntity.this.preferPounceThisWindow
-                    && (SpringbugEntity.this.hasLineOfSight(target) || SpringbugEntity.this.distanceToSqr(target) <= 9.0D);
+                    && (SpringbugEntity.this.distanceToSqr(target) <= 9.0D || SpringbugEntity.this.getSensing().hasLineOfSight(target));
         }
 
         @Override
@@ -782,6 +831,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     private final class HideOnCeilingGoal extends Goal {
         @Nullable
         private BlockPos targetCeiling;
+        private int nextCeilingRetryTick;
 
         private HideOnCeilingGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
@@ -850,7 +900,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
                     SpringbugEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
                     if (SpringbugEntity.this.pounceCooldownTicks <= 0
                             && SpringbugEntity.this.distanceToSqr(target) <= CEILING_TRIGGER_RANGE_SQR
-                            && SpringbugEntity.this.hasLineOfSight(target)) {
+                            && SpringbugEntity.this.getSensing().hasLineOfSight(target)) {
                         SpringbugEntity.this.beginCeilingDrop(target);
                     }
                 }
@@ -873,7 +923,13 @@ public class SpringbugEntity extends Monster implements GeoEntity {
                     SpringbugEntity.this.beginLeapToCeiling(ceiling);
                 }
             } else {
-                SpringbugEntity.this.getNavigation().moveTo(ceiling.getX() + 0.5D, SpringbugEntity.this.getY(), ceiling.getZ() + 0.5D, 1.05D);
+                boolean navDone = SpringbugEntity.this.getNavigation().isDone();
+                if (!navDone || SpringbugEntity.this.tickCount >= this.nextCeilingRetryTick) {
+                    SpringbugEntity.this.getNavigation().moveTo(ceiling.getX() + 0.5D, SpringbugEntity.this.getY(), ceiling.getZ() + 0.5D, 1.05D);
+                    if (navDone) {
+                        this.nextCeilingRetryTick = SpringbugEntity.this.tickCount + 20;
+                    }
+                }
             }
         }
     }
@@ -910,7 +966,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
             double distSqr = SpringbugEntity.this.distanceToSqr(target);
 
             if (distSqr <= MELEE_WALK_RANGE * MELEE_WALK_RANGE) {
-                SpringbugEntity.this.getNavigation().moveTo(target, 1.05D);
+                SpringbugEntity.this.chaseTarget(target, 1.05D);
             } else if (distSqr > CHASE_LEAP_RANGE_SQR) {
                 if (SpringbugEntity.this.onGround() && SpringbugEntity.this.chaseJumpCooldownTicks <= 0) {
                     Vec3 dir = SpringbugEntity.this.toLocalPlane(target.position().subtract(SpringbugEntity.this.position())).normalize();
@@ -924,7 +980,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
                 }
                 SpringbugEntity.this.getNavigation().stop();
             } else {
-                SpringbugEntity.this.getNavigation().moveTo(target, 1.05D);
+                SpringbugEntity.this.chaseTarget(target, 1.05D);
             }
         }
     }

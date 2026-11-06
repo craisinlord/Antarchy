@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.83,
-  "downfall": 1.0,
+  "downfall": 1,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 2502722,
     "sky_color": 8084735,
@@ -14,7 +14,7 @@
       "sound": "minecraft:ambient.basalt_deltas.mood",
       "tick_delay": 8000,
       "block_search_extent": 8,
-      "offset": 2.0
+      "offset": 2
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
@@ -36,27 +36,28 @@
     [],
     [],
     [
-      "minecraft:ore_coal_upper",
-      "minecraft:ore_coal_lower",
-      "minecraft:ore_iron_upper",
-      "minecraft:ore_iron_middle",
-      "minecraft:ore_iron_small",
-      "minecraft:ore_gold",
-      "minecraft:ore_gold_lower",
-      "minecraft:ore_redstone",
-      "minecraft:ore_redstone_lower",
-      "minecraft:ore_diamond",
-      "minecraft:ore_diamond_medium",
-      "minecraft:ore_diamond_large",
-      "minecraft:ore_diamond_buried",
-      "minecraft:ore_lapis",
-      "minecraft:ore_lapis_buried",
-      "minecraft:ore_copper"
+      "antarchy:elythia_geology",
+      "antarchy:elythia_ore_coal_upper",
+      "antarchy:elythia_ore_coal_lower",
+      "antarchy:elythia_ore_iron_upper",
+      "antarchy:elythia_ore_iron_middle",
+      "antarchy:elythia_ore_iron_small",
+      "antarchy:elythia_ore_gold",
+      "antarchy:elythia_ore_gold_lower",
+      "antarchy:elythia_ore_redstone",
+      "antarchy:elythia_ore_redstone_lower",
+      "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
+      "antarchy:elythia_ore_diamond_large",
+      "antarchy:elythia_ore_diamond_buried",
+      "antarchy:elythia_ore_lapis",
+      "antarchy:elythia_ore_lapis_buried",
+      "antarchy:elythia_ore_copper"
     ],
     [
       "antarchy:elythia_underground",
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone"
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
     ],
     [],
     [
@@ -65,7 +66,8 @@
       "antarchy:butterfly_fields_flora",
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",
-      "antarchy:ouranwood_cocoon_trees"
+      "antarchy:ouranwood_cocoon_trees",
+      "antarchy:throwback_nerd_pole"
     ],
     []
   ],

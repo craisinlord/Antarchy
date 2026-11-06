@@ -9,8 +9,7 @@
     "guide.antarchy.entry.red_ant.description",
     "guide.antarchy.entry.red_ant.description2",
     "guide.antarchy.entry.red_ant.description3",
-    "guide.antarchy.entry.red_ant.description4",
-    "guide.antarchy.entry.red_ant.description5"
+    "guide.antarchy.entry.red_ant.description4"
   ],
   "entity": "antarchy:red_ant",
   "cover_entity": "antarchy:red_ant",
@@ -28,5 +27,13 @@
     "antarchy:emperor_scorpion",
     "antarchy:scorpion",
     "antarchy:bed_bug"
-  ]
+  ],
+  "lookup": [
+    "antarchy:bluestone",
+    "antarchy:antiwater_bucket",
+    "antarchy:nyxite",
+    "antarchy:red_ant_nest",
+    "antarchy:red_ant_spawn_egg"
+  ],
+  "unlocked_by_default": true
 }

@@ -1,0 +1,8 @@
+{
+  "type": "antarchy:elythia_stone_ruin",
+  "bricks": "antarchy:arkrose_bricks",
+  "pillar": "antarchy:arkrose_pillar",
+  "chiseled": "antarchy:chiseled_arkrose",
+  "slab": "antarchy:arkrose_brick_slab",
+  "wall": "antarchy:arkrose_brick_wall"
+}

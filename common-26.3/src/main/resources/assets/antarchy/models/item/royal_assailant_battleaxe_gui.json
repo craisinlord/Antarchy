@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/royal_assailant/royal_assailant_battleaxe_item"
+  }
+}

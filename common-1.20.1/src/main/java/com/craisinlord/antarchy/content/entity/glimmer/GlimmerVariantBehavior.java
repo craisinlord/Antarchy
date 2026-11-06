@@ -6,11 +6,28 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public interface GlimmerVariantBehavior {
+    static boolean isValidFoe(Player owner, LivingEntity target) {
+        if (!(target instanceof Enemy) || !target.isAlive() || target == owner || target.isInvulnerable()) {
+            return false;
+        }
+        if (target instanceof OwnableEntity ownable && owner.getUUID().equals(ownable.getOwnerUUID())) {
+            return false;
+        }
+        return !owner.isAlliedTo(target);
+    }
+
+    static boolean hurtAsOwner(Player owner, LivingEntity target, float amount) {
+        return target.hurt(owner.damageSources().playerAttack(owner), amount);
+    }
+
     void registerGoals(GlimmerEntity entity);
 
     ResourceLocation modelGeo();
@@ -45,6 +62,10 @@ public interface GlimmerVariantBehavior {
     }
 
     default void clearPassive(GlimmerEntity entity, Player owner) {
+    }
+
+    default boolean locksMovement(GlimmerEntity entity) {
+        return false;
     }
 
     @Nullable

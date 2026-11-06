@@ -1,0 +1,37 @@
+{
+  "type": "antarchy:nadir_tree",
+  "trunk_provider": {
+    "id": "antarchy:nadir_log",
+    "properties": {
+      "axis": "y"
+    }
+  },
+  "foliage_provider": {
+    "id": "antarchy:nadir_veil"
+  },
+  "height": {
+    "type": "minecraft:uniform",
+    "min_inclusive": 10,
+    "max_inclusive": 16
+  },
+  "bottom_radius": {
+    "type": "minecraft:uniform",
+    "min_inclusive": 2,
+    "max_inclusive": 4
+  },
+  "branch_count": {
+    "type": "minecraft:uniform",
+    "min_inclusive": 4,
+    "max_inclusive": 7
+  },
+  "branch_length": {
+    "type": "minecraft:uniform",
+    "min_inclusive": 4,
+    "max_inclusive": 7
+  },
+  "veil_radius": {
+    "type": "minecraft:uniform",
+    "min_inclusive": 2,
+    "max_inclusive": 3
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "antarchy:zebra_stone"
+    }
+  },
+  "result": {
+    "item": "antarchy:polished_zebra_stone",
+    "count": 4
+  }
+}

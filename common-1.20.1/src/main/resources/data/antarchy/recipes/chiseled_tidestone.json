@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "antarchy:polished_tidestone_slab"
+    }
+  },
+  "result": {
+    "item": "antarchy:chiseled_tidestone"
+  }
+}

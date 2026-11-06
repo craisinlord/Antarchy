@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.content.network.ScorpionWhipTetherPayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.Map;
@@ -49,7 +51,7 @@ public final class ScorpionWhipTetherManager {
         TetherState state = new TetherState(target.getUUID());
         state.marked = target.hasEffect(MobEffects.POISON);
         TETHERS.put(player.getUUID(), state);
-        ScorpionWhipTetherSync.send(player, target.getId());
+        AntarchyNetwork.sendToTrackingAndSelf(player, new ScorpionWhipTetherPayload(player.getId(), target.getId()));
     }
 
     public static void clear(ServerPlayer player) {
@@ -57,7 +59,7 @@ public final class ScorpionWhipTetherManager {
         if (removed == null) {
             return;
         }
-        ScorpionWhipTetherSync.send(player, -1);
+        AntarchyNetwork.sendToTrackingAndSelf(player, new ScorpionWhipTetherPayload(player.getId(), -1));
     }
 
     public static boolean pullAndDetach(ServerPlayer player) {
@@ -124,7 +126,7 @@ public final class ScorpionWhipTetherManager {
         applyTautTether(player, target);
 
         if (state.remainingTicks % 20 == 0) {
-            ScorpionWhipTetherSync.send(player, targetEntity.getId());
+            AntarchyNetwork.sendToTrackingAndSelf(player, new ScorpionWhipTetherPayload(player.getId(), targetEntity.getId()));
         }
     }
 

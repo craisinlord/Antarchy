@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:polished_zebra_stone",
+  "result": {
+    "id": "antarchy:polished_zebra_stone_slab",
+    "count": 2
+  }
+}

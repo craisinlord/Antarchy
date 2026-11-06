@@ -15,5 +15,6 @@
     {"item": "antarchy:blood_crystal_boots"},
     {"item": "antarchy:blood_crystal_katana"},
     {"item": "antarchy:blood_crystal_apple"}
-  ]
+  ],
+  "lookup": ["antarchy:blood_crystal_helmet", "antarchy:blood_crystal_chestplate", "antarchy:blood_crystal_leggings", "antarchy:blood_crystal_boots", "antarchy:blood_crystal_katana", "antarchy:blood_crystal_apple"]
 }

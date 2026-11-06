@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/jungle_trapdoor_open",
+  "textures": {
+    "texture": "antarchy:block/uranium/uranium_trapdoor"
+  }
+}

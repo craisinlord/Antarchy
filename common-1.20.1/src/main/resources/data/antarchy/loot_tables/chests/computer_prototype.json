@@ -11,7 +11,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{AntOSFloppyDisk:\"antarchy:chronosphere\"}"
+              "tag": "{AntOSFloppyDisk:\"antarchy:temporal_fields\"}"
             }
           ]
         },

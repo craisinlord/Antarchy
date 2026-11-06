@@ -1,0 +1,83 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_once",
+    "argument": {
+      "type": "minecraft:clamp",
+      "min": -10.0,
+      "max": 10.0,
+      "input": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:y_clamped_gradient",
+          "from_y": -64,
+          "to_y": 400,
+          "from_value": 3.08559,
+          "to_value": -4.229252
+        },
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:flat_cache",
+              "argument": "antarchy:elythia_butte_offset"
+            },
+            "argument2": {
+              "type": "minecraft:range_choice",
+              "input": {
+                "type": "minecraft:flat_cache",
+                "argument": "antarchy:elythia_reserve_mask"
+              },
+              "min_inclusive": 0.05,
+              "max_exclusive": 0.95,
+              "when_in_range": {
+                "type": "minecraft:mul",
+                "argument1": 0.12,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_cliff_roughness",
+                  "xz_scale": 1.0,
+                  "y_scale": 1.0
+                }
+              },
+              "when_out_of_range": 0.0
+            }
+          },
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": "antarchy:elythia_terrain_roughness",
+              "argument2": {
+                "type": "minecraft:flat_cache",
+                "argument": "antarchy:elythia_shelf_roughness_scale"
+              }
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": "antarchy:elythia_shelf_lip",
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": {
+                  "type": "minecraft:mul",
+                  "argument1": 0.1,
+                  "argument2": {
+                    "type": "minecraft:flat_cache",
+                    "argument": "antarchy:elythia_shelf_mask"
+                  }
+                },
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_cliff_roughness",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.5
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

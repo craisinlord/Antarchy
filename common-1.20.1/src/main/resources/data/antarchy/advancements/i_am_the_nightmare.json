@@ -33,8 +33,7 @@
     },
     "frame": "challenge",
     "icon": {
-      "item": "minecraft:potion",
-      "nbt": "{\"Potion\":\"antarchy:dread\"}"
+      "item": "antarchy:nightmare_scale"
     },
     "show_toast": true,
     "title": {

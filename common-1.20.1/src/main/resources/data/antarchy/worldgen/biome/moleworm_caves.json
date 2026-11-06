@@ -40,7 +40,9 @@
     [],
     [],
     [],
-    [],
+    [
+      "antarchy:elythia_geology"
+    ],
     [
       "antarchy:elythia_moleworm_warrens",
       "antarchy:elythia_moleworm_cave_entrances",

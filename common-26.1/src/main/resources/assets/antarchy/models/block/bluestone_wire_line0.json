@@ -1,0 +1,18 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "antarchy:block/bluestone/bluestone_dust_line0",
+    "line": "antarchy:block/bluestone/bluestone_dust_line0"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 7.0],
+      "to": [16, 0, 9.0],
+      "shade": false,
+      "faces": {
+        "up": { "uv": [0, 0, 16, 2], "texture": "#line", "tintindex": 0 },
+        "down": { "uv": [0, 0, 16, 2], "texture": "#line", "tintindex": 0 }
+      }
+    }
+  ]
+}

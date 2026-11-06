@@ -655,9 +655,6 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
         if (focus.onGround() || focus.onClimbable() || focus.isFallFlying() || focus.isPassenger()) {
             return false;
         }
-        if (this.isPlayerInsideAntiwater(focus)) {
-            return false;
-        }
 
         GravityDirection gravityDirection = GravityApi.getGravityDirection(focus);
         Vec3 localMotion = GravityRotationUtil.vecWorldToPlayer(focus.getDeltaMovement(), gravityDirection);
@@ -667,7 +664,8 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
             return false;
         }
 
-        return this.getDangerousFallSupportDistance(focus) >= this.cfgDangerousFallDistance;
+        return this.getDangerousFallSupportDistance(focus) >= this.cfgDangerousFallDistance
+                && !this.isPlayerInsideAntiwater(focus);
     }
 
     private void tickLookTarget() {
@@ -879,15 +877,12 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
             return null;
         }
         this.nextNoticeScanTick = this.tickCount + 20;
-        List<Player> nearbyPlayers = this.level().getEntitiesOfClass(
-                Player.class,
-                this.getBoundingBox().inflate(this.cfgInterestRadius)
-        );
+        AABB interestArea = this.getBoundingBox().inflate(this.cfgInterestRadius);
 
         Player nearest = null;
         double nearestDistanceSqr = Double.MAX_VALUE;
-        for (Player player : nearbyPlayers) {
-            if (!this.isValidNoticePlayer(player)) {
+        for (Player player : this.level().players()) {
+            if (!interestArea.intersects(player.getBoundingBox()) || !this.isValidNoticePlayer(player)) {
                 continue;
             }
             double distanceSqr = this.distanceToSqr(player);
@@ -905,15 +900,12 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
             return null;
         }
         this.nextDuplicationScanTick = this.tickCount + 20;
-        List<Player> nearbyPlayers = this.level().getEntitiesOfClass(
-                Player.class,
-                this.getBoundingBox().inflate(this.cfgInterestRadius)
-        );
+        AABB interestArea = this.getBoundingBox().inflate(this.cfgInterestRadius);
 
         Player nearest = null;
         double nearestDistanceSqr = Double.MAX_VALUE;
-        for (Player player : nearbyPlayers) {
-            if (!this.isValidBoundPlayer(player) || !this.isHoldingDuplicationItem(player)) {
+        for (Player player : this.level().players()) {
+            if (!interestArea.intersects(player.getBoundingBox()) || !this.isValidBoundPlayer(player) || !this.isHoldingDuplicationItem(player)) {
                 continue;
             }
 

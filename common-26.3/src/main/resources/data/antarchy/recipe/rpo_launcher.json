@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TTT",
+    "III",
+    "TTT"
+  ],
+  "key": {
+    "T": "antarchy:titanium_block",
+    "I": "minecraft:ink_sac"
+  },
+  "result": {
+    "id": "antarchy:rpo_launcher"
+  }
+}

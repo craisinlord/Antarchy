@@ -1,5 +1,7 @@
 {
   "category": "antarchy:thoraxis",
   "title": "guide.antarchy.disk.thoraxis.title",
-  "entries": ["antarchy:red_ant", "antarchy:nightmare"]
+  "description": "guide.antarchy.disk.thoraxis.description",
+  "entries": ["antarchy:nightmare"],
+  "programs": ["antarchy:thoraxis_quiz"]
 }

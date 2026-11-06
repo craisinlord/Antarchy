@@ -55,6 +55,10 @@ public final class AntarchyClothConfigScreenBuilder {
             category.addEntry(entryBuilder.startFloatField(label, (Float) binding.getValue())
                     .setSaveConsumer(binding::setValue)
                     .build());
+        } else if (type == String.class) {
+            category.addEntry(entryBuilder.startStrField(label, (String) binding.getValue())
+                    .setSaveConsumer(binding::setValue)
+                    .build());
         }
     }
 

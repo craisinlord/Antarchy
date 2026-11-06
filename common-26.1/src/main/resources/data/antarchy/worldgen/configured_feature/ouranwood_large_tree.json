@@ -1,0 +1,60 @@
+{
+  "type": "antarchy:ouranwood_large_tree",
+  "config": {
+    "trunk_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:ouranwood_log",
+        "Properties": {
+          "axis": "y"
+        }
+      }
+    },
+    "foliage_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:ouranwood_leaves",
+        "Properties": {
+          "distance": "7",
+          "persistent": "false",
+          "waterlogged": "false"
+        }
+      }
+    },
+    "height": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 108,
+      "max_inclusive": 136
+    },
+    "trunk_radius": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 2,
+      "max_inclusive": 3
+    },
+    "canopy_radius": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 10,
+      "max_inclusive": 16
+    },
+    "canopy_depth": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 16,
+      "max_inclusive": 24
+    },
+    "buttress_height": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 6,
+      "max_inclusive": 12
+    },
+    "trunk_vine_length": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 4,
+      "max_inclusive": 9
+    },
+    "juvenile": false,
+    "flying_squirrel_nest_chance": 0.16,
+    "flying_squirrel_hollow_chance": 0.75,
+    "wasp_nest_chance": 0.03266666666666667,
+    "caterpillar_chrysalis_chance": 0.09
+  }
+}

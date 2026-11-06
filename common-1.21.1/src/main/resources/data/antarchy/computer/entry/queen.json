@@ -27,5 +27,6 @@
     {"item": "antarchy:princess_egg"},
     {"item": "antarchy:blood_crystal_shard"},
     {"item": "antarchy:music_disc_the_queen"}
-  ]
+  ],
+  "lookup": ["antarchy:queen_scale"]
 }

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:duct_tape"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:match_block",
+            "blocks": "antarchy:duct_tape",
+            "state": {
+              "uses": "4"
+            }
+          },
+          {
+            "type": "minecraft:survives_explosion"
+          }
+        ]
+      }
+    }
+  ]
+}

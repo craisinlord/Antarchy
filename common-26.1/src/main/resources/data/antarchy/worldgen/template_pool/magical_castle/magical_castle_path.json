@@ -1,0 +1,15 @@
+{
+  "name": "antarchy:magical_castle/magical_castle_path",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:magical_castle/magical_castle_path",
+        "processors": "antarchy:generic_processor",
+        "projection": "terrain_matching",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    }
+  ]
+}

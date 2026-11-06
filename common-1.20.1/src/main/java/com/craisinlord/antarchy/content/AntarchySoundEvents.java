@@ -227,8 +227,15 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> HOVERBOARD_MOUNT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> HOVERBOARD_DISMOUNT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> HOVERBOARD_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> THROWBACK_MUSIC = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PLAYER_HURT_CLASSIC = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
+    }
+
+    public static void bindThrowbackSounds(Supplier<SoundEvent> music, Supplier<SoundEvent> playerHurtClassic) {
+        THROWBACK_MUSIC = music;
+        PLAYER_HURT_CLASSIC = playerHurtClassic;
     }
 
     public static void bind(Supplier<?>... ignored) {

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "truffalo_tuft",
+  "ingredients": [
+    "#antarchy:truffalo_tuft",
+    "minecraft:light_gray_dye"
+  ],
+  "result": {
+    "id": "antarchy:light_gray_truffalo_tuft"
+  }
+}

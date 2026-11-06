@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/jungle_slab",
+  "textures": {
+    "bottom": "antarchy:block/ouranwood/ouranwood_planks",
+    "side": "antarchy:block/ouranwood/ouranwood_planks",
+    "top": "antarchy:block/ouranwood/ouranwood_planks"
+  }
+}

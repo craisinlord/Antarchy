@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,13 +34,6 @@ public class BloodCrystalKatanaItem extends SwordItem {
     private static final Map<UUID, Long> LAST_DASH_TICK = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> DASH_UNTIL_TICK = new ConcurrentHashMap<>();
 
-    @FunctionalInterface
-    public interface TrailCallback {
-        void trigger(ServerPlayer player, int durationTicks);
-    }
-
-    private static TrailCallback trailCallback = (player, durationTicks) -> {};
-
     private final Tier tier;
     private final int attackDamage;
     private final float attackSpeed;
@@ -59,10 +54,6 @@ public class BloodCrystalKatanaItem extends SwordItem {
                 com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, this.attackDamage, this.attackSpeed);
         com.craisinlord.antarchy.compat.entity.EntityReach.addModifier(builder, ATTACK_RANGE_MODIFIER_ID, AntarchySettings.bloodCrystalKatanaReachBonus());
         return builder.build();
-    }
-
-    public static void setTrailCallback(TrailCallback callback) {
-        trailCallback = callback == null ? (player, durationTicks) -> {} : callback;
     }
 
     @Override
@@ -95,7 +86,7 @@ public class BloodCrystalKatanaItem extends SwordItem {
         player.hasImpulse = true;
         player.hurtMarked = true;
 
-        trailCallback.trigger(player, AntarchySettings.bloodCrystalKatanaTrailDurationTicks());
+        AntarchyNetwork.sendToTrackingAndSelf(player, new BloodCrystalKatanaTrailPayload(player.getId(), AntarchySettings.bloodCrystalKatanaTrailDurationTicks()));
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 AntarchySoundEvents.BLOOD_CRYSTAL_KATANA_DASH.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 

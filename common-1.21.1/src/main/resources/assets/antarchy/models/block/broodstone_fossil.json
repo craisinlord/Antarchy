@@ -1,0 +1,138 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "antarchy:block/broodstone/broodstone_fossil",
+    "all": "antarchy:block/broodstone/broodstone_fossil",
+    "egg": "antarchy:block/fossil/fossil_egg",
+    "spots": "antarchy:block/fossil/fossil_egg_spots"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#all",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#all",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#all",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#all",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#all",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#all",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#egg",
+          "cullface": "down",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#egg",
+          "cullface": "up",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#egg",
+          "cullface": "north",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#egg",
+          "cullface": "south",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#egg",
+          "cullface": "west",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#egg",
+          "cullface": "east",
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#spots",
+          "cullface": "down",
+          "tintindex": 1
+        },
+        "up": {
+          "texture": "#spots",
+          "cullface": "up",
+          "tintindex": 1
+        },
+        "north": {
+          "texture": "#spots",
+          "cullface": "north",
+          "tintindex": 1
+        },
+        "south": {
+          "texture": "#spots",
+          "cullface": "south",
+          "tintindex": 1
+        },
+        "west": {
+          "texture": "#spots",
+          "cullface": "west",
+          "tintindex": 1
+        },
+        "east": {
+          "texture": "#spots",
+          "cullface": "east",
+          "tintindex": 1
+        }
+      }
+    }
+  ]
+}

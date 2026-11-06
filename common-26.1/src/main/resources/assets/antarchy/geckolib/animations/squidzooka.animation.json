@@ -1,0 +1,143 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"squidzooka_recoil": {
+			"animation_length": 0.875,
+			"bones": {
+				"squid": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.125": {
+							"vector": [5, 0, 0]
+						},
+						"0.5833": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.1667": {
+							"vector": [0, 0, -1]
+						},
+						"0.875": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"bazooka": {
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2083": {
+							"vector": [0, 0, 1],
+							"easing": "easeInElastic"
+						},
+						"0.875": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"all": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2917": {
+							"vector": [-12.5, 0, 0],
+							"easing": "easeInElastic"
+						},
+						"0.4167": {
+							"vector": [-10, 0, 0],
+							"easing": "easeInOutSine"
+						},
+						"0.7917": {
+							"vector": [-0.91, 0, 0]
+						},
+						"0.875": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 2, 4],
+							"easing": "easeInElastic",
+							"easingArgs": [2]
+						},
+						"0.4583": {
+							"vector": [0, 0, 3.56],
+							"easing": "easeInOutSine"
+						},
+						"0.8333": {
+							"vector": [0, 0, 0],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"center": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.4583": {
+							"vector": [-3, 0, 0]
+						},
+						"0.625": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.1667": {
+							"vector": [0, 0, 0]
+						},
+						"0.3333": {
+							"vector": [0, 0.3, 0]
+						},
+						"0.875": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"squid2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.0833": {
+							"vector": [0, -7.5, 0]
+						},
+						"0.1667": {
+							"vector": [0, 8.75, 0]
+						},
+						"0.25": {
+							"vector": [0, -7.28, 0]
+						},
+						"0.3333": {
+							"vector": [0, 3.69, 0]
+						},
+						"0.4167": {
+							"vector": [0, -4.38, 0]
+						},
+						"0.5417": {
+							"vector": [0, -0.69, 0]
+						},
+						"0.875": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		}
+	}
+}

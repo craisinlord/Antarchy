@@ -1653,10 +1653,10 @@
 						"vector": [90, 0, 0]
 					},
 					"position": {
-						"vector": [0, -3, "math.cos(q.anim_time*90*4*2)"]
+						"vector": [0, -3, "math.cos(query.anim_time*90*4*2)"]
 					},
 					"scale": {
-						"vector": ["1+math.cos(q.anim_time*90*4*2+80)/5/2", "1-math.cos(q.anim_time*90*4*2+80)/5", "1+math.cos(q.anim_time*90*4*2+80)/5/2"]
+						"vector": ["1+math.cos(query.anim_time*90*4*2+80)/5/2", "1-math.cos(query.anim_time*90*4*2+80)/5", "1+math.cos(query.anim_time*90*4*2+80)/5/2"]
 					}
 				}
 			}

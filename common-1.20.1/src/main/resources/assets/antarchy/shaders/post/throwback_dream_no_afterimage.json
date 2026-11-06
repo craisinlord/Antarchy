@@ -1,0 +1,18 @@
+{
+  "targets": [
+    "swap"
+  ],
+  "passes": [
+    {
+      "name": "antarchy_throwback_dream",
+      "intarget": "minecraft:main",
+      "outtarget": "swap",
+      "use_linear_filter": true
+    },
+    {
+      "name": "blit",
+      "intarget": "swap",
+      "outtarget": "minecraft:main"
+    }
+  ]
+}

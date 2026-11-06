@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "antarchy:bluestone_block"
+    }
+  ],
+  "result": {
+    "id": "antarchy:bluestone",
+    "count": 9
+  }
+}

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
+import com.craisinlord.antarchy.content.command.ElythiaCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.command.RoyalCommand;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,9 +22,12 @@ public final class AntarchyForgeCommandEvents {
         CavarynCommand.register(event.getDispatcher());
         CaterpillarCommand.register(event.getDispatcher());
         DimensionalTearCommand.register(event.getDispatcher());
+        ElythiaCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.ThoraxisCommand.register(event.getDispatcher());
         QueenLocateCommand.register(event.getDispatcher());
         RoyalCommand.register(event.getDispatcher());
         com.craisinlord.antarchy.content.command.PortalGunCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.DimensionResetCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent

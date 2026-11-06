@@ -1,15 +1,17 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.component.AntarchyItemTag;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
-import com.craisinlord.antarchy.content.component.AntarchyItemTag;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerCompanionSavedData;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import java.util.List;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 public class GlimmerBottleItem extends Item {
     private static final String ABILITY_COOLDOWN_TAG = "AbilityCooldown";
     private static final String SHEAR_COOLDOWN_TAG = "ShearCooldown";
+    private static final String GROWTH_TAG = "GrowthScale";
 
     public GlimmerBottleItem() {
         super(new Item.Properties().stacksTo(1));
@@ -41,15 +44,22 @@ public class GlimmerBottleItem extends Item {
     }
 
     public static ItemStack create(GlimmerVariant variant, int abilityCooldown, int shearCooldown) {
+        return create(variant, abilityCooldown, shearCooldown, 1.0F);
+    }
+
+    public static ItemStack create(GlimmerVariant variant, int abilityCooldown, int shearCooldown, float growthScale) {
         ItemStack stack = new ItemStack(AntarchyObjects.GLIMMER_BOTTLE.get());
         AntarchyObjects.GLIMMER_VARIANT_COMPONENT.set(stack, variant);
-        if (abilityCooldown > 0 || shearCooldown > 0) {
+        if (abilityCooldown > 0 || shearCooldown > 0 || growthScale != 1.0F) {
             AntarchyItemTag.update(stack, tag -> {
                 if (abilityCooldown > 0) {
                     tag.putInt(ABILITY_COOLDOWN_TAG, abilityCooldown);
                 }
                 if (shearCooldown > 0) {
                     tag.putInt(SHEAR_COOLDOWN_TAG, shearCooldown);
+                }
+                if (growthScale != 1.0F) {
+                    tag.putFloat(GROWTH_TAG, growthScale);
                 }
             });
         }
@@ -67,6 +77,11 @@ public class GlimmerBottleItem extends Item {
 
     public static int getStoredShearCooldown(ItemStack stack) {
         return AntarchyItemTag.getOrEmpty(stack).getInt(SHEAR_COOLDOWN_TAG);
+    }
+
+    public static float getStoredGrowthScale(ItemStack stack) {
+        CompoundTag tag = AntarchyItemTag.getOrEmpty(stack);
+        return tag.contains(GROWTH_TAG) ? tag.getFloat(GROWTH_TAG) : 1.0F;
     }
 
     @Override
@@ -92,8 +107,14 @@ public class GlimmerBottleItem extends Item {
         glimmer.setOrderedToSit(false);
         glimmer.setAbilityCooldown(getStoredAbilityCooldown(stack));
         glimmer.startShearCooldown(getStoredShearCooldown(stack));
+        glimmer.setGrowthScale(getStoredGrowthScale(stack));
+        if (stack.hasCustomHoverName()) {
+            glimmer.setCustomName(stack.getHoverName());
+        }
+        MinecraftServer server = ((ServerLevel) level).getServer();
+        ItemStack previous = GlimmerCompanionSavedData.retireCompanion(server, player.getUUID());
         level.addFreshEntity(glimmer);
-        GlimmerCompanionSavedData.replaceCompanion(((ServerLevel) level).getServer(), player.getUUID(), glimmer.getUUID());
+        GlimmerCompanionSavedData.setCompanion(server, player.getUUID(), glimmer.getUUID(), variant);
         GlimmerParticles.tickBurst(glimmer);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
 
@@ -102,7 +123,7 @@ public class GlimmerBottleItem extends Item {
             AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, variant.name().toLowerCase(java.util.Locale.ROOT));
         }
 
-        ItemStack result = ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE));
+        ItemStack result = ItemUtils.createFilledResult(stack, player, previous.isEmpty() ? new ItemStack(Items.GLASS_BOTTLE) : previous);
         return InteractionResultHolder.success(result);
     }
 

@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.client;
 
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload;
 import com.craisinlord.antarchy.content.portalgun.PortalGunMoonMath;
 import java.lang.ref.WeakReference;
-import java.util.function.Consumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -19,13 +19,8 @@ public final class MoonSkyTracker {
     private static Vec3 direction;
     private static WeakReference<ClientLevel> level = new WeakReference<>(null);
     private static long recordedAt;
-    private static Consumer<PortalGunMoonAimPayload> sender = payload -> {};
 
     private MoonSkyTracker() {
-    }
-
-    public static void setSender(Consumer<PortalGunMoonAimPayload> payloadSender) {
-        sender = payloadSender;
     }
 
     public static void recordSphericalMoon(ClientLevel renderedLevel, Camera camera, Matrix4f skyMatrix, double theta, double phi) {
@@ -48,6 +43,6 @@ public final class MoonSkyTracker {
         boolean tracked = direction != null && level.get() == minecraft.level && System.currentTimeMillis() - recordedAt <= MAX_AGE_MILLIS;
         boolean aiming = tracked && minecraft.gameRenderer.getMainCamera().getLookVector().dot(
                 new Vector3f((float) direction.x, (float) direction.y, (float) direction.z)) >= AIM_COSINE;
-        sender.accept(new PortalGunMoonAimPayload(tracked, aiming));
+        AntarchyNetwork.sendToServer(new PortalGunMoonAimPayload(tracked, aiming));
     }
 }

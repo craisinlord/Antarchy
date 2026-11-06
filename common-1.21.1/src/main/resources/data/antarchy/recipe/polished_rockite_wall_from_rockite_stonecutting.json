@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:rockite"
+  },
+  "result": {
+    "id": "antarchy:polished_rockite_wall",
+    "count": 1
+  }
+}

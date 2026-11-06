@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:match_tool",
+        "predicate": {
+          "items": [
+            "minecraft:shears"
+          ]
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:spiraling_vines"
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/cut_uranium"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/cut_uranium_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/cut_uranium_slab_top"
+    }
+  }
+}

@@ -6,11 +6,11 @@ import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 public final class KneelDecree implements RoyalDecree {
-    private final Map<UUID, Integer> deadlines = new HashMap<>();
+    private static final long KNEEL_TICKS = 100L;
+    private final Map<UUID, Long> deadlines = new HashMap<>();
     public String translationKey() { return "decree.antarchy.kneel"; }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) {
-        UUID id = target.getUUID();
-        deadlines.computeIfAbsent(id, ignored -> target.tickCount + 100);
+        this.deadlines.computeIfAbsent(target.getUUID(), ignored -> level.getGameTime() + KNEEL_TICKS);
     }
 
     @Override
@@ -18,13 +18,14 @@ public final class KneelDecree implements RoyalDecree {
         if (target.isCrouching()) {
             return Evaluation.COMPLETE;
         }
-        int deadline = deadlines.computeIfAbsent(target.getUUID(), ignored -> target.tickCount + 100);
-        return target.tickCount >= deadline ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
+        long deadline = this.deadlines.computeIfAbsent(target.getUUID(), ignored -> level.getGameTime() + KNEEL_TICKS);
+        return level.getGameTime() >= deadline ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
 
     @Override
     public int countdownTicks(KingEntity king, LivingEntity target) {
-        return this.deadlines.getOrDefault(target.getUUID(), target.tickCount + 100) - target.tickCount;
+        long now = king.level().getGameTime();
+        return (int) Math.max(0L, this.deadlines.getOrDefault(target.getUUID(), now + KNEEL_TICKS) - now);
     }
 
     @Override

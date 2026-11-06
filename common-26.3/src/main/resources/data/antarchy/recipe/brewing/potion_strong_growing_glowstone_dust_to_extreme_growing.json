@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "minecraft:potion",
+    "potion_contents": {
+      "potions": "antarchy:strong_growing"
+    }
+  },
+  "output": {
+    "components": {
+      "minecraft:potion_contents": {
+        "potion": "antarchy:extreme_growing"
+      }
+    },
+    "id": "minecraft:potion"
+  },
+  "reagent": {
+    "item": "minecraft:glowstone_dust"
+  }
+}

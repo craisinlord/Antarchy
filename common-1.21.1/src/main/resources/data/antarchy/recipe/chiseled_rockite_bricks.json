@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "antarchy:polished_rockite_slab"
+    }
+  },
+  "result": {
+    "id": "antarchy:chiseled_rockite_bricks"
+  }
+}

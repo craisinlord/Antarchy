@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "group": "coal",
+  "ingredient": {
+    "item": "antarchy:rockite_coal_ore"
+  },
+  "result": "minecraft:coal",
+  "experience": 0.1,
+  "cookingtime": 100
+}

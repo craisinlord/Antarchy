@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "antarchy:primordial_loam",
     "antarchy:infested_rooted_dirt",
     "antarchy:infested_coarse_dirt",
     "antarchy:brown_ant_nest",
@@ -9,6 +10,7 @@
     "antarchy:dream_sand",
     "antarchy:cloud_block",
     "antarchy:antigravel",
-    "antarchy:loam"
+    "antarchy:loam",
+    "antarchy:truffled_loam"
   ]
 }

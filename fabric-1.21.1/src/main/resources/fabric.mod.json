@@ -24,6 +24,9 @@
     ],
     "modmenu": [
       "com.craisinlord.antarchy.fabric.client.AntarchyModMenuIntegration"
+    ],
+    "sodium:config_api_user": [
+      "com.craisinlord.antarchy.content.client.renderer.PrimordialGrassSodiumOptions"
     ]
   },
   "mixins": [
@@ -31,8 +34,8 @@
     "antarchy-fabric.mixins.json"
   ],
   "depends": {
-    "antos": ">=1.2.1",
-    "anthology": ">=1.0.0",
+    "antos": ">=1.6.4",
+    "anthology": ">=1.0.4",
     "fabricloader": ">=${fabric_loader_version}",
     "minecraft": "~${minecraft_version}",
     "java": ">=21",

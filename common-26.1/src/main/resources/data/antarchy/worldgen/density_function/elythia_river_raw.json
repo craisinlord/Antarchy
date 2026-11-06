@@ -1,0 +1,12 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:noise",
+      "noise": "antarchy:elythia_river",
+      "xz_scale": 0.5,
+      "y_scale": 0.0
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": "antarchy:raw_titanium_scrap"
+  },
+  "result": {
+    "id": "antarchy:raw_titanium"
+  }
+}

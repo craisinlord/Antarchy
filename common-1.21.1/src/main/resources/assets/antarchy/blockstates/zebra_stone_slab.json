@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/zebra_stone"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/zebra_stone_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/zebra_stone_slab_top"
+    }
+  }
+}
+

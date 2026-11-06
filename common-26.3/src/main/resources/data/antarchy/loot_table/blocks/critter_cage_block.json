@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:critter_cage"
+        }
+      ],
+      "modifier": {
+        "type": "minecraft:copy_components",
+        "source": "block_entity"
+      }
+    }
+  ]
+}

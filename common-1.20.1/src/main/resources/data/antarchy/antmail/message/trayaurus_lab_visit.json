@@ -1,0 +1,12 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "You came to visit!",
+  "body": "You made it to the lab!! It's been too long.\n\nI've set up some trades for you. Bring me a Kraken Tooth and some uranium and I'll give you my very very powerful Duplicator Sapling. I've also got a very expensive egg I've been meaning to hatch I think you would quite like.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:the_lab",
+    "delay_minutes": 3
+  }
+}

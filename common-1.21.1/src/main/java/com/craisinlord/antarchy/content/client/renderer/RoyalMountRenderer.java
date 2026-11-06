@@ -50,7 +50,9 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
                           @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
         float scale = animatable.getGrowthScale();
-        poseStack.scale(scale, scale, scale);
+        if (!isReRender) {
+            poseStack.scale(scale, scale, scale);
+        }
         this.shadowRadius = 1.1F * scale;
     }
 

@@ -1,0 +1,8 @@
+{
+  "type": "antarchy:cavaryn_cavity",
+  "kind": "brood_nest",
+  "humidity": "antarchy:cavaryn/humidity",
+  "weirdness": "antarchy:cavaryn/weirdness",
+  "depth": "minecraft:overworld/depth",
+  "noise": "antarchy:cavaryn_brood_nest"
+}

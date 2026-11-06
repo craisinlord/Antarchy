@@ -181,5 +181,47 @@ public class AntarchyNeoforgePayloadHandlers {
                         com.craisinlord.antarchy.content.client.HordeClientState.update(payload.intensity())
                 )
         );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE,
+                com.craisinlord.antarchy.content.network.ThrowbackZonePayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.ThrowbackClientState.update(payload.strength())
+                )
+        );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.AntTransitPayload.TYPE,
+                com.craisinlord.antarchy.content.network.AntTransitPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.AntTransitClientState.handle(payload)
+                )
+        );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE,
+                com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.ElythiaEchoes.handleTest(payload.immediate())
+                )
+        );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE,
+                com.craisinlord.antarchy.content.network.ElythiaEventPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload)
+                )
+        );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ThoraxisEventPayload.TYPE,
+                com.craisinlord.antarchy.content.network.ThoraxisEventPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.ThoraxisEventClient.handle(payload)
+                )
+        );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.TYPE,
+                com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.ThoraxisEventClient.handleUpdate(payload)
+                )
+        );
     }
 }

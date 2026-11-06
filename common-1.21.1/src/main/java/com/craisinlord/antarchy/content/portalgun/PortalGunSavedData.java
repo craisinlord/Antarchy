@@ -213,6 +213,15 @@ public final class PortalGunSavedData extends SavedData {
         }
     }
 
+    public static void clearAntarchyDimensions(MinecraftServer server, Set<String> dimensionPaths) {
+        PortalGunSavedData data = get(server);
+        boolean removed = data.pairs.keySet().removeIf(key -> "antarchy".equals(key.dimension().getNamespace())
+                && dimensionPaths.contains(key.dimension().getPath()));
+        if (removed) {
+            data.setDirty();
+        }
+    }
+
     public static int clearEverything(MinecraftServer server) {
         return clearMatching(server, record -> true);
     }

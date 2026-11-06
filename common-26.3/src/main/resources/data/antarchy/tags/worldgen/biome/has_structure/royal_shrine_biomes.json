@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:ouranwood_forest",
+    "antarchy:sparse_ouranwood_forest",
+    "antarchy:fungal_ouranwood_forest",
+    "antarchy:fungal_reserve",
+    "antarchy:peach_forest",
+    "antarchy:truffalo_forest"
+  ]
+}

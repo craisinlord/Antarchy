@@ -1,6 +1,7 @@
 {
   "category": "antarchy:cavaryn",
   "title": "guide.antarchy.disk.hercules_beetle.title",
+  "description": "guide.antarchy.disk.hercules_beetle.description",
   "entries": [
     "antarchy:hercules_beetle"
   ]

@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
+import com.craisinlord.antarchy.content.entity.NearestFirstTargetGoal;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
@@ -13,6 +14,8 @@ import com.craisinlord.anthology.gravity.GravityTransition;
 import com.craisinlord.anthology.time.TimeDilationApi;
 import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerSite;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,7 +47,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.animal.WaterAnimal;
@@ -102,13 +104,13 @@ public class QueenEntity extends RoyalBossEntity {
     private static final double DEBRIS_CYCLONE_GATHER_RADIUS = 13.0D;
     private static final double DEBRIS_CYCLONE_ORBIT_RADIUS = 6.0D;
     private static final int DEBRIS_CYCLONE_BLOCK_COUNT = 12;
+    private static final int GLIMMER_DEBRIS_CYCLONE_BLOCK_COUNT = 8;
     private static final double DEBRIS_CYCLONE_LAUNCH_SPEED = 1.35D;
-    private static final float DEBRIS_CYCLONE_BLOCK_DAMAGE_PER_DISTANCE = 2.2F;
-    private static final int DEBRIS_CYCLONE_BLOCK_MAX_DAMAGE = 16;
     private static final int GRAVITIC_UPHEAVAL_COOLDOWN = 420;
     private static final int GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS = 50;
     private static final double GRAVITIC_UPHEAVAL_RADIUS = 26.0D;
     private static final int GRAVITIC_UPHEAVAL_BLOCK_COUNT = 80;
+    private static final int GLIMMER_GRAVITIC_UPHEAVAL_BLOCK_COUNT = 40;
     private static final int GRAVITIC_UPHEAVAL_RISE_TICKS = 35;
     private static final int GRAVITIC_UPHEAVAL_HANG_TICKS = 15;
     private static final int GRAVITIC_UPHEAVAL_DURATION = GRAVITIC_UPHEAVAL_RISE_TICKS + GRAVITIC_UPHEAVAL_HANG_TICKS;
@@ -117,26 +119,48 @@ public class QueenEntity extends RoyalBossEntity {
     private static final int LANDING_DESCENT_TIMEOUT_TICKS = 120;
     private static final int LANDING_IMPACT_TICKS = 18;
     private static final int GROUND_COMBAT_TICKS = 240;
-    private static final int GROUND_CHARGE_WINDUP_TICKS = 10;
+    private static final int GROUND_CHARGE_WINDUP_TICKS = 28;
+    private static final int GROUND_CHARGE_AIM_LOCK_TICKS = 18;
+    private static final double GROUND_CHARGE_LANE_HALF_WIDTH = 5.5D;
+    private static final double GROUND_CHARGE_LANE_LENGTH = 24.0D;
     private static final int GROUND_CHARGE_DURATION_TICKS = 14;
-    private static final int GROUND_CHARGE_COOLDOWN_MIN = 45;
-    private static final int GROUND_CHARGE_COOLDOWN_VARIANCE = 25;
+    private static final int GROUND_CHARGE_COOLDOWN_MIN = 80;
+    private static final int GROUND_CHARGE_COOLDOWN_VARIANCE = 40;
     private static final double GROUND_CHARGE_SPEED = 1.45D;
     private static final int TAKEOFF_TICKS = 30;
     private static final int LANDING_COOLDOWN_MIN = 220;
     private static final int LANDING_COOLDOWN_VARIANCE = 80;
     private static final int BLACK_HOLE_FOLLOW_UP_DELAY = 22;
     private static final int CRUSHING_LANDING_DELAY = 40;
-    private static final int MOMENTUM_VOLLEY_DELAY = MOMENTUM_LOCK_DURATION + 5;
     private static final int ACCELERATION_VOLLEY_DELAY = 18;
     private static final int ACCELERATION_LANDING_DELAY = 55;
     private static final int DIRECTED_LANDING_RETRY_TICKS = 60;
     private static final int LANDING_TIMEOUT_COOLDOWN_TICKS = 160;
-    private static final double GROUND_CHARGE_MIN_DISTANCE = 16.0D;
+    private static final double GROUND_CHARGE_MIN_DISTANCE = 22.0D;
     private static final double GROUND_CHARGE_HIT_INFLATE = 1.5D;
     private static final double GROUND_CHARGE_DAMAGE_SCALE = 1.1D;
     private static final double GROUND_CHARGE_KNOCKBACK = 2.2D;
     private static final int ELEVATED_TARGET_TAKEOFF_TICKS = 40;
+    private static final int GLIMMER_MANTICORE_SUMMON_BONUS = 1;
+    private static final int GLIMMER_MANTICORE_CAP_BONUS = 2;
+    private static final double QUEEN_BITE_SCALE = 1.33D;
+    private static final double GRAVITY_STOMP_DAMAGE = 48.0D;
+    private static final double GRAVITY_STOMP_RADIUS = 24.0D;
+    private static final int STOMP_CLIP_LEAD_TICKS = 6;
+    private static final int SHOOT_CLIP_LEAD_TICKS = 10;
+    private static final int LANDING_STOMP_IMPACT_DELAY_TICKS = 6;
+    private static final int ACCELERATION_MAJOR_BLOCK_TICKS = 100;
+    private static final double CRUSHING_PLAYER_MAX_SPEED = 2.0D;
+    private static final int[] FROZEN_VOLLEY_FIRE_TICKS = {15, 35, 55};
+    private static final int FROZEN_VOLLEY_RELEASE_DELAY_TICKS = 10;
+    private static final float DEBRIS_CYCLONE_HIT_DAMAGE = 40.0F;
+    private static final float GRAVITIC_UPHEAVAL_HIT_DAMAGE = 48.0F;
+    private static final float GRAVITY_SLAM_HIT_DAMAGE = 70.0F;
+    private static final double DEBRIS_HIT_INFLATE = 0.6D;
+    private static final double DEBRIS_HIT_SCAN_RANGE = 96.0D;
+    private static final double INVERTED_DEBRIS_ACCELERATION = 0.04D;
+    private static final double GRAVITY_SLAM_SPEED = 1.3D;
+    private static final double GRAVITY_SLAM_SHOCK_DAMAGE = 60.0D;
 
     private int manticoreSummonCooldownTicks;
     private int gravityStompCooldownTicks;
@@ -158,6 +182,16 @@ public class QueenEntity extends RoyalBossEntity {
     private int graviticUpheavalAgeTicks;
     private final List<FallingBlockEntity> debrisCycloneBlocks = new ArrayList<>();
     private final List<FallingBlockEntity> graviticUpheavalBlocks = new ArrayList<>();
+    private final Map<FallingBlockEntity, Float> trackedDebris = new HashMap<>();
+    private final List<FrozenBolt> frozenVolleyBolts = new ArrayList<>();
+    private int momentumLockAgeTicks;
+    private int frozenVolleyReleaseTicks;
+    private int accelerationMajorBlockTicks;
+    private boolean graviticUpheavalFallStarted;
+    private boolean landingStompPending;
+    private boolean strandedDebrisSweepPending;
+    @Nullable
+    private Vec3 graviticUpheavalCenter;
     @Nullable
     private Vec3 pendingBlackHoleAnchor;
     private int queenLandingCooldownTicks = 200;
@@ -191,6 +225,9 @@ public class QueenEntity extends RoyalBossEntity {
     @Nullable
     private BlockPos naturalTrailHome;
 
+    private record FrozenBolt(RoyalElementalProjectileEntity projectile, Vec3 velocity) {
+    }
+
     private enum QueenLandingStage {
         AERIAL,
         TELEGRAPH,
@@ -222,6 +259,59 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     @Override
+    protected double glimmerHealthMultiplier() {
+        return AntarchySettings.glimmerQueenHealthMultiplier();
+    }
+
+    @Override
+    protected double glimmerDamageMultiplier() {
+        return AntarchySettings.glimmerQueenDamageMultiplier();
+    }
+
+    @Override
+    protected double glimmerCooldownMultiplier() {
+        return AntarchySettings.glimmerQueenCooldownMultiplier();
+    }
+
+    @Override
+    public void onGlimmerSummoned(ServerLevel level, GlimmerSite.Match site, ServerPlayer summoner) {
+        if (!site.is(GlimmerSite.UNDERSIDE)) {
+            return;
+        }
+        this.naturalTrailHome = this.blockPosition().immutable();
+        this.setNoGravity(false);
+        ThoraxisUndersideManager.applyUndersideInversion(this);
+        GravityApi.setAirborneGravityDirection(this, GravityDirection.UP, true, new GravityTransition(12));
+        this.resetFallDistance();
+    }
+
+    @Override
+    protected void onGlimmerFade() {
+        super.onGlimmerFade();
+        if (this.level() instanceof ServerLevel level) {
+            DimensionalTearEntity.discardQueenOwnedTears(level, this.getUUID());
+        }
+        this.clearQueenAbilityTelegraphs();
+        this.clearQueenAttackDirector();
+        this.royalEffects.clear();
+        this.frozenVelocities.clear();
+        this.frozenPositions.clear();
+        this.releaseQueenDebris();
+        this.discardFrozenVolley();
+        if (this.level() instanceof ServerLevel level) {
+            RoyalBlackHoleEntity.discardOwnedBy(level, this.getUUID(), this.getBoundingBox().inflate(128.0D));
+        }
+        this.setRoyalAccelerated(false);
+        removeAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
+        removeAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
+    }
+
+    public int manticoreCap() {
+        int cap = AntarchySettings.queenManticoreCap();
+        return this.isGlimmerEcho() ? cap + GLIMMER_MANTICORE_CAP_BONUS : cap;
+    }
+
+    @Override
     protected String geoName() {
         return "queen";
     }
@@ -249,12 +339,18 @@ public class QueenEntity extends RoyalBossEntity {
                 || this.queenLandingStage == QueenLandingStage.TAKEOFF
                 || this.queenGroundChargeWindupTicks > 0
                 || this.queenGroundChargeTicks > 0
+                || this.royalEffects.active("momentum_lock")
                 || this.isQueenAbilityTelegraphActive();
     }
 
     @Override
     protected boolean blocksRoyalBeamScheduling() {
-        return this.directedFireballVolleyTicks > 0;
+        return this.directedFireballVolleyTicks > 0 || this.royalEffects.active("momentum_lock");
+    }
+
+    @Override
+    protected boolean acceptsRetaliationFrom(LivingEntity attacker) {
+        return attacker instanceof Player || attacker instanceof KingEntity;
     }
 
     @Override
@@ -273,7 +369,7 @@ public class QueenEntity extends RoyalBossEntity {
         this.getNavigation().stop();
         this.setDeltaMovement(this.getDeltaMovement().scale(0.7D));
         if (this.level() instanceof ServerLevel level && elapsedTicks % 3 == 0) {
-            level.sendParticles(nextPhase == Phase.THREE ? ACCEL_DUST : ParticleTypes.REVERSE_PORTAL,
+            level.sendParticles(this.royalParticle(nextPhase == Phase.THREE ? ACCEL_DUST : ParticleTypes.REVERSE_PORTAL),
                     this.getX(), this.getY() + this.getBbHeight() * 0.55D, this.getZ(),
                     20, this.getBbWidth() * 0.25D, this.getBbHeight() * 0.25D,
                     this.getBbWidth() * 0.25D, 0.08D);
@@ -326,7 +422,7 @@ public class QueenEntity extends RoyalBossEntity {
             case GROUND_COMBAT -> this.beginQueenTakeoff();
             case TELEGRAPH, DESCENT -> {
                 this.resetQueenLandingSequence();
-                this.queenLandingCooldownTicks = LANDING_TIMEOUT_COOLDOWN_TICKS;
+                this.queenLandingCooldownTicks = this.scaledRoyalCooldown(LANDING_TIMEOUT_COOLDOWN_TICKS);
             }
             default -> {
             }
@@ -335,7 +431,7 @@ public class QueenEntity extends RoyalBossEntity {
 
     @Override
     protected double biteDamageMultiplier() {
-        return super.biteDamageMultiplier() * 1.5D;
+        return super.biteDamageMultiplier() * QUEEN_BITE_SCALE;
     }
 
     @Override
@@ -353,10 +449,10 @@ public class QueenEntity extends RoyalBossEntity {
 
     protected void registerRoyalTargetGoals() {
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, KingEntity.class, true));
-        this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
+        this.targetSelector.addGoal(2, new RoyalRetaliationTargetGoal().setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true)
                 .setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(
+        this.targetSelector.addGoal(4, new NearestFirstTargetGoal<>(
                 this, Mob.class, 10, true, false,
                 living -> !(living instanceof AmbientCreature) && !(living instanceof WaterAnimal)
                         && this.canAttack(living)));
@@ -497,9 +593,15 @@ public class QueenEntity extends RoyalBossEntity {
         if (!this.level().isClientSide) {
             this.entityData.set(QUEEN_MUSIC_ACTIVE, this.shouldPlayQueenMusic());
         }
-        if (this.level().isClientSide || this.isDeadOrDying()) {
+        if (this.level().isClientSide || this.isDeadOrDying() || this.isRemoved()) {
             return;
         }
+        if (this.strandedDebrisSweepPending && this.level() instanceof ServerLevel sweepLevel) {
+            this.strandedDebrisSweepPending = false;
+            this.sweepStrandedDebris(sweepLevel);
+        }
+        this.tickFrozenVolley();
+        this.tickTrackedDebris();
         if (this.isRoyalPhaseTransitionActive()) {
             this.royalEffects.tick();
             return;
@@ -527,7 +629,6 @@ public class QueenEntity extends RoyalBossEntity {
         }
         this.tickDreamFireballs();
         this.tickDirectedFireballVolley();
-        this.tickFinalAcceleration();
         this.royalEffects.tick();
     }
 
@@ -537,6 +638,7 @@ public class QueenEntity extends RoyalBossEntity {
         }
         if (this.queenLandingStage == QueenLandingStage.AERIAL && this.isRoyalFlying()
                 && !this.isQueenAbilityTelegraphActive()
+                && !this.royalEffects.active("momentum_lock")
                 && this.queenLandingCooldownTicks-- <= 0) {
             this.beginQueenLanding(target);
         }
@@ -561,20 +663,27 @@ public class QueenEntity extends RoyalBossEntity {
                 this.setRoyalFlying(true);
                 this.getMoveControl().setWantedPosition(landing.x, landing.y, landing.z, 1.15D);
                 this.tickQueenLandingIndicator();
-                boolean reachedLanding = this.onGround() || this.position().distanceToSqr(landing) <= 2.25D;
+                boolean reachedLanding = this.position().distanceToSqr(landing) <= 2.25D
+                        || this.onGround() && this.position().distanceToSqr(landing) <= 36.0D;
                 if (reachedLanding) {
                     this.setRoyalFlying(false);
                     this.queenLandingStage = QueenLandingStage.IMPACT;
                     this.queenLandingStageTicks = LANDING_IMPACT_TICKS;
-                    this.performGravityStomp((ServerLevel) this.level(), target);
+                    this.triggerAnim("body_action", "stomp");
+                    this.landingStompPending = true;
                 } else if (--this.queenLandingStageTicks <= 0) {
                     this.resetQueenLandingSequence();
-                    this.queenLandingCooldownTicks = LANDING_TIMEOUT_COOLDOWN_TICKS;
+                    this.queenLandingCooldownTicks = this.scaledRoyalCooldown(LANDING_TIMEOUT_COOLDOWN_TICKS);
                 }
             }
             case IMPACT -> {
                 this.getNavigation().stop();
                 this.setDeltaMovement(Vec3.ZERO);
+                if (this.landingStompPending
+                        && this.queenLandingStageTicks <= LANDING_IMPACT_TICKS - LANDING_STOMP_IMPACT_DELAY_TICKS) {
+                    this.landingStompPending = false;
+                    this.performGravityStomp((ServerLevel) this.level(), target, false);
+                }
                 if (--this.queenLandingStageTicks <= 0) {
                     this.queenLandingStage = QueenLandingStage.GROUND_COMBAT;
                     this.queenLandingStageTicks = GROUND_COMBAT_TICKS;
@@ -583,7 +692,9 @@ public class QueenEntity extends RoyalBossEntity {
                 }
             }
             case GROUND_COMBAT -> {
-                this.tickQueenGroundCharge(target);
+                if (!this.royalEffects.active("momentum_lock")) {
+                    this.tickQueenGroundCharge(target);
+                }
                 if (--this.queenLandingStageTicks <= 0
                         || this.royalElevatedTargetTicks() >= ELEVATED_TARGET_TAKEOFF_TICKS) {
                     this.beginQueenTakeoff();
@@ -592,8 +703,8 @@ public class QueenEntity extends RoyalBossEntity {
             case TAKEOFF -> {
                 if (--this.queenLandingStageTicks <= 0) {
                     this.queenLandingStage = QueenLandingStage.AERIAL;
-                    this.queenLandingCooldownTicks = LANDING_COOLDOWN_MIN
-                            + this.random.nextInt(LANDING_COOLDOWN_VARIANCE + 1);
+                    this.queenLandingCooldownTicks = this.scaledRoyalCooldown(LANDING_COOLDOWN_MIN
+                            + this.random.nextInt(LANDING_COOLDOWN_VARIANCE + 1));
                 }
             }
             case AERIAL -> {
@@ -625,23 +736,23 @@ public class QueenEntity extends RoyalBossEntity {
                 double x = target.getX() + Math.cos(angle) * radius;
                 double z = target.getZ() + Math.sin(angle) * radius;
                 double y = inverted
-                        ? target.position().y - 0.1D
+                        ? this.ceilingYAbove(x, z, target.getY() - 1.0D) - 0.1D
                         : this.groundYBelow(x, z, target.getY() + 1.0D) + 0.1D;
                 Vec3 candidate = new Vec3(x, y, z);
                 AABB box = this.getBoundingBox().move(
                         candidate.x - this.getX(), candidate.y - this.getY(), candidate.z - this.getZ());
-                if (this.level().noCollision(this, box)) {
+                if (this.royalBoxClear(box)) {
                     return candidate;
                 }
             }
         }
         double fallbackY = inverted
-                ? target.position().y - 0.1D
+                ? this.ceilingYAbove(target.getX(), target.getZ(), target.getY() - 1.0D) - 0.1D
                 : this.groundYBelow(target.getX(), target.getZ(), target.getY() + 1.0D) + 0.1D;
         Vec3 fallback = new Vec3(target.getX(), fallbackY, target.getZ());
         AABB fallbackBox = this.getBoundingBox().move(
                 fallback.x - this.getX(), fallback.y - this.getY(), fallback.z - this.getZ());
-        if (this.level().noCollision(this, fallbackBox)) {
+        if (this.royalBoxClear(fallbackBox)) {
             return fallback;
         }
         return null;
@@ -654,12 +765,12 @@ public class QueenEntity extends RoyalBossEntity {
         }
         double progress = this.queenLandingStage == QueenLandingStage.TELEGRAPH
                 ? 1.0D - this.queenLandingStageTicks / (double) LANDING_TELEGRAPH_TICKS : 1.0D;
-        double radius = Mth.lerp(progress, 4.0D, 18.0D);
+        double radius = Mth.lerp(progress, 4.0D, GRAVITY_STOMP_RADIUS);
         Vec3 indicator = this.queenLandingWaypoint.add(GravityRotationUtil.vecPlayerToWorld(
                 0.0D, 0.2D, 0.0D, GravityApi.getGravityDirection(this)));
         for (int index = 0; index < 40; index++) {
             double angle = Mth.TWO_PI * index / 40.0D;
-            level.sendParticles(ParticleTypes.REVERSE_PORTAL,
+            level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL),
                     this.queenLandingWaypoint.x + Math.cos(angle) * radius,
                     indicator.y,
                     this.queenLandingWaypoint.z + Math.sin(angle) * radius,
@@ -675,7 +786,7 @@ public class QueenEntity extends RoyalBossEntity {
         this.playRoyalSound(AntarchySoundEvents.QUEEN_FLY_LOOP.get(), 0.9F);
         if (this.level() instanceof ServerLevel level) {
             this.spawnQueenWingPressure(level);
-            level.sendParticles(ParticleTypes.REVERSE_PORTAL,
+            level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL),
                     this.getX(), this.getY() + this.getBbHeight() * 0.4D, this.getZ(),
                     60, 7.0D, 1.0D, 7.0D, 0.12D);
         }
@@ -687,6 +798,7 @@ public class QueenEntity extends RoyalBossEntity {
 
     private void resetQueenLandingSequence() {
         this.clearQueenGroundCharge();
+        this.landingStompPending = false;
         if (this.queenLandingStage != QueenLandingStage.AERIAL) {
             this.setRoyalFlying(true);
         }
@@ -702,11 +814,21 @@ public class QueenEntity extends RoyalBossEntity {
         if (this.queenGroundChargeWindupTicks > 0) {
             this.getNavigation().stop();
             this.setDeltaMovement(this.getDeltaMovement().scale(0.45D));
-            this.getLookControl().setLookAt(target, 90.0F, 90.0F);
+            if (this.queenGroundChargeWindupTicks > GROUND_CHARGE_AIM_LOCK_TICKS) {
+                this.getLookControl().setLookAt(target, 90.0F, 90.0F);
+                Vec3 aim = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+                if (aim.lengthSqr() > 1.0E-4D) {
+                    this.queenGroundChargeDirection = aim.normalize();
+                    float yaw = (float) (Mth.atan2(-aim.x, aim.z) * Mth.RAD_TO_DEG);
+                    this.setYRot(Mth.rotLerp(0.35F, this.getYRot(), yaw));
+                    this.yBodyRot = this.getYRot();
+                }
+            } else if (this.queenGroundChargeDirection != null && this.tickCount % 2 == 0
+                    && this.level() instanceof ServerLevel level) {
+                this.spawnQueenChargeLane(level, this.queenGroundChargeDirection);
+            }
             if (--this.queenGroundChargeWindupTicks <= 0) {
-                Vec3 direction = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
-                if (direction.lengthSqr() > 1.0E-4D) {
-                    this.queenGroundChargeDirection = direction.normalize();
+                if (this.queenGroundChargeDirection != null) {
                     this.queenGroundChargeTicks = GROUND_CHARGE_DURATION_TICKS;
                     this.queenGroundChargeHits.clear();
                 } else {
@@ -742,19 +864,21 @@ public class QueenEntity extends RoyalBossEntity {
         this.queenGroundChargeWindupTicks = GROUND_CHARGE_WINDUP_TICKS;
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.12F);
         if (this.level() instanceof ServerLevel level) {
-            level.sendParticles(ACCEL_DUST, this.getX(), this.getY() + this.getBbHeight() * 0.35D, this.getZ(),
+            level.sendParticles(this.royalParticle(ACCEL_DUST), this.getX(), this.getY() + this.getBbHeight() * 0.35D, this.getZ(),
                     32, this.getBbWidth() * 0.2D, 0.6D, this.getBbWidth() * 0.2D, 0.04D);
         }
     }
 
     private void applyQueenGroundChargeHits(ServerLevel level, Vec3 direction) {
-        float damage = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * GROUND_CHARGE_DAMAGE_SCALE);
+        float damage = (float) (this.royalAttackDamage() * GROUND_CHARGE_DAMAGE_SCALE);
         DamageSource source = this.damageSources().mobAttack(this);
         AABB hitBox = this.getBoundingBox().inflate(GROUND_CHARGE_HIT_INFLATE);
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, hitBox,
                 entity -> entity.isAlive() && entity != this && this.canDamageWithRoyalAttack(entity))) {
             Vec3 offset = living.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            double lateral = Math.abs(offset.x * direction.z - offset.z * direction.x);
             if (offset.dot(direction) < -this.getBbWidth() * 0.15D
+                    || lateral > GROUND_CHARGE_LANE_HALF_WIDTH + living.getBbWidth() * 0.5D
                     || !this.queenGroundChargeHits.add(living.getUUID())) {
                 continue;
             }
@@ -766,12 +890,27 @@ public class QueenEntity extends RoyalBossEntity {
                 living.hasImpulse = true;
                 living.hurtMarked = true;
             }
-            level.sendParticles(ParticleTypes.CRIT, living.getX(), living.getY() + living.getBbHeight() * 0.5D,
+            level.sendParticles(this.royalParticle(ParticleTypes.CRIT), living.getX(), living.getY() + living.getBbHeight() * 0.5D,
                     living.getZ(), 16, 0.5D, 0.6D, 0.5D, 0.1D);
         }
-        if (this.queenGroundChargeTicks % 4 == 0) {
+        if (!this.isGlimmerEcho() && this.queenGroundChargeTicks % 4 == 0) {
             Vec3 front = this.position().add(direction.scale(this.getBbWidth() * 0.5D + 1.0D));
             RoyalBlockDestruction.destroySphere(level, this, front.add(0.0D, 2.0D, 0.0D), 3.5D, 24, 60.0D, 0.1F);
+        }
+    }
+
+    private void spawnQueenChargeLane(ServerLevel level, Vec3 direction) {
+        Vec3 side = new Vec3(-direction.z, 0.0D, direction.x);
+        Vec3 start = this.position().add(GravityRotationUtil.vecPlayerToWorld(
+                0.0D, 0.2D, 0.0D, GravityApi.getGravityDirection(this)));
+        double length = this.getBbWidth() * 0.5D + GROUND_CHARGE_LANE_LENGTH;
+        for (int segment = 0; segment <= 14; segment++) {
+            Vec3 along = start.add(direction.scale(length * segment / 14.0D));
+            for (int edge = -1; edge <= 1; edge += 2) {
+                Vec3 point = along.add(side.scale(edge * GROUND_CHARGE_LANE_HALF_WIDTH));
+                level.sendParticles(this.royalParticle(ACCEL_DUST), point.x, point.y, point.z,
+                        1, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
         }
     }
 
@@ -779,8 +918,8 @@ public class QueenEntity extends RoyalBossEntity {
         this.queenGroundChargeTicks = 0;
         this.queenGroundChargeWindupTicks = 0;
         this.queenGroundChargeDirection = null;
-        this.queenGroundChargeCooldownTicks = GROUND_CHARGE_COOLDOWN_MIN
-                + this.random.nextInt(GROUND_CHARGE_COOLDOWN_VARIANCE + 1);
+        this.queenGroundChargeCooldownTicks = this.scaledRoyalCooldown(GROUND_CHARGE_COOLDOWN_MIN
+                + this.random.nextInt(GROUND_CHARGE_COOLDOWN_VARIANCE + 1));
     }
 
     private void clearQueenGroundCharge() {
@@ -834,7 +973,7 @@ public class QueenEntity extends RoyalBossEntity {
                             head.stopShoot();
                         }
                     })) {
-                this.dreamFireballCooldownTicks[index] = cooldown;
+                this.dreamFireballCooldownTicks[index] = this.scaledRoyalCooldown(cooldown);
             }
         }
     }
@@ -1004,23 +1143,25 @@ public class QueenEntity extends RoyalBossEntity {
         }
 
         int currentCount = ManticoreEntity.countSummonedBy(serverLevel, this.getUUID());
-        int cap = AntarchySettings.queenManticoreCap();
+        int cap = this.manticoreCap();
         if (currentCount >= cap) {
             this.manticoreSummonCooldownTicks = FAILED_SUMMON_RETRY_TICKS;
             return;
         }
 
-        int summonCount = Math.min(AntarchySettings.queenManticoreSummonCount(), cap - currentCount);
+        int requested = AntarchySettings.queenManticoreSummonCount()
+                + (this.isGlimmerEcho() ? GLIMMER_MANTICORE_SUMMON_BONUS : 0);
+        int summonCount = Math.min(requested, cap - currentCount);
         int spawned = this.spawnManticoreTears(serverLevel, target, summonCount);
 
         this.manticoreSummonCooldownTicks = spawned > 0
-                ? this.cooldown(Math.max(20, AntarchySettings.queenManticoreSummonCooldownTicks()))
+                ? this.scaledRoyalCooldown(this.cooldown(Math.max(20, AntarchySettings.queenManticoreSummonCooldownTicks())))
                 : FAILED_SUMMON_RETRY_TICKS;
         if (spawned > 0) {
             this.startRoyalRecovery(45);
             this.manticoreAnimationPending = true;
             this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.8F + this.random.nextFloat() * 0.12F);
-            serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY() + 2.0D, this.getZ(),
+            serverLevel.sendParticles(this.royalParticle(ParticleTypes.PORTAL), this.getX(), this.getY() + 2.0D, this.getZ(),
                     36, 3.0D, 2.0D, 3.0D, 0.15D);
         }
     }
@@ -1077,6 +1218,8 @@ public class QueenEntity extends RoyalBossEntity {
                     tearYaw, 240, this.getUUID(), secondCount);
             first.linkTo(second);
             second.linkTo(first);
+            GlimmerEchoes.markSummon(this, first);
+            GlimmerEchoes.markSummon(this, second);
             level.addFreshEntity(first);
             level.addFreshEntity(second);
             created++;
@@ -1108,7 +1251,7 @@ public class QueenEntity extends RoyalBossEntity {
         }
 
         Phase phase = this.phase();
-        boolean accelerationBlocksMajor = this.royalEffects.active("acceleration")
+        boolean accelerationBlocksMajor = this.accelerationMajorBlockTicks > 0
                 && !this.pendingPhaseThreeChronosphere;
         boolean majorBusy = this.royalEffects.active("momentum_lock")
                 || this.royalEffects.active("crushing_gravity")
@@ -1158,9 +1301,7 @@ public class QueenEntity extends RoyalBossEntity {
         if (!this.beginRoyalAttack(selected, lane, this.cooldown(cooldown),
                 actionWindup, 1, actionRecovery, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
                     @Override public void onStart() {
-                        if ("gravity_stomp".equals(selected)) {
-                            QueenEntity.this.triggerAnim("body_action", "stomp");
-                        } else if ("momentum_lock".equals(selected)
+                        if ("momentum_lock".equals(selected)
                                 || "crushing_gravity".equals(selected)
                                 || "acceleration".equals(selected)
                                 || "queen_chronosphere".equals(selected)
@@ -1169,9 +1310,15 @@ public class QueenEntity extends RoyalBossEntity {
                             QueenEntity.this.triggerAnim("wing_action", "wing_gust");
                         } else if ("black_hole".equals(selected)) {
                             QueenEntity.this.royalHead(RoyalHead.Slot.CENTER).startShoot();
-                            QueenEntity.this.triggerAnim(RoyalHead.Slot.CENTER.controllerName(), "shoot");
                         }
                         QueenEntity.this.startQueenAbilityTelegraph(selected, target);
+                    }
+                    @Override public void onWindup(int elapsedTicks, int remainingTicks) {
+                        if ("gravity_stomp".equals(selected) && remainingTicks == STOMP_CLIP_LEAD_TICKS) {
+                            QueenEntity.this.triggerAnim("body_action", "stomp");
+                        } else if ("black_hole".equals(selected) && remainingTicks == SHOOT_CLIP_LEAD_TICKS) {
+                            QueenEntity.this.triggerAnim(RoyalHead.Slot.CENTER.controllerName(), "shoot");
+                        }
                     }
                     @Override public void onActive(int elapsedTicks) {
                         QueenEntity.this.finishQueenAbilityTelegraph(selected);
@@ -1203,12 +1350,12 @@ public class QueenEntity extends RoyalBossEntity {
                                             ServerLevel level, LivingEntity target) {
         switch (selected) {
             case "gravity_stomp" -> {
-                this.gravityStompCooldownTicks = cooldown;
+                this.gravityStompCooldownTicks = this.scaledRoyalCooldown(cooldown);
                 this.performGravityStomp(level, target, false);
                 this.startRoyalRecovery(18);
             }
             case "black_hole" -> {
-                this.blackHoleCooldownTicks = cooldown;
+                this.blackHoleCooldownTicks = this.scaledRoyalCooldown(cooldown);
                 this.castBlackHole(level, target);
                 this.startRoyalRecovery(16);
                 if (this.phase() == Phase.ONE) {
@@ -1216,12 +1363,11 @@ public class QueenEntity extends RoyalBossEntity {
                 }
             }
             case "momentum_lock" -> {
-                this.momentumLockCooldownTicks = cooldown;
+                this.momentumLockCooldownTicks = this.scaledRoyalCooldown(cooldown);
                 this.startMomentumLock(level);
-                this.queueQueenFollowUp(QueenFollowUp.FIREBALL_VOLLEY, MOMENTUM_VOLLEY_DELAY);
             }
             case "crushing_gravity" -> {
-                this.crushingGravityCooldownTicks = cooldown;
+                this.crushingGravityCooldownTicks = this.scaledRoyalCooldown(cooldown);
                 this.royalEffects.start("crushing_gravity", CRUSHING_GRAVITY_DURATION,
                         () -> {}, this::tickCrushingGravity, () -> this.startRoyalRecovery(35));
                 this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.6F);
@@ -1230,12 +1376,12 @@ public class QueenEntity extends RoyalBossEntity {
                 }
             }
             case "acceleration" -> {
-                this.accelerationCooldownTicks = cooldown;
+                this.accelerationCooldownTicks = this.scaledRoyalCooldown(cooldown);
                 this.startRoyalAcceleration();
                 this.queueQueenFollowUp(QueenFollowUp.ACCELERATION_VOLLEY, ACCELERATION_VOLLEY_DELAY);
             }
             case "queen_chronosphere" -> {
-                this.queenChronosphereCooldownTicks = cooldown;
+                this.queenChronosphereCooldownTicks = this.scaledRoyalCooldown(cooldown);
                 TimeDilationFieldEntity field = TimeDilationApi.createField(level, this.position(),
                         QUEEN_CHRONOSPHERE_RADIUS, QUEEN_CHRONOSPHERE_RATE,
                         QUEEN_CHRONOSPHERE_DURATION, this.getUUID());
@@ -1243,12 +1389,12 @@ public class QueenEntity extends RoyalBossEntity {
                 this.startRoyalRecovery(35);
             }
             case "debris_cyclone" -> {
-                this.debrisCycloneCooldownTicks = cooldown;
+                this.debrisCycloneCooldownTicks = this.scaledRoyalCooldown(cooldown);
                 this.performDebrisCycloneLaunch(level, target);
                 this.startRoyalRecovery(20);
             }
             case "gravitic_upheaval" -> {
-                this.graviticUpheavalCooldownTicks = cooldown;
+                this.graviticUpheavalCooldownTicks = this.scaledRoyalCooldown(cooldown);
                 this.startGraviticUpheaval(level);
             }
         }
@@ -1267,7 +1413,7 @@ public class QueenEntity extends RoyalBossEntity {
                         localX, this.getBbHeight() * 0.45D, localZ, gravity));
                 Vec3 velocity = GravityRotationUtil.vecPlayerToWorld(
                         Math.cos(angle) * 0.2D, 0.025D, Math.sin(angle) * 0.2D, gravity);
-                level.sendParticles(ACCEL_DUST, point.x, point.y, point.z,
+                level.sendParticles(this.royalParticle(ACCEL_DUST), point.x, point.y, point.z,
                         0, velocity.x, velocity.y, velocity.z, 1.0D);
             }
         }
@@ -1316,36 +1462,28 @@ public class QueenEntity extends RoyalBossEntity {
         };
     }
 
-    private void tickFinalAcceleration() {
-        if (this.phase() != Phase.THREE) {
-            return;
-        }
-        if (!this.royalEffects.active("acceleration") && this.accelerationCooldownTicks <= 0) {
-            this.pendingPhaseSignature = Phase.THREE;
-        }
-    }
-
-    private void performGravityStomp(ServerLevel level, LivingEntity target) {
-        this.performGravityStomp(level, target, true);
-    }
-
     private void performGravityStomp(ServerLevel level, LivingEntity target, boolean triggerAnimation) {
         if (triggerAnimation) {
             this.triggerAnim("body_action", "stomp");
         }
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.7F);
         DamageSource source = this.damageSources().mobAttack(this);
-        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(18.0D), this::canDamageWithRoyalAttack)) {
-            double distance = Math.max(1.0D, living.distanceTo(this));
-            living.hurt(source, this.scaleRoyalDamage(12.0D * Math.max(0.25D, 1.0D - distance / 24.0D)));
-            Vec3 push = living.position().subtract(this.position()).normalize().scale(1.3D);
+        AABB bounds = new AABB(this.position(), this.position()).inflate(GRAVITY_STOMP_RADIUS, 12.0D, GRAVITY_STOMP_RADIUS);
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, bounds, this::canDamageWithRoyalAttack)) {
+            Vec3 offset = living.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            double distance = offset.length();
+            if (distance > GRAVITY_STOMP_RADIUS || !this.hasLineOfSight(living)) {
+                continue;
+            }
+            living.hurt(source, this.scaleRoyalDamage(GRAVITY_STOMP_DAMAGE * Math.max(0.25D, 1.0D - distance / GRAVITY_STOMP_RADIUS)));
+            Vec3 push = (distance > 1.0E-4D ? offset.scale(1.0D / distance) : Vec3.ZERO).scale(1.3D);
             Vec3 vertical = GravityRotationUtil.vecPlayerToWorld(
                     0.0D, 0.65D, 0.0D, GravityApi.getGravityDirection(living));
-            this.addGravityAwareImpulse(living, new Vec3(push.x, 0.0D, push.z).add(vertical));
+            this.addGravityAwareImpulse(living, push.add(vertical));
             living.hasImpulse = true;
+            living.hurtMarked = true;
         }
-        level.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY() + 1.0D, this.getZ(),
+        level.sendParticles(this.royalParticle(ParticleTypes.EXPLOSION), this.getX(), this.getY() + 1.0D, this.getZ(),
                 18, 5.0D, 0.6D, 5.0D, 0.08D);
     }
 
@@ -1355,9 +1493,11 @@ public class QueenEntity extends RoyalBossEntity {
         this.pendingBlackHoleAnchor = null;
         Vec3 mouth = this.beamAnchor(this.royalHead(RoyalHead.Slot.CENTER));
         RoyalBlackHoleEntity hole = RoyalBlackHoleEntity.createProjectile(level, mouth, anchor, this.getUUID());
+        hole.setGravityInverted(GravityApi.isGravityInverted(this));
+        GlimmerEchoes.markSummon(this, hole);
         level.addFreshEntity(hole);
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.0F);
-        level.sendParticles(ParticleTypes.REVERSE_PORTAL, mouth.x, mouth.y, mouth.z,
+        level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL), mouth.x, mouth.y, mouth.z,
                 30, 0.6D, 0.6D, 0.6D, 0.25D);
     }
 
@@ -1421,6 +1561,7 @@ public class QueenEntity extends RoyalBossEntity {
                 this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.9F);
             }
             case "gravitic_upheaval" -> {
+                this.graviticUpheavalCenter = target.position();
                 this.graviticUpheavalTelegraphTicks = GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS;
                 this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.5F);
             }
@@ -1480,7 +1621,7 @@ public class QueenEntity extends RoyalBossEntity {
         if (this.gravityStompTelegraphTicks <= 0) return;
         int elapsed = GRAVITY_STOMP_TELEGRAPH_TICKS - this.gravityStompTelegraphTicks;
         if (this.tickCount % 2 == 0) {
-            double radius = Mth.lerp(elapsed / (double) GRAVITY_STOMP_TELEGRAPH_TICKS, 3.0D, 18.0D);
+            double radius = Mth.lerp(elapsed / (double) GRAVITY_STOMP_TELEGRAPH_TICKS, 3.0D, GRAVITY_STOMP_RADIUS);
             Vec3 surfaceCenter = this.position().add(GravityRotationUtil.vecPlayerToWorld(
                     0.0D, 0.2D, 0.0D, GravityApi.getGravityDirection(this)));
             this.spawnQueenTelegraphSpokes(level, surfaceCenter, radius);
@@ -1498,7 +1639,7 @@ public class QueenEntity extends RoyalBossEntity {
         if (this.tickCount % 2 == 0) {
             this.spawnQueenTelegraphRing(level, this.pendingBlackHoleAnchor, fieldRadius, 40, ParticleTypes.WITCH);
             this.spawnBlackHoleFunnel(level, this.pendingBlackHoleAnchor, fieldRadius, progress);
-            level.sendParticles(AntarchyObjects.LUCID_BOLT_IMPACT_LARGE.get(),
+            level.sendParticles(this.royalParticle(AntarchyObjects.LUCID_BOLT_IMPACT_LARGE.get()),
                     this.pendingBlackHoleAnchor.x, this.pendingBlackHoleAnchor.y, this.pendingBlackHoleAnchor.z,
                     2, 0.12D, 0.12D, 0.12D, 0.01D);
         }
@@ -1577,13 +1718,15 @@ public class QueenEntity extends RoyalBossEntity {
 
     private void gatherDebrisCycloneBlocks(ServerLevel level) {
         this.discardDebrisCycloneBlocks();
-        if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+        boolean glimmer = this.isGlimmerEcho();
+        if (!glimmer && !level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             return;
         }
         Vec3 center = this.position();
         double radius = DEBRIS_CYCLONE_GATHER_RADIUS;
         int gathered = 0;
-        for (int attempt = 0; attempt < 140 && gathered < DEBRIS_CYCLONE_BLOCK_COUNT; attempt++) {
+        int blockCount = glimmer ? GLIMMER_DEBRIS_CYCLONE_BLOCK_COUNT : DEBRIS_CYCLONE_BLOCK_COUNT;
+        for (int attempt = 0; attempt < 140 && gathered < blockCount; attempt++) {
             BlockPos pos = BlockPos.containing(
                     center.x + (this.random.nextDouble() * 2.0D - 1.0D) * radius,
                     center.y + (this.random.nextDouble() * 2.0D - 1.0D) * radius * 0.6D,
@@ -1597,7 +1740,7 @@ public class QueenEntity extends RoyalBossEntity {
                     || state.getDestroySpeed(level, pos) < 0.0F || state.getCollisionShape(level, pos).isEmpty()) {
                 continue;
             }
-            FallingBlockEntity block = FallingBlockEntity.fall(level, pos, state);
+            FallingBlockEntity block = this.liftQueenDebris(level, pos, pos.above(), state);
             if (block == null) {
                 continue;
             }
@@ -1607,6 +1750,20 @@ public class QueenEntity extends RoyalBossEntity {
             this.debrisCycloneBlocks.add(block);
             gathered++;
         }
+    }
+
+    @Nullable
+    private FallingBlockEntity liftQueenDebris(ServerLevel level, BlockPos pos, BlockPos glimmerPos, BlockState state) {
+        if (!this.isGlimmerEcho()) {
+            return FallingBlockEntity.fall(level, pos, state);
+        }
+        if (!level.getBlockState(glimmerPos).isAir()) {
+            return null;
+        }
+        FallingBlockEntity block = FallingBlockEntity.fall(level, glimmerPos, state);
+        block.disableDrop();
+        block.dropItem = false;
+        return block;
     }
 
     private void discardDebrisCycloneBlocks() {
@@ -1637,7 +1794,7 @@ public class QueenEntity extends RoyalBossEntity {
             block.setPos(point.x - 0.5D, point.y - 0.5D, point.z - 0.5D);
             block.setDeltaMovement(Vec3.ZERO);
             if (this.tickCount % 2 == 0) {
-                level.sendParticles(ParticleTypes.CRIT, point.x, point.y, point.z, 2, 0.15D, 0.15D, 0.15D, 0.01D);
+                level.sendParticles(this.royalParticle(ParticleTypes.CRIT), point.x, point.y, point.z, 2, 0.15D, 0.15D, 0.15D, 0.01D);
             }
         }
         this.playQueenTelegraphBeat(level, this.debrisCycloneTelegraphTicks, DEBRIS_CYCLONE_TELEGRAPH_TICKS, 0.9F);
@@ -1650,16 +1807,17 @@ public class QueenEntity extends RoyalBossEntity {
             if (!block.isAlive()) continue;
             Vec3 toTarget = aimPoint.subtract(block.position());
             double distance = Math.max(1.0D, toTarget.length());
+            boolean inverted = GravityApi.isGravityInverted(this);
             Vec3 launch = toTarget.normalize().scale(DEBRIS_CYCLONE_LAUNCH_SPEED)
-                    .add(0.0D, Math.min(0.35D, distance * 0.03D), 0.0D);
-            block.setNoGravity(false);
+                    .add(0.0D, (inverted ? -1.0D : 1.0D) * Math.min(0.35D, distance * 0.03D), 0.0D);
+            block.setNoGravity(inverted);
             block.setDeltaMovement(launch);
-            block.setHurtsEntities(DEBRIS_CYCLONE_BLOCK_DAMAGE_PER_DISTANCE, DEBRIS_CYCLONE_BLOCK_MAX_DAMAGE);
             block.hurtMarked = true;
+            this.trackedDebris.put(block, DEBRIS_CYCLONE_HIT_DAMAGE);
         }
         this.debrisCycloneBlocks.clear();
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.05F);
-        level.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+        level.sendParticles(this.royalParticle(ParticleTypes.EXPLOSION), this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
                 4, 0.6D, 0.6D, 0.6D, 0.02D);
     }
 
@@ -1669,7 +1827,8 @@ public class QueenEntity extends RoyalBossEntity {
         if (this.tickCount % 3 == 0) {
             double progress = elapsed / (double) GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS;
             double radius = Mth.lerp(progress, 4.0D, GRAVITIC_UPHEAVAL_RADIUS);
-            this.spawnQueenTelegraphRing(level, this.position(), radius, 48, ParticleTypes.REVERSE_PORTAL);
+            Vec3 center = this.graviticUpheavalCenter != null ? this.graviticUpheavalCenter : this.position();
+            this.spawnQueenTelegraphRing(level, center, radius, 48, ParticleTypes.REVERSE_PORTAL);
         }
         this.playQueenTelegraphBeat(level, this.graviticUpheavalTelegraphTicks, GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS, 0.5F);
         this.graviticUpheavalTelegraphTicks--;
@@ -1678,25 +1837,26 @@ public class QueenEntity extends RoyalBossEntity {
     private void startGraviticUpheaval(ServerLevel level) {
         this.graviticUpheavalBlocks.clear();
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.75F);
-        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-            Vec3 center = this.position();
+        if (this.isGlimmerEcho() || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            Vec3 center = this.graviticUpheavalCenter != null ? this.graviticUpheavalCenter : this.position();
             boolean inverted = GravityApi.isGravityInverted(this);
             int gathered = 0;
+            int blockCount = this.isGlimmerEcho() ? GLIMMER_GRAVITIC_UPHEAVAL_BLOCK_COUNT : GRAVITIC_UPHEAVAL_BLOCK_COUNT;
             for (int attempt = 0; attempt < GRAVITIC_UPHEAVAL_BLOCK_COUNT * 3
-                    && gathered < GRAVITIC_UPHEAVAL_BLOCK_COUNT; attempt++) {
+                    && gathered < blockCount; attempt++) {
                 double angle = this.random.nextDouble() * Mth.TWO_PI;
                 double radius = this.random.nextDouble() * GRAVITIC_UPHEAVAL_RADIUS;
                 double x = center.x + Math.cos(angle) * radius;
                 double z = center.z + Math.sin(angle) * radius;
                 BlockPos pos = inverted
-                        ? BlockPos.containing(x, this.ceilingYAbove(x, z, this.getBoundingBox().minY + 0.5D) + 0.5D, z)
-                        : BlockPos.containing(x, this.groundYBelow(x, z) - 0.5D, z);
+                        ? BlockPos.containing(x, this.ceilingYAbove(x, z, center.y - 1.0D) + 0.5D, z)
+                        : BlockPos.containing(x, this.groundYBelow(x, z, center.y + 1.0D) - 0.5D, z);
                 BlockState state = level.getBlockState(pos);
                 if (!state.is(AntarchyTags.Blocks.QUEEN_GRABBABLE_BLOCKS) || level.getBlockEntity(pos) != null
                         || state.getDestroySpeed(level, pos) < 0.0F || state.getCollisionShape(level, pos).isEmpty()) {
                     continue;
                 }
-                FallingBlockEntity block = FallingBlockEntity.fall(level, pos, state);
+                FallingBlockEntity block = this.liftQueenDebris(level, pos, inverted ? pos.below() : pos.above(), state);
                 if (block == null) {
                     continue;
                 }
@@ -1712,27 +1872,236 @@ public class QueenEntity extends RoyalBossEntity {
             }
         }
         this.graviticUpheavalAgeTicks = 0;
+        this.graviticUpheavalFallStarted = false;
         this.royalEffects.start("gravitic_upheaval", GRAVITIC_UPHEAVAL_DURATION,
                 () -> {}, this::tickGraviticUpheaval, this::endGraviticUpheaval);
     }
 
     private void tickGraviticUpheaval() {
         this.graviticUpheavalAgeTicks++;
-        boolean shouldFall = this.graviticUpheavalAgeTicks >= GRAVITIC_UPHEAVAL_RISE_TICKS;
-        for (FallingBlockEntity block : this.graviticUpheavalBlocks) {
-            if (!block.isAlive() || !shouldFall || !block.isNoGravity()) continue;
-            block.setNoGravity(false);
-            block.setHurtsEntities(1.6F, 20);
+        if (!this.graviticUpheavalFallStarted && this.graviticUpheavalAgeTicks >= GRAVITIC_UPHEAVAL_RISE_TICKS) {
+            this.graviticUpheavalFallStarted = true;
+            this.releaseGraviticUpheaval();
+        }
+        Vec3 center = this.graviticUpheavalCenter != null ? this.graviticUpheavalCenter : this.position();
+        if (!this.graviticUpheavalFallStarted && this.graviticUpheavalBlocks.isEmpty() && this.tickCount % 3 == 0
+                && this.level() instanceof ServerLevel ringLevel) {
+            this.spawnQueenTelegraphRing(ringLevel, center, GRAVITIC_UPHEAVAL_RADIUS, 48, ParticleTypes.REVERSE_PORTAL);
         }
         if (this.level() instanceof ServerLevel level && this.tickCount % 5 == 0) {
-            level.sendParticles(ParticleTypes.REVERSE_PORTAL, this.getX(), this.getY(), this.getZ(),
+            level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL), center.x, center.y, center.z,
                     6, GRAVITIC_UPHEAVAL_RADIUS * 0.5D, 1.0D, GRAVITIC_UPHEAVAL_RADIUS * 0.5D, 0.01D);
+        }
+    }
+
+    private void releaseGraviticUpheaval() {
+        boolean slam = this.phase() == Phase.THREE;
+        boolean inverted = GravityApi.isGravityInverted(this);
+        double fallSign = inverted ? 1.0D : -1.0D;
+        boolean anyBlocks = false;
+        for (FallingBlockEntity block : this.graviticUpheavalBlocks) {
+            if (!block.isAlive()) {
+                continue;
+            }
+            anyBlocks = true;
+            block.setNoGravity(inverted);
+            if (slam) {
+                block.setDeltaMovement(block.getDeltaMovement().multiply(0.2D, 0.0D, 0.2D)
+                        .add(0.0D, fallSign * GRAVITY_SLAM_SPEED, 0.0D));
+                block.hurtMarked = true;
+            }
+            this.trackedDebris.put(block, slam ? GRAVITY_SLAM_HIT_DAMAGE : GRAVITIC_UPHEAVAL_HIT_DAMAGE);
+        }
+        this.graviticUpheavalBlocks.clear();
+        if (!(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        if (slam) {
+            this.triggerAnim("wing_action", "wing_gust");
+            this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.42F);
+            this.spawnQueenWingPressure(level);
+        }
+        Vec3 center = this.graviticUpheavalCenter != null ? this.graviticUpheavalCenter : this.position();
+        if (slam) {
+            AABB bounds = new AABB(center, center).inflate(GRAVITIC_UPHEAVAL_RADIUS, 24.0D, GRAVITIC_UPHEAVAL_RADIUS);
+            for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, bounds, this::canDamageWithRoyalAttack)) {
+                double dx = living.getX() - center.x;
+                double dz = living.getZ() - center.z;
+                if (dx * dx + dz * dz > GRAVITIC_UPHEAVAL_RADIUS * GRAVITIC_UPHEAVAL_RADIUS) {
+                    continue;
+                }
+                double downSign = GravityApi.isGravityInverted(living) ? 1.0D : -1.0D;
+                this.spawnCrushingGravityArrow(level, living, downSign, 1.0D);
+                if (living instanceof ServerPlayer player) {
+                    RoyalBlackHoleEntity.pushPlayer(player, new Vec3(0.0D, downSign * 0.9D, 0.0D), CRUSHING_PLAYER_MAX_SPEED);
+                } else {
+                    living.setDeltaMovement(living.getDeltaMovement().add(0.0D, downSign * 0.9D, 0.0D));
+                    living.hasImpulse = true;
+                }
+            }
+        }
+        if (!anyBlocks) {
+            this.spawnQueenTelegraphRing(level, center, GRAVITIC_UPHEAVAL_RADIUS, 48, ParticleTypes.EXPLOSION);
+            DamageSource source = this.damageSources().mobAttack(this);
+            AABB shock = new AABB(center, center).inflate(GRAVITIC_UPHEAVAL_RADIUS, 8.0D, GRAVITIC_UPHEAVAL_RADIUS);
+            for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, shock, this::canDamageWithRoyalAttack)) {
+                double dx = living.getX() - center.x;
+                double dz = living.getZ() - center.z;
+                if (dx * dx + dz * dz <= GRAVITIC_UPHEAVAL_RADIUS * GRAVITIC_UPHEAVAL_RADIUS) {
+                    living.hurt(source, this.scaleRoyalDamage(GRAVITY_SLAM_SHOCK_DAMAGE));
+                }
+            }
         }
     }
 
     private void endGraviticUpheaval() {
         this.graviticUpheavalBlocks.clear();
+        this.graviticUpheavalCenter = null;
         this.startRoyalRecovery(30);
+    }
+
+    private void tickTrackedDebris() {
+        if (this.trackedDebris.isEmpty() || !(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        List<LivingEntity> candidates = level.getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(DEBRIS_HIT_SCAN_RANGE), this::canDamageWithRoyalAttack);
+        DamageSource source = this.damageSources().mobAttack(this);
+        boolean griefing = level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+        for (Iterator<Map.Entry<FallingBlockEntity, Float>> iterator = this.trackedDebris.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<FallingBlockEntity, Float> entry = iterator.next();
+            FallingBlockEntity block = entry.getKey();
+            if (!block.isAlive()) {
+                iterator.remove();
+                continue;
+            }
+            AABB box = block.getBoundingBox().expandTowards(block.getDeltaMovement()).inflate(DEBRIS_HIT_INFLATE);
+            for (LivingEntity living : candidates) {
+                if (living.isAlive() && box.intersects(living.getBoundingBox())) {
+                    living.hurt(source, this.scaleRoyalDamage(entry.getValue()));
+                }
+            }
+            if (block.isNoGravity()) {
+                block.setDeltaMovement(block.getDeltaMovement().add(0.0D, INVERTED_DEBRIS_ACCELERATION, 0.0D));
+                if (this.tickCount % 5 == 0) {
+                    block.hurtMarked = true;
+                }
+                if (block.verticalCollision && block.getDeltaMovement().y > 0.0D) {
+                    this.settleInvertedDebris(level, block, griefing);
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    private void releaseQueenDebris() {
+        boolean inverted = GravityApi.isGravityInverted(this);
+        List<FallingBlockEntity> blocks = new ArrayList<>(this.debrisCycloneBlocks);
+        blocks.addAll(this.graviticUpheavalBlocks);
+        blocks.addAll(this.trackedDebris.keySet());
+        for (FallingBlockEntity block : blocks) {
+            this.releaseStrandedDebris(block, inverted);
+        }
+        this.debrisCycloneBlocks.clear();
+        this.graviticUpheavalBlocks.clear();
+        this.trackedDebris.clear();
+    }
+
+    private void releaseStrandedDebris(FallingBlockEntity block, boolean inverted) {
+        if (!block.isAlive()) {
+            return;
+        }
+        if (inverted) {
+            block.discard();
+        } else {
+            block.setNoGravity(false);
+            block.hurtMarked = true;
+        }
+    }
+
+    private void sweepStrandedDebris(ServerLevel level) {
+        boolean inverted = GravityApi.isGravityInverted(this);
+        for (FallingBlockEntity block : level.getEntitiesOfClass(FallingBlockEntity.class,
+                this.getBoundingBox().inflate(DEBRIS_HIT_SCAN_RANGE), FallingBlockEntity::isNoGravity)) {
+            this.releaseStrandedDebris(block, inverted);
+        }
+    }
+
+    private void settleInvertedDebris(ServerLevel level, FallingBlockEntity block, boolean griefing) {
+        BlockPos pos = block.blockPosition();
+        if (griefing && !this.isGlimmerEcho() && level.getBlockState(pos).isAir()) {
+            level.setBlock(pos, block.getBlockState(), 3);
+        }
+        block.discard();
+    }
+
+    private void tickFrozenVolley() {
+        if (this.frozenVolleyBolts.isEmpty()) {
+            return;
+        }
+        this.frozenVolleyBolts.removeIf(bolt -> !bolt.projectile().isAlive());
+        boolean release = false;
+        if (this.frozenVolleyReleaseTicks > 0) {
+            release = --this.frozenVolleyReleaseTicks <= 0;
+        } else if (!this.royalEffects.active("momentum_lock")) {
+            release = true;
+        }
+        if (!release) {
+            for (FrozenBolt bolt : this.frozenVolleyBolts) {
+                bolt.projectile().setDeltaMovement(Vec3.ZERO);
+            }
+            return;
+        }
+        for (FrozenBolt bolt : this.frozenVolleyBolts) {
+            RoyalElementalProjectileEntity projectile = bolt.projectile();
+            projectile.setNoGravity(false);
+            projectile.setDeltaMovement(bolt.velocity());
+            projectile.tickCount = 0;
+            projectile.hasImpulse = true;
+            projectile.hurtMarked = true;
+        }
+        this.frozenVolleyBolts.clear();
+        this.playRoyalSound(AntarchySoundEvents.QUEEN_BEAM_SHOOT.get(), 0.7F);
+    }
+
+    private void discardFrozenVolley() {
+        for (FrozenBolt bolt : this.frozenVolleyBolts) {
+            bolt.projectile().discard();
+        }
+        this.frozenVolleyBolts.clear();
+        this.frozenVolleyReleaseTicks = 0;
+    }
+
+    private void fireFrozenVolleyBolt(ServerLevel level, RoyalHead head) {
+        LivingEntity target = null;
+        LivingEntity assigned = head.target(level);
+        if (assigned != null && assigned.isAlive() && this.frozenPositions.containsKey(assigned.getUUID())) {
+            target = assigned;
+        } else {
+            LivingEntity primary = this.getTarget();
+            if (primary != null && primary.isAlive() && this.frozenPositions.containsKey(primary.getUUID())) {
+                target = primary;
+            }
+        }
+        if (target == null) {
+            return;
+        }
+        Vec3 origin = this.headAnchor(head);
+        Vec3 direction = target.getEyePosition().subtract(origin).normalize();
+        RoyalElementalProjectileEntity projectile = RoyalElementalProjectileEntity.create(
+                level, this, RoyalBeamElement.DREAM_FIRE, origin, direction);
+        Vec3 velocity = projectile.getDeltaMovement();
+        projectile.setNoGravity(true);
+        projectile.setDeltaMovement(Vec3.ZERO);
+        level.addFreshEntity(projectile);
+        this.frozenVolleyBolts.add(new FrozenBolt(projectile, velocity));
+        this.triggerAnim(head.slot().controllerName(), "shoot");
+        this.playRoyalSound(AntarchySoundEvents.QUEEN_BEAM_SHOOT.get(), 1.2F);
+    }
+
+    private boolean queenCanForceMove(Entity entity) {
+        return entity != this && !isFieldImmune(entity)
+                && !(entity instanceof Player player && (player.isCreative() || player.isSpectator()));
     }
 
     private void spawnQueenTelegraphSpokes(ServerLevel level, Vec3 center, double radius) {
@@ -1742,13 +2111,13 @@ public class QueenEntity extends RoyalBossEntity {
             double angle = Mth.TWO_PI * spoke / spokes;
             for (int segment = 1; segment <= segments; segment++) {
                 double distance = radius * segment / segments;
-                level.sendParticles(ParticleTypes.CRIT,
+                level.sendParticles(this.royalParticle(ParticleTypes.CRIT),
                         center.x + Math.cos(angle) * distance, center.y,
                         center.z + Math.sin(angle) * distance,
                         1, 0.08D, 0.02D, 0.08D, 0.0D);
             }
         }
-        level.sendParticles(ParticleTypes.LARGE_SMOKE, center.x, center.y, center.z,
+        level.sendParticles(this.royalParticle(ParticleTypes.LARGE_SMOKE), center.x, center.y, center.z,
                 3, 0.7D, 0.05D, 0.7D, 0.015D);
     }
 
@@ -1763,7 +2132,7 @@ public class QueenEntity extends RoyalBossEntity {
                 double angle = rotation + tier * 0.65D + Mth.TWO_PI * point / 10.0D;
                 Vec3 particlePos = center.add(GravityRotationUtil.vecPlayerToWorld(
                         Math.cos(angle) * radius, localY, Math.sin(angle) * radius, gravity));
-                level.sendParticles(ParticleTypes.REVERSE_PORTAL,
+                level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL),
                         particlePos.x, particlePos.y, particlePos.z,
                         1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
@@ -1779,7 +2148,7 @@ public class QueenEntity extends RoyalBossEntity {
             double z = this.getZ() + Math.sin(angle) * MOMENTUM_LOCK_RADIUS;
             for (int segment = 0; segment < 7; segment++) {
                 double y = centerY - halfHeight + segment * halfHeight / 3.0D;
-                level.sendParticles(ParticleTypes.END_ROD, x, y, z,
+                level.sendParticles(this.royalParticle(ParticleTypes.END_ROD), x, y, z,
                         1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
         }
@@ -1793,7 +2162,7 @@ public class QueenEntity extends RoyalBossEntity {
             double x = living.getX() + Math.cos(angle) * 0.9D;
             double z = living.getZ() + Math.sin(angle) * 0.9D;
             for (int segment = -1; segment <= 1; segment++) {
-                level.sendParticles(ParticleTypes.END_ROD, x,
+                level.sendParticles(this.royalParticle(ParticleTypes.END_ROD), x,
                         centerY + segment * halfHeight, z,
                         1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
@@ -1805,21 +2174,21 @@ public class QueenEntity extends RoyalBossEntity {
         double centerY = living.getY(0.5D);
         double shaftStartY = centerY - downSign * Mth.lerp(progress, 7.0D, 4.5D);
         for (int segment = 0; segment < 6; segment++) {
-            level.sendParticles(ParticleTypes.REVERSE_PORTAL, living.getX(),
+            level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL), living.getX(),
                     shaftStartY + downSign * segment * 0.75D, living.getZ(),
                     1, 0.04D, 0.02D, 0.04D, 0.0D);
         }
         double tipY = shaftStartY + downSign * 4.5D;
         double headY = tipY - downSign * 0.85D;
-        level.sendParticles(ParticleTypes.WITCH, living.getX() + 0.7D, headY, living.getZ(),
+        level.sendParticles(this.royalParticle(ParticleTypes.WITCH), living.getX() + 0.7D, headY, living.getZ(),
                 1, 0.0D, 0.0D, 0.0D, 0.0D);
-        level.sendParticles(ParticleTypes.WITCH, living.getX() - 0.7D, headY, living.getZ(),
+        level.sendParticles(this.royalParticle(ParticleTypes.WITCH), living.getX() - 0.7D, headY, living.getZ(),
                 1, 0.0D, 0.0D, 0.0D, 0.0D);
-        level.sendParticles(ParticleTypes.WITCH, living.getX(), headY, living.getZ() + 0.7D,
+        level.sendParticles(this.royalParticle(ParticleTypes.WITCH), living.getX(), headY, living.getZ() + 0.7D,
                 1, 0.0D, 0.0D, 0.0D, 0.0D);
-        level.sendParticles(ParticleTypes.WITCH, living.getX(), headY, living.getZ() - 0.7D,
+        level.sendParticles(this.royalParticle(ParticleTypes.WITCH), living.getX(), headY, living.getZ() - 0.7D,
                 1, 0.0D, 0.0D, 0.0D, 0.0D);
-        level.sendParticles(AntarchyObjects.LUCID_BOLT_IMPACT_SMALL.get(),
+        level.sendParticles(this.royalParticle(AntarchyObjects.LUCID_BOLT_IMPACT_SMALL.get()),
                 living.getX(), tipY, living.getZ(), 1, 0.05D, 0.05D, 0.05D, 0.0D);
     }
 
@@ -1834,11 +2203,11 @@ public class QueenEntity extends RoyalBossEntity {
                 double localY = 0.4D + heightProgress * (this.getBbHeight() + 2.0D);
                 Vec3 particlePos = this.position().add(GravityRotationUtil.vecPlayerToWorld(
                         Math.cos(angle) * radius, localY, Math.sin(angle) * radius, gravity));
-                level.sendParticles(AntarchyObjects.LUCID_BOLT_IMPACT_SMALL.get(),
+                level.sendParticles(this.royalParticle(AntarchyObjects.LUCID_BOLT_IMPACT_SMALL.get()),
                         particlePos.x, particlePos.y, particlePos.z,
                         1, 0.02D, 0.02D, 0.02D, 0.0D);
                 if (segment % 2 == 0) {
-                    level.sendParticles(ACCEL_DUST, particlePos.x, particlePos.y, particlePos.z,
+                    level.sendParticles(this.royalParticle(ACCEL_DUST), particlePos.x, particlePos.y, particlePos.z,
                             1, 0.0D, 0.0D, 0.0D, 0.0D);
                 }
             }
@@ -1849,7 +2218,7 @@ public class QueenEntity extends RoyalBossEntity {
             ServerLevel level, Vec3 center, double radius, int count, T particle) {
         for (int index = 0; index < count; index++) {
             double angle = Mth.TWO_PI * index / count;
-            level.sendParticles(particle,
+            level.sendParticles(this.royalParticle(particle),
                     center.x + Math.cos(angle) * radius, center.y,
                     center.z + Math.sin(angle) * radius,
                     1, 0.0D, 0.0D, 0.0D, 0.0D);
@@ -1866,29 +2235,42 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void startMomentumLock(ServerLevel level) {
-        this.momentumLockCooldownTicks = MOMENTUM_LOCK_COOLDOWN;
+        this.momentumLockCooldownTicks = this.scaledRoyalCooldown(MOMENTUM_LOCK_COOLDOWN);
         this.royalEffects.start("momentum_lock", MOMENTUM_LOCK_DURATION, () -> {
             this.frozenVelocities.clear();
             this.frozenPositions.clear();
+            this.momentumLockAgeTicks = 0;
+            this.frozenVolleyReleaseTicks = 0;
+            this.stopRoyalBeamsForDirectedAttack();
+            this.getNavigation().stop();
             for (Entity entity : level.getEntitiesOfClass(Entity.class,
                     this.queenEffectBounds(MOMENTUM_LOCK_RADIUS),
                     entity -> this.withinQueenEffectRange(entity, MOMENTUM_LOCK_RADIUS))) {
-                if (entity == this || isFieldImmune(entity) || entity instanceof Player player && player.isCreative()) {
+                if (!this.queenCanForceMove(entity)) {
                     continue;
                 }
-                this.frozenVelocities.put(entity.getUUID(), entity.getDeltaMovement());
+                Vec3 velocity = entity instanceof ServerPlayer
+                        ? new Vec3(entity.getX() - entity.xo, entity.getY() - entity.yo, entity.getZ() - entity.zo)
+                        : entity.getDeltaMovement();
+                this.frozenVelocities.put(entity.getUUID(), velocity);
                 this.frozenPositions.put(entity.getUUID(), entity.position());
             }
         }, this::tickMomentumLockEffect, () -> {
             for (Map.Entry<UUID, Vec3> entry : this.frozenVelocities.entrySet()) {
                 Entity entity = level.getEntity(entry.getKey());
                 if (entity != null && entity.isAlive()) {
-                    entity.setDeltaMovement(entry.getValue());
+                    if (entity instanceof ServerPlayer player) {
+                        GravityApi.setWorldVelocity(player, entry.getValue());
+                        player.hurtMarked = true;
+                    } else {
+                        entity.setDeltaMovement(entry.getValue());
+                    }
                     entity.hasImpulse = true;
                 }
             }
             this.frozenVelocities.clear();
             this.frozenPositions.clear();
+            this.frozenVolleyReleaseTicks = FROZEN_VOLLEY_RELEASE_DELAY_TICKS;
             this.startRoyalRecovery(35);
         });
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.5F);
@@ -1897,6 +2279,13 @@ public class QueenEntity extends RoyalBossEntity {
     private void tickMomentumLockEffect() {
         if (!(this.level() instanceof ServerLevel level)) {
             return;
+        }
+        this.momentumLockAgeTicks++;
+        RoyalHead.Slot[] slots = RoyalHead.Slot.values();
+        for (int index = 0; index < FROZEN_VOLLEY_FIRE_TICKS.length && index < slots.length; index++) {
+            if (this.momentumLockAgeTicks == FROZEN_VOLLEY_FIRE_TICKS[index]) {
+                this.fireFrozenVolleyBolt(level, this.royalHead(slots[index]));
+            }
         }
         for (Iterator<Map.Entry<UUID, Vec3>> iterator = this.frozenVelocities.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<UUID, Vec3> entry = iterator.next();
@@ -1914,7 +2303,7 @@ public class QueenEntity extends RoyalBossEntity {
             entity.fallDistance = 0.0F;
             entity.hasImpulse = true;
             if (this.tickCount % 6 == 0) {
-                level.sendParticles(ParticleTypes.END_ROD, entity.getX(), entity.getY() + entity.getBbHeight() * 0.5D, entity.getZ(),
+                level.sendParticles(this.royalParticle(ParticleTypes.END_ROD), entity.getX(), entity.getY() + entity.getBbHeight() * 0.5D, entity.getZ(),
                         2, 0.2D, 0.2D, 0.2D, 0.0D);
             }
         }
@@ -1930,26 +2319,35 @@ public class QueenEntity extends RoyalBossEntity {
         for (Entity entity : level.getEntitiesOfClass(Entity.class,
                 this.queenEffectBounds(CRUSHING_GRAVITY_RADIUS),
                 entity -> this.withinQueenEffectRange(entity, CRUSHING_GRAVITY_RADIUS))) {
-            if (entity == this || isFieldImmune(entity) || entity instanceof Player player && player.isCreative()) {
+            if (!this.queenCanForceMove(entity)) {
                 continue;
             }
             double downSign = GravityApi.isGravityInverted(entity) ? 1.0D : -1.0D;
-            entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, downSign * CRUSHING_GRAVITY_STRENGTH, 0.0D));
-            entity.hasImpulse = true;
+            if (entity instanceof ServerPlayer player) {
+                if (level.getGameTime() % RoyalBlackHoleEntity.PLAYER_PUSH_INTERVAL_TICKS == 0L && !player.isPassenger()) {
+                    RoyalBlackHoleEntity.pushPlayer(player,
+                            new Vec3(0.0D, downSign * CRUSHING_GRAVITY_STRENGTH * RoyalBlackHoleEntity.PLAYER_PUSH_INTERVAL_TICKS, 0.0D),
+                            CRUSHING_PLAYER_MAX_SPEED);
+                }
+            } else {
+                entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, downSign * CRUSHING_GRAVITY_STRENGTH, 0.0D));
+                entity.hasImpulse = true;
+            }
             if (entity instanceof LivingEntity living && this.tickCount % 8 == 0) {
                 this.spawnCrushingGravityArrow(level, living, downSign, 1.0D);
             }
         }
         if (this.tickCount % 8 == 0) {
-            level.sendParticles(ACCEL_DUST, this.getX(), this.getY() + 1.0D, this.getZ(), 20,
+            level.sendParticles(this.royalParticle(ACCEL_DUST), this.getX(), this.getY() + 1.0D, this.getZ(), 20,
                     CRUSHING_GRAVITY_RADIUS * 0.5D, 1.0D, CRUSHING_GRAVITY_RADIUS * 0.5D, 0.0D);
         }
     }
 
     private void startRoyalAcceleration() {
-        this.accelerationCooldownTicks = ACCELERATION_COOLDOWN;
+        this.accelerationCooldownTicks = this.scaledRoyalCooldown(ACCELERATION_COOLDOWN);
         this.royalEffects.start("acceleration", ACCELERATION_DURATION, () -> {
             this.setRoyalAccelerated(true);
+            this.accelerationMajorBlockTicks = ACCELERATION_MAJOR_BLOCK_TICKS;
             this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.4F);
             applyAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
             applyAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
@@ -1975,11 +2373,14 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickRoyalAccelerationEffect() {
+        if (this.accelerationMajorBlockTicks > 0) {
+            this.accelerationMajorBlockTicks--;
+        }
         if (!this.isRoyalAccelerated()) {
             return;
         }
         if (this.level() instanceof ServerLevel level && this.tickCount % 2 == 0) {
-            level.sendParticles(ACCEL_DUST,
+            level.sendParticles(this.royalParticle(ACCEL_DUST),
                     this.getX() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
                     this.getY() + this.random.nextDouble() * this.getBbHeight(),
                     this.getZ() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
@@ -1991,7 +2392,11 @@ public class QueenEntity extends RoyalBossEntity {
     public void die(DamageSource damageSource) {
         if (!this.level().isClientSide && this.level() instanceof ServerLevel level) {
             DimensionalTearEntity.discardQueenOwnedTears(level, this.getUUID());
+            RoyalBlackHoleEntity.discardOwnedBy(level, this.getUUID(), this.getBoundingBox().inflate(128.0D));
+            ManticoreEntity.discardSummonedBy(level, this.getUUID());
         }
+        this.discardFrozenVolley();
+        this.releaseQueenDebris();
         this.royalEffects.clear();
         this.frozenVelocities.clear();
         this.frozenPositions.clear();
@@ -2023,6 +2428,7 @@ public class QueenEntity extends RoyalBossEntity {
             }
             manticore.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spawnPos), MobSpawnType.MOB_SUMMONED, null);
             manticore.markQueenSummoned(this.getUUID());
+            GlimmerEchoes.markSummon(this, manticore);
             manticore.setTarget(target);
             serverLevel.addFreshEntity(manticore);
             return true;
@@ -2061,6 +2467,7 @@ public class QueenEntity extends RoyalBossEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        this.strandedDebrisSweepPending = true;
         this.manticoreSummonCooldownTicks = Math.max(0, tag.getInt(SUMMON_COOLDOWN_KEY));
         this.gravityStompCooldownTicks = Math.max(0, tag.getInt("GravityStompCooldownTicks"));
         this.momentumLockCooldownTicks = Math.max(0, tag.getInt("MomentumLockCooldownTicks"));

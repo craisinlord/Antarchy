@@ -1,0 +1,275 @@
+package com.craisinlord.antarchy.content.item;
+
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
+import com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.animatable.GeoItem;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+public class AnvilCannonItem extends ProjectileWeaponItem implements GeoItem, com.craisinlord.antarchy.content.client.AntarchyGeoItem {
+    private static final String FIRE_CONTROLLER = "fire_controller";
+    private static final String FIRE_ANIMATION = "shoot";
+    private static final Predicate<ItemStack> AMMO = stack -> stack.is(AntarchyTags.Items.ANVIL_CANNON_AMMO);
+    private static final ResourceLocation MODEL_LOCATION = new ResourceLocation("antarchy", "geo/anvil_cannon.geo.json");
+    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("antarchy", "textures/models/item/anvil_cannon.png");
+    private static final ResourceLocation ANIMATION_LOCATION = new ResourceLocation("antarchy", "animations/anvil_cannon.animation.json");
+    private static final float[] MULTISHOT_YAW_OFFSETS = {0.0F, -10.0F, 10.0F};
+    private static final int SHAKE_TICKS = 12;
+
+    public static int clientShakeTicks = 0;
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+
+    public AnvilCannonItem(Properties properties) {
+        super(properties);
+        GeoItem.registerSyncedAnimatable(this);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        ItemStack cannon = player.getItemInHand(usedHand);
+        if (player.getCooldowns().isOnCooldown(this)) {
+            return InteractionResultHolder.fail(cannon);
+        }
+
+        boolean infinite = player.getAbilities().instabuild;
+        if (!infinite && findAmmo(player).isEmpty()) {
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 1.0F, 0.6F);
+            return InteractionResultHolder.fail(cannon);
+        }
+
+        if (level.isClientSide()) {
+            clientShakeTicks = SHAKE_TICKS;
+        } else {
+            int shots = hasMultishot(cannon) ? MULTISHOT_YAW_OFFSETS.length : 1;
+            Vec3 recoilDirection = null;
+            for (int shot = 0; shot < shots; shot++) {
+                ItemStack ammo = infinite ? ItemStack.EMPTY : findAmmo(player);
+                if (!infinite && ammo.isEmpty()) {
+                    break;
+                }
+                BlockState anvilState = anvilStateFor(infinite ? new ItemStack(Blocks.ANVIL) : ammo, player.getDirection());
+                if (!infinite) {
+                    ammo.shrink(1);
+                }
+                Vec3 direction = fireFromPlayer(level, player, MULTISHOT_YAW_OFFSETS[shot], anvilState);
+                if (recoilDirection == null) {
+                    recoilDirection = direction;
+                }
+            }
+            if (recoilDirection != null) {
+                applyRecoil(player, recoilDirection);
+            }
+            spawnFireParticles((ServerLevel) level, player);
+            cannon.hurtAndBreak(1, player, e -> e.broadcastBreakEvent(usedHand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
+            triggerFireAnimation((ServerLevel) level, player, cannon);
+        }
+
+        playFireSound(level, player.getX(), player.getY(), player.getZ());
+        player.awardStat(Stats.ITEM_USED.get(this));
+        double cooldownSeconds = AntarchySettings.anvilCannonCooldownSeconds();
+        if (cooldownSeconds > 0) {
+            player.getCooldowns().addCooldown(this, (int) (cooldownSeconds * 20));
+        }
+        return InteractionResultHolder.consume(cannon);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (level.isClientSide() && clientShakeTicks > 0 && isSelected) {
+            clientShakeTicks--;
+        }
+    }
+
+    public static ItemStack findAmmo(Player player) {
+        ItemStack offhand = player.getItemInHand(InteractionHand.OFF_HAND);
+        if (AMMO.test(offhand)) {
+            return offhand;
+        }
+        ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if (AMMO.test(mainHand)) {
+            return mainHand;
+        }
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            if (AMMO.test(stack)) {
+                return stack;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public static boolean isAmmo(ItemStack stack) {
+        return AMMO.test(stack);
+    }
+
+    public static BlockState anvilStateFor(ItemStack ammo, Direction facing) {
+        BlockState state = ammo.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof AnvilBlock
+                ? blockItem.getBlock().defaultBlockState()
+                : Blocks.ANVIL.defaultBlockState();
+        Direction horizontal = facing.getAxis().isHorizontal() ? facing : Direction.NORTH;
+        return state.setValue(AnvilBlock.FACING, horizontal.getClockWise());
+    }
+
+    public static void launchAnvil(Level level, Vec3 spawn, Vec3 velocity, Entity owner, BlockState anvilState) {
+        LaunchedAnvilEntity anvil = AntarchyObjects.LAUNCHED_ANVIL.get().create(level);
+        if (anvil == null) {
+            return;
+        }
+        anvil.setAnvilState(anvilState);
+        anvil.setOwner(owner);
+        anvil.moveTo(spawn.x, spawn.y, spawn.z, owner == null ? 0.0F : owner.getYRot(), 0.0F);
+        anvil.setDeltaMovement(velocity);
+        level.addFreshEntity(anvil);
+    }
+
+    public static void playFireSound(Level level, double x, double y, double z) {
+        level.playSound(null, x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 1.6F, 0.55F + level.getRandom().nextFloat() * 0.1F);
+        level.playSound(null, x, y, z, SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 1.2F, 0.6F);
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
+    }
+
+    @Override
+    public Predicate<ItemStack> getSupportedHeldProjectiles() {
+        return AMMO;
+    }
+
+    @Override
+    public Predicate<ItemStack> getAllSupportedProjectiles() {
+        return AMMO;
+    }
+
+    @Override
+    public int getDefaultProjectileRange() {
+        return 0;
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return stack.getCount() == 1;
+    }
+
+    @Override
+    public int getEnchantmentValue() {
+        return 1;
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, FIRE_CONTROLLER, state -> PlayState.STOP)
+                .triggerableAnim(FIRE_ANIMATION, RawAnimation.begin().thenPlay(FIRE_ANIMATION)));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    public void createRenderer(Consumer<Object> consumer) {
+        consumer.accept(new AntarchyGeoItemRenderer() {
+            private AnimatedHeldItemRenderer<AnvilCannonItem> renderer;
+
+            @Override
+            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (this.renderer == null) {
+                    this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
+                }
+
+                return this.renderer;
+            }
+        });
+    }
+
+    private final java.util.function.Supplier<Object> renderProvider = com.google.common.base.Suppliers.memoize(() -> {
+        Object[] holder = new Object[1];
+        createRenderer(o -> holder[0] = o);
+        return holder[0];
+    });
+
+    @Override
+    public java.util.function.Supplier<Object> getRenderProvider() {
+        return this.renderProvider;
+    }
+
+    private void triggerFireAnimation(ServerLevel level, LivingEntity livingEntity, ItemStack stack) {
+        long animatableId = GeoItem.getOrAssignId(stack, level);
+        triggerAnim(livingEntity, animatableId, FIRE_CONTROLLER, FIRE_ANIMATION);
+    }
+
+    private static Vec3 fireFromPlayer(Level level, Player player, float yawOffset, BlockState anvilState) {
+        float yaw = player.getYRot() + yawOffset;
+        Vec3 localDirection = Vec3.directionFromRotation(new Vec2(player.getXRot(), yaw));
+        GravityDirection gravity = GravityApi.getGravityDirection(player);
+        Vec3 direction = GravityRotationUtil.vecPlayerToWorld(localDirection, gravity).normalize();
+        Vec3 spawn = player.getEyePosition().add(direction.scale(1.1D)).subtract(0.0D, 0.5D, 0.0D);
+        Vec3 velocity = direction.scale(AntarchySettings.anvilCannonLaunchVelocity()).add(GravityApi.deltaMovement(player));
+        launchAnvil(level, spawn, velocity, player, anvilState);
+        return direction;
+    }
+
+    private static void applyRecoil(Player player, Vec3 direction) {
+        double recoil = AntarchySettings.anvilCannonRecoilStrength();
+        if (recoil <= 0.0D) {
+            return;
+        }
+        player.push(-direction.x * recoil, -direction.y * recoil * 0.5D, -direction.z * recoil);
+        player.hurtMarked = true;
+    }
+
+    private static boolean hasMultishot(ItemStack stack) {
+        return net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, stack) > 0;
+    }
+
+    private static void spawnFireParticles(ServerLevel level, Player player) {
+        Vec3 look = player.getLookAngle();
+        double originX = player.getX() + look.x * 1.2D;
+        double originY = player.getEyeY() - 0.2D + look.y * 1.2D;
+        double originZ = player.getZ() + look.z * 1.2D;
+
+        level.sendParticles(ParticleTypes.EXPLOSION, originX, originY, originZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        level.sendParticles(ParticleTypes.LARGE_SMOKE, originX, originY, originZ, 16, 0.25D, 0.2D, 0.25D, 0.03D);
+        level.sendParticles(ParticleTypes.CLOUD, originX, originY - 0.05D, originZ, 10, 0.2D, 0.15D, 0.2D, 0.02D);
+    }
+}

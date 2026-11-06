@@ -7,7 +7,7 @@ public class PeachItem extends Item {
     public PeachItem() {
         super(new Item.Properties().food(new FoodProperties.Builder()
                 .nutrition(4)
-                .saturationMod(2.4F)
+                .saturationMod(1.4F)
                 .build()));
     }
 }

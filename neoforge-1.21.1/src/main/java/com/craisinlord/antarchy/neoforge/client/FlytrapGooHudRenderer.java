@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.neoforge.client;
 
+import com.craisinlord.antarchy.content.client.hud.ScreenTint;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,6 +41,6 @@ public final class FlytrapGooHudRenderer {
         int color = (alpha << 24) | 0x003300;
         int width = minecraft.getWindow().getGuiScaledWidth();
         int height = minecraft.getWindow().getGuiScaledHeight();
-        guiGraphics.fill(0, 0, width, height, color);
+        ScreenTint.fill(guiGraphics, 0, 0, width, height, color);
     }
 }

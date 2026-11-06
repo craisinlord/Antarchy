@@ -1,0 +1,171 @@
+package com.craisinlord.antarchy.content.client.renderer;
+
+import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
+import com.mojang.blaze3d.platform.CompareOp;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.joml.Vector4fc;
+import org.jetbrains.annotations.Nullable;
+
+public final class AntarchySkyDraw {
+    static final Vector4fc WHITE = new Vector4f(1.0F, 1.0F, 1.0F, 1.0F);
+    private static final RenderPipeline ADDITIVE_TEXTURE_PIPELINE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            .withLocation(Identifier.fromNamespaceAndPath("antarchy", "pipeline/additive_texture"))
+            .withVertexShader("core/position_tex_color")
+            .withFragmentShader("core/position_tex_color")
+            .withSampler("Sampler0")
+            .withCull(false)
+            .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
+            .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+            .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
+            .build();
+    private static final Map<Identifier, RenderType> ADDITIVE_TEXTURE_TYPES = new HashMap<>();
+
+    @Nullable
+    private static StaticMesh topSkyDisc;
+    @Nullable
+    private static StaticMesh bottomSkyDisc;
+
+    private AntarchySkyDraw() {
+    }
+
+    public record StaticMesh(GpuBuffer vertices, int indexCount, VertexFormat.Mode mode) {
+    }
+
+    public static RenderType additiveTexture(Identifier texture) {
+        return ADDITIVE_TEXTURE_TYPES.computeIfAbsent(texture, id -> RenderType.create(
+                "antarchy_additive_texture",
+                RenderSetup.builder(ADDITIVE_TEXTURE_PIPELINE).withTexture("Sampler0", id).createRenderSetup()));
+    }
+
+    public static StaticMesh upload(String label, MeshData mesh) {
+        try (mesh) {
+            GpuBuffer buffer = RenderSystem.getDevice().createBuffer(() -> label, GpuBuffer.USAGE_VERTEX, mesh.vertexBuffer());
+            return new StaticMesh(buffer, mesh.drawState().indexCount(), mesh.drawState().mode());
+        }
+    }
+
+    static StaticMesh topSkyDisc() {
+        if (topSkyDisc == null) {
+            topSkyDisc = buildSkyDisc("Antarchy top sky disc", 16.0F);
+        }
+        return topSkyDisc;
+    }
+
+    static StaticMesh bottomSkyDisc() {
+        if (bottomSkyDisc == null) {
+            bottomSkyDisc = buildSkyDisc("Antarchy bottom sky disc", -16.0F);
+        }
+        return bottomSkyDisc;
+    }
+
+    private static StaticMesh buildSkyDisc(String label, float yy) {
+        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION);
+        float x = Math.signum(yy) * 512.0F;
+        builder.addVertex(0.0F, yy, 0.0F);
+        for (int i = -180; i <= 180; i += 45) {
+            builder.addVertex(x * Mth.cos(i * Mth.DEG_TO_RAD), yy, 512.0F * Mth.sin(i * Mth.DEG_TO_RAD));
+        }
+        return upload(label, builder.buildOrThrow());
+    }
+
+    public static Matrix4f modelView() {
+        return new Matrix4f(RenderSystem.getModelViewMatrix());
+    }
+
+    public static void draw(String label, RenderPipeline pipeline, MeshData mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
+        try (mesh) {
+            GpuBuffer vertices = pipeline.getVertexFormat().uploadImmediateVertexBuffer(mesh.vertexBuffer());
+            draw(label, pipeline, vertices, mesh.drawState().indexCount(), mesh.drawState().mode(), modelView, color, texture, null);
+        }
+    }
+
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
+        draw(label, pipeline, mesh.vertices(), mesh.indexCount(), mesh.mode(), modelView, color, texture, null);
+    }
+
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture, @Nullable RenderTarget target) {
+        draw(label, pipeline, mesh.vertices(), mesh.indexCount(), mesh.mode(), modelView, color, texture, target);
+    }
+
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, Vector3f modelOffset, @Nullable RenderTarget target) {
+        draw(label, pipeline, mesh.vertices(), mesh.indexCount(), mesh.mode(), modelView, color, modelOffset, null, target);
+    }
+
+    private static void draw(
+            String label,
+            RenderPipeline pipeline,
+            GpuBuffer vertices,
+            int indexCount,
+            VertexFormat.Mode mode,
+            Matrix4fc modelView,
+            Vector4fc color,
+            @Nullable Identifier texture,
+            @Nullable RenderTarget target
+    ) {
+        draw(label, pipeline, vertices, indexCount, mode, modelView, color, new Vector3f(), texture, target);
+    }
+
+    private static void draw(
+            String label,
+            RenderPipeline pipeline,
+            GpuBuffer vertices,
+            int indexCount,
+            VertexFormat.Mode mode,
+            Matrix4fc modelView,
+            Vector4fc color,
+            Vector3f modelOffset,
+            @Nullable Identifier texture,
+            @Nullable RenderTarget target
+    ) {
+        if (indexCount <= 0) {
+            return;
+        }
+        RenderSystem.AutoStorageIndexBuffer indices = RenderSystem.getSequentialBuffer(mode);
+        GpuBuffer indexBuffer = indices.getBuffer(indexCount);
+        GpuBufferSlice transforms = RenderSystem.getDynamicUniforms().writeTransform(modelView, color, modelOffset, new Matrix4f());
+        AbstractTexture abstractTexture = texture != null ? Minecraft.getInstance().getTextureManager().getTexture(texture) : null;
+        if (target == null) {
+            target = Minecraft.getInstance().getMainRenderTarget();
+        }
+        try (RenderPass renderPass = RenderSystem.getDevice()
+                .createCommandEncoder()
+                .createRenderPass(() -> label, target.getColorTextureView(), OptionalInt.empty(), target.getDepthTextureView(), OptionalDouble.empty())) {
+            renderPass.setPipeline(pipeline);
+            RenderSystem.bindDefaultUniforms(renderPass);
+            renderPass.setUniform("DynamicTransforms", transforms);
+            if (abstractTexture != null) {
+                renderPass.bindTexture("Sampler0", abstractTexture.getTextureView(), abstractTexture.getSampler());
+            }
+            renderPass.setVertexBuffer(0, vertices);
+            renderPass.setIndexBuffer(indexBuffer, indices.type());
+            renderPass.drawIndexed(0, 0, indexCount, 1);
+        }
+    }
+}

@@ -9,7 +9,12 @@ pluginManagement {
     }
     plugins {
         id 'net.fabricmc.fabric-loom-remap' version '1.16.3'
+        id 'net.fabricmc.fabric-loom' version '1.16.3'
     }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
 include("common-1.21.1")
@@ -18,5 +23,12 @@ include("neoforge-1.21.1")
 include("test-suite")
 
 include("common-1.20.1")
+
+include("common-26.1")
+include("fabric-26.1")
+include("neoforge-26.1")
+include("common-26.3")
+include("fabric-26.3")
+include("neoforge-26.3")
 
 rootProject.name = "Antarchy"

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "antarchy:raw_uranium_block"
+  ],
+  "result": {
+    "id": "antarchy:raw_uranium",
+    "count": 9
+  }
+}

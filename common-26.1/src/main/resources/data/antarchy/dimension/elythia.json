@@ -1,0 +1,882 @@
+{
+  "type": "antarchy:elythia",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "antarchy:elythia",
+    "biome_source": {
+      "type": "antarchy:elythia_biome_source",
+      "biomes": [
+        {
+          "biome": "antarchy:elythia_ocean",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -1,
+              -0.41
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.01
+          }
+        },
+        {
+          "biome": "antarchy:elythia_coral_spikes",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -1,
+              -0.5
+            ],
+            "erosion": [
+              -0.2,
+              0.45
+            ],
+            "weirdness": [
+              0.4,
+              0.7
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:conglomerate_shore",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.41,
+              -0.37
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -1,
+              -0.4
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:zebra_scarps",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.58,
+              -0.41
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -1,
+              -0.55
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_beach",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.41,
+              -0.37
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -0.4,
+              0.4
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:arkrose_strand",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.41,
+              -0.37
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.4,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:primordial_plains",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -1,
+              -0.05
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:cranberry_fields",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -0.05,
+              0.12
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:primordial_plains",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.12,
+              0.2
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:cranberry_fields",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.68
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.62,
+              0.8
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:primordial_plains",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.68
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.8,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:primordial_massif",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0,
+              1
+            ],
+            "erosion": [
+              0.68,
+              0.72
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:shelfback_highlands",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.15
+            ],
+            "erosion": [
+              0.86,
+              0.9
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:glimmering_falls",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.15
+            ],
+            "erosion": [
+              0.905,
+              0.915
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:truffalo_forest",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.2,
+              0.4
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:truffalo_forest",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.62,
+              0.75
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:truffalo_forest",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              0.3,
+              0.65
+            ],
+            "weirdness": [
+              0.4,
+              0.62
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:truffalo_spires",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.3
+            ],
+            "weirdness": [
+              0.4,
+              0.62
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:truffalo_forest",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              0.75,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.01
+          }
+        },
+        {
+          "biome": "antarchy:butterfly_fields",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.3,
+              0.05
+            ],
+            "erosion": [
+              -0.2,
+              0.5
+            ],
+            "weirdness": [
+              0.75,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": [
+              0.52,
+              0.78
+            ],
+            "humidity": [
+              0.84,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.68
+            ],
+            "erosion": [
+              -0.5,
+              0.55
+            ],
+            "weirdness": [
+              -0.35,
+              0.62
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_river",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.41,
+              1
+            ],
+            "erosion": [
+              0.75,
+              0.85
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:fungal_reserve",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.41,
+              1
+            ],
+            "erosion": [
+              0.92,
+              1
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:glimmering_pools",
+          "parameters": {
+            "temperature": [
+              0.52,
+              0.78
+            ],
+            "humidity": [
+              0.84,
+              1
+            ],
+            "continentalness": [
+              0.36,
+              0.62
+            ],
+            "erosion": [
+              -0.3,
+              0.45
+            ],
+            "weirdness": [
+              -1,
+              -0.68
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.05
+          }
+        },
+        {
+          "biome": "antarchy:peach_forest",
+          "parameters": {
+            "temperature": [
+              0.58,
+              0.8
+            ],
+            "humidity": [
+              0.78,
+              0.98
+            ],
+            "continentalness": [
+              0.68,
+              1
+            ],
+            "erosion": [
+              -0.5,
+              0.65
+            ],
+            "weirdness": [
+              -0.85,
+              0.7
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:rockite_barrens",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.37,
+              0.05
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -1.6,
+              -1.4
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.68
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -0.68,
+              -0.45
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              0.05,
+              0.36
+            ],
+            "erosion": [
+              -1,
+              0.65
+            ],
+            "weirdness": [
+              -1,
+              -0.68
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:tidestone_lagoon",
+          "parameters": {
+            "temperature": [
+              0.55,
+              0.8
+            ],
+            "humidity": [
+              0.82,
+              1
+            ],
+            "continentalness": [
+              -0.52,
+              -0.41
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -0.5,
+              0.4
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        }
+      ]
+    }
+  }
+}

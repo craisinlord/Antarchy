@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "group": "diamond",
+  "ingredient": {
+    "item": "antarchy:rockite_diamond_ore"
+  },
+  "result": {
+    "id": "minecraft:diamond"
+  },
+  "experience": 1,
+  "cookingtime": 100
+}

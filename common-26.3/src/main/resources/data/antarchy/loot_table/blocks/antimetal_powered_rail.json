@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:antimetal_powered_rail"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/antimetal_powered_rail"
+}

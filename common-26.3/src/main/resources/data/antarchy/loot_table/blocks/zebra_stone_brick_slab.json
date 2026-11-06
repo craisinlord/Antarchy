@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:zebra_stone_brick_slab",
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "condition": {
+                "type": "minecraft:match_block",
+                "blocks": "antarchy:zebra_stone_brick_slab",
+                "state": {
+                  "type": "double"
+                }
+              },
+              "count": 2.0
+            },
+            {
+              "type": "minecraft:explosion_decay"
+            }
+          ]
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "antarchy:blocks/zebra_stone_brick_slab"
+}

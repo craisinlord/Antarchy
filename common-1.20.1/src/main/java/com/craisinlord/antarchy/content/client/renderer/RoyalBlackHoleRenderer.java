@@ -21,6 +21,9 @@ public class RoyalBlackHoleRenderer extends GeoEntityRenderer<RoyalBlackHoleEnti
                        MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
         float scale = 1.5F * entity.visualGrowth();
+        if (entity.isGravityInverted()) {
+            poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+        }
         poseStack.scale(scale, scale, scale);
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, 0xF000F0);
         poseStack.popPose();

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "antarchy:block/royal_slab"
+    },
+    "type=double": {
+      "model": "antarchy:block/royal_planks"
+    },
+    "type=top": {
+      "model": "antarchy:block/royal_slab_top"
+    }
+  }
+}

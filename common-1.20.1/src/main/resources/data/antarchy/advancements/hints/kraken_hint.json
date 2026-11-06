@@ -1,0 +1,94 @@
+{
+  "criteria": {
+    "killed_squid": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:squid"
+        }
+      }
+    },
+    "bad_omen": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "minecraft:bad_omen": {}
+        }
+      }
+    },
+    "elythia_ocean_elythia_ocean": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "antarchy:elythia_ocean"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "elythia_ocean_elythia_coral_spikes": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "antarchy:elythia_coral_spikes"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "elythia_ocean_tidestone_lagoon": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "antarchy:tidestone_lagoon"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "elythia_ocean_zebra_scarps": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "antarchy:zebra_scarps"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "killed_squid",
+      "bad_omen",
+      "elythia_ocean_elythia_ocean",
+      "elythia_ocean_elythia_coral_spikes",
+      "elythia_ocean_tidestone_lagoon",
+      "elythia_ocean_zebra_scarps"
+    ]
+  ]
+}

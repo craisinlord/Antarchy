@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "antarchy:peach_boat",
+    "minecraft:chest"
+  ],
+  "result": {
+    "id": "antarchy:peach_chest_boat"
+  }
+}

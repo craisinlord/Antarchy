@@ -5,9 +5,14 @@
     "#": {
       "item": "antarchy:dream_torch"
     },
-    "X": {
-      "tag": "c:nuggets/iron"
-    }
+    "X": [
+      {
+        "tag": "forge:nuggets/iron"
+      },
+      {
+        "tag": "c:nuggets/iron"
+      }
+    ]
   },
   "pattern": [
     "XXX",

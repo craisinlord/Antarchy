@@ -1,0 +1,24 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "antarchy:elythia_continents",
+        "points": [
+          {
+            "location": -0.4,
+            "value": 1.0,
+            "derivative": 0.0
+          },
+          {
+            "location": -0.22,
+            "value": 0.0,
+            "derivative": 0.0
+          }
+        ]
+      }
+    }
+  }
+}

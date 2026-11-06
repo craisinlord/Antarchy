@@ -1,0 +1,247 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_sword",
+          "weight": 18,
+          "modifier": {
+            "type": "minecraft:enchant_with_levels",
+            "levels": {
+              "type": "minecraft:uniform",
+              "min": 8,
+              "max": 20
+            },
+            "options": "#minecraft:on_random_loot"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:crossbow",
+          "weight": 16,
+          "modifier": {
+            "type": "minecraft:enchant_with_levels",
+            "levels": {
+              "type": "minecraft:uniform",
+              "min": 10,
+              "max": 22
+            },
+            "options": "#minecraft:on_random_loot"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bow",
+          "weight": 14,
+          "modifier": {
+            "type": "minecraft:enchant_with_levels",
+            "levels": {
+              "type": "minecraft:uniform",
+              "min": 10,
+              "max": 22
+            },
+            "options": "#minecraft:on_random_loot"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:shield",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:arrow",
+          "weight": 20,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 16,
+              "max": 36
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:spectral_arrow",
+          "weight": 10,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 8,
+              "max": 20
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:experience_bottle",
+          "weight": 10,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 3,
+              "max": 7
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:potion",
+          "weight": 8,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:potion_contents": {
+                "potion": "minecraft:swiftness"
+              }
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:potion",
+          "weight": 8,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:potion_contents": {
+                "potion": "minecraft:strength"
+              }
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:potion",
+          "weight": 6,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:potion_contents": {
+                "potion": "minecraft:healing"
+              }
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:emerald",
+          "weight": 10,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 2,
+              "max": 6
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_ingot",
+          "weight": 8,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 2,
+              "max": 7
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:lapis_lazuli",
+          "weight": 8,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 5,
+              "max": 12
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:uranium_nugget",
+          "weight": 48,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 3,
+              "max": 7
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:titanium_nugget",
+          "weight": 48,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 3,
+              "max": 7
+            }
+          }
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 4.0,
+        "max": 7.0
+      }
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_sword",
+          "weight": 4,
+          "modifier": {
+            "type": "minecraft:enchant_with_levels",
+            "levels": {
+              "type": "minecraft:uniform",
+              "min": 20,
+              "max": 30
+            },
+            "options": "#minecraft:on_random_loot"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 6,
+          "modifier": {
+            "type": "minecraft:enchant_with_levels",
+            "levels": {
+              "type": "minecraft:uniform",
+              "min": 20,
+              "max": 30
+            },
+            "options": "#minecraft:on_random_loot"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_apple",
+          "weight": 6
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 1.0,
+        "max": 1.0
+      }
+    }
+  ],
+  "random_sequence": "antarchy:spawners/ruined_arena/medium"
+}

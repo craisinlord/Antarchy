@@ -1,0 +1,96 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 32,
+				"texture_height": 32,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "projectile",
+					"pivot": [0, 6.5, -0.5],
+					"cubes": [
+						{"origin": [-1.5, 5, -5], "size": [3, 3, 9], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "ring",
+					"parent": "projectile",
+					"pivot": [0, 6.5, -2],
+					"cubes": [
+						{"origin": [-3.5, 3, -2], "size": [7, 7, 0], "uv": [0, 12]}
+					]
+				},
+				{
+					"name": "particle_right",
+					"parent": "projectile",
+					"pivot": [-3.5, 6, 2.5],
+					"cubes": [
+						{"origin": [-3.5, 5, 1], "size": [0, 2, 3], "uv": [0, -1]}
+					]
+				},
+				{
+					"name": "particle_left",
+					"parent": "projectile",
+					"pivot": [3.5, 6, 2.5],
+					"cubes": [
+						{"origin": [3.5, 5, 1], "size": [0, 2, 3], "uv": [0, -1], "mirror": true}
+					]
+				},
+				{
+					"name": "particle_right3",
+					"parent": "projectile",
+					"pivot": [-2.5, 4, 4.5],
+					"cubes": [
+						{"origin": [-2.5, 3, 3], "size": [0, 2, 3], "uv": [0, 1]}
+					]
+				},
+				{
+					"name": "particle_left3",
+					"parent": "projectile",
+					"pivot": [2.5, 4, 4.5],
+					"cubes": [
+						{"origin": [2.5, 3, 3], "size": [0, 2, 3], "uv": [0, 1], "mirror": true}
+					]
+				},
+				{
+					"name": "particle_right2",
+					"parent": "projectile",
+					"pivot": [-3.5, 8, 6.5],
+					"cubes": [
+						{"origin": [-3.5, 7, 5], "size": [0, 2, 3], "uv": [0, -3]}
+					]
+				},
+				{
+					"name": "particle_left2",
+					"parent": "projectile",
+					"pivot": [3.5, 8, 6.5],
+					"cubes": [
+						{"origin": [3.5, 7, 5], "size": [0, 2, 3], "uv": [0, -3], "mirror": true}
+					]
+				},
+				{
+					"name": "particle_right4",
+					"parent": "projectile",
+					"pivot": [-1.5, 10, 3.5],
+					"cubes": [
+						{"origin": [-1.5, 9, 2], "size": [0, 2, 3], "uv": [0, -3]}
+					]
+				},
+				{
+					"name": "particle_left4",
+					"parent": "projectile",
+					"pivot": [1.5, 10, 3.5],
+					"cubes": [
+						{"origin": [1.5, 9, 2], "size": [0, 2, 3], "uv": [0, -3], "mirror": true}
+					]
+				}
+			]
+		}
+	]
+}

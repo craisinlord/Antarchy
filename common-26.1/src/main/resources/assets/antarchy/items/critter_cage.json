@@ -1,0 +1,40 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "antarchy:critter_cage_state",
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "antarchy:item/critter_cage"
+    },
+    "entries": [
+      {
+        "threshold": 1.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "antarchy:item/critter_cage_filled_plain"
+        }
+      },
+      {
+        "threshold": 2.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "antarchy:item/critter_cage_filled_colored",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -1
+            },
+            {
+              "type": "antarchy:critter_cage",
+              "layer": 1
+            },
+            {
+              "type": "antarchy:critter_cage",
+              "layer": 2
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

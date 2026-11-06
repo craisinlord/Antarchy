@@ -31,9 +31,17 @@
     }
   },
   "spawn_costs": {
+    "antarchy:scorpion": {
+      "energy_budget": 0.15,
+      "charge": 0.7
+    },
+    "antarchy:manticore": {
+      "energy_budget": 0.12,
+      "charge": 1.0
+    },
     "antarchy:emperor_scorpion": {
-      "energy_budget": 0.18,
-      "charge": 1.4
+      "energy_budget": 0.12,
+      "charge": 2.0
     }
   },
   "carvers": {

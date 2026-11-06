@@ -46,10 +46,13 @@ public final class RoyalBlockDestruction {
                 continue;
             }
 
+            BlockState existing = level.getBlockState(cursor);
+            if (existing.isAir()) {
+                continue;
+            }
+
             BlockPos pos = cursor.immutable();
-            BlockState existing = level.getBlockState(pos);
-            if (existing.isAir()
-                    || level.getBlockEntity(pos) != null
+            if (level.getBlockEntity(pos) != null
                     || existing.getDestroySpeed(level, pos) < 0.0F
                     || existing.getBlock().getExplosionResistance() > maxResistance
                     || existing.getCollisionShape(level, pos).isEmpty()) {

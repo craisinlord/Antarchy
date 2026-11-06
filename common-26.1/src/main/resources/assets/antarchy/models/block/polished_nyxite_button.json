@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/stone_button",
+  "textures": {
+    "texture": "antarchy:block/polished_nyxite"
+  }
+}

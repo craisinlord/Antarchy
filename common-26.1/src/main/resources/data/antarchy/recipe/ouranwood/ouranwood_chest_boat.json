@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "antarchy:ouranwood_boat",
+    "minecraft:chest"
+  ],
+  "result": {
+    "id": "antarchy:ouranwood_chest_boat"
+  }
+}

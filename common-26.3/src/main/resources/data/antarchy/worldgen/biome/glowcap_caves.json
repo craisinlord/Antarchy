@@ -1,0 +1,109 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.68,
+  "downfall": 0.35,
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [
+      "antarchy:cavaryn_worm_bore_dressing",
+      "antarchy:cavaryn_brood_nest_dressing",
+      "antarchy:cavaryn_brood_gallery_dressing",
+      "antarchy:cavaryn_glowcap_grotto_dressing",
+      "antarchy:cavaryn_moleworm_warren_dressing",
+      "antarchy:cavaryn_carapace_rift_dressing",
+      "antarchy:cavaryn_biowart_gut_dressing"
+    ],
+    [],
+    [],
+    [
+      "antarchy:myrmite_coal_ore",
+      "antarchy:myrmite_copper_ore",
+      "antarchy:myrmite_iron_ore",
+      "antarchy:myrmite_gold_ore",
+      "antarchy:myrmite_redstone_ore",
+      "antarchy:myrmite_lapis_ore",
+      "antarchy:myrmite_diamond_ore",
+      "antarchy:myrmite_emerald_ore",
+      "antarchy:myrmite_redstone_ore_rich",
+      "antarchy:myrmite_lapis_ore_rich",
+      "antarchy:myrmite_fossil"
+    ],
+    [],
+    [],
+    [
+      "antarchy:glowcap_caves_floor_patch",
+      "antarchy:glowcap_caves_huge_glowcap_mushroom",
+      "antarchy:glowcap_caves_molting_vines",
+      "antarchy:glowcap_caves_wall_amber_moss",
+      "antarchy:termite_nest"
+    ],
+    []
+  ],
+  "attributes": {
+    "minecraft:visual/fog_color": "#0f0000",
+    "minecraft:visual/sky_color": "#080000",
+    "minecraft:visual/water_fog_color": "#561b1a",
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.cave",
+        "tick_delay": 40000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "antarchy:orange_ash"
+        },
+        "probability": 0.004
+      }
+    ],
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "antarchy:rolly_polly",
+              "weight": 280,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 4,
+                "max_inclusive": 8
+              }
+            },
+            {
+              "type": "antarchy:stink_bug",
+              "weight": 380,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 4,
+                "max_inclusive": 8
+              }
+            }
+          ]
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.98
+  },
+  "effects": {
+    "water_color": "#903f10",
+    "grass_color": "#ff7f00",
+    "foliage_color": "#ff2b00",
+    "grass_color_modifier": "none"
+  }
+}

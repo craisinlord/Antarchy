@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:myrmite_redstone_ore",
+    "antarchy:broodstone_redstone_ore",
+    "antarchy:rockite_redstone_ore"
+  ]
+}

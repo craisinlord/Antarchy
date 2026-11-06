@@ -6,9 +6,14 @@
     "PPP"
   ],
   "key": {
-    "S": {
-      "tag": "c:slime_balls"
-    },
+    "S": [
+      {
+        "tag": "forge:slimeballs"
+      },
+      {
+        "tag": "c:slime_balls"
+      }
+    ],
     "P": {
       "item": "minecraft:paper"
     }

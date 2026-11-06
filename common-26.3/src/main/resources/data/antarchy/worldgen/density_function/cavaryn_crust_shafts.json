@@ -1,0 +1,8 @@
+{
+  "type": "antarchy:cavaryn_cavity",
+  "kind": "crust_shaft",
+  "humidity": "antarchy:cavaryn/humidity",
+  "weirdness": "antarchy:cavaryn/weirdness",
+  "depth": "minecraft:overworld/depth",
+  "noise": "antarchy:cavaryn_crust_shaft"
+}

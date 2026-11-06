@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#antarchy:flower_forest_butterfly_spawn_biomes",
+  "spawners": [
+    {
+      "type": "antarchy:butterfly",
+      "weight": 28,
+      "minCount": 2,
+      "maxCount": 5
+    }
+  ]
+}

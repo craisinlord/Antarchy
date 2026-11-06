@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/iron_bars_post",
+  "textures": {
+    "bars": "antarchy:block/titanium/titanium_bars",
+    "edge": "antarchy:block/titanium/titanium_bars",
+    "particle": "antarchy:block/titanium/titanium_bars"
+  }
+}

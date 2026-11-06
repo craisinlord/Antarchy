@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": "antarchy:antimetal"
+  },
+  "result": {
+    "id": "antarchy:polished_antimetal"
+  }
+}

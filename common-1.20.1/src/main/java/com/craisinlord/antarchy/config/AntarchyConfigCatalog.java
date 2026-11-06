@@ -101,6 +101,9 @@ public final class AntarchyConfigCatalog {
         if (setterType == float.class && getterType == float.class) {
             return ValueType.FLOAT;
         }
+        if (setterType == String.class && getterType == String.class) {
+            return ValueType.STRING;
+        }
         if (setterType == String.class && ResourceKey.class.isAssignableFrom(getterType)) {
             return ValueType.STRING;
         }
@@ -131,6 +134,8 @@ public final class AntarchyConfigCatalog {
 
     private static boolean isMiscSetting(String name) {
         return name.equals("disableInfinityBookPortalCreation")
+                || name.equals("fossilsEnabled")
+                || name.equals("fossilEntityBlacklist")
                 || name.equals("rainbowAntsLeadToInfinityDimensions")
                 || name.equals("permanentPortalsEnabled")
                 || name.equals("permanentPortalsFlintAndSteelEnabled")
@@ -149,6 +154,17 @@ public final class AntarchyConfigCatalog {
                 || name.startsWith("portalGunMoon")
                 || name.equals("hushweedSporeLifetimeSeconds")
                 || name.equals("elythiaFireflyParticlesEnabled")
+                || name.equals("elythiaFogEnabled")
+                || name.equals("elythiaGroundMistEnabled")
+                || name.equals("elythiaGrassWindEnabled")
+                || name.equals("elythiaWindSoundsEnabled")
+                || name.equals("elythiaWindLinesEnabled")
+                || name.equals("primordialGrassDrawDistance")
+                || name.equals("primordialGrassDynamic")
+                || name.equals("primordialGrassQuality")
+                || name.equals("elythiaSoftCloudsEnabled")
+                || name.equals("boatsClimbWaterSteps")
+                || name.equals("boatWaterStepMaxHeight")
                 || name.equals("duplicatorTreeEnabled")
                 || name.equals("glowVinesUnderLeaves")
                 || name.equals("swingThroughGrassEnabled")
@@ -157,6 +173,7 @@ public final class AntarchyConfigCatalog {
                 || name.equals("unlockAllArchives")
                 || name.equals("entitySpecificFireOverlayEnabled")
                 || name.startsWith("dreamSand")
+                || name.startsWith("giantLilyPad")
                 || name.equals("ichorWitherEnabled")
                 || name.startsWith("diamondMinecart")
                 || name.startsWith("hoverboard");

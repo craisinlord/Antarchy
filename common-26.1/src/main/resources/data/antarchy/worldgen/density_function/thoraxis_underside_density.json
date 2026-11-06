@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:mul",
+  "argument1": 0.72,
+  "argument2": {
+    "type": "minecraft:range_choice",
+    "input": "antarchy:thoraxis_underside_base",
+    "min_inclusive": -1.0,
+    "max_exclusive": 1.0,
+    "when_in_range": {
+      "type": "minecraft:add",
+      "argument1": "antarchy:thoraxis_underside_base",
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 0.42,
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": 0.9,
+            "argument2": "antarchy:thoraxis_underside_noise"
+          },
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": 0.35,
+            "argument2": {
+              "type": "minecraft:flat_cache",
+              "argument": {
+                "type": "minecraft:noise",
+                "noise": "minecraft:surface",
+                "xz_scale": 1.0,
+                "y_scale": 0.0
+              }
+            }
+          }
+        }
+      }
+    },
+    "when_out_of_range": "antarchy:thoraxis_underside_base"
+  }
+}

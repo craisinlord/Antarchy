@@ -1,0 +1,9 @@
+{
+  "type": "antarchy:brown_ant_nest",
+  "to_place": {
+    "id": "antarchy:brown_ant_nest",
+    "properties": {
+      "facing": "north"
+    }
+  }
+}

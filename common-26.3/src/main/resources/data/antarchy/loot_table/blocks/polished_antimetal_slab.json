@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "condition": {
+                "type": "minecraft:match_block",
+                "blocks": "antarchy:polished_antimetal_slab",
+                "state": {
+                  "type": "double"
+                }
+              },
+              "modifier": {
+                "type": "minecraft:set_count",
+                "count": 2
+              },
+              "name": "antarchy:polished_antimetal_slab"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "antarchy:polished_antimetal_slab"
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ],
+  "random_sequence": "antarchy:blocks/polished_antimetal_slab"
+}

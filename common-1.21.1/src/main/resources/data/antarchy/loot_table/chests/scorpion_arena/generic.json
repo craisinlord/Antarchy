@@ -9,4 +9,14 @@
 {"type":"minecraft:item","name":"antarchy:scorpion_whip","weight":3},{"type":"minecraft:item","name":"minecraft:golden_apple","weight":3},
 {"type":"minecraft:item","name":"minecraft:potion","weight":7,"functions":[{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
 {"type":"minecraft:item","name":"minecraft:book","weight":5,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:sharpness"]}]}
-]}],"random_sequence":"antarchy:chests/scorpion_arena/generic"}
+]},
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "antarchy:inject/antroid_phone"
+        }
+      ]
+    }
+  ],"random_sequence":"antarchy:chests/scorpion_arena/generic"}

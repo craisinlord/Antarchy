@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "id": "antarchy:jerry_egg",
+    "properties": {
+      "rotated": "false"
+    }
+  }
+}

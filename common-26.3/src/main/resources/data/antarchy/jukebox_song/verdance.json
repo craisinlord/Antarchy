@@ -1,0 +1,8 @@
+{
+  "sound_event": "antarchy:music_disc_verdance",
+  "description": {
+    "translate": "jukebox_song.antarchy.verdance"
+  },
+  "length_in_seconds": 135.75,
+  "comparator_output": 13
+}

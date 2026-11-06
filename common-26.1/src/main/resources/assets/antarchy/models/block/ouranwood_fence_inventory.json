@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/jungle_fence_inventory",
+  "textures": {
+    "texture": "antarchy:block/ouranwood/ouranwood_planks"
+  }
+}

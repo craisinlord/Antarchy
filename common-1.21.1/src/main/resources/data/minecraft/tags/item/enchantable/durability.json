@@ -8,6 +8,7 @@
     "antarchy:ultimate_sword",
     "antarchy:battle_axe",
     "antarchy:big_bertha",
+    "antarchy:big_betsy",
     "antarchy:giant_frying_pan",
     "antarchy:nightmare_sword",
     "antarchy:basilisk_dagger",
@@ -55,6 +56,9 @@
     "antarchy:portal_gun_atlas",
     "antarchy:portal_gun_p_body",
     "antarchy:portal_gun_craisin",
-    "antarchy:portal_gun_laynce"
+    "antarchy:portal_gun_laynce",
+    "antarchy:squidzooka",
+    "antarchy:rpo_launcher",
+    "antarchy:anvil_cannon"
   ]
 }

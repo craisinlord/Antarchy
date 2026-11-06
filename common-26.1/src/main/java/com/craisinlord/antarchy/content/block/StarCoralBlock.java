@@ -1,0 +1,74 @@
+package com.craisinlord.antarchy.content.block;
+
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.material.FluidState;
+
+public class StarCoralBlock extends Block {
+    public static final MapCodec<Block> DEAD_CORAL_FIELD = BuiltInRegistries.BLOCK.byNameCodec().fieldOf("dead");
+    public static final MapCodec<StarCoralBlock> CODEC = RecordCodecBuilder.mapCodec(
+            instance -> instance.group(DEAD_CORAL_FIELD.forGetter(block -> block.deadBlock), propertiesCodec()).apply(instance, StarCoralBlock::new)
+    );
+    private final Block deadBlock;
+
+    public StarCoralBlock(Block deadBlock, Properties properties) {
+        super(properties);
+        this.deadBlock = deadBlock;
+    }
+
+    @Override
+    public MapCodec<StarCoralBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (!this.scanForWater(level, pos)) {
+            level.setBlock(pos, this.deadBlock.defaultBlockState(), 2);
+        }
+    }
+
+    @Override
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        if (!this.scanForWater(level, pos)) {
+            tickAccess.scheduleTick(pos, this, 60 + random.nextInt(40));
+        }
+
+        return super.updateShape(state, level, tickAccess, pos, direction, neighborPos, neighborState, random);
+    }
+
+    protected boolean scanForWater(BlockGetter level, BlockPos pos) {
+        for (Direction direction : Direction.values()) {
+            FluidState fluidState = level.getFluidState(pos.relative(direction));
+            if (fluidState.is(FluidTags.WATER)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        if (!this.scanForWater(context.getLevel(), context.getClickedPos())) {
+            context.getLevel().scheduleTick(context.getClickedPos(), this, 60 + context.getLevel().getRandom().nextInt(40));
+        }
+
+        return this.defaultBlockState();
+    }
+}

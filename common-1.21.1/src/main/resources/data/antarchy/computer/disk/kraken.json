@@ -1,5 +1,6 @@
 {
   "category": "antarchy:general",
   "title": "guide.antarchy.disk.kraken.title",
+  "description": "guide.antarchy.disk.kraken.description",
   "entries": ["antarchy:kraken"]
 }

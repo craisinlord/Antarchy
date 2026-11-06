@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:find_top_surface",
+  "cell_height": 8,
+  "density": "antarchy:elythia_surface",
+  "lower_bound": -64,
+  "upper_bound": 448
+}

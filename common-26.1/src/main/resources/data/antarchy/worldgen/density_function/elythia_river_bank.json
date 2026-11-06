@@ -1,0 +1,125 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:max",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": 0.015764745,
+              "argument2": "antarchy:elythia_river_surface"
+            },
+            "argument2": -2.076646
+          },
+          "argument2": 0.031529
+        },
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:spline",
+            "spline": {
+              "coordinate": "antarchy:elythia_river_surface",
+              "points": [
+                {
+                  "location": 100.5,
+                  "value": 1.0,
+                  "derivative": 0.0
+                },
+                {
+                  "location": 103.0,
+                  "value": 0.0,
+                  "derivative": 0.0
+                }
+              ]
+            }
+          },
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:min",
+              "argument1": "antarchy:elythia_coast_offset",
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:mul",
+                    "argument1": 0.015764745,
+                    "argument2": "antarchy:elythia_river_surface"
+                  },
+                  "argument2": -2.076646
+                },
+                "argument2": 0.031529
+              }
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": -1.0,
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:mul",
+                    "argument1": 0.015764745,
+                    "argument2": "antarchy:elythia_river_surface"
+                  },
+                  "argument2": -2.076646
+                },
+                "argument2": 0.031529
+              }
+            }
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:min",
+        "argument1": "antarchy:elythia_coast_offset",
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": 0.015764745,
+              "argument2": "antarchy:elythia_river_surface"
+            },
+            "argument2": -2.076646
+          },
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": 0.094588,
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": 0.3,
+              "argument2": {
+                "type": "minecraft:spline",
+                "spline": {
+                  "coordinate": "antarchy:elythia_massif_mask",
+                  "points": [
+                    {
+                      "location": 0.0,
+                      "value": 0.0,
+                      "derivative": 0.0
+                    },
+                    {
+                      "location": 0.5,
+                      "value": 1.0,
+                      "derivative": 0.0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

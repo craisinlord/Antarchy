@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "antarchy:nightmare_armor"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "antarchy:nightmare_armor"
+      }
+    ]
+  }
+}

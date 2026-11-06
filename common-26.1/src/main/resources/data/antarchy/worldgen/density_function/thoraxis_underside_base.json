@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:y_clamped_gradient",
+    "from_y": -256,
+    "to_y": -1,
+    "from_value": -7.1368,
+    "to_value": 1.05
+  },
+  "argument2": {
+    "type": "minecraft:mul",
+    "argument1": 0.032105,
+    "argument2": "antarchy:thoraxis_underside_mountains"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:uranium_ore",
+    "antarchy:deepslate_uranium_ore",
+    "antarchy:broodstone_uranium_ore",
+    "antarchy:rockite_uranium_ore"
+  ]
+}

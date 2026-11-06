@@ -25,8 +25,6 @@ public final class PortalGunClientHandler {
         if (mc.player == null) {
             com.craisinlord.antarchy.content.client.PortalGunResetClientState.clear();
         }
-        com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.setRequestSender(com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore::sendToServer);
-        com.craisinlord.antarchy.content.client.MoonSkyTracker.setSender(com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore::sendToServer);
         com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.setClientReporter(com.craisinlord.antarchy.content.client.MoonSkyTracker::report);
         boolean hasPortalGun = mc.player != null && (mc.player.getMainHandItem().getItem() instanceof PortalGunItem || mc.player.getOffhandItem().getItem() instanceof PortalGunItem);
         boolean gameplayInput = mc.screen == null;

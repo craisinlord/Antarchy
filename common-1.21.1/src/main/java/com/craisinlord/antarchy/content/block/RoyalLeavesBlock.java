@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -39,6 +40,10 @@ public class RoyalLeavesBlock extends LeavesBlock {
     @Override
     public MapCodec<RoyalLeavesBlock> codec() {
         return CODEC;
+    }
+
+    public boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction dir) {
+        return LeafFaceCulling.hidesNeighborFace(level, pos, neighborState);
     }
 
     @Override

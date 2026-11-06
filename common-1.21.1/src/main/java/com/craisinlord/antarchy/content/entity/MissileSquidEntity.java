@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
@@ -10,9 +12,12 @@ import com.craisinlord.anthology.gravity.GravityTransition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -40,6 +45,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec2;
@@ -57,9 +64,12 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.UUID;
 
-public class MissileSquidEntity extends Monster implements GeoEntity {
+public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(MissileSquidEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> CAN_FLY = SynchedEntityData.defineId(MissileSquidEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(MissileSquidEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final int BASE_XP_REWARD = 6;
 
     private static final String BITE_COOLDOWN_KEY = "BiteCooldown";
     private static final String CAN_FLY_KEY = "CanFly";
@@ -68,6 +78,8 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private static final String ARMED_AFTER_LANDING_KEY = "ArmedAfterLanding";
     private static final String ACTION_ANIM_TICKS_KEY = "ActionAnimTicks";
     private static final String SPAWNED_BY_KRAKEN_KEY = "SpawnedByKraken";
+    private static final String KRAKEN_OWNER_KEY = "KrakenOwner";
+    private static final int KRAKEN_OWNER_GRACE_TICKS = 200;
     private static final double AGGRO_SPEED = 0.5D;
     private static final double PATROL_SPEED = 0.28D;
     private static final double ATTACH_RANGE_SQR = 2.25D;
@@ -82,9 +94,12 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private static final RawAnimation SWIM_ANIM = RawAnimation.begin().thenLoop("swim");
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack");
 
+    private static final int PATROL_SEARCH_RETRY_TICKS = 10;
+
     @Nullable
     private Vec3 patrolTarget;
     private int patrolRetargetTicks;
+    private boolean patrolSearchFailed;
     private int strafeRetargetTicks;
     private int biteCooldown;
     private int actionAnimationTicks;
@@ -95,12 +110,17 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private boolean spawnedByKraken;
     @Nullable
     private UUID launchOwnerUuid;
+    @Nullable
+    private UUID glimmerEchoOwner;
+    @Nullable
+    private UUID krakenOwner;
+    private int krakenOwnerMissingTicks;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public MissileSquidEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new SmoothSwimmingMoveControl(this, 80, 8, 0.06F, 0.12F, true);
-        this.xpReward = 6;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -132,6 +152,68 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
         builder.define(CAN_FLY, false);
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    public void setKrakenOwner(@Nullable UUID owner) {
+        this.krakenOwner = owner;
+    }
+
+    public boolean isOwnedByKraken(UUID owner) {
+        return owner.equals(this.krakenOwner);
+    }
+
+    private boolean tickKrakenOwner() {
+        if (this.krakenOwner == null || this.tickCount % 20 != 0 || !(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        Entity owner = serverLevel.getEntity(this.krakenOwner);
+        if (owner != null && owner.isAlive()) {
+            this.krakenOwnerMissingTicks = 0;
+            return false;
+        }
+        if (owner == null) {
+            this.krakenOwnerMissingTicks += 20;
+            if (this.krakenOwnerMissingTicks < KRAKEN_OWNER_GRACE_TICKS) {
+                return false;
+            }
+        }
+        serverLevel.sendParticles(ParticleTypes.SQUID_INK, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(), 10, 0.3D, 0.3D, 0.3D, 0.02D);
+        this.discard();
+        return true;
+    }
+
+    private int glimmerCooldown(int ticks) {
+        if (!this.isGlimmerEcho()) {
+            return ticks;
+        }
+        return Math.max(1, (int) Math.round(ticks * AntarchySettings.glimmerKrakenCooldownMultiplier()));
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.missile_squid.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? BuiltInLootTables.EMPTY : super.getDefaultLootTable();
     }
 
     @Override
@@ -186,6 +268,18 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide && this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 8, 2);
+            if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                return;
+            }
+        }
+        if (!this.level().isClientSide && this.tickKrakenOwner()) {
+            return;
+        }
+        if (this.isDeadOrDying()) {
+            return;
+        }
         LivingEntity attachedTarget = this.getAttachedTarget();
         this.setNoGravity(attachedTarget != null || (!this.launchedFromSquidzooka && (this.isInWater() || this.canFly())));
 
@@ -317,6 +411,13 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         if (this.launchOwnerUuid != null) {
             tag.putUUID(LAUNCH_OWNER_KEY, this.launchOwnerUuid);
         }
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        if (this.glimmerEchoOwner != null) {
+            tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
+        }
+        if (this.krakenOwner != null) {
+            tag.putUUID(KRAKEN_OWNER_KEY, this.krakenOwner);
+        }
     }
 
     @Override
@@ -329,6 +430,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         this.actionAnimationTicks = Math.max(0, tag.getInt(ACTION_ANIM_TICKS_KEY));
         this.spawnedByKraken = tag.getBoolean(SPAWNED_BY_KRAKEN_KEY);
         this.launchOwnerUuid = tag.hasUUID(LAUNCH_OWNER_KEY) ? tag.getUUID(LAUNCH_OWNER_KEY) : null;
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
+        this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
+        this.krakenOwner = tag.hasUUID(KRAKEN_OWNER_KEY) ? tag.getUUID(KRAKEN_OWNER_KEY) : null;
         this.updateAnimationState();
     }
 
@@ -367,9 +471,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private void tickPatrolMovement() {
         this.strafeRetargetTicks = 0;
 
-        if (this.patrolRetargetTicks-- <= 0 || this.patrolTarget == null || this.position().distanceToSqr(this.patrolTarget) < 3.0D) {
-            this.patrolRetargetTicks = 24 + this.random.nextInt(18);
+        if (this.patrolRetargetTicks-- <= 0 || this.patrolTarget == null || (!this.patrolSearchFailed && this.position().distanceToSqr(this.patrolTarget) < 3.0D)) {
             this.patrolTarget = this.findPatrolTarget();
+            this.patrolRetargetTicks = this.patrolSearchFailed ? PATROL_SEARCH_RETRY_TICKS : 24 + this.random.nextInt(18);
         }
 
         if (this.patrolTarget != null) {
@@ -385,9 +489,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         BlockPos origin = this.blockPosition();
         for (int attempt = 0; attempt < 16; attempt++) {
             BlockPos candidate = origin.offset(this.random.nextInt(17) - 8, this.random.nextInt(7) - 3, this.random.nextInt(17) - 8);
-            boolean candidateOpen = this.level().isEmptyBlock(candidate) || this.level().getFluidState(candidate).is(FluidTags.WATER);
-            boolean aboveOpen = this.level().isEmptyBlock(candidate.above()) || this.level().getFluidState(candidate.above()).is(FluidTags.WATER);
             if (this.canFly()) {
+                boolean candidateOpen = this.level().isEmptyBlock(candidate) || this.level().getFluidState(candidate).is(FluidTags.WATER);
+                boolean aboveOpen = this.level().isEmptyBlock(candidate.above()) || this.level().getFluidState(candidate.above()).is(FluidTags.WATER);
                 if (!candidateOpen || !aboveOpen) {
                     continue;
                 }
@@ -395,9 +499,11 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
                 continue;
             }
 
+            this.patrolSearchFailed = false;
             return Vec3.atCenterOf(candidate);
         }
 
+        this.patrolSearchFailed = true;
         return this.position();
     }
 
@@ -535,7 +641,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private void tickClientParticles() {
         if ((this.getTarget() != null || this.biteCooldown > 0 || this.getAttachedTarget() != null) && this.tickCount % 3 == 0) {
             this.level().addParticle(
-                    ParticleTypes.BUBBLE,
+                    GlimmerEchoes.particle(this, ParticleTypes.BUBBLE),
                     this.getX() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
                     this.getY() + 0.3D + this.random.nextDouble() * 0.4D,
                     this.getZ() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
@@ -566,7 +672,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
             return;
         }
 
-        if (this.isInWaterOrBubble()) {
+        if (this.isInWaterOrBubble() || (this.spawnedByKraken && this.canFly())) {
             this.setAirSupply(this.getMaxAirSupply());
             return;
         }
@@ -610,7 +716,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         this.setTarget(target);
         this.setDeltaMovement(Vec3.ZERO);
         this.hasImpulse = true;
-        this.biteCooldown = LATCH_DAMAGE_INTERVAL;
+        this.biteCooldown = this.glimmerCooldown(LATCH_DAMAGE_INTERVAL);
         this.playActionAnimation(ANIM_ATTACK, ATTACK_ANIM_TICKS);
         this.positionOnAttachedTarget(target);
         this.updateAttachedRotation(target);
@@ -649,12 +755,15 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
 
         if (this.biteCooldown <= 0) {
             Vec3 previousMovement = target.getDeltaMovement();
-            boolean hurt = target.hurt(this.damageSources().mobAttack(this), LATCH_DAMAGE);
+            boolean hurt = target.hurt(this.damageSources().mobAttack(this), LATCH_DAMAGE * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner));
+            if (hurt && this.isGlimmerEcho() && this.level() instanceof ServerLevel serverLevel) {
+                GlimmerEchoes.burst(serverLevel, target.position().add(0.0D, target.getBbHeight() * 0.6D, 0.0D), 0.4D, 8);
+            }
             target.setDeltaMovement(previousMovement);
             if (hurt) {
                 this.playActionAnimation(ANIM_ATTACK, ATTACK_ANIM_TICKS);
             }
-            this.biteCooldown = LATCH_DAMAGE_INTERVAL;
+            this.biteCooldown = this.glimmerCooldown(LATCH_DAMAGE_INTERVAL);
         }
     }
 

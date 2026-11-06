@@ -1,0 +1,75 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": 131.7279,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 63.4326,
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": "antarchy:elythia_surface_offset",
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:clamp",
+                    "input": {
+                      "type": "minecraft:add",
+                      "argument1": 1.3125,
+                      "argument2": {
+                        "type": "minecraft:mul",
+                        "argument1": -0.0078125,
+                        "argument2": {
+                          "type": "minecraft:add",
+                          "argument1": 131.7279,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 63.4326,
+                            "argument2": "antarchy:elythia_surface_offset"
+                          }
+                        }
+                      }
+                    },
+                    "min": -1.5,
+                    "max": 1.5
+                  },
+                  "argument2": "minecraft:overworld/offset"
+                },
+                "points": [
+                  {
+                    "location": 0.31,
+                    "value": 0.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.39,
+                    "value": 1.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.48,
+                    "value": 1.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.56,
+                    "value": 0.0,
+                    "derivative": 0.0
+                  }
+                ]
+              }
+            },
+            "argument2": "antarchy:elythia_terrain_roughness_2d"
+          }
+        }
+      }
+    }
+  }
+}

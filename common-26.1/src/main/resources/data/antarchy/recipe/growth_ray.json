@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TTT",
+    "TCT",
+    "  N"
+  ],
+  "key": {
+    "T": "antarchy:titanium_ingot",
+    "N": "#c:ingots/netherite",
+    "C": "antarchy:bluestone_comparator"
+  },
+  "result": {
+    "id": "antarchy:growth_ray"
+  }
+}

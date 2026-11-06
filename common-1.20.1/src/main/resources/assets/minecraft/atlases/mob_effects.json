@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "antarchy:mob_effect/remembrance",
+      "sprite": "antarchy:remembrance"
+    },
+    {
+      "type": "single",
+      "resource": "antarchy:mob_effect/sauced",
+      "sprite": "antarchy:sauced"
+    }
+  ]
+}

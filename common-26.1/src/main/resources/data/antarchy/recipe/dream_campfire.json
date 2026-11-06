@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": "antarchy:dream_sand",
+    "L": "#minecraft:logs",
+    "S": "#c:rods/wooden"
+  },
+  "pattern": [
+    " S ",
+    "S#S",
+    "LLL"
+  ],
+  "result": {
+    "id": "antarchy:dream_campfire"
+  }
+}

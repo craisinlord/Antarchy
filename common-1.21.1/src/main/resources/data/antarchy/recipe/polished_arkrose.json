@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "antarchy:arkrose"
+    }
+  },
+  "result": {
+    "id": "antarchy:polished_arkrose",
+    "count": 4
+  }
+}

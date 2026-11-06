@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:zebra_stone_bricks"
+  },
+  "result": "antarchy:zebra_stone_brick_stairs",
+  "count": 1
+}

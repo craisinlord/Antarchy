@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "minecraft:potion",
+    "potion_contents": {
+      "potions": "antarchy:strong_shrinking"
+    }
+  },
+  "output": {
+    "components": {
+      "minecraft:potion_contents": {
+        "potion": "antarchy:extreme_shrinking"
+      }
+    },
+    "id": "minecraft:potion"
+  },
+  "reagent": {
+    "item": "minecraft:glowstone_dust"
+  }
+}

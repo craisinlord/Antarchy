@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.fabric.registry;
 
+import com.craisinlord.antarchy.content.entity.AntarchyBoatEntity;
+import com.craisinlord.antarchy.content.entity.AntarchyChestBoatEntity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.AppleCow;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.EnchantedGoldenAppleCow;
@@ -24,18 +26,11 @@ import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
+import com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
 import com.craisinlord.antarchy.content.entity.SpringbugEntity;
 import com.craisinlord.antarchy.content.entity.StinkBugEntity;
 import com.craisinlord.antarchy.content.entity.HoverboardEntity;
-import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
-import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.NadirBoatEntity;
-import com.craisinlord.antarchy.content.entity.NadirChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.RoyalBoatEntity;
-import com.craisinlord.antarchy.content.entity.RoyalChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.TruffaloBoatEntity;
-import com.craisinlord.antarchy.content.entity.TruffaloChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.RollyPollyEntity;
@@ -131,80 +126,80 @@ public final class AntarchyFabricEntities {
                     .build("alpha_mantis"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<OuranwoodBoatEntity>> OURANWOOD_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_boat",
-            () -> EntityType.Builder.<OuranwoodBoatEntity>of(OuranwoodBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyBoatEntity>> OURANWOOD_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "ouranwood_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("ouranwood_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<OuranwoodChestBoatEntity>> OURANWOOD_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_chest_boat",
-            () -> EntityType.Builder.<OuranwoodChestBoatEntity>of(OuranwoodChestBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyChestBoatEntity>> OURANWOOD_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "ouranwood_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("ouranwood_chest_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.PeachBoatEntity>> PEACH_BOAT_ENTITY = ENTITY_TYPES.register("peach_boat",
-            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.PeachBoatEntity>of(com.craisinlord.antarchy.content.entity.PeachBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyBoatEntity>> PEACH_BOAT_ENTITY = ENTITY_TYPES.register("peach_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "peach_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("peach_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.PeachChestBoatEntity>> PEACH_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("peach_chest_boat",
-            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.PeachChestBoatEntity>of(com.craisinlord.antarchy.content.entity.PeachChestBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyChestBoatEntity>> PEACH_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("peach_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "peach_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("peach_chest_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<NadirBoatEntity>> NADIR_BOAT_ENTITY = ENTITY_TYPES.register("nadir_boat",
-            () -> EntityType.Builder.<NadirBoatEntity>of(NadirBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyBoatEntity>> NADIR_BOAT_ENTITY = ENTITY_TYPES.register("nadir_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "nadir_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("nadir_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<NadirChestBoatEntity>> NADIR_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("nadir_chest_boat",
-            () -> EntityType.Builder.<NadirChestBoatEntity>of(NadirChestBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyChestBoatEntity>> NADIR_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("nadir_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "nadir_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("nadir_chest_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<RoyalBoatEntity>> ROYAL_BOAT_ENTITY = ENTITY_TYPES.register("royal_boat",
-            () -> EntityType.Builder.<RoyalBoatEntity>of(RoyalBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyBoatEntity>> ROYAL_BOAT_ENTITY = ENTITY_TYPES.register("royal_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "royal_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("royal_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<RoyalChestBoatEntity>> ROYAL_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("royal_chest_boat",
-            () -> EntityType.Builder.<RoyalChestBoatEntity>of(RoyalChestBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyChestBoatEntity>> ROYAL_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("royal_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "royal_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("royal_chest_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<TruffaloBoatEntity>> TRUFFALO_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_boat",
-            () -> EntityType.Builder.<TruffaloBoatEntity>of(TruffaloBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyBoatEntity>> TRUFFALO_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_boat",
+            () -> EntityType.Builder.<AntarchyBoatEntity>of((type, level) -> new AntarchyBoatEntity(type, level, "truffalo_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("truffalo_boat"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<TruffaloChestBoatEntity>> TRUFFALO_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_chest_boat",
-            () -> EntityType.Builder.<TruffaloChestBoatEntity>of(TruffaloChestBoatEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<AntarchyChestBoatEntity>> TRUFFALO_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_chest_boat",
+            () -> EntityType.Builder.<AntarchyChestBoatEntity>of((type, level) -> new AntarchyChestBoatEntity(type, level, "truffalo_chest_boat"), MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
@@ -532,6 +527,12 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("critter_cage_projectile"));
+    public static final DeferredHolder<EntityType<?>, EntityType<LaunchedAnvilEntity>> LAUNCHED_ANVIL = ENTITY_TYPES.register("launched_anvil",
+            () -> EntityType.Builder.<LaunchedAnvilEntity>of(LaunchedAnvilEntity::new, MobCategory.MISC)
+                    .sized(0.98F, 0.98F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("launched_anvil"));
     public static final DeferredHolder<EntityType<?>, EntityType<WormHookProjectileEntity>> WORM_HOOK_PROJECTILE = ENTITY_TYPES.register("worm_hook_projectile",
             () -> EntityType.Builder.<WormHookProjectileEntity>of(WormHookProjectileEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
@@ -714,11 +715,6 @@ public final class AntarchyFabricEntities {
                 .sized(0.6375F, 0.2125F)
                 .clientTrackingRange(8)
                 .build(name);
-    }
-
-
-    public static void register() {
-        ENTITY_TYPES.register();
     }
 
 }

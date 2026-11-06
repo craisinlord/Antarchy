@@ -1,0 +1,10 @@
+{"type":"minecraft:chest","pools":[{"rolls":{"type":"minecraft:uniform","min":4,"max":7},"entries":[
+{"type":"minecraft:item","name":"minecraft:arrow","weight":16,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":14,"max":36}}]},
+{"type":"minecraft:item","name":"minecraft:tipped_arrow","weight":8,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":2,"max":6}},{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
+{"type":"minecraft:item","name":"minecraft:iron_sword","weight":9},{"type":"minecraft:item","name":"antarchy:blood_crystal_katana","weight":2},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_helmet","weight":2},{"type":"minecraft:item","name":"antarchy:blood_crystal_boots","weight":2},
+{"type":"minecraft:item","name":"antarchy:bluestone","weight":14,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":5,"max":14}}]},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_shard","weight":10,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1,"max":3}}]},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_apple","weight":18,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1,"max":2}}]},
+{"type":"minecraft:item","name":"minecraft:potion","weight":8,"functions":[{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},{"type":"minecraft:item","name":"minecraft:book","weight":6,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:sharpness"]}]}
+]}],"random_sequence":"antarchy:spawners/scorpion_arena/medium"}

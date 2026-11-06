@@ -1,0 +1,12 @@
+{
+  "type": "antarchy:cavaryn_spires",
+  "noise": "antarchy:cavaryn_spire",
+  "mask": {
+    "temperature": "antarchy:cavaryn/surface_temperature",
+    "erosion": "antarchy:cavaryn/surface_erosion",
+    "temperature_min": -0.15,
+    "temperature_max": 1.0,
+    "erosion_min": -1.0,
+    "erosion_max": 0.0
+  }
+}

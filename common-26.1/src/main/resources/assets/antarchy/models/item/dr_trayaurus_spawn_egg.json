@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "antarchy:item/dr_trayaurus_spawn_egg"
+  }
+}

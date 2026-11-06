@@ -5,6 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public final class AntarchyMobsConfig {
     public static final ForgeConfigSpec SPEC;
 
+
     private static final ForgeConfigSpec.BooleanValue ANTS_STEAL_FROM_CHESTS;
 
     private static final ForgeConfigSpec.BooleanValue BROWN_ANT_REQUIRES_REAGENT;
@@ -35,21 +36,27 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue  TERMITE_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.ConfigValue<String> TERMITE_DESTINATION_DIMENSION;
 
+
+
     private static final ForgeConfigSpec.BooleanValue EASTER_BUNNY_ENABLED;
     private static final ForgeConfigSpec.IntValue     EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT;
+
 
     private static final ForgeConfigSpec.DoubleValue WASP_HEALTH;
     private static final ForgeConfigSpec.DoubleValue WASP_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue WASP_MOVEMENT_SPEED;
+
 
     private static final ForgeConfigSpec.DoubleValue BOMBER_HEALTH;
     private static final ForgeConfigSpec.DoubleValue BOMBER_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue BOMBER_EXPLOSION_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
+
     private static final ForgeConfigSpec.DoubleValue SPRINGBUG_HEALTH;
     private static final ForgeConfigSpec.DoubleValue SPRINGBUG_POUNCE_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue SPRINGBUG_CAMOUFLAGE_ALPHA;
+
 
     private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_HEALTH;
     private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_ATTACK_DAMAGE;
@@ -79,11 +86,14 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue SCORPION_ARMOR;
     private static final ForgeConfigSpec.DoubleValue SCORPION_KNOCKBACK_RESISTANCE;
 
+
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
     private static final ForgeConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
     private static final ForgeConfigSpec.BooleanValue KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON;
+    private static final ForgeConfigSpec.BooleanValue KRAKEN_RITUAL_ENABLED;
+    private static final ForgeConfigSpec.IntValue     KRAKEN_RITUAL_INK_COST;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_FOLLOW_RANGE;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_DAMAGE_RANGE;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_ARMOR;
@@ -146,6 +156,7 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue PRINCESS_KNOCKBACK_RESISTANCE;
     private static final ForgeConfigSpec.DoubleValue PRINCESS_FOLLOW_RANGE;
 
+
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_HEALTH;
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_SWIPE_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_SPIT_DAMAGE;
@@ -156,11 +167,13 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_FLYING_SPEED;
 
+
     private static final ForgeConfigSpec.DoubleValue  MANTIS_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  MANTIS_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue  MANTIS_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.DoubleValue  MANTIS_FLYING_SPEED;
     private static final ForgeConfigSpec.BooleanValue MANTIS_IGNORE_LIGHT_LEVEL;
+
 
     private static final ForgeConfigSpec.DoubleValue ALPHA_MANTIS_HEALTH;
     private static final ForgeConfigSpec.DoubleValue ALPHA_MANTIS_ATTACK_DAMAGE;
@@ -169,6 +182,28 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.IntValue    ALPHA_MANTIS_SUMMON_INTERVAL_TICKS;
     private static final ForgeConfigSpec.IntValue    ALPHA_MANTIS_MAX_MINIONS;
     private static final ForgeConfigSpec.DoubleValue ALPHA_MANTIS_DAMAGE_RANGE;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_ALPHA_MANTIS_HEALTH_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_ALPHA_MANTIS_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_BRUTALFLY_HEALTH_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_BRUTALFLY_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_HERCULES_BEETLE_HEALTH_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_HERCULES_BEETLE_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_HERCULES_BEETLE_COOLDOWN_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_KRAKEN_HEALTH_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_KRAKEN_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_KRAKEN_COOLDOWN_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_KING_HEALTH_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_KING_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_KING_COOLDOWN_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_QUEEN_HEALTH_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_QUEEN_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue GLIMMER_QUEEN_COOLDOWN_MULTIPLIER;
+
 
     private static final ForgeConfigSpec.DoubleValue ROLLY_POLLY_HEALTH;
     private static final ForgeConfigSpec.DoubleValue ROLLY_POLLY_MOVEMENT_SPEED;
@@ -179,10 +214,12 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue ROLLY_POLLY_ARMOR;
     private static final ForgeConfigSpec.DoubleValue ROLLY_POLLY_ROLLED_ARMOR_BONUS;
 
+
     private static final ForgeConfigSpec.DoubleValue FLYTRAP_HEALTH;
     private static final ForgeConfigSpec.DoubleValue FLYTRAP_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue FLYTRAP_GRAB_DAMAGE;
     private static final ForgeConfigSpec.IntValue    FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS;
+
 
     private static final ForgeConfigSpec.DoubleValue CATERPILLAR_HEALTH;
     private static final ForgeConfigSpec.DoubleValue CATERPILLAR_MOVEMENT_SPEED;
@@ -223,7 +260,9 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue OCTOPUS_BOMB_HEALTH;
     private static final ForgeConfigSpec.DoubleValue OCTOPUS_BOMB_ATTACK_DAMAGE;
 
+
     private static final ForgeConfigSpec.DoubleValue ANT_DANCE_RADIUS;
+
 
     private static final ForgeConfigSpec.DoubleValue  REVERIE_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  REVERIE_INTEREST_RADIUS;
@@ -238,6 +277,7 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue  REVERIE_WARNING_THREAT_VERTICAL_RANGE;
     private static final ForgeConfigSpec.IntValue     REVERIE_DUPLICATION_COOLDOWN_TICKS;
 
+
     private static final ForgeConfigSpec.DoubleValue  NIGHTMARE_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  NIGHTMARE_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue  NIGHTMARE_MOVEMENT_SPEED;
@@ -249,6 +289,7 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.IntValue     DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS;
     private static final ForgeConfigSpec.DoubleValue  DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE;
     private static final ForgeConfigSpec.BooleanValue DIMENSIONAL_TEARS_SPAWN_NATURALLY;
+
 
     private static final ForgeConfigSpec.BooleanValue BASILISK_PETRIFYING_GAZE_ENABLED;
     private static final ForgeConfigSpec.IntValue     BASILISK_SPAWN_MAX_LIGHT_LEVEL;
@@ -272,6 +313,7 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue  BASILISK_PREY_PETRIFY_RANGE;
     private static final ForgeConfigSpec.IntValue     BASILISK_PREY_PETRIFY_TICKS;
 
+
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_DAMAGE_RANGE;
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_DAMAGE;
@@ -279,13 +321,18 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_SPIN_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_SPIN_KNOCKBACK;
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue  GLIMMER_TORETERROR_HEALTH_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue  GLIMMER_TORETERROR_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue  GLIMMER_TORETERROR_COOLDOWN_MULTIPLIER;
     private static final ForgeConfigSpec.DoubleValue  WATER_BOMB_DAMAGE;
     private static final ForgeConfigSpec.IntValue     WATER_BOMB_LIFETIME_TICKS;
     private static final ForgeConfigSpec.DoubleValue  WATER_BOMB_GRAVITY;
     private static final ForgeConfigSpec.DoubleValue  WATER_BOMB_KNOCKBACK;
 
+
     private static final ForgeConfigSpec.DoubleValue CRAWLING_BLIGHT_HEALTH;
     private static final ForgeConfigSpec.DoubleValue CRAWLING_BLIGHT_ATTACK_DAMAGE;
+
 
     private static final ForgeConfigSpec.DoubleValue SKULKING_FRIGHT_HEALTH;
     private static final ForgeConfigSpec.DoubleValue SKULKING_FRIGHT_ATTACK_DAMAGE;
@@ -306,19 +353,25 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue JERRY_GAMMA_HEALTH;
     private static final ForgeConfigSpec.DoubleValue JERRY_GAMMA_ATTACK_DAMAGE;
 
+
     private static final ForgeConfigSpec.DoubleValue CHEEP_HEALTH;
     private static final ForgeConfigSpec.DoubleValue CHEEP_ATTACK_DAMAGE;
 
+
     private static final ForgeConfigSpec.DoubleValue DORRIE_HEALTH;
+
 
     private static final ForgeConfigSpec.DoubleValue OURANWOOD_DEER_HEALTH;
 
+
     private static final ForgeConfigSpec.DoubleValue GLIMMER_HEALTH;
+
 
     private static final ForgeConfigSpec.DoubleValue HERCULES_BEETLE_HEALTH;
     private static final ForgeConfigSpec.DoubleValue HERCULES_BEETLE_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue HERCULES_BEETLE_CHARGE_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue HERCULES_BEETLE_DAMAGE_RANGE;
+
 
     private static final ForgeConfigSpec.DoubleValue LUCID_ATTACK_RANGE;
     private static final ForgeConfigSpec.DoubleValue LUCID_PEARL_INVERTED_DURATION_SECONDS;
@@ -344,6 +397,7 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_PUSH_STRENGTH;
     private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_LAUNCH_STRENGTH;
 
+
     private static final ForgeConfigSpec.BooleanValue DREAD_HALLUCINATION_SOUNDS_ENABLED;
     private static final ForgeConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MIN_INTERVAL;
     private static final ForgeConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MAX_INTERVAL;
@@ -353,6 +407,7 @@ public final class AntarchyMobsConfig {
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
+
 
         ANTS_STEAL_FROM_CHESTS = b
                 .comment("Whether ants will steal edible items from nearby chest inventories.")
@@ -434,6 +489,7 @@ public final class AntarchyMobsConfig {
                 .define("destinationDimension", "antarchy:cavaryn", AntarchyMobsConfig::isValidDimensionId);
         b.pop();
 
+
         b.push("easterBunny");
         EASTER_BUNNY_ENABLED = b
                 .comment(
@@ -449,11 +505,13 @@ public final class AntarchyMobsConfig {
                 .defineInRange("naturalSpawnChancePercent", 1, 0, 100);
         b.pop();
 
+
         b.push("wasp");
         WASP_HEALTH         = b.comment("Base max health.")                            .defineInRange("health",       16.0D, 1.0D, 32768.0D);
         WASP_ATTACK_DAMAGE  = b.comment("Base attack damage.")                         .defineInRange("attackDamage", 4.0D,  0.0D, 1024.0D);
         WASP_MOVEMENT_SPEED = b.comment("Base wasp speed used for both flying and movement. Vanilla bee default is 0.3, so 0.39 is 30% faster.").defineInRange("movementSpeed", 0.39D, 0.0D, 10.0D);
         b.pop();
+
 
         b.push("bomber");
         BOMBER_HEALTH           = b.comment("Base max health.")                                        .defineInRange("health",          10.0D, 1.0D, 32768.0D);
@@ -462,14 +520,16 @@ public final class AntarchyMobsConfig {
         BOMBER_EXPLOSION_RADIUS = b.comment("Explosion radius when a bomber detonates. TNT uses 4.0.").defineInRange("explosionRadius",  4.0D,  0.0D, 128.0D);
         b.pop();
 
+
         b.push("springbug");
         SPRINGBUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
         SPRINGBUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
         SPRINGBUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
         b.pop();
 
+
         b.push("emperorScorpion");
-        EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
+        EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 420.0D, 1.0D, 32768.0D);
         EMPEROR_SCORPION_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 28.0D, 0.0D, 1024.0D);
         EMPEROR_SCORPION_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.384D, 0.0D, 10.0D);
         EMPEROR_SCORPION_ARMOR = b.comment("Base armor value.").defineInRange("armor", 22.0D, 0.0D, 1024.0D);
@@ -477,23 +537,26 @@ public final class AntarchyMobsConfig {
         EMPEROR_SCORPION_FOLLOW_RANGE = b.comment("Base follow range.").defineInRange("followRange", 80.0D, 1.0D, 256.0D);
         EMPEROR_SCORPION_XP_REWARD = b.comment("Base experience reward.").defineInRange("xpReward", 25, 0, 100000);
         EMPEROR_SCORPION_CLAW_ANIM_TICKS = b.comment("Ticks for the claw attack animation window.").defineInRange("clawAnimTicks", 23, 1, 400);
-        EMPEROR_SCORPION_CLAW_HIT_TICK = b.comment("Tick during the claw animation when damage is applied.").defineInRange("clawHitTick", 12, 0, 400);
+        EMPEROR_SCORPION_CLAW_HIT_TICK = b.comment("Ticks remaining in the claw animation when damage is applied. Clamped to 1 through clawAnimTicks.").defineInRange("clawHitTick", 6, 0, 400);
         EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS = b.comment("Ticks between claw attacks.").defineInRange("clawCooldownTicks", 28, 0, 2000);
         EMPEROR_SCORPION_STING_ANIM_TICKS = b.comment("Ticks for the sting attack animation window.").defineInRange("stingAnimTicks", 25, 1, 400);
-        EMPEROR_SCORPION_STING_HIT_TICK = b.comment("Tick during the sting animation when damage is applied.").defineInRange("stingHitTick", 13, 0, 400);
+        EMPEROR_SCORPION_STING_HIT_TICK = b.comment("Ticks remaining in the sting animation when damage is applied. Clamped to 1 through stingAnimTicks.").defineInRange("stingHitTick", 9, 0, 400);
         EMPEROR_SCORPION_STING_COOLDOWN_TICKS = b.comment("Ticks between sting attacks.").defineInRange("stingCooldownTicks", 60, 0, 2000);
         EMPEROR_SCORPION_POISON_TICKS = b.comment("Ticks the Poison effect from a sting lasts.").defineInRange("poisonTicks", 300, 0, 20000);
         EMPEROR_SCORPION_WEAKNESS_TICKS = b.comment("Ticks the Weakness effect from a sting lasts.").defineInRange("weaknessTicks", 120, 0, 20000);
         EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS = b.comment("Ticks between minion scorpion summons while hardened.").defineInRange("summonIntervalTicks", 140, 20, 72000);
         EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS = b.comment("Maximum scorpions summoned per hardening cast.").defineInRange("maxSummonedScorpions", 4, 0, 32);
         EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS = b.comment("Maximum owned scorpion minions allowed near this scorpion at once.").defineInRange("maxNearbyScorpions", 4, 0, 32);
-        EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS = b.comment("Cooldown in ticks before the Emperor Scorpion can harden and summon again.").defineInRange("hardenCooldownTicks", 2400, 0, 200000);
+        EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS = b.comment("Cooldown in ticks before the Emperor Scorpion can harden and summon again.").defineInRange("hardenCooldownTicks", 1200, 0, 200000);
         EMPEROR_SCORPION_DAMAGE_RANGE = b
-                .comment("Range in blocks a player must be within for the Emperor Scorpion to be able to take damage. Prevents cheesing it from outside its aggro range.")
+                .comment("Attacker distance in blocks at which the Emperor Scorpion takes full damage. Damage falls off beyond this and reaches zero at 5/3 of this range.")
                 .defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         EMPEROR_SCORPION_MIN_DESPAWN_TICKS = b
-                .comment("Minimum ticks after spawning before the Emperor Scorpion can despawn from being far away. It also never despawns once it has taken damage. 6000 ticks = 5 minutes.")
+                .comment("Minimum ticks after spawning before the Emperor Scorpion can despawn from being far away. It also won't despawn after taking damage until its encounter resets. 6000 ticks = 5 minutes.")
                 .defineInRange("minDespawnTicks", 6000, 0, 1000000);
+        GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER = b.comment("Max health multiplier for the Glimmer Emperor Scorpion summoned with a Glimmer Sigil.").defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER = b.comment("Damage multiplier for the Glimmer Emperor Scorpion's attacks.").defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer Emperor Scorpion's claw, sting and venom cooldowns (lower = more often). Harden is exempt.").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
 
         b.push("scorpion");
@@ -504,12 +567,15 @@ public final class AntarchyMobsConfig {
         SCORPION_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
         b.pop();
 
+
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
         KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     45.0D,  0.0D, 1024.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
+        KRAKEN_RITUAL_ENABLED                    = b.comment("If true, using Ink Sacs on a Chiseled Tidestone touching water in an Elythia ocean biome begins the Kraken summoning ritual.").define("ritualEnabled", true);
+        KRAKEN_RITUAL_INK_COST                   = b.comment("Ink Sacs consumed from the held stack to begin the Kraken summoning ritual.").defineInRange("ritualInkCost", 8, 1, 64);
         KRAKEN_FOLLOW_RANGE                      = b.comment("How far the Kraken can see/target players.").defineInRange("followRange", 96.0D, 1.0D, 256.0D);
         KRAKEN_DAMAGE_RANGE                      = b.comment("Range in blocks a player must be within for the Kraken to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 35.0D, 1.0D, 256.0D);
         KRAKEN_ARMOR                              = b.comment("Base armor value.").defineInRange("armor", 8.0D, 0.0D, 1024.0D);
@@ -518,6 +584,9 @@ public final class AntarchyMobsConfig {
         KRAKEN_FLYING_SPEED                       = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.24D, 0.0D, 10.0D);
         KRAKEN_BOSS_BAR_RANGE                     = b.comment("Range in blocks within which the Kraken's boss bar is shown to players.").defineInRange("bossBarRange", 40.0D, 1.0D, 256.0D);
         KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE         = b.comment("Lightning strike damage during phase one.").defineInRange("lightningDamagePhaseOne", 6.0D, 0.0D, 1024.0D);
+        GLIMMER_KRAKEN_HEALTH_MULTIPLIER = b.comment("Max health multiplier for the Glimmer Kraken summoned with a Glimmer Sigil.").defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_KRAKEN_DAMAGE_MULTIPLIER = b.comment("Damage multiplier for the Glimmer Kraken's attacks.").defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_KRAKEN_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer Kraken's attack, minion and lightning cooldowns (lower = more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
 
         b.push("royalBosses");
@@ -587,6 +656,12 @@ public final class AntarchyMobsConfig {
         KING_ICE_SPIKE_COOLDOWN_TICKS = b.defineInRange("kingIceSpikeCooldownTicks", 240, 1, 2400);
         KING_ELEMENTAL_TERRAIN_CAP = b.defineInRange("kingElementalTerrainCap", 256, 0, 4096);
         ROYAL_BOSS_SOUND_VOLUME = b.comment("Volume multiplier for large King and Queen presence, movement, and attack sounds.").defineInRange("royalBossSoundVolume", 4.5D, 0.5D, 16.0D);
+        GLIMMER_KING_HEALTH_MULTIPLIER = b.comment("Max health multiplier for the Glimmer King summoned with a Glimmer Sigil.").defineInRange("kingGlimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_KING_DAMAGE_MULTIPLIER = b.comment("Damage multiplier for the Glimmer King's attacks.").defineInRange("kingGlimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_KING_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer King's royal attack cooldowns (lower = more often).").defineInRange("kingGlimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
+        GLIMMER_QUEEN_HEALTH_MULTIPLIER = b.comment("Max health multiplier for the Glimmer Queen summoned with a Glimmer Sigil.").defineInRange("queenGlimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_QUEEN_DAMAGE_MULTIPLIER = b.comment("Damage multiplier for the Glimmer Queen's attacks.").defineInRange("queenGlimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_QUEEN_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer Queen's royal attack cooldowns (lower = more often).").defineInRange("queenGlimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
 
         b.push("royalMounts");
@@ -608,6 +683,7 @@ public final class AntarchyMobsConfig {
         PRINCESS_FOLLOW_RANGE = b.comment("Princess owner and target range.").defineInRange("princessFollowRange", 48.0D, 1.0D, 256.0D);
         b.pop();
 
+
         b.push("brutalfly");
         BRUTALFLY_HEALTH      = b.comment("Base max health.")                                          .defineInRange("health",      200.0D, 1.0D, 32768.0D);
         BRUTALFLY_SWIPE_DAMAGE = b.comment("Damage dealt by a claw swipe.")                           .defineInRange("swipeDamage",  15.0D, 0.0D, 1024.0D);
@@ -618,7 +694,11 @@ public final class AntarchyMobsConfig {
         BRUTALFLY_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.7D, 0.0D, 1.0D);
         BRUTALFLY_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.34D, 0.0D, 10.0D);
         BRUTALFLY_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.55D, 0.0D, 10.0D);
+        GLIMMER_BRUTALFLY_HEALTH_MULTIPLIER = b.comment("Max health multiplier for the Glimmer Brutalfly summoned with a Glimmer Sigil.").defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_BRUTALFLY_DAMAGE_MULTIPLIER = b.comment("Damage multiplier for the Glimmer Brutalfly's attacks.").defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer Brutalfly's spit and swipe cooldowns (lower = more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
+
 
         b.push("mantis");
         MANTIS_HEALTH             = b.comment("Base max health.")                                                                                                 .defineInRange("health",            50.0D, 1.0D, 32768.0D);
@@ -628,15 +708,20 @@ public final class AntarchyMobsConfig {
         MANTIS_IGNORE_LIGHT_LEVEL = b.comment("If false, mantises only spawn naturally in darkness (standard monster rules). If true, light level is ignored.").define("ignoreLightLevel", false);
         b.pop();
 
+
         b.push("alphaMantis");
-        ALPHA_MANTIS_HEALTH                = b.comment("Base max health.")                                              .defineInRange("health",             250.0D, 1.0D, 32768.0D);
+        ALPHA_MANTIS_HEALTH                = b.comment("Base max health.")                                              .defineInRange("health",             420.0D, 1.0D, 32768.0D);
         ALPHA_MANTIS_ATTACK_DAMAGE         = b.comment("Base attack damage.")                                           .defineInRange("attackDamage",        18.0D, 0.0D, 1024.0D);
         ALPHA_MANTIS_MOVEMENT_SPEED        = b.comment("Base movement speed.")                                          .defineInRange("movementSpeed",       0.546D, 0.0D, 10.0D);
         ALPHA_MANTIS_FLYING_SPEED          = b.comment("Base flying speed.")                                            .defineInRange("flyingSpeed",         0.77D, 0.0D, 10.0D);
         ALPHA_MANTIS_SUMMON_INTERVAL_TICKS = b.comment("Ticks between mantis minion summons while in combat.")          .defineInRange("summonIntervalTicks",   300, 20, 72000);
         ALPHA_MANTIS_MAX_MINIONS           = b.comment("Maximum summoned mantises alive near the alpha at once.")       .defineInRange("maxMinions",              4, 0, 32);
-        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
+        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Attacker distance in blocks at which the Alpha Mantis takes full damage. Damage then falls off gradually and reaches zero at 5/3 of this distance.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        GLIMMER_ALPHA_MANTIS_HEALTH_MULTIPLIER   = b.comment("Max health multiplier for the Glimmer Alpha Mantis summoned with a Glimmer Sigil.").defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_ALPHA_MANTIS_DAMAGE_MULTIPLIER   = b.comment("Attack damage multiplier for the Glimmer Alpha Mantis.").defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER = b.comment("Attack cooldown and minion summon interval multiplier for the Glimmer Alpha Mantis (lower = more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
+
 
         b.push("rollyPolly");
         ROLLY_POLLY_HEALTH                = b.comment("Base max health.")                                                          .defineInRange("health",              25.0D, 1.0D, 32768.0D);
@@ -649,6 +734,7 @@ public final class AntarchyMobsConfig {
         ROLLY_POLLY_ROLLED_ARMOR_BONUS    = b.comment("Additional armor gained while rolled up.")                                  .defineInRange("rolledArmorBonus",    16.0D, 0.0D, 100.0D);
         b.pop();
 
+
         b.push("flytrap");
         FLYTRAP_HEALTH        = b.comment("Base max health.")                     .defineInRange("health",       80.0D, 1.0D, 32768.0D);
         FLYTRAP_ATTACK_DAMAGE = b.comment("Damage dealt by the sweep attack.")   .defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
@@ -657,6 +743,7 @@ public final class AntarchyMobsConfig {
                 .comment("Ticks a given entity is immune to repeat sweep-attack damage attempts after being hit once, so shields/armor absorbing a hit can't be shredded by every tick of the sweep's active window.")
                 .defineInRange("sweepHitCooldownTicks", 10, 0, 200);
         b.pop();
+
 
         b.push("caterpillar");
         CATERPILLAR_HEALTH = b.defineInRange("health", 6.0D, 0.1D, 32768.0D);
@@ -722,11 +809,13 @@ public final class AntarchyMobsConfig {
         OCTOPUS_BOMB_ATTACK_DAMAGE = b.defineInRange("attackDamage", 16.0D, 0.0D, 1024.0D);
         b.pop();
 
+
         b.push("antDance");
         ANT_DANCE_RADIUS = b
                 .comment("Radius in blocks where ants will dance around a playing jukebox.")
                 .defineInRange("radius", 5.0D, 1.0D, 32.0D);
         b.pop();
+
 
         b.push("reverie");
         REVERIE_HEALTH                         = b.comment("Base max health.")                                                                                         .defineInRange("health",                    20.0D, 1.0D, 1024.0D);
@@ -760,6 +849,7 @@ public final class AntarchyMobsConfig {
         DIMENSIONAL_TEARS_SPAWN_NATURALLY = b.define("spawnNaturally", true);
         b.pop();
 
+
         b.push("basilisk");
         BASILISK_PETRIFYING_GAZE_ENABLED = b
                 .comment("If false, the Basilisk will not use its petrifying gaze and will never apply the Paralyzed effect.")
@@ -787,6 +877,7 @@ public final class AntarchyMobsConfig {
         BASILISK_PREY_PETRIFY_RANGE = b.comment("Range in blocks for prey petrification checks.").defineInRange("preyPetrifyRange", 8.0D, 0.0D, 128.0D);
         BASILISK_PREY_PETRIFY_TICKS = b.comment("Ticks the prey petrify effect lasts.").defineInRange("preyPetrifyTicks", 200, 0, 20000);
         b.pop();
+
 
         b.push("lucid");
         LUCID_ATTACK_RANGE = b
@@ -819,6 +910,7 @@ public final class AntarchyMobsConfig {
         VORTEX_LENS_PUSH_STRENGTH = b.comment("How strongly bluestone-powered Vortex Lens vortexes push entities outward from the lens.").defineInRange("vortexLensPushStrength", 0.38D, 0.0D, 8.0D);
         VORTEX_LENS_LAUNCH_STRENGTH = b.comment("Launch velocity multiplier applied at the end of bluestone-powered Vortex Lens vortexes.").defineInRange("vortexLensLaunchStrength", 1.15D, 0.0D, 8.0D);
         b.pop();
+
 
         b.push("dread");
 
@@ -889,6 +981,9 @@ public final class AntarchyMobsConfig {
         HERCULES_BEETLE_ATTACK_DAMAGE = b.comment("Base melee damage for ground and flying attacks.").defineInRange("attackDamage", 30.0D, 0.0D, 1024.0D);
         HERCULES_BEETLE_CHARGE_DAMAGE = b.comment("AOE impact damage dealt when a charge collides.").defineInRange("chargeDamage", 40.0D, 0.0D, 1024.0D);
         HERCULES_BEETLE_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Hercules Beetle to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
+        GLIMMER_HERCULES_BEETLE_HEALTH_MULTIPLIER = b.comment("Max health multiplier for the Glimmer Hercules Beetle summoned with a Glimmer Sigil.").defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_HERCULES_BEETLE_DAMAGE_MULTIPLIER = b.comment("Damage multiplier for the Glimmer Hercules Beetle's attacks.").defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_HERCULES_BEETLE_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer Hercules Beetle's cry, attack and charge cooldowns (lower = more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
 
         b.push("toreterror");
@@ -899,6 +994,9 @@ public final class AntarchyMobsConfig {
         TORETERROR_SPIN_DAMAGE             = b.comment("Damage per spin-attack tick.").defineInRange("spinDamage", 8.0D, 0.0D, 1024.0D);
         TORETERROR_SPIN_KNOCKBACK          = b.comment("Knockback strength of the spin attack.").defineInRange("spinKnockback", 1.5D, 0.0D, 10.0D);
         TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER = b.comment("Damage multiplier applied to projectile hits on the Toreterror (0.5 = half damage).").defineInRange("projectileDamageMultiplier", 0.5D, 0.0D, 1.0D);
+        GLIMMER_TORETERROR_HEALTH_MULTIPLIER   = b.comment("Max health multiplier for the Glimmer Toreterror summoned with a Glimmer Sigil.").defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_TORETERROR_DAMAGE_MULTIPLIER   = b.comment("Damage multiplier for the Glimmer Toreterror's jump, spin, and water bomb attacks.").defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_TORETERROR_COOLDOWN_MULTIPLIER = b.comment("Attack cooldown multiplier for the Glimmer Toreterror (lower = attacks more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         WATER_BOMB_DAMAGE                  = b.comment("Damage dealt by a Water Bomb hit.").defineInRange("waterBombDamage", 6.0D, 0.0D, 1024.0D);
         WATER_BOMB_LIFETIME_TICKS          = b.comment("Ticks before a Water Bomb despawns.").defineInRange("waterBombLifetimeTicks", 120, 1, 6000);
         WATER_BOMB_GRAVITY                 = b.comment("Gravity applied to Water Bombs (higher = steeper arc).").defineInRange("waterBombGravity", 0.12D, 0.0D, 2.0D);
@@ -979,6 +1077,7 @@ public final class AntarchyMobsConfig {
     static double  termiteAttackDamage()                    { return TERMITE_ATTACK_DAMAGE.get(); }
     static String  termiteDestinationDimension()            { return TERMITE_DESTINATION_DIMENSION.get(); }
 
+
     static boolean easterBunnyEnabled()                     { return EASTER_BUNNY_ENABLED.get(); }
     static int     easterBunnyNaturalSpawnChancePercent()   { return EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT.get(); }
 
@@ -1028,6 +1127,8 @@ public final class AntarchyMobsConfig {
     static boolean krakenSquidSpawnEnabled()                { return KRAKEN_SQUID_SPAWN_ENABLED.get(); }
     static boolean krakenMassSpawnEnabled()                 { return KRAKEN_MASS_SPAWN_ENABLED.get(); }
     static boolean krakenRequireBadOmenToSummon()           { return KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON.get(); }
+    static boolean krakenRitualEnabled()                    { return KRAKEN_RITUAL_ENABLED.get(); }
+    static int     krakenRitualInkCost()                    { return KRAKEN_RITUAL_INK_COST.get(); }
     static double  krakenFollowRange()                      { return KRAKEN_FOLLOW_RANGE.get(); }
     static double  krakenDamageRange()                      { return KRAKEN_DAMAGE_RANGE.get(); }
     static double  krakenArmor()                            { return KRAKEN_ARMOR.get(); }
@@ -1143,6 +1244,27 @@ public final class AntarchyMobsConfig {
     static int     alphaMantisSummonIntervalTicks()         { return ALPHA_MANTIS_SUMMON_INTERVAL_TICKS.get(); }
     static int     alphaMantisMaxMinions()                  { return ALPHA_MANTIS_MAX_MINIONS.get(); }
     static double  alphaMantisDamageRange()                 { return ALPHA_MANTIS_DAMAGE_RANGE.get(); }
+    static double  glimmerAlphaMantisHealthMultiplier()     { return GLIMMER_ALPHA_MANTIS_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerAlphaMantisDamageMultiplier()     { return GLIMMER_ALPHA_MANTIS_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerAlphaMantisCooldownMultiplier()   { return GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER.get(); }
+    static double  glimmerEmperorScorpionHealthMultiplier() { return GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerEmperorScorpionDamageMultiplier() { return GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerEmperorScorpionCooldownMultiplier() { return GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER.get(); }
+    static double  glimmerBrutalflyHealthMultiplier() { return GLIMMER_BRUTALFLY_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerBrutalflyDamageMultiplier() { return GLIMMER_BRUTALFLY_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerBrutalflyCooldownMultiplier() { return GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER.get(); }
+    static double  glimmerHerculesBeetleHealthMultiplier() { return GLIMMER_HERCULES_BEETLE_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerHerculesBeetleDamageMultiplier() { return GLIMMER_HERCULES_BEETLE_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerHerculesBeetleCooldownMultiplier() { return GLIMMER_HERCULES_BEETLE_COOLDOWN_MULTIPLIER.get(); }
+    static double  glimmerKrakenHealthMultiplier() { return GLIMMER_KRAKEN_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerKrakenDamageMultiplier() { return GLIMMER_KRAKEN_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerKrakenCooldownMultiplier() { return GLIMMER_KRAKEN_COOLDOWN_MULTIPLIER.get(); }
+    static double  glimmerKingHealthMultiplier() { return GLIMMER_KING_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerKingDamageMultiplier() { return GLIMMER_KING_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerKingCooldownMultiplier() { return GLIMMER_KING_COOLDOWN_MULTIPLIER.get(); }
+    static double  glimmerQueenHealthMultiplier() { return GLIMMER_QUEEN_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerQueenDamageMultiplier() { return GLIMMER_QUEEN_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerQueenCooldownMultiplier() { return GLIMMER_QUEEN_COOLDOWN_MULTIPLIER.get(); }
     static double  rollyPollyHealth()                       { return ROLLY_POLLY_HEALTH.get(); }
     static double  rollyPollyMovementSpeed()                { return ROLLY_POLLY_MOVEMENT_SPEED.get(); }
     static double  rollyPollyRollSpeedMultiplier()          { return ROLLY_POLLY_ROLL_SPEED_MULTIPLIER.get(); }
@@ -1237,6 +1359,9 @@ public final class AntarchyMobsConfig {
     static double  toreterrorSpinDamage()                   { return TORETERROR_SPIN_DAMAGE.get(); }
     static double  toreterrorSpinKnockback()                { return TORETERROR_SPIN_KNOCKBACK.get(); }
     static double  toreterrorProjectileDamageMultiplier()   { return TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerToreterrorHealthMultiplier()      { return GLIMMER_TORETERROR_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerToreterrorDamageMultiplier()      { return GLIMMER_TORETERROR_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerToreterrorCooldownMultiplier()    { return GLIMMER_TORETERROR_COOLDOWN_MULTIPLIER.get(); }
     static double  waterBombDamage()                        { return WATER_BOMB_DAMAGE.get(); }
     static int     waterBombLifetimeTicks()                 { return WATER_BOMB_LIFETIME_TICKS.get(); }
     static double  waterBombGravity()                       { return WATER_BOMB_GRAVITY.get(); }

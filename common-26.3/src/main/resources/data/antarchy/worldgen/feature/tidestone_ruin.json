@@ -1,0 +1,9 @@
+{
+  "type": "antarchy:elythia_stone_ruin",
+  "bricks": "antarchy:tidestone_bricks",
+  "pillar": "antarchy:tidestone_pillar",
+  "chiseled": "antarchy:chiseled_tidestone",
+  "slab": "antarchy:tidestone_brick_slab",
+  "wall": "antarchy:tidestone_brick_wall",
+  "submerged": true
+}

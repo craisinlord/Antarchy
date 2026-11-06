@@ -23,5 +23,6 @@
     "antarchy:prince",
     {"item": "antarchy:king_scale"},
     {"item": "antarchy:prince_egg"}
-  ]
+  ],
+  "lookup": ["antarchy:king_scale"]
 }

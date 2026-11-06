@@ -121,11 +121,11 @@ public class LucidEntity extends Monster implements GeoEntity {
             return level.getDifficulty() != Difficulty.PEACEFUL;
         }
         return level.getDifficulty() != Difficulty.PEACEFUL
-                && level.getEntitiesOfClass(LucidEntity.class, new AABB(pos).inflate(NATURAL_SPAWN_LIMIT_RADIUS), lucid -> lucid.isAlive()).size() < NATURAL_SPAWN_LIMIT
                 && pos.getY() <= 250
                 && level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above())
-                && level.isEmptyBlock(pos.above(2));
+                && level.isEmptyBlock(pos.above(2))
+                && level.getEntitiesOfClass(LucidEntity.class, new AABB(pos).inflate(NATURAL_SPAWN_LIMIT_RADIUS), lucid -> lucid.isAlive()).size() < NATURAL_SPAWN_LIMIT;
     }
 
     @Override
@@ -228,13 +228,30 @@ public class LucidEntity extends Monster implements GeoEntity {
         double distanceSqr = this.distanceToSqr(target);
 
         this.faceTowards(target.getEyePosition(), 12.0F, 8.0F);
-        this.getMoveControl().setWantedPosition(target.getX(), target.getY() + 2.0D, target.getZ(), 0.42D);
+        Vec3 hover = this.findHoverPosition(target);
+        this.getMoveControl().setWantedPosition(hover.x, hover.y, hover.z, 0.42D);
 
         if (this.attackCooldown <= 0
                 && distanceSqr <= this.getAttackRange() * this.getAttackRange() * 1.1D
                 && this.hasLineOfSight(target)) {
             this.startAttack();
         }
+    }
+
+    private Vec3 findHoverPosition(LivingEntity target) {
+        Vec3 away = new Vec3(this.getX() - target.getX(), 0.0D, this.getZ() - target.getZ());
+        if (away.lengthSqr() < 0.25D) {
+            Vec3 look = this.getLookAngle();
+            away = new Vec3(-look.x, 0.0D, -look.z);
+        }
+        if (away.lengthSqr() < 1.0E-4D) {
+            away = new Vec3(1.0D, 0.0D, 0.0D);
+        }
+        Vec3 standoff = target.position().add(away.normalize().scale(MIN_HOVER_RANGE)).add(0.0D, DEFAULT_HOVER_HEIGHT, 0.0D);
+        if (this.level().noCollision(this, this.getBoundingBox().move(standoff.subtract(this.position())))) {
+            return standoff;
+        }
+        return new Vec3(target.getX(), target.getY() + DEFAULT_HOVER_HEIGHT, target.getZ());
     }
 
     private void startAttack() {
@@ -355,7 +372,6 @@ public class LucidEntity extends Monster implements GeoEntity {
 
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
-            this.dropExperience(this);
         }
     }
 

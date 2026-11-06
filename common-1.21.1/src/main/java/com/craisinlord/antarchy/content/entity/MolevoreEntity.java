@@ -7,11 +7,13 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -19,9 +21,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -32,11 +37,14 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +53,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -67,6 +79,8 @@ public class MolevoreEntity extends Monster implements GeoEntity {
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cavaryn_moleworm_caves")
     );
     private static final EntityDataAccessor<Integer> ACTION_STATE = SynchedEntityData.defineId(MolevoreEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> SUBMERGED = SynchedEntityData.defineId(MolevoreEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ACTION_SERIAL = SynchedEntityData.defineId(MolevoreEntity.class, EntityDataSerializers.INT);
 
     private static final int ACTION_NONE = 0;
     private static final int ACTION_DIG_UP = 1;
@@ -75,14 +89,46 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     private static final int ACTION_HURT = 4;
     private static final int ACTION_DEATH = 5;
     private static final int ACTION_IDLE_DIG = 6;
+    private static final int ACTION_DIG_DOWN = 7;
+    private static final int ACTION_TUNNEL_DIG = 8;
 
     private static final int DIG_UP_TICKS = 60;
-    private static final int SWIPE_TICKS = 18;
-    private static final int SWIPE_DAMAGE_TICK = 8;
-    private static final int SPIN_TOTAL_TICKS = 32;
-    private static final int SPIN_WINDUP_TICKS = 10;
+    private static final int DIG_UP_SUBMERGED_TICKS = 10;
+    private static final int DIG_DOWN_TICKS = 50;
+    private static final int DIG_DOWN_SUBMERGE_TICK = 37;
+    private static final int SWIPE_TICKS = 31;
+    private static final int SWIPE_COMMIT_TICK = 12;
+    private static final int SWIPE_FIRST_HIT_TICK = 18;
+    private static final int SWIPE_SECOND_HIT_TICK = 25;
+    private static final float SWIPE_SECOND_HIT_MULTIPLIER = 0.6F;
+    private static final int SWIPE_COOLDOWN_TICKS = 20;
+    private static final int SPIN_TOTAL_TICKS = 50;
+    private static final int SPIN_LOCK_TICK = 10;
+    private static final int SPIN_LAUNCH_TICK = 15;
+    private static final int SPIN_RECOVERY_TICK = 32;
+    private static final int SPIN_COOLDOWN_TICKS = 42;
+    private static final int WALL_STAGGER_TICKS = 17;
+    private static final int WALL_STAGGER_COOLDOWN_TICKS = 60;
     private static final int HURT_TICKS = 10;
-    private static final int DEATH_TICKS = 34;
+    private static final int FLINCH_LOCKOUT_TICKS = 40;
+    private static final int DEATH_TICKS = 44;
+    private static final int NO_PATH_RESPONSE_TICKS = 100;
+    private static final int TUNNEL_RETRY_NO_PATH_TICKS = 70;
+    private static final int BURROW_COOLDOWN_TICKS = 300;
+    private static final int BURROW_RETRY_TICKS = 100;
+    private static final int BURROW_SEARCH_ATTEMPTS = 16;
+    private static final int ANIMATION_TRANSITION_TICKS = 4;
+
+    private static final float TRACKING_TURN_DEGREES = 12.0F;
+    private static final float SPIN_ALIGN_TURN_DEGREES = 36.0F;
+    private static final double SWIPE_MAX_TARGET_ABOVE = 2.4D;
+    private static final double SWIPE_MAX_TARGET_BELOW = 2.0D;
+    private static final double SPIN_MAX_TARGET_ELEVATION = 2.0D;
+    private static final double BURROW_MIN_TARGET_DISTANCE = 5.0D;
+    private static final double BURROW_EMERGE_MIN_RADIUS = 3.0D;
+    private static final double BURROW_EMERGE_RADIUS_RANGE = 5.0D;
+    private static final double IDLE_DIG_PLAYER_RANGE = 24.0D;
+    private static final double CHASE_WALK_ANIMATION_SPEED = 1.6D;
 
     private static final double CHASE_SPEED = 1.05D;
     private static final double WANDER_SPEED = 0.8D;
@@ -96,17 +142,30 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("death");
     private static final RawAnimation HURT_ANIM = RawAnimation.begin().thenPlay("hurt");
     private static final RawAnimation DIG_UP_ANIM = RawAnimation.begin().thenPlay("digging up");
+    private static final RawAnimation DIG_DOWN_ANIM = RawAnimation.begin().thenPlay("digging down");
     private static final RawAnimation CLAW_SWIPE_ANIM = RawAnimation.begin().thenPlay("claw swiping");
     private static final RawAnimation SPINNING_ANIM = RawAnimation.begin().thenPlay("spinning");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private final Set<UUID> spinHitEntities = new HashSet<>();
+    private final Set<UUID> actionHitEntities = new HashSet<>();
 
     private int actionTicks;
+    private int animatedActionSerial;
     private int attackCooldown;
     private int idleDigCooldown;
-    private boolean swipeDamageApplied;
+    private int flinchLockout;
+    private int noPathTicks;
+    private int burrowCooldown;
+    private int pacifiedTicks;
+    private int swipeHitsApplied;
+    private float committedYaw;
     private Vec3 spinDirection = Vec3.ZERO;
+    private Vec3 tunnelDirection = Vec3.ZERO;
+    @Nullable
+    private Vec3 burrowEmergeSpot;
+    private int nextChaseRepathTick;
+    @Nullable
+    private Vec3 lastChaseTargetPos;
 
     public MolevoreEntity(EntityType<? extends MolevoreEntity> entityType, Level level) {
         super(entityType, level);
@@ -149,35 +208,52 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ACTION_STATE, ACTION_NONE);
+        builder.define(SUBMERGED, false);
+        builder.define(ACTION_SERIAL, 0);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, WANDER_SPEED));
+        this.goalSelector.addGoal(3, new TruffleLureGoal(this));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, WANDER_SPEED) {
+            @Override
+            public boolean canUse() {
+                return MolevoreEntity.this.canStroll() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return MolevoreEntity.this.canStroll() && super.canContinueToUse();
+            }
+        });
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 12.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, target -> !MoleTruffles.lures(target)));
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
-                .triggerableAnim("dig_up", DIG_UP_ANIM)
-                .triggerableAnim("claw_swipe", CLAW_SWIPE_ANIM)
-                .triggerableAnim("spin_charge", SPINNING_ANIM)
-                .triggerableAnim("hurt", HURT_ANIM));
+        controllers.add(new AnimationController<>(this, "main_controller", ANIMATION_TRANSITION_TICKS, this::mainAnimController));
     }
 
     private PlayState mainAnimController(AnimationState<MolevoreEntity> state) {
-        return switch (this.getActionState()) {
+        int action = this.getActionState();
+        int actionSerial = this.entityData.get(ACTION_SERIAL);
+        if (actionSerial != this.animatedActionSerial) {
+            this.animatedActionSerial = actionSerial;
+            state.getController().forceAnimationReset();
+        }
+        state.getController().transitionLength(action == ACTION_DIG_UP ? 0 : ANIMATION_TRANSITION_TICKS);
+        state.getController().setAnimationSpeed(action == ACTION_NONE && state.isMoving() && this.isAggressive() ? CHASE_WALK_ANIMATION_SPEED : 1.0D);
+        return switch (action) {
             case ACTION_DIG_UP -> state.setAndContinue(DIG_UP_ANIM);
-            case ACTION_CLAW_SWIPE -> state.setAndContinue(CLAW_SWIPE_ANIM);
+            case ACTION_DIG_DOWN -> state.setAndContinue(DIG_DOWN_ANIM);
+            case ACTION_CLAW_SWIPE, ACTION_IDLE_DIG, ACTION_TUNNEL_DIG -> state.setAndContinue(CLAW_SWIPE_ANIM);
             case ACTION_SPIN_CHARGE -> state.setAndContinue(SPINNING_ANIM);
             case ACTION_HURT -> state.setAndContinue(HURT_ANIM);
             case ACTION_DEATH -> state.setAndContinue(DEATH_ANIM);
-            case ACTION_IDLE_DIG -> state.setAndContinue(CLAW_SWIPE_ANIM);
             default -> state.setAndContinue(state.isMoving() ? WALK_ANIM : IDLE_ANIM);
         };
     }
@@ -203,6 +279,9 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         super.tick();
 
         if (this.level().isClientSide) {
+            if (this.isBodyLockedToYaw()) {
+                this.yBodyRot = Mth.approachDegrees(this.yBodyRot, this.getYRot(), SPIN_ALIGN_TURN_DEGREES);
+            }
             return;
         }
 
@@ -212,6 +291,16 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         if (this.idleDigCooldown > 0) {
             this.idleDigCooldown--;
         }
+        if (this.flinchLockout > 0) {
+            this.flinchLockout--;
+        }
+        if (this.burrowCooldown > 0) {
+            this.burrowCooldown--;
+        }
+        if (this.pacifiedTicks > 0) {
+            this.pacifiedTicks--;
+            MoleTruffles.tickCalm(this);
+        }
 
         if (this.getActionState() == ACTION_DEATH) {
             return;
@@ -219,6 +308,8 @@ public class MolevoreEntity extends Monster implements GeoEntity {
 
         switch (this.getActionState()) {
             case ACTION_DIG_UP -> this.tickDigUp();
+            case ACTION_DIG_DOWN -> this.tickDigDown();
+            case ACTION_TUNNEL_DIG -> this.tickTunnelDig();
             case ACTION_CLAW_SWIPE -> this.tickClawSwipe();
             case ACTION_SPIN_CHARGE -> this.tickSpinCharge();
             case ACTION_HURT -> this.tickHurtAnimation();
@@ -280,11 +371,17 @@ public class MolevoreEntity extends Monster implements GeoEntity {
             return hurt;
         }
 
-        if (!this.isDeadOrDying() && this.getActionState() != ACTION_DIG_UP && this.getActionState() != ACTION_DEATH) {
-            if (this.getActionState() == ACTION_NONE) {
-                this.setActionState(ACTION_HURT);
-                this.actionTicks = HURT_TICKS;
-            }
+        if (source.getEntity() instanceof LivingEntity) {
+            this.pacifiedTicks = 0;
+        }
+
+        if (!this.isDeadOrDying()
+                && this.getActionState() == ACTION_NONE
+                && source.getEntity() != null
+                && this.flinchLockout <= 0) {
+            this.setActionState(ACTION_HURT);
+            this.actionTicks = HURT_TICKS;
+            this.flinchLockout = FLINCH_LOCKOUT_TICKS;
         }
 
         return true;
@@ -292,22 +389,67 @@ public class MolevoreEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return super.removeWhenFarAway(distanceToClosestPlayer);
+        return this.pacifiedTicks <= 0 && super.removeWhenFarAway(distanceToClosestPlayer);
     }
 
     @Override
-    public boolean canBeCollidedWith() {
-        return this.getActionState() != ACTION_DIG_UP && super.canBeCollidedWith();
+    public boolean isInvulnerableTo(DamageSource source) {
+        return super.isInvulnerableTo(source)
+                || (this.isSubmerged() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY));
+    }
+
+    @Override
+    public boolean isPickable() {
+        return !this.isSubmerged() && super.isPickable();
+    }
+
+    @Override
+    public boolean isPushable() {
+        return !this.isSubmerged() && super.isPushable();
     }
 
     @Override
     public boolean canAttack(LivingEntity target) {
-        return target instanceof Player player && !player.isCreative() && !player.isSpectator() && super.canAttack(target);
+        return this.pacifiedTicks <= 0 && target instanceof Player player && !player.isCreative() && !player.isSpectator() && super.canAttack(target);
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(this.pacifiedTicks > 0 ? null : target);
+    }
+
+    @Override
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!MoleTruffles.isTruffle(player.getItemInHand(hand)) || this.isDeadOrDying()) {
+            return super.mobInteract(player, hand);
+        }
+        if (this.level().isClientSide) {
+            return InteractionResult.CONSUME;
+        }
+        if (this.getActionState() != ACTION_NONE) {
+            return InteractionResult.CONSUME;
+        }
+        this.setAggressive(false);
+        this.pacifiedTicks = MoleTruffles.feed(this, player, hand, this.pacifiedTicks);
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt(MoleTruffles.PACIFIED_KEY, this.pacifiedTicks);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.pacifiedTicks = tag.getInt(MoleTruffles.PACIFIED_KEY);
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return this.getActionState() == ACTION_DIG_UP ? null : AntarchySoundEvents.MOLEVORE_AMBIENT.get();
+        int action = this.getActionState();
+        return action == ACTION_DIG_UP || action == ACTION_DIG_DOWN ? null : AntarchySoundEvents.MOLEVORE_AMBIENT.get();
     }
 
     @Override
@@ -368,8 +510,9 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     @Override
     protected void tickDeath() {
         this.deathTime++;
-        if (this.deathTime == 1) {
+        if (this.deathTime == 1 && !this.level().isClientSide) {
             this.setActionState(ACTION_DEATH);
+            this.setSubmerged(false);
         }
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
@@ -379,41 +522,198 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     private void tickCombat() {
         LivingEntity target = this.getTarget();
         if (target == null || !target.isAlive()) {
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.8D));
+            this.setAggressive(false);
+            this.noPathTicks = 0;
+            this.dampHorizontalMovement(0.8D);
             if (this.idleDigCooldown <= 0 && this.random.nextFloat() < 0.01F) {
                 this.startIdleDig();
             }
             return;
         }
 
+        this.setAggressive(true);
         this.getLookControl().setLookAt(target, 30.0F, 20.0F);
         double distanceToTarget = this.distanceToSqr(target);
 
         if (this.attackCooldown <= 0) {
-            if (distanceToTarget <= SWIPE_RANGE * SWIPE_RANGE) {
+            if (distanceToTarget <= SWIPE_RANGE * SWIPE_RANGE && this.canSwipeTarget(target)) {
                 this.startClawSwipe();
                 return;
             }
 
             if (distanceToTarget >= SPIN_RANGE_MIN * SPIN_RANGE_MIN
                     && distanceToTarget <= SPIN_RANGE_MAX * SPIN_RANGE_MAX
-                    && this.random.nextFloat() < 0.05F) {
+                    && this.random.nextFloat() < 0.05F
+                    && this.canSpinAt(target)) {
                 this.startSpinCharge(target);
                 return;
             }
         }
 
-        this.getNavigation().moveTo(target, CHASE_SPEED);
+        if (this.tickCount >= this.nextChaseRepathTick
+                || this.lastChaseTargetPos == null
+                || target.distanceToSqr(this.lastChaseTargetPos) > 1.0D) {
+            this.lastChaseTargetPos = target.position();
+            this.nextChaseRepathTick = this.tickCount + (this.getNavigation().moveTo(target, CHASE_SPEED) ? 4 : 10);
+        }
 
         if (this.horizontalCollision && this.canBreakBlocks()) {
             this.breakTaggedBlocksInFront(1.7D, 2.0D, 1.0D);
         }
+
+        this.tickNoPathResponse(target);
+    }
+
+    private void tickNoPathResponse(LivingEntity target) {
+        Path path = this.getNavigation().getPath();
+        if (path != null && path.canReach()) {
+            this.noPathTicks = 0;
+            return;
+        }
+
+        if (++this.noPathTicks < NO_PATH_RESPONSE_TICKS) {
+            return;
+        }
+
+        Vec3 toTarget = this.toLocalPlane(target.position().subtract(this.position()));
+        if (toTarget.lengthSqr() < BURROW_MIN_TARGET_DISTANCE * BURROW_MIN_TARGET_DISTANCE || this.burrowCooldown > 0) {
+            return;
+        }
+
+        Vec3 direction = this.toWorld(toTarget.normalize());
+        if (this.canBreakBlocks() && this.hasTaggedBlocksAhead(direction)) {
+            this.noPathTicks = TUNNEL_RETRY_NO_PATH_TICKS;
+            this.startTunnelDig(direction);
+            return;
+        }
+
+        this.noPathTicks = 0;
+        if (!this.canStartBurrow()) {
+            this.burrowCooldown = BURROW_RETRY_TICKS;
+            return;
+        }
+
+        Vec3 emergeSpot = this.findEmergeSpot(target);
+        if (emergeSpot == null) {
+            this.burrowCooldown = BURROW_RETRY_TICKS;
+            return;
+        }
+
+        this.burrowEmergeSpot = emergeSpot;
+        this.startDigDown();
+    }
+
+    private boolean canSwipeTarget(LivingEntity target) {
+        double elevation = this.toLocal(target.position().subtract(this.position())).y;
+        return elevation <= SWIPE_MAX_TARGET_ABOVE
+                && elevation >= -SWIPE_MAX_TARGET_BELOW
+                && this.hasLineOfSight(target);
+    }
+
+    private boolean canSpinAt(LivingEntity target) {
+        Vec3 delta = target.position().subtract(this.position());
+        if (this.isInWater()
+                || Math.abs(this.toLocal(delta).y) > SPIN_MAX_TARGET_ELEVATION
+                || !this.hasLineOfSight(target)) {
+            return false;
+        }
+
+        Vec3 flat = this.toLocalPlane(delta);
+        double distance = flat.length();
+        if (distance < 1.0E-4D) {
+            return false;
+        }
+
+        Vec3 forward = flat.scale(1.0D / distance);
+        Vec3 side = new Vec3(-forward.z, 0.0D, forward.x);
+        boolean canBreak = this.canBreakBlocks();
+        for (double travelled = 1.0D; travelled < distance; travelled += 1.0D) {
+            for (double lateral = -0.6D; lateral <= 0.6D; lateral += 0.6D) {
+                Vec3 local = forward.scale(travelled).add(side.scale(lateral)).add(0.0D, 1.5D, 0.0D);
+                BlockPos pos = BlockPos.containing(this.position().add(this.toWorld(local)));
+                BlockState state = this.level().getBlockState(pos);
+                if (state.getCollisionShape(this.level(), pos).isEmpty()) {
+                    continue;
+                }
+                if (!canBreak || !state.is(AntarchyTags.Blocks.MOLEVORE_BREAKABLE_BLOCKS)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean hasTaggedBlocksAhead(Vec3 worldDirection) {
+        Vec3 forward = this.toLocalPlane(worldDirection).normalize();
+        for (double distance = 1.5D; distance <= 2.5D; distance += 1.0D) {
+            for (double height = 0.5D; height <= 1.5D; height += 1.0D) {
+                Vec3 local = forward.scale(distance).add(0.0D, height, 0.0D);
+                BlockState state = this.level().getBlockState(BlockPos.containing(this.position().add(this.toWorld(local))));
+                if (state.is(AntarchyTags.Blocks.MOLEVORE_BREAKABLE_BLOCKS)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean canStartBurrow() {
+        return this.onGround()
+                && !this.isInWater()
+                && !this.isInLava()
+                && !this.isPassenger()
+                && !this.isLeashed()
+                && this.gravityDirection() == GravityDirection.DOWN;
+    }
+
+    @Nullable
+    private Vec3 findEmergeSpot(LivingEntity target) {
+        double angleStart = this.random.nextDouble() * Math.PI * 2.0D;
+        for (int attempt = 0; attempt < BURROW_SEARCH_ATTEMPTS; attempt++) {
+            double angle = angleStart + attempt * Math.PI * 2.0D / BURROW_SEARCH_ATTEMPTS;
+            double radius = BURROW_EMERGE_MIN_RADIUS + this.random.nextDouble() * BURROW_EMERGE_RADIUS_RANGE;
+            int blockX = Mth.floor(target.getX() + Math.cos(angle) * radius);
+            int blockZ = Mth.floor(target.getZ() + Math.sin(angle) * radius);
+            for (int offsetY = 2; offsetY >= -3; offsetY--) {
+                Vec3 candidate = new Vec3(blockX + 0.5D, target.getBlockY() + offsetY, blockZ + 0.5D);
+                if (this.isValidEmergeSpot(candidate) && this.emergeSpotSees(candidate, target)) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isValidEmergeSpot(Vec3 spot) {
+        BlockPos feet = BlockPos.containing(spot);
+        if (!this.level().hasChunkAt(feet)) {
+            return false;
+        }
+
+        BlockPos floor = feet.below();
+        if (!this.level().getBlockState(floor).entityCanStandOn(this.level(), floor, this)) {
+            return false;
+        }
+
+        AABB box = this.getDimensions(this.getPose()).makeBoundingBox(spot).inflate(0.25D, 0.0D, 0.25D).expandTowards(0.0D, 1.0D, 0.0D);
+        if (!this.level().noCollision(this, box) || this.level().containsAnyLiquid(box)) {
+            return false;
+        }
+
+        PathType pathType = WalkNodeEvaluator.getPathTypeStatic(this, feet);
+        return this.getPathfindingMalus(pathType) == 0.0F;
+    }
+
+    private boolean emergeSpotSees(Vec3 spot, LivingEntity target) {
+        Vec3 start = spot.add(0.0D, 1.0D, 0.0D);
+        return this.level().clip(new ClipContext(start, target.getEyePosition(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType() == HitResult.Type.MISS;
     }
 
     private void startDigUp() {
         this.setActionState(ACTION_DIG_UP);
         this.actionTicks = DIG_UP_TICKS;
         this.attackCooldown = 30;
+        this.setSubmerged(true);
         this.setDeltaMovement(Vec3.ZERO);
     }
 
@@ -423,6 +723,54 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         if (this.actionTicks == DIG_UP_TICKS) {
             this.playSound(AntarchySoundEvents.MOLEVORE_DIG.get(), 0.9F, 0.75F);
         }
+        this.setSubmerged(DIG_UP_TICKS - this.actionTicks < DIG_UP_SUBMERGED_TICKS);
+        this.spawnDigParticles();
+        if (--this.actionTicks <= 0) {
+            this.setSubmerged(false);
+            this.setActionState(ACTION_NONE);
+        }
+    }
+
+    private void startDigDown() {
+        this.setActionState(ACTION_DIG_DOWN);
+        this.actionTicks = DIG_DOWN_TICKS;
+        this.getNavigation().stop();
+        this.setDeltaMovement(Vec3.ZERO);
+        this.playSound(AntarchySoundEvents.MOLEVORE_DIG.get(), 0.9F, 0.6F);
+    }
+
+    private void tickDigDown() {
+        this.getNavigation().stop();
+        this.setDeltaMovement(Vec3.ZERO);
+        this.setSubmerged(DIG_DOWN_TICKS - this.actionTicks >= DIG_DOWN_SUBMERGE_TICK);
+        this.spawnDigParticles();
+        if (--this.actionTicks > 0) {
+            return;
+        }
+
+        Vec3 emergeSpot = this.resolveEmergeSpot();
+        if (emergeSpot != null) {
+            this.teleportTo(emergeSpot.x, emergeSpot.y, emergeSpot.z);
+        }
+        this.burrowEmergeSpot = null;
+        this.noPathTicks = 0;
+        this.burrowCooldown = BURROW_COOLDOWN_TICKS;
+        this.startDigUp();
+    }
+
+    @Nullable
+    private Vec3 resolveEmergeSpot() {
+        LivingEntity target = this.getTarget();
+        if (target != null && target.isAlive() && target.level() == this.level()) {
+            Vec3 nearTarget = this.findEmergeSpot(target);
+            if (nearTarget != null) {
+                return nearTarget;
+            }
+        }
+        return this.burrowEmergeSpot != null && this.isValidEmergeSpot(this.burrowEmergeSpot) ? this.burrowEmergeSpot : null;
+    }
+
+    private void spawnDigParticles() {
         if (this.tickCount % 4 == 0 && this.level() instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
                     net.minecraft.core.particles.ParticleTypes.POOF,
@@ -436,64 +784,79 @@ public class MolevoreEntity extends Monster implements GeoEntity {
                     0.02D
             );
         }
-        if (--this.actionTicks <= 0) {
-            this.setActionState(ACTION_NONE);
-        }
     }
 
     private void startClawSwipe() {
         this.setActionState(ACTION_CLAW_SWIPE);
         this.actionTicks = SWIPE_TICKS;
-        this.swipeDamageApplied = false;
+        this.swipeHitsApplied = 0;
+        this.actionHitEntities.clear();
+        this.committedYaw = this.getYRot();
         this.getNavigation().stop();
-        this.setDeltaMovement(this.getDeltaMovement().scale(0.35D));
+        this.dampHorizontalMovement(0.35D);
         this.playSound(AntarchySoundEvents.MOLEVORE_ATTACK.get(), 0.9F, 0.65F);
     }
 
     private void tickClawSwipe() {
         this.getNavigation().stop();
-        this.setDeltaMovement(this.getDeltaMovement().scale(0.6D));
+        this.dampHorizontalMovement(0.6D);
+        int elapsed = SWIPE_TICKS - this.actionTicks;
         LivingEntity target = this.getTarget();
-        if (target != null) {
-            this.getLookControl().setLookAt(target, 35.0F, 20.0F);
+        if (elapsed < SWIPE_COMMIT_TICK && target != null) {
+            this.turnBodyToward(target.position(), TRACKING_TURN_DEGREES);
+            this.committedYaw = this.getYRot();
+        } else {
+            this.holdBodyYaw(this.committedYaw);
         }
 
-        int elapsed = SWIPE_TICKS - this.actionTicks;
-        if (!this.swipeDamageApplied && elapsed >= SWIPE_DAMAGE_TICK) {
-            this.performClawSwipe();
-            this.swipeDamageApplied = true;
+        if (this.swipeHitsApplied == 0 && elapsed >= SWIPE_FIRST_HIT_TICK) {
+            this.performClawSwipe(1.0F, false);
+            if (this.canBreakBlocks()) {
+                this.breakTaggedBlocksInDirection(this.committedForwardWorld(), 2.8D, 2.2D, 1.15D);
+            }
+            this.swipeHitsApplied = 1;
+        } else if (this.swipeHitsApplied == 1 && elapsed >= SWIPE_SECOND_HIT_TICK) {
+            this.performClawSwipe(SWIPE_SECOND_HIT_MULTIPLIER, true);
+            this.swipeHitsApplied = 2;
         }
 
         if (--this.actionTicks <= 0) {
+            this.actionHitEntities.clear();
             this.setActionState(ACTION_NONE);
-            this.attackCooldown = 20;
+            this.attackCooldown = SWIPE_COOLDOWN_TICKS;
         }
     }
 
-    private void performClawSwipe() {
+    private void performClawSwipe(float damageMultiplier, boolean followUp) {
         AABB hitBox = this.getBoundingBox().inflate(3.0D, 1.3D, 3.0D);
+        Vec3 forward = this.committedForwardLocal();
         for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, hitBox, this::isValidSwipeTarget)) {
-            if (!this.isInFront(entity.position(), 0.05D)) {
+            Vec3 toEntity = this.toLocalPlane(entity.position().subtract(this.position()));
+            if (toEntity.lengthSqr() > 1.0E-4D && forward.dot(toEntity.normalize()) < 0.05D) {
+                continue;
+            }
+            if (!this.hasLineOfSight(entity)) {
                 continue;
             }
 
-            if (entity.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
-                Vec3 push = this.toLocalPlane(entity.position().subtract(this.position()));
-                if (push.lengthSqr() < 1.0E-4D) {
-                    push = this.toLocalPlane(this.getViewVector(1.0F));
+            if (followUp && this.actionHitEntities.contains(entity.getUUID())) {
+                entity.invulnerableTime = 0;
+            }
+            Vec3 preHitMovement = entity.getDeltaMovement();
+            if (entity.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * damageMultiplier)) {
+                this.actionHitEntities.add(entity.getUUID());
+                if (followUp) {
+                    Vec3 push = toEntity.lengthSqr() < 1.0E-4D ? forward : toEntity.normalize();
+                    Vec3 worldPush = this.toWorld(push.x * 0.8D, 0.25D, push.z * 0.8D);
+                    entity.push(worldPush.x, worldPush.y, worldPush.z);
+                } else {
+                    entity.setDeltaMovement(preHitMovement);
                 }
-                push = push.normalize().scale(0.8D);
-                Vec3 worldPush = this.toWorld(push.x, 0.25D, push.z);
-                entity.push(worldPush.x, worldPush.y, worldPush.z);
                 entity.hurtMarked = true;
             }
         }
 
-        if (this.canBreakBlocks()) {
-            this.breakTaggedBlocksInFront(2.8D, 2.2D, 1.15D);
-        }
-
-        this.playSound(AntarchySoundEvents.MOLEVORE_ATTACK.get(), 1.0F, 0.85F);
+        this.playSound(AntarchySoundEvents.MOLEVORE_ATTACK.get(), 1.0F, followUp ? 1.0F : 0.85F);
     }
 
     private void startSpinCharge(LivingEntity target) {
@@ -503,7 +866,7 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         }
 
         this.spinDirection = this.toWorld(horizontal.normalize());
-        this.spinHitEntities.clear();
+        this.actionHitEntities.clear();
         this.setActionState(ACTION_SPIN_CHARGE);
         this.actionTicks = SPIN_TOTAL_TICKS;
         this.getNavigation().stop();
@@ -513,46 +876,121 @@ public class MolevoreEntity extends Monster implements GeoEntity {
 
     private void tickSpinCharge() {
         this.getNavigation().stop();
-        LivingEntity target = this.getTarget();
-        boolean inWindup = this.actionTicks > SPIN_TOTAL_TICKS - SPIN_WINDUP_TICKS;
+        int elapsed = SPIN_TOTAL_TICKS - this.actionTicks;
 
-        if (target != null && inWindup) {
-            this.getLookControl().setLookAt(target, 35.0F, 20.0F);
-            Vec3 horizontal = this.toLocalPlane(target.position().subtract(this.position()));
-            if (horizontal.lengthSqr() > 1.0E-4D) {
-                this.spinDirection = this.toWorld(horizontal.normalize());
+        if (elapsed < SPIN_LAUNCH_TICK) {
+            if (elapsed < SPIN_LOCK_TICK) {
+                LivingEntity target = this.getTarget();
+                if (target != null) {
+                    Vec3 horizontal = this.toLocalPlane(target.position().subtract(this.position()));
+                    if (horizontal.lengthSqr() > 1.0E-4D) {
+                        this.spinDirection = this.toWorld(horizontal.normalize());
+                    }
+                }
+                this.turnBodyToward(this.position().add(this.spinDirection), TRACKING_TURN_DEGREES);
+            } else {
+                this.turnBodyToward(this.position().add(this.spinDirection), SPIN_ALIGN_TURN_DEGREES);
             }
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.2D));
-        } else {
-            Vec3 lookTarget = this.position().add(this.spinDirection);
-            this.getLookControl().setLookAt(lookTarget.x, lookTarget.y, lookTarget.z, 360.0F, 0.0F);
-            Vec3 motion = this.spinDirection.scale(SPIN_SPEED).add(this.toWorld(0.0D, this.onGround() ? 0.08D : 0.0D, 0.0D));
-            this.setDeltaMovement(motion);
+            this.committedYaw = this.getYRot();
+            this.setSpinMovement(this.currentHorizontalMovement().scale(0.2D));
+        } else if (elapsed < SPIN_RECOVERY_TICK) {
+            this.committedYaw = this.yawOf(this.spinDirection);
+            this.holdBodyYaw(this.committedYaw);
+            this.setSpinMovement(this.spinDirection.scale(SPIN_SPEED));
             this.hasImpulse = true;
             this.performSpinChargeHit();
-        }
-        if (this.horizontalCollision && !inWindup) {
-            boolean brokeDirt = this.canBreakBlocks()
-                    && this.breakTaggedBlocksInDirection(this.spinDirection, 1.8D, 2.2D, 1.1D);
-            if (!brokeDirt) {
-                this.actionTicks = Math.min(this.actionTicks, 3);
+
+            if (this.horizontalCollision) {
+                boolean brokeDirt = this.canBreakBlocks()
+                        && this.breakTaggedBlocksInDirection(this.spinDirection, 1.8D, 2.2D, 1.1D);
+                if (!brokeDirt) {
+                    this.startWallStagger();
+                    return;
+                }
             }
-        } else if (this.horizontalCollision) {
-            this.actionTicks = Math.min(this.actionTicks, 3);
+            if (this.isInWater()) {
+                this.actionTicks = SPIN_TOTAL_TICKS - SPIN_RECOVERY_TICK;
+            }
+        } else {
+            this.holdBodyYaw(this.committedYaw);
+            this.setSpinMovement(this.currentHorizontalMovement().scale(0.5D));
         }
 
         if (--this.actionTicks <= 0) {
-            this.spinHitEntities.clear();
+            this.actionHitEntities.clear();
             this.setActionState(ACTION_NONE);
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.25D));
-            this.attackCooldown = 60;
+            this.attackCooldown = SPIN_COOLDOWN_TICKS;
         }
+    }
+
+    private void startWallStagger() {
+        this.actionHitEntities.clear();
+        this.setDeltaMovement(this.currentVerticalMovement());
+        this.setActionState(ACTION_HURT);
+        this.actionTicks = WALL_STAGGER_TICKS;
+        this.attackCooldown = WALL_STAGGER_COOLDOWN_TICKS;
+        this.playSound(AntarchySoundEvents.MOLEVORE_DIG.get(), 1.0F, 0.6F);
+    }
+
+    private void setSpinMovement(Vec3 horizontal) {
+        double localVertical = this.toLocal(this.getDeltaMovement()).y;
+        double nextVertical;
+        if (this.isInWater()) {
+            nextVertical = 0.0D;
+        } else if (this.onGround()) {
+            nextVertical = -0.08D;
+        } else {
+            nextVertical = Math.max(localVertical - 0.08D, -2.0D);
+        }
+        this.setDeltaMovement(horizontal.add(this.toWorld(0.0D, nextVertical, 0.0D)));
+    }
+
+    private Vec3 currentHorizontalMovement() {
+        return this.toWorld(this.toLocalPlane(this.getDeltaMovement()));
+    }
+
+    private Vec3 currentVerticalMovement() {
+        return this.toWorld(0.0D, this.toLocal(this.getDeltaMovement()).y, 0.0D);
+    }
+
+    private void dampHorizontalMovement(double factor) {
+        Vec3 local = this.toLocal(this.getDeltaMovement());
+        this.setDeltaMovement(this.toWorld(local.x * factor, local.y, local.z * factor));
+    }
+
+    private void turnBodyToward(Vec3 worldPoint, float maxDegrees) {
+        Vec3 flat = this.toLocalPlane(worldPoint.subtract(this.position()));
+        if (flat.lengthSqr() < 1.0E-4D) {
+            return;
+        }
+        float yaw = (float) (Mth.atan2(flat.z, flat.x) * Mth.RAD_TO_DEG) - 90.0F;
+        this.holdBodyYaw(Mth.approachDegrees(this.getYRot(), yaw, maxDegrees));
+    }
+
+    private void holdBodyYaw(float yaw) {
+        this.setYRot(yaw);
+        this.yBodyRot = yaw;
+        this.yHeadRot = yaw;
+    }
+
+    private float yawOf(Vec3 worldDirection) {
+        Vec3 flat = this.toLocalPlane(worldDirection);
+        return (float) (Mth.atan2(flat.z, flat.x) * Mth.RAD_TO_DEG) - 90.0F;
+    }
+
+    private Vec3 committedForwardLocal() {
+        float radians = this.committedYaw * Mth.DEG_TO_RAD;
+        return new Vec3(-Mth.sin(radians), 0.0D, Mth.cos(radians));
+    }
+
+    private Vec3 committedForwardWorld() {
+        return this.toWorld(this.committedForwardLocal());
     }
 
     private void performSpinChargeHit() {
         AABB hitBox = this.getBoundingBox().inflate(0.55D, 0.35D, 0.55D);
         for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, hitBox, this::isValidSwipeTarget)) {
-            if (!this.spinHitEntities.add(entity.getUUID())) {
+            if (!this.actionHitEntities.add(entity.getUUID())) {
                 continue;
             }
 
@@ -575,20 +1013,20 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     private void startIdleDig() {
         this.setActionState(ACTION_IDLE_DIG);
         this.actionTicks = SWIPE_TICKS;
-        this.swipeDamageApplied = false;
+        this.swipeHitsApplied = 0;
         this.getNavigation().stop();
-        this.setDeltaMovement(this.getDeltaMovement().scale(0.35D));
+        this.dampHorizontalMovement(0.35D);
         this.playSound(AntarchySoundEvents.MOLEVORE_DIG.get(), 0.9F, 0.55F);
     }
 
     private void tickIdleDig() {
         this.getNavigation().stop();
-        this.setDeltaMovement(this.getDeltaMovement().scale(0.6D));
+        this.dampHorizontalMovement(0.6D);
 
         int elapsed = SWIPE_TICKS - this.actionTicks;
-        if (!this.swipeDamageApplied && elapsed >= SWIPE_DAMAGE_TICK) {
+        if (this.swipeHitsApplied == 0 && elapsed >= SWIPE_FIRST_HIT_TICK) {
             this.performIdleDig();
-            this.swipeDamageApplied = true;
+            this.swipeHitsApplied = 1;
         }
 
         if (--this.actionTicks <= 0) {
@@ -597,41 +1035,67 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         }
     }
 
-    
     private void performIdleDig() {
-        if (!this.canBreakBlocks()) return;
+        if (!this.canBreakBlocks()
+                || !this.level().hasNearbyAlivePlayer(this.getX(), this.getY(), this.getZ(), IDLE_DIG_PLAYER_RANGE)) {
+            return;
+        }
 
-        Vec3 forward = this.getViewVector(1.0F).normalize();
-        Vec3 digCenter = this.position()
-                .add(forward.scale(1.0D))
-                .add(this.toWorld(0.0D, -0.5D, 0.0D));
+        Vec3 forward = this.toLocalPlane(this.getViewVector(1.0F));
+        if (forward.lengthSqr() < 1.0E-4D) {
+            return;
+        }
 
-        double halfWidth = 0.9D;
-        double digDepth = 1.5D;
-        BlockPos min = BlockPos.containing(digCenter.x - halfWidth, digCenter.y - digDepth, digCenter.z - halfWidth);
-        BlockPos max = BlockPos.containing(digCenter.x + halfWidth, digCenter.y + 0.4D, digCenter.z + halfWidth);
-
-        Vec3 hForward = this.toLocalPlane(forward);
-        for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
-            BlockState state = this.level().getBlockState(pos);
-            if (!state.is(AntarchyTags.Blocks.MOLEVORE_BREAKABLE_BLOCKS) || state.isAir()) {
-                continue;
-            }
-            if (hForward.lengthSqr() > 1.0E-4D) {
-                Vec3 toBlock = this.toLocalPlane(Vec3.atCenterOf(pos).subtract(this.position()));
-                if (toBlock.lengthSqr() > 1.0E-4D && hForward.normalize().dot(toBlock.normalize()) < -0.2D) {
-                    continue;
+        forward = forward.normalize();
+        Vec3 side = new Vec3(-forward.z, 0.0D, forward.x);
+        for (int across = -1; across <= 1; across++) {
+            for (int along = 2; along <= 3; along++) {
+                Vec3 local = forward.scale(along).add(side.scale(across)).add(0.0D, -0.5D, 0.0D);
+                BlockPos pos = BlockPos.containing(this.position().add(this.toWorld(local)));
+                BlockPos support = BlockPos.containing(Vec3.atCenterOf(pos).add(this.toWorld(0.0D, -1.0D, 0.0D)));
+                if (this.level().getBlockState(pos).is(AntarchyTags.Blocks.MOLEVORE_BREAKABLE_BLOCKS)
+                        && !this.level().getBlockState(support).getCollisionShape(this.level(), support).isEmpty()) {
+                    this.level().destroyBlock(pos, false, this);
                 }
             }
-            this.level().destroyBlock(pos, false, this);
         }
 
         this.playSound(AntarchySoundEvents.MOLEVORE_ATTACK.get(), 1.0F, 0.8F + this.random.nextFloat() * 0.1F);
     }
 
+    private void startTunnelDig(Vec3 direction) {
+        this.tunnelDirection = direction;
+        this.setActionState(ACTION_TUNNEL_DIG);
+        this.actionTicks = SWIPE_TICKS;
+        this.swipeHitsApplied = 0;
+        this.getNavigation().stop();
+        this.dampHorizontalMovement(0.35D);
+        this.playSound(AntarchySoundEvents.MOLEVORE_DIG.get(), 0.9F, 0.55F);
+    }
+
+    private void tickTunnelDig() {
+        this.getNavigation().stop();
+        this.dampHorizontalMovement(0.6D);
+        this.turnBodyToward(this.position().add(this.tunnelDirection), TRACKING_TURN_DEGREES);
+
+        int elapsed = SWIPE_TICKS - this.actionTicks;
+        if (this.swipeHitsApplied == 0 && elapsed >= SWIPE_FIRST_HIT_TICK) {
+            if (this.canBreakBlocks()) {
+                this.breakTaggedBlocksInDirection(this.tunnelDirection, 2.8D, 2.2D, 1.15D);
+            }
+            this.playSound(AntarchySoundEvents.MOLEVORE_DIG.get(), 1.0F, 0.75F);
+            this.swipeHitsApplied = 1;
+        }
+
+        if (--this.actionTicks <= 0) {
+            this.lastChaseTargetPos = null;
+            this.setActionState(ACTION_NONE);
+        }
+    }
+
     private void tickHurtAnimation() {
         this.getNavigation().stop();
-        this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+        this.dampHorizontalMovement(0.5D);
         if (--this.actionTicks <= 0) {
             this.setActionState(ACTION_NONE);
         }
@@ -641,19 +1105,17 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         return entity.isAlive() && entity != this && this.canAttack(entity);
     }
 
-    
     private boolean breakTaggedBlocksInFront(double range, double verticalRange, double halfWidth) {
         return this.breakTaggedBlocksInDirection(this.getViewVector(1.0F).normalize(), range, verticalRange, halfWidth);
     }
 
-    
     private boolean breakTaggedBlocksInDirection(Vec3 direction, double range, double verticalRange, double halfWidth) {
         if (!canMobGrief(this.level())) {
             return false;
         }
 
         Vec3 forward = direction.normalize();
-        Vec3 center = this.position().add(forward.scale(range * 0.5D)).add(this.toWorld(0.0D, this.getBbHeight() * 0.4D, 0.0D));
+        Vec3 center = this.position().add(forward.scale(range * 0.5D)).add(this.toWorld(0.0D, verticalRange * 0.5D + 0.05D, 0.0D));
         BlockPos min = BlockPos.containing(center.x - halfWidth, center.y - verticalRange * 0.5D, center.z - halfWidth);
         BlockPos max = BlockPos.containing(center.x + halfWidth, center.y + verticalRange * 0.5D, center.z + halfWidth);
 
@@ -678,15 +1140,6 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         return broke;
     }
 
-    private boolean isInFront(Vec3 position, double minimumDot) {
-        Vec3 forward = this.toLocalPlane(this.getViewVector(1.0F));
-        Vec3 toTarget = this.toLocalPlane(position.subtract(this.position()));
-        if (forward.lengthSqr() < 1.0E-4D || toTarget.lengthSqr() < 1.0E-4D) {
-            return true;
-        }
-        return forward.normalize().dot(toTarget.normalize()) >= minimumDot;
-    }
-
     private GravityDirection gravityDirection() {
         return GravityApi.getGravityDirection(this);
     }
@@ -699,6 +1152,10 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         return GravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
     }
 
+    private Vec3 toLocal(Vec3 worldVector) {
+        return GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
     private Vec3 toLocalPlane(Vec3 worldVector) {
         Vec3 local = GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
         return new Vec3(local.x, 0.0D, local.z);
@@ -709,23 +1166,98 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     }
 
     private void setActionState(int actionState) {
-        if (this.entityData.get(ACTION_STATE) != actionState) {
-            this.entityData.set(ACTION_STATE, actionState);
-            String trigger = switch (actionState) {
-                case ACTION_DIG_UP -> "dig_up";
-                case ACTION_CLAW_SWIPE, ACTION_IDLE_DIG -> "claw_swipe";
-                case ACTION_SPIN_CHARGE -> "spin_charge";
-                case ACTION_HURT -> "hurt";
-                default -> null;
-            };
-            if (trigger != null) {
-                this.triggerAnim("main_controller", trigger);
-            }
+        if (this.entityData.get(ACTION_STATE) == actionState) {
+            return;
         }
+        this.entityData.set(ACTION_STATE, actionState);
+        if (actionState != ACTION_NONE) {
+            this.entityData.set(ACTION_SERIAL, this.entityData.get(ACTION_SERIAL) + 1);
+        }
+    }
+
+    private boolean isSubmerged() {
+        return this.entityData.get(SUBMERGED);
+    }
+
+    private void setSubmerged(boolean submerged) {
+        this.entityData.set(SUBMERGED, submerged);
+    }
+
+    private boolean canStroll() {
+        return this.getTarget() == null && this.getActionState() == ACTION_NONE;
+    }
+
+    private boolean isBodyLockedToYaw() {
+        int action = this.getActionState();
+        return action == ACTION_CLAW_SWIPE || action == ACTION_SPIN_CHARGE || action == ACTION_TUNNEL_DIG;
+    }
+
+    public boolean isHeadTrackingActive() {
+        return this.getActionState() == ACTION_NONE && !this.isDeadOrDying();
     }
 
     private boolean canBreakBlocks() {
         return canMobGrief(this.level());
+    }
+
+    private static final class TruffleLureGoal extends Goal {
+        private static final double RANGE = 16.0D;
+        private static final double STOP_DISTANCE = 3.0D;
+        private static final int REPATH_TICKS = 10;
+        private final MolevoreEntity molevore;
+        private final TargetingConditions conditions = TargetingConditions.forNonCombat().range(RANGE).ignoreLineOfSight().selector(MoleTruffles::lures);
+        @Nullable
+        private Player player;
+        private int repathDelay;
+
+        private TruffleLureGoal(MolevoreEntity molevore) {
+            this.molevore = molevore;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!this.molevore.canStroll()) {
+                return false;
+            }
+            this.player = this.molevore.level().getNearestPlayer(this.conditions, this.molevore);
+            return this.player != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.player != null
+                    && this.player.isAlive()
+                    && !this.player.isSpectator()
+                    && MoleTruffles.lures(this.player)
+                    && this.molevore.canStroll()
+                    && this.molevore.distanceToSqr(this.player) <= RANGE * RANGE;
+        }
+
+        @Override
+        public void start() {
+            this.repathDelay = 0;
+        }
+
+        @Override
+        public void stop() {
+            this.player = null;
+            this.molevore.getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.player == null) {
+                return;
+            }
+            this.molevore.getLookControl().setLookAt(this.player, 30.0F, 20.0F);
+            if (this.molevore.distanceToSqr(this.player) <= STOP_DISTANCE * STOP_DISTANCE) {
+                this.molevore.getNavigation().stop();
+            } else if (--this.repathDelay <= 0) {
+                this.repathDelay = REPATH_TICKS;
+                this.molevore.getNavigation().moveTo(this.player, WANDER_SPEED);
+            }
+        }
     }
 
     private static boolean canMobGrief(Level level) {

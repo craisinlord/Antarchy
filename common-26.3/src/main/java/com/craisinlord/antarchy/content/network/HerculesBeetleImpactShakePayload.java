@@ -1,0 +1,20 @@
+package com.craisinlord.antarchy.content.network;
+
+import com.craisinlord.antarchy.Antarchy;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+
+public record HerculesBeetleImpactShakePayload(int durationTicks) implements CustomPacketPayload {
+    public static final Type<HerculesBeetleImpactShakePayload> TYPE =
+            new Type<>(Identifier.fromNamespaceAndPath(Antarchy.MODID, "hercules_beetle_impact_shake"));
+    public static final StreamCodec<ByteBuf, HerculesBeetleImpactShakePayload> STREAM_CODEC =
+            ByteBufCodecs.VAR_INT.map(HerculesBeetleImpactShakePayload::new, HerculesBeetleImpactShakePayload::durationTicks);
+
+    @Override
+    public Type<HerculesBeetleImpactShakePayload> type() {
+        return TYPE;
+    }
+}

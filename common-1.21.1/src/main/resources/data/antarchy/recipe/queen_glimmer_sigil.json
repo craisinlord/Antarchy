@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:faded_memory"
+    },
+    {
+      "item": "minecraft:deepslate"
+    },
+    {
+      "item": "antarchy:queen_scale"
+    }
+  ],
+  "result": {
+    "id": "antarchy:queen_glimmer_sigil",
+    "count": 1
+  }
+}

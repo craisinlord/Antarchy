@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "antarchy:nadir_boat",
+    "minecraft:chest"
+  ],
+  "result": {
+    "id": "antarchy:nadir_chest_boat"
+  }
+}

@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.72,
   "downfall": 1.0,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 736368,
     "sky_color": 8084735,
@@ -41,10 +41,12 @@
     [],
     [],
     [],
-    [],
     [
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone",
+      "antarchy:elythia_geology"
+    ],
+    [
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone",
       "minecraft:lush_caves_clay"
     ],
     [],

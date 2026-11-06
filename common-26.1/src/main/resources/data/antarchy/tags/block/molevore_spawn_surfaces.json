@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:coarse_dirt",
+    "minecraft:dirt",
+    "minecraft:dirt_path",
+    "minecraft:farmland",
+    "minecraft:grass_block",
+    "minecraft:rooted_dirt",
+    "minecraft:mud",
+    "minecraft:packed_mud",
+    "minecraft:mycelium",
+    "minecraft:podzol",
+    "minecraft:moss_block",
+    "minecraft:clay",
+    "minecraft:gravel",
+    "minecraft:stone",
+    "minecraft:granite",
+    "minecraft:diorite",
+    "minecraft:andesite",
+    "minecraft:tuff",
+    "minecraft:calcite",
+    "minecraft:dripstone_block",
+    "minecraft:deepslate",
+    "minecraft:cobbled_deepslate",
+    "antarchy:infested_coarse_dirt",
+    "antarchy:infested_rooted_dirt"
+  ]
+}

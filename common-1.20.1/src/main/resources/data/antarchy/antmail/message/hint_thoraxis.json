@@ -1,0 +1,20 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "Red Ants",
+  "body": "Seen any Red Ants in the Nether? They bite. But right-click one and it takes you to Thoraxis. Put one in a Nyxite frame for a portal that stays lit.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "random",
+    "pool": "antarchy:trayaurus_hints"
+  },
+  "once": true,
+  "conditions": {
+    "advancements": [
+      "minecraft:nether/root"
+    ],
+    "not_advancements": [
+      "antarchy:visit_thoraxis"
+    ]
+  }
+}

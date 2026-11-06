@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:flower_pot"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:truffalo_sapling"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/potted_truffalo_sapling"
+}

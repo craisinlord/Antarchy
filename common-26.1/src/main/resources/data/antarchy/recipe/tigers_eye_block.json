@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "III",
+    "III",
+    "III"
+  ],
+  "key": {
+    "I": "antarchy:tigers_eye"
+  },
+  "result": {
+    "id": "antarchy:tigers_eye_block"
+  }
+}

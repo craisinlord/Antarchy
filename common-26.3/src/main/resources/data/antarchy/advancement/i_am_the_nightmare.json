@@ -1,0 +1,67 @@
+{
+  "parent": "antarchy:visit_thoraxis",
+  "criteria": {
+    "kill_emperor_scorpion": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:emperor_scorpion"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "kill_lucid": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:lucid"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "kill_nightmare": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:nightmare"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "text": "Defeat Emperor Scorpion, Lucid, and Nightmare"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "antarchy:nightmare_scale"
+    },
+    "show_toast": true,
+    "title": {
+      "text": "I Am the Nightmare"
+    }
+  },
+  "requirements": [
+    [
+      "kill_emperor_scorpion"
+    ],
+    [
+      "kill_lucid"
+    ],
+    [
+      "kill_nightmare"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

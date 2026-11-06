@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import com.mojang.math.Axis;
 
 public class NightmareRenderer extends GeoEntityRenderer<NightmareEntity> {
     public NightmareRenderer(EntityRendererProvider.Context context) {
@@ -19,6 +20,18 @@ public class NightmareRenderer extends GeoEntityRenderer<NightmareEntity> {
         this.shadowRadius = 1.8F;
         this.withScale(1.15F);
         this.addRenderLayer(new NightmareEmissiveLayer(this));
+    }
+
+    @Override
+    protected void applyRotations(NightmareEntity animatable, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTick) {
+        super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick);
+        float bodyPitch = animatable.getBodyPitch(partialTick);
+        if (bodyPitch != 0.0F) {
+            float pivotY = animatable.getBbHeight() * 0.5F;
+            poseStack.translate(0.0F, pivotY, 0.0F);
+            poseStack.mulPose(Axis.XP.rotationDegrees(-bodyPitch));
+            poseStack.translate(0.0F, -pivotY, 0.0F);
+        }
     }
 
     @Override

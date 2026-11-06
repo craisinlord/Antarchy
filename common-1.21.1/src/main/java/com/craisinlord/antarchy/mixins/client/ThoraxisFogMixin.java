@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.mixins.client;
 
+import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -39,6 +40,12 @@ public abstract class ThoraxisFogMixin {
         fogRed = FOG_RED;
         fogGreen = FOG_GREEN;
         fogBlue = FOG_BLUE;
+        float[] eventColor = ThoraxisEventClient.fogColor(fogRed, fogGreen, fogBlue, partialTick);
+        if (eventColor != null) {
+            fogRed = eventColor[0];
+            fogGreen = eventColor[1];
+            fogBlue = eventColor[2];
+        }
         RenderSystem.clearColor(fogRed, fogGreen, fogBlue, 0.0F);
     }
 
@@ -55,7 +62,7 @@ public abstract class ThoraxisFogMixin {
         }
 
         RenderSystem.setShaderFogStart(0.5F);
-        RenderSystem.setShaderFogEnd(Math.max(renderDistance, 1024.0F));
+        RenderSystem.setShaderFogEnd((float) ThoraxisEventClient.fogEnd(Math.max(renderDistance, 1024.0F), partialTick));
         RenderSystem.setShaderFogShape(FogShape.SPHERE);
     }
 

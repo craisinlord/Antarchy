@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "antarchy:chitin_block"
+  ],
+  "result": {
+    "id": "antarchy:chitin",
+    "count": 9
+  }
+}

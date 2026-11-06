@@ -1,0 +1,58 @@
+{
+  "sea_level": -256,
+  "disable_mob_generation": false,
+  "legacy_random_source": true,
+  "default_block": "antarchy:nyxite",
+  "default_fluid": {
+    "id": "antarchy:ichor",
+    "properties": {
+      "level": "0"
+    }
+  },
+  "noise": {
+    "min_y": -256,
+    "height": 512
+  },
+  "noise_router": {
+    "temperature": "antarchy:thoraxis_peaks_mask",
+    "vegetation": 0,
+    "continents": "antarchy:thoraxis_region",
+    "erosion": "antarchy:thoraxis_regime_a",
+    "depth": "antarchy:thoraxis_vertical",
+    "ridges": "antarchy:thoraxis_regime_b",
+    "chunk_surface_level": 0.0,
+    "final_density": {
+      "type": "minecraft:range_choice",
+      "input": "minecraft:y",
+      "min_inclusive": -256,
+      "max_exclusive": 0,
+      "when_in_range": {
+        "type": "minecraft:squeeze",
+        "input": {
+          "type": "minecraft:interpolated",
+          "cell_size_xz": 4,
+          "cell_size_y": 8,
+          "input": {
+            "type": "minecraft:range_choice",
+            "input": "minecraft:y",
+            "min_inclusive": -208,
+            "max_exclusive": 8,
+            "when_in_range": "antarchy:thoraxis_underside_density",
+            "when_out_of_range": -1.0
+          }
+        }
+      },
+      "when_out_of_range": {
+        "type": "minecraft:squeeze",
+        "input": {
+          "type": "minecraft:interpolated",
+          "cell_size_xz": 4,
+          "cell_size_y": 8,
+          "input": "antarchy:thoraxis_terrain"
+        }
+      }
+    }
+  },
+  "material_rule": "antarchy:thoraxis",
+  "spawn_target": []
+}

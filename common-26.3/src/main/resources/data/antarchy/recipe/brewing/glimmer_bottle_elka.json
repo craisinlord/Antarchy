@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "antarchy:glimmer_bottle"
+  },
+  "output": {
+    "components": {
+      "antarchy:glimmer_variant": "ELKA"
+    },
+    "id": "antarchy:glimmer_bottle"
+  },
+  "reagent": {
+    "item": "#antarchy:glimmer_augment_elka"
+  }
+}

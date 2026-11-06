@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "entity_tag": "antarchy:horde_common",
+      "weight": 1,
+      "base_count": 2,
+      "per_player_count": 1
+    },
+    {
+      "entity_tag": "antarchy:horde_spitters",
+      "weight": 1,
+      "base_count": 0,
+      "per_player_count": 1,
+      "min_count": 1
+    }
+  ]
+}

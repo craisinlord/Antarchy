@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "III",
+    "IAI",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "A": {
+      "item": "minecraft:anvil"
+    }
+  },
+  "result": {
+    "id": "antarchy:anvil_cannon",
+    "count": 1
+  }
+}

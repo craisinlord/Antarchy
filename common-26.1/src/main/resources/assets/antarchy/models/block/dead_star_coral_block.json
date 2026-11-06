@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "antarchy:block/star_coral/dead_star_coral_block"
+  }
+}

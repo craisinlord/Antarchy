@@ -804,7 +804,11 @@ public class DorrieEntity extends Animal implements GeoEntity {
         private static final int TARGET_REFRESH_TICKS = 20;
         private static final double AQUATIC_SPEED = 1.15D;
         private static final double SEARCH_RADIUS = 12.0D;
+        private static final int MOVE_RETRY_GOAL_TICKS = 5;
 
+        @Nullable
+        private Vec3 lastMoveTarget;
+        private int moveRetryTicks;
         @Nullable
         private Vec3 targetPos;
         private int phaseTicks;
@@ -859,6 +863,8 @@ public class DorrieEntity extends Animal implements GeoEntity {
                     ? DorrieEntity.this.random.nextInt(DIVE_MAX_TICKS - DIVE_MIN_TICKS + 1) + DIVE_MIN_TICKS
                     : DorrieEntity.this.random.nextInt(ROAM_MAX_TICKS - ROAM_MIN_TICKS + 1) + ROAM_MIN_TICKS;
             this.targetRefreshTicks = 0;
+            this.lastMoveTarget = null;
+            this.moveRetryTicks = 0;
             if (this.targetPos == null) {
                 this.targetPos = this.pickTargetForPhase();
             }
@@ -914,7 +920,15 @@ public class DorrieEntity extends Animal implements GeoEntity {
             }
 
             DorrieEntity.this.getLookControl().setLookAt(this.targetPos.x, this.targetPos.y, this.targetPos.z, 25.0F, 20.0F);
-            DorrieEntity.this.getNavigation().moveTo(this.targetPos.x, this.targetPos.y, this.targetPos.z, AQUATIC_SPEED);
+            if (this.moveRetryTicks > 0) {
+                this.moveRetryTicks--;
+            }
+            if (!this.targetPos.equals(this.lastMoveTarget)
+                    || (this.moveRetryTicks <= 0 && DorrieEntity.this.getNavigation().isDone())) {
+                this.lastMoveTarget = this.targetPos;
+                this.moveRetryTicks = MOVE_RETRY_GOAL_TICKS;
+                DorrieEntity.this.getNavigation().moveTo(this.targetPos.x, this.targetPos.y, this.targetPos.z, AQUATIC_SPEED);
+            }
         }
 
         @Nullable
@@ -937,12 +951,15 @@ public class DorrieEntity extends Animal implements GeoEntity {
 
     private static class HuntCheepGoal extends Goal {
         private static final int COOLDOWN_TICKS = 600;
+        private static final int EMPTY_SCAN_COOLDOWN = 10;
+        private static final int REPATH_GOAL_TICKS = 4;
         private static final double HUNT_RANGE = 16.0D;
         private static final double ATTACK_RANGE_SQ = 2.5D * 2.5D;
 
         private final DorrieEntity dorrie;
         private CheepEntity target;
         private int cooldown = 0;
+        private int repathTicks;
 
         HuntCheepGoal(DorrieEntity dorrie) {
             this.dorrie = dorrie;
@@ -964,10 +981,19 @@ public class DorrieEntity extends Animal implements GeoEntity {
             List<CheepEntity> nearby = dorrie.level().getEntitiesOfClass(
                     CheepEntity.class, dorrie.getBoundingBox().inflate(HUNT_RANGE));
             if (nearby.isEmpty()) {
+                cooldown = EMPTY_SCAN_COOLDOWN;
                 return false;
             }
-            nearby.sort((a, b) -> Double.compare(a.distanceToSqr(dorrie), b.distanceToSqr(dorrie)));
-            target = nearby.get(0);
+            CheepEntity closest = null;
+            double closestDistance = Double.MAX_VALUE;
+            for (CheepEntity cheep : nearby) {
+                double distance = cheep.distanceToSqr(dorrie);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closest = cheep;
+                }
+            }
+            target = closest;
             return true;
         }
 
@@ -980,6 +1006,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
 
         @Override
         public void start() {
+            repathTicks = REPATH_GOAL_TICKS;
             dorrie.getNavigation().moveTo(target, 1.4D);
         }
 
@@ -989,7 +1016,10 @@ public class DorrieEntity extends Animal implements GeoEntity {
                 return;
             }
             dorrie.getLookControl().setLookAt(target, 30.0F, 30.0F);
-            dorrie.getNavigation().moveTo(target, 1.4D);
+            if (--repathTicks <= 0) {
+                repathTicks = REPATH_GOAL_TICKS;
+                dorrie.getNavigation().moveTo(target, 1.4D);
+            }
             if (dorrie.distanceToSqr(target) <= ATTACK_RANGE_SQ) {
                 target.hurt(dorrie.damageSources().mobAttack(dorrie),
                         (float) dorrie.getAttributeValue(Attributes.ATTACK_DAMAGE));

@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:survives_explosion"
+          },
+          {
+            "type": "minecraft:match_tool",
+            "predicate": {
+              "components": {
+                "minecraft:enchantments": {
+                  "minecraft:silk_touch": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:rainbow_ant_nest"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:ore",
+  "size": 16,
+  "discard_chance_on_air_exposure": 0.35,
+  "targets": [
+    {
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "antarchy:typhonite"
+      },
+      "state": "antarchy:veined_typhonite"
+    }
+  ]
+}

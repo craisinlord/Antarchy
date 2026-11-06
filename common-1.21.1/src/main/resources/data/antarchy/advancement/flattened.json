@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_with_launched_anvil": {
+      "conditions": {
+        "killing_blow": {
+          "direct_entity": {
+            "type": "antarchy:launched_anvil"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.flattened.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:anvil_cannon"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.flattened.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_with_launched_anvil"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

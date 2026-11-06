@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "antarchy:royal_boat",
+    "minecraft:chest"
+  ],
+  "result": {
+    "id": "antarchy:royal_chest_boat"
+  }
+}

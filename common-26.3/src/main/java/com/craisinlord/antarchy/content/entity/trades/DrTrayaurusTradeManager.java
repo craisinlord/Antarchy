@@ -1,0 +1,163 @@
+package com.craisinlord.antarchy.content.entity.trades;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.logging.LogUtils;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentExactPredicate;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.MerchantOffers;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.slf4j.Logger;
+
+public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListener<JsonElement> {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final String DIRECTORY = "trayaurus_trades";
+    private static final Codec<TradeFile> TRADE_FILE_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            TradeEntry.CODEC.listOf().fieldOf("trades").forGetter(TradeFile::trades)
+    ).apply(instance, TradeFile::new));
+    private static volatile List<TradeEntry> loadedTrades = defaultTrades();
+
+    public DrTrayaurusTradeManager() {
+        super(ExtraCodecs.JSON, FileToIdConverter.json(DIRECTORY));
+    }
+
+    @Override
+    protected void apply(java.util.Map<Identifier, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+        List<TradeEntry> parsedTrades = new ArrayList<>();
+        for (java.util.Map.Entry<Identifier, JsonElement> entry : object.entrySet()) {
+            TRADE_FILE_CODEC.parse(JsonOps.INSTANCE, entry.getValue())
+                    .resultOrPartial(message -> {
+                        throw new JsonParseException("Failed to parse " + entry.getKey() + ": " + message);
+                    })
+                    .ifPresent(file -> parsedTrades.addAll(file.trades()));
+        }
+
+        loadedTrades = parsedTrades.isEmpty() ? defaultTrades() : List.copyOf(parsedTrades);
+    }
+
+    public static MerchantOffers createOffers(HolderLookup.Provider registries) {
+        MerchantOffers offers = new MerchantOffers();
+        for (TradeEntry trade : loadedTrades) {
+            trade.toOffer(registries).ifPresent(offers::add);
+        }
+        return offers;
+    }
+
+    private static List<TradeEntry> defaultTrades() {
+        return List.of(
+                new TradeEntry(new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "uranium_ingot"), 4), Optional.empty(), new StackEntry(Identifier.withDefaultNamespace("spyglass"), 1), 16, 1, 0.05F),
+                new TradeEntry(new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "titanium_ingot"), 6), Optional.empty(), new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "duct_tape"), 2), 12, 5, 0.05F),
+                new TradeEntry(new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "uranium_ingot"), 8), Optional.of(new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "kraken_tooth"), 1)), new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "duplicator_sapling"), 1), 6, 10, 0.1F),
+                new TradeEntry(new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "titanium_ingot"), 10), Optional.empty(), new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "easter_bunny_spawn_egg"), 1), 3, 5, 0.05F),
+                new TradeEntry(new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "uranium_ingot"), 16), Optional.of(new StackEntry(Identifier.fromNamespaceAndPath("antarchy", "titanium_ingot"), 8)), new StackEntry(Identifier.withDefaultNamespace("enchanted_golden_apple"), 1), 2, 20, 0.2F)
+        );
+    }
+
+    private record TradeFile(List<TradeEntry> trades) {
+    }
+
+    private record TradeEntry(StackEntry buy, Optional<StackEntry> secondBuy, StackEntry sell, int maxUses, int villagerXp, float priceMultiplier) {
+        private static final Codec<TradeEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                StackEntry.CODEC.fieldOf("buy").forGetter(TradeEntry::buy),
+                StackEntry.CODEC.optionalFieldOf("second_buy").forGetter(TradeEntry::secondBuy),
+                StackEntry.CODEC.fieldOf("sell").forGetter(TradeEntry::sell),
+                Codec.INT.optionalFieldOf("max_uses", 12).forGetter(TradeEntry::maxUses),
+                Codec.INT.optionalFieldOf("villager_xp", 1).forGetter(TradeEntry::villagerXp),
+                Codec.FLOAT.optionalFieldOf("price_multiplier", 0.05F).forGetter(TradeEntry::priceMultiplier)
+        ).apply(instance, TradeEntry::new));
+
+        private Optional<MerchantOffer> toOffer(HolderLookup.Provider registries) {
+            if (this.maxUses < 1 || this.villagerXp < 1 || this.villagerXp > 99) {
+                return Optional.empty();
+            }
+
+            Optional<ItemCost> buyCost = this.buy.toCost(registries);
+            if (buyCost.isEmpty()) {
+                return Optional.empty();
+            }
+
+            Optional<ItemCost> secondBuyCost = this.secondBuy.flatMap(entry -> entry.toCost(registries));
+            ItemStack sellStack = this.sell.toStack(registries);
+            if (sellStack.isEmpty()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new MerchantOffer(
+                    buyCost.get(),
+                    secondBuyCost,
+                    sellStack,
+                    this.maxUses,
+                    this.villagerXp,
+                    this.priceMultiplier
+            ));
+        }
+    }
+
+    private record StackEntry(Identifier itemId, int count, Optional<JsonElement> components) {
+        private static final Codec<StackEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Identifier.CODEC.fieldOf("item").forGetter(StackEntry::itemId),
+                Codec.INT.optionalFieldOf("count", 1).forGetter(StackEntry::count),
+                ExtraCodecs.JSON.optionalFieldOf("components").forGetter(StackEntry::components)
+        ).apply(instance, StackEntry::new));
+
+        private StackEntry(Identifier itemId, int count) {
+            this(itemId, count, Optional.empty());
+        }
+
+        private Optional<Item> item() {
+            return BuiltInRegistries.ITEM.getOptional(this.itemId)
+                    .filter(item -> item != net.minecraft.world.item.Items.AIR);
+        }
+
+        private ItemStack toStack(HolderLookup.Provider registries) {
+            Optional<Item> item = this.item().filter(found -> this.count > 0);
+            if (item.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+            ItemStack stack = new ItemStack(item.get(), this.count);
+            if (this.components.isPresent()) {
+                Optional<DataComponentPatch> patch = DataComponentPatch.CODEC
+                        .parse(RegistryOps.create(JsonOps.INSTANCE, registries), this.components.get())
+                        .resultOrPartial(message -> LOGGER.error("Dr. Trayaurus trade {}: bad components: {}", this.itemId, message));
+                if (patch.isEmpty()) {
+                    return ItemStack.EMPTY;
+                }
+                stack.applyComponents(patch.get());
+            }
+            return stack;
+        }
+
+        private Optional<ItemCost> toCost(HolderLookup.Provider registries) {
+            Optional<Item> item = this.item().filter(found -> this.count > 0);
+            if (item.isEmpty()) {
+                return Optional.empty();
+            }
+            if (this.components.isEmpty()) {
+                return Optional.of(new ItemCost(item.get(), this.count));
+            }
+            return DataComponentExactPredicate.CODEC
+                    .parse(RegistryOps.create(JsonOps.INSTANCE, registries), this.components.get())
+                    .resultOrPartial(message -> LOGGER.error("Dr. Trayaurus trade {}: bad components: {}", this.itemId, message))
+                    .map(predicate -> new ItemCost(item.get().builtInRegistryHolder(), this.count, predicate));
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "NQ",
+    "QN"
+  ],
+  "key": {
+    "N": "antarchy:nyxite",
+    "Q": "minecraft:quartz"
+  },
+  "result": {
+    "id": "antarchy:pale_nyxite",
+    "count": 2
+  }
+}

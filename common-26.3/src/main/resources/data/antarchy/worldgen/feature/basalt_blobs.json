@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:netherrack_replace_blobs",
+  "radius": {
+    "type": "minecraft:uniform",
+    "max_inclusive": 7,
+    "min_inclusive": 3
+  },
+  "state": {
+    "id": "antarchy:nyxite",
+    "properties": {
+      "axis": "y"
+    }
+  },
+  "target": "antarchy:nyxite"
+}

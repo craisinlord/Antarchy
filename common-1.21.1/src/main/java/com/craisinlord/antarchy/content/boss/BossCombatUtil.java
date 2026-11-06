@@ -4,7 +4,9 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 
@@ -31,7 +33,25 @@ public final class BossCombatUtil {
         return boss.level().getNearestPlayer(boss, range) == null;
     }
 
-    public static void clampHalfHealthCrossing(LivingEntity boss, float preHitHealth) {
+    public static float damageRangeMultiplier(LivingEntity boss, DamageSource source, double fullRange, double zeroRange) {
+        Entity attacker = source.getEntity();
+        if (fullRange <= 0.0D || attacker == null || source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return 1.0F;
+        }
+        double distance = attacker.distanceTo(boss);
+        if (distance <= fullRange) {
+            return 1.0F;
+        }
+        if (distance >= zeroRange) {
+            return 0.0F;
+        }
+        return (float) ((zeroRange - distance) / (zeroRange - fullRange));
+    }
+
+    public static void clampHalfHealthCrossing(LivingEntity boss, float preHitHealth, DamageSource source) {
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return;
+        }
         float halfHealth = boss.getMaxHealth() * 0.5F;
         if (preHitHealth > halfHealth && boss.getHealth() < halfHealth) {
             boss.setHealth(halfHealth);

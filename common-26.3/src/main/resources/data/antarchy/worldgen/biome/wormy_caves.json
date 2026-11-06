@@ -1,0 +1,112 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.82,
+  "downfall": 1.0,
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [
+      "antarchy:cavaryn_worm_bore_dressing",
+      "antarchy:cavaryn_brood_nest_dressing",
+      "antarchy:cavaryn_brood_gallery_dressing",
+      "antarchy:cavaryn_glowcap_grotto_dressing",
+      "antarchy:cavaryn_moleworm_warren_dressing",
+      "antarchy:cavaryn_carapace_rift_dressing",
+      "antarchy:cavaryn_biowart_gut_dressing"
+    ],
+    [],
+    [],
+    [
+      "antarchy:myrmite_coal_ore",
+      "antarchy:broodstone_uranium_ore",
+      "antarchy:broodstone_titanium_ore",
+      "antarchy:myrmite_copper_ore",
+      "antarchy:myrmite_iron_ore",
+      "antarchy:myrmite_gold_ore",
+      "antarchy:myrmite_redstone_ore",
+      "antarchy:myrmite_lapis_ore",
+      "antarchy:myrmite_diamond_ore",
+      "antarchy:myrmite_emerald_ore",
+      "antarchy:myrmite_copper_ore_rich",
+      "antarchy:myrmite_iron_ore_rich",
+      "antarchy:myrmite_fossil"
+    ],
+    [],
+    [],
+    [
+      "antarchy:wormy_caves_mucus",
+      "antarchy:wormy_caves_creepvine",
+      "antarchy:wormy_caves_hanging_creeproots",
+      "antarchy:wormy_caves_molting_vines",
+      "antarchy:wormy_caves_ground_molting_vines",
+      "antarchy:termite_nest"
+    ],
+    []
+  ],
+  "attributes": {
+    "minecraft:visual/fog_color": "#0f0000",
+    "minecraft:visual/sky_color": "#080000",
+    "minecraft:visual/water_fog_color": "#1f6a20",
+    "minecraft:audio/ambient_sounds": {},
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:spore_blossom_air"
+        },
+        "probability": 0.012
+      }
+    ],
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {
+          "antarchy:worm": {
+            "energy_budget": 0.55,
+            "charge": 0.32
+          }
+        },
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "antarchy:worm",
+              "weight": 35,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
+            }
+          ],
+          "ambient": [
+            {
+              "type": "minecraft:bat",
+              "weight": 1,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
+            }
+          ]
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.65
+  },
+  "effects": {
+    "water_color": "#3f76e4",
+    "foliage_color": "#303313",
+    "grass_color": "#4b704c",
+    "grass_color_modifier": "none"
+  }
+}

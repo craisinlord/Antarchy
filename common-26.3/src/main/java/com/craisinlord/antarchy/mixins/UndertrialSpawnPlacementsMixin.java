@@ -1,0 +1,27 @@
+package com.craisinlord.antarchy.mixins;
+
+import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnContext;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.SpawnPlacements;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(SpawnPlacements.class)
+public abstract class UndertrialSpawnPlacementsMixin {
+    @Inject(method = "checkSpawnRules", at = @At("RETURN"), cancellable = true)
+    private static <T extends net.minecraft.world.entity.Entity> void antarchy$allowUndertrialSpawn(
+            net.minecraft.world.entity.EntityType<T> entityType,
+            net.minecraft.world.level.ServerLevelAccessor level,
+            EntitySpawnReason spawnReason,
+            net.minecraft.core.BlockPos pos,
+            net.minecraft.util.RandomSource random,
+            CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValueZ()
+                && spawnReason == EntitySpawnReason.TRIAL_SPAWNER
+                && UndertrialSpawnContext.isActive()) {
+            cir.setReturnValue(true);
+        }
+    }
+}

@@ -53,6 +53,8 @@ import net.minecraft.world.phys.Vec3;
 public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     private static final TagKey<Block> GLASS_BLOCKS = TagKey.create(Registries.BLOCK, new ResourceLocation("c", "glass_blocks"));
     private static final TagKey<Block> GLASS_PANES = TagKey.create(Registries.BLOCK, new ResourceLocation("c", "glass_panes"));
+    private static final TagKey<Block> FORGE_GLASS = TagKey.create(Registries.BLOCK, new ResourceLocation("forge", "glass"));
+    private static final TagKey<Block> FORGE_GLASS_PANES = TagKey.create(Registries.BLOCK, new ResourceLocation("forge", "glass_panes"));
     private static final int MAX_TICKETED_PROJECTILES = 20;
     private static final int PROJECTILE_TICKET_LEVEL = 31;
     private static final int MAX_CHUNK_WAIT_TICKS = 200;
@@ -464,6 +466,8 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         Block block = state.getBlock();
         return state.is(GLASS_BLOCKS)
                 || state.is(GLASS_PANES)
+                || state.is(FORGE_GLASS)
+                || state.is(FORGE_GLASS_PANES)
                 || block == Blocks.GLASS
                 || block == Blocks.GLASS_PANE
                 || block == Blocks.TINTED_GLASS

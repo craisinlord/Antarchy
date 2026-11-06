@@ -1,0 +1,129 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:faded_memory",
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 16.0,
+                "max": 28.0
+              }
+            },
+            {
+              "type": "minecraft:enchanted_count_increase",
+              "enchantment": "minecraft:looting",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 2.0
+              }
+            }
+          ]
+        }
+      ],
+      "rolls": 1.0,
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      }
+    },
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 6.0,
+        "max": 9.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:king_scale",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 8.0,
+              "max": 16.0
+            }
+          }
+        }
+      ],
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      }
+    },
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 12.0,
+        "max": 18.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_block",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 12.0,
+              "max": 20.0
+            }
+          }
+        }
+      ],
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      }
+    },
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 4.0,
+        "max": 8.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 10.0,
+              "max": 16.0
+            }
+          }
+        }
+      ],
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      }
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:tigers_eye",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 4.0,
+              "max": 8.0
+            }
+          }
+        }
+      ],
+      "rolls": 1.0,
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      }
+    }
+  ],
+  "random_sequence": "antarchy:entities/king_glimmer"
+}

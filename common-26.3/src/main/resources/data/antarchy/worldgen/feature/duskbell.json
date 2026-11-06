@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "id": "antarchy:duskbell",
+    "properties": {
+      "vertical_direction": "down"
+    }
+  }
+}

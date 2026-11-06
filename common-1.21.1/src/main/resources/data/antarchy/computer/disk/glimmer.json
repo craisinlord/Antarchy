@@ -1,5 +1,6 @@
 {
   "category": "antarchy:elythia",
   "title": "guide.antarchy.disk.glimmer.title",
+  "description": "guide.antarchy.disk.glimmer.description",
   "entries": ["antarchy:glimmer"]
 }

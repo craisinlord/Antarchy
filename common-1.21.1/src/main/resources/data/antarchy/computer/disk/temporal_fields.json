@@ -1,5 +1,6 @@
 {
   "category": "antarchy:thoraxis",
   "title": "guide.antarchy.disk.temporal_fields.title",
+  "description": "guide.antarchy.disk.temporal_fields.description",
   "entries": ["antarchy:temporal_fields"]
 }

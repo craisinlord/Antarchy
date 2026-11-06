@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/jungle_slab_top",
+  "textures": {
+    "bottom": "antarchy:block/cranberry/cranberry_planks",
+    "side": "antarchy:block/cranberry/cranberry_planks",
+    "top": "antarchy:block/cranberry/cranberry_planks"
+  }
+}
+

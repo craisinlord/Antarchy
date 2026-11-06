@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "antarchy:myrmite_diamond_ore",
+              "condition": "minecraft:tool/can_silk_touch"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "minecraft:diamond",
+              "modifier": [
+                {
+                  "type": "minecraft:apply_bonus",
+                  "enchantment": "minecraft:fortune",
+                  "formula": "minecraft:ore_drops"
+                },
+                {
+                  "type": "minecraft:explosion_decay"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ],
+  "random_sequence": "antarchy:blocks/myrmite_diamond_ore"
+}

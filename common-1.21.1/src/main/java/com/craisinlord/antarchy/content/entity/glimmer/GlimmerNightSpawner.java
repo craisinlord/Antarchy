@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.weather.ElythiaEvent;
+import com.craisinlord.antarchy.content.weather.ElythiaEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -15,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -34,6 +37,11 @@ public final class GlimmerNightSpawner {
     private static final double MIN_SPAWN_DISTANCE = 24.0D;
     private static final double MAX_SPAWN_DISTANCE = 56.0D;
     private static final int COLUMN_ATTEMPTS = 8;
+    private static final int LUMEN_RAIN_INTERVAL_TICKS = 20 * 3;
+    private static final float LUMEN_RAIN_SPAWN_CHANCE = 0.7F;
+    private static final int LUMEN_RAIN_MAX_NEARBY_WILD = 12;
+    private static final double LUMEN_RAIN_MIN_SPAWN_DISTANCE = 12.0D;
+    private static final double LUMEN_RAIN_MAX_SPAWN_DISTANCE = 40.0D;
 
     private GlimmerNightSpawner() {
     }
@@ -42,25 +50,35 @@ public final class GlimmerNightSpawner {
         if (!level.dimension().equals(ELYTHIA)) {
             return;
         }
-        if (level.getGameTime() % CHECK_INTERVAL_TICKS != 0L || !level.isNight()) {
-            return;
-        }
         if (!level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
             return;
         }
+        boolean lumenRain = ElythiaEvents.isActive(level, ElythiaEvent.LUMEN_RAIN);
+        if (lumenRain) {
+            if (level.getGameTime() % LUMEN_RAIN_INTERVAL_TICKS == 0L) {
+                spawnForPlayers(level, LUMEN_RAIN_SPAWN_CHANCE, LUMEN_RAIN_MAX_NEARBY_WILD, true);
+            }
+            return;
+        }
+        if (level.getGameTime() % CHECK_INTERVAL_TICKS != 0L || !level.isNight()) {
+            return;
+        }
+        spawnForPlayers(level, SPAWN_CHANCE, MAX_NEARBY_WILD, false);
+    }
 
+    private static void spawnForPlayers(ServerLevel level, float chance, int maxNearby, boolean lumenRain) {
         EntityType<GlimmerEntity> type = AntarchyObjects.GLIMMER.get();
         for (ServerPlayer player : level.players()) {
             if (player.isSpectator() || !player.isAlive()) {
                 continue;
             }
-            if (level.random.nextFloat() >= SPAWN_CHANCE) {
+            if (level.random.nextFloat() >= chance) {
                 continue;
             }
-            if (countNearbyWild(level, player, type) >= MAX_NEARBY_WILD) {
+            if (countNearbyWild(level, player, type) >= maxNearby) {
                 continue;
             }
-            attemptSpawnNear(level, player, type);
+            attemptSpawnNear(level, player, type, lumenRain);
         }
     }
 
@@ -69,22 +87,26 @@ public final class GlimmerNightSpawner {
         return level.getEntities(type, box, glimmer -> !glimmer.isTame()).size();
     }
 
-    private static void attemptSpawnNear(ServerLevel level, ServerPlayer player, EntityType<GlimmerEntity> type) {
+    private static void attemptSpawnNear(ServerLevel level, ServerPlayer player, EntityType<GlimmerEntity> type, boolean lumenRain) {
         RandomSource random = level.random;
         BlockPos origin = player.blockPosition();
+        double minDistance = lumenRain ? LUMEN_RAIN_MIN_SPAWN_DISTANCE : MIN_SPAWN_DISTANCE;
+        double maxDistance = lumenRain ? LUMEN_RAIN_MAX_SPAWN_DISTANCE : MAX_SPAWN_DISTANCE;
         for (int attempt = 0; attempt < COLUMN_ATTEMPTS; attempt++) {
             double angle = random.nextDouble() * Math.PI * 2.0D;
-            double distance = MIN_SPAWN_DISTANCE + random.nextDouble() * (MAX_SPAWN_DISTANCE - MIN_SPAWN_DISTANCE);
+            double distance = minDistance + random.nextDouble() * (maxDistance - minDistance);
             int x = origin.getX() + Mth.floor(Math.cos(angle) * distance);
             int z = origin.getZ() + Mth.floor(Math.sin(angle) * distance);
             if (!level.hasChunkAt(new BlockPos(x, origin.getY(), z))) {
                 continue;
             }
             BlockPos pos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, z));
-            if (!biomeSpawnsGlimmers(level.getBiome(pos), type)) {
-                continue;
-            }
-            if (!SpawnPlacements.checkSpawnRules(type, level, MobSpawnType.NATURAL, pos, random)) {
+            if (lumenRain) {
+                if (!Animal.checkAnimalSpawnRules(type, level, MobSpawnType.NATURAL, pos, random)) {
+                    continue;
+                }
+            } else if (!biomeSpawnsGlimmers(level.getBiome(pos), type)
+                    || !SpawnPlacements.checkSpawnRules(type, level, MobSpawnType.NATURAL, pos, random)) {
                 continue;
             }
             if (!level.noCollision(type.getSpawnAABB(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D))) {

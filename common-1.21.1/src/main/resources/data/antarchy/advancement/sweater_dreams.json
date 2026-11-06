@@ -17,13 +17,7 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
-      "id": "minecraft:potion",
-      "components": {
-        "minecraft:potion_contents": {
-          "potion": "antarchy:dread"
-        }
-      }
+      "id": "antarchy:nightmare_scale"
     },
     "show_toast": true,
     "title": {

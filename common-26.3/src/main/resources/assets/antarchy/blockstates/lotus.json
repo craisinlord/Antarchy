@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "hanging=false": { "model": "antarchy:block/lotus" },
+    "hanging=true": { "model": "antarchy:block/lotus", "x": 180 }
+  }
+}

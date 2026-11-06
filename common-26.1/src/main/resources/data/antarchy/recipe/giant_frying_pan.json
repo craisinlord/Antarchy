@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "NNN",
+    "NNN",
+    " S "
+  ],
+  "key": {
+    "N": "minecraft:netherite_block",
+    "S": "antarchy:ultimate_shovel"
+  },
+  "result": {
+    "id": "antarchy:giant_frying_pan",
+    "components": {
+      "minecraft:enchantments": {
+        "minecraft:fire_aspect": 2
+      }
+    }
+  }
+}

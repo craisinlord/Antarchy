@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "condition": {
+                "type": "minecraft:match_tool",
+                "predicate": {
+                  "components": {
+                    "minecraft:enchantments": {
+                      "minecraft:silk_touch": 1
+                    }
+                  }
+                }
+              },
+              "name": "antarchy:star_coral_block"
+            },
+            {
+              "type": "minecraft:item",
+              "condition": {
+                "type": "minecraft:survives_explosion"
+              },
+              "name": "antarchy:star_coral_block"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

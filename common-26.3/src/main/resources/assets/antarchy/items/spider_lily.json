@@ -1,0 +1,13 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "antarchy:item/spider_lily",
+    "tints": [
+      {
+        "type": "minecraft:grass",
+        "temperature": 0.5,
+        "downfall": 1.0
+      }
+    ]
+  }
+}

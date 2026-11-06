@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": "minecraft:cobblestone",
+    "R": "antarchy:bluestone"
+  },
+  "pattern": [
+    "###",
+    "# #",
+    "#R#"
+  ],
+  "result": {
+    "id": "minecraft:dropper"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:mossy_shellstone_bricks",
+  "result": {
+    "id": "antarchy:mossy_shellstone_brick_stairs"
+  }
+}

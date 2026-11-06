@@ -1,0 +1,84 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:clamp",
+      "min": -10.0,
+      "max": 10.0,
+      "input": {
+        "type": "minecraft:add",
+        "left": {
+          "type": "minecraft:gradient",
+          "from_coordinate": -64,
+          "to_coordinate": 400,
+          "from_value": 3.08559,
+          "to_value": -4.229252,
+          "axis": "y"
+        },
+        "right": {
+          "type": "minecraft:add",
+          "left": {
+            "type": "minecraft:add",
+            "left": {
+              "type": "minecraft:cache",
+              "input": "antarchy:elythia_butte_offset"
+            },
+            "right": {
+              "type": "minecraft:range_choice",
+              "input": {
+                "type": "minecraft:cache",
+                "input": "antarchy:elythia_reserve_mask"
+              },
+              "min_inclusive": 0.05,
+              "max_exclusive": 0.95,
+              "when_in_range": {
+                "type": "minecraft:mul",
+                "left": 0.12,
+                "right": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_cliff_roughness",
+                  "xz_scale": 1.0,
+                  "y_scale": 1.0
+                }
+              },
+              "when_out_of_range": 0.0
+            }
+          },
+          "right": {
+            "type": "minecraft:add",
+            "left": {
+              "type": "minecraft:mul",
+              "left": "antarchy:elythia_terrain_roughness",
+              "right": {
+                "type": "minecraft:cache",
+                "input": "antarchy:elythia_shelf_roughness_scale"
+              }
+            },
+            "right": {
+              "type": "minecraft:add",
+              "left": "antarchy:elythia_shelf_lip",
+              "right": {
+                "type": "minecraft:mul",
+                "left": {
+                  "type": "minecraft:mul",
+                  "left": 0.1,
+                  "right": {
+                    "type": "minecraft:cache",
+                    "input": "antarchy:elythia_shelf_mask"
+                  }
+                },
+                "right": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_cliff_roughness",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.5
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

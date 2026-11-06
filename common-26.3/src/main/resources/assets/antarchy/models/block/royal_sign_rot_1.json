@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_sign_rot_1",
+  "textures": {
+    "all": "antarchy:block/royal_sign",
+    "particle": "antarchy:item/royal_sign"
+  }
+}

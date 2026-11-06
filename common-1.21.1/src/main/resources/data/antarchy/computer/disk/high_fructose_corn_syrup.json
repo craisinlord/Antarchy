@@ -1,5 +1,6 @@
 {
   "category": "antarchy:general",
   "title": "guide.antarchy.disk.high_fructose_corn_syrup.title",
+  "description": "guide.antarchy.disk.high_fructose_corn_syrup.description",
   "entries": ["antarchy:high_fructose_corn_syrup"]
 }

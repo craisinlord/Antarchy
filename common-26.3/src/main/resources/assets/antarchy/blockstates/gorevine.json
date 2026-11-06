@@ -1,0 +1,43 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "growth_direction": "down",
+        "bottom_cap": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/gorevine",
+        "x": 0
+      }
+    },
+    {
+      "when": {
+        "growth_direction": "down",
+        "bottom_cap": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/gorevine_body",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "growth_direction": "up",
+        "top_cap": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/gorevine",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "growth_direction": "up",
+        "top_cap": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/gorevine_body"
+      }
+    }
+  ]
+}

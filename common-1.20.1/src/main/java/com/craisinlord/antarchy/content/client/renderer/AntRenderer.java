@@ -26,10 +26,14 @@ public class AntRenderer extends GeoEntityRenderer<BaseAntEntity> {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
         if (animatable.isBaby()) {
-            poseStack.scale(ADULT_SCALE * BABY_SCALE, ADULT_SCALE * BABY_SCALE, ADULT_SCALE * BABY_SCALE);
+            if (!isReRender) {
+                poseStack.scale(ADULT_SCALE * BABY_SCALE, ADULT_SCALE * BABY_SCALE, ADULT_SCALE * BABY_SCALE);
+            }
             this.shadowRadius = ADULT_SHADOW_RADIUS * BABY_SCALE;
         } else {
-            poseStack.scale(ADULT_SCALE, ADULT_SCALE, ADULT_SCALE);
+            if (!isReRender) {
+                poseStack.scale(ADULT_SCALE, ADULT_SCALE, ADULT_SCALE);
+            }
             this.shadowRadius = ADULT_SHADOW_RADIUS;
         }
     }

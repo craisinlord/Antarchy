@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:primordial_grass"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        },
+        {
+          "condition": "minecraft:match_tool",
+          "predicate": {
+            "items": [
+              "minecraft:shears"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/primordial_grass"
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:cranberry_door",
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "antarchy:cranberry_door",
+            "state": {
+              "half": "lower"
+            }
+          }
+        }
+      ],
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ],
+  "random_sequence": "minecraft:blocks/jungle_door"
+}

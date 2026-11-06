@@ -1,0 +1,156 @@
+{
+  "variants": {
+    "face=floor,facing=north,uses=1": {
+      "model": "antarchy:block/duct_tape_use1"
+    },
+    "face=floor,facing=east,uses=1": {
+      "model": "antarchy:block/duct_tape_use1",
+      "y": 90
+    },
+    "face=floor,facing=south,uses=1": {
+      "model": "antarchy:block/duct_tape_use1",
+      "y": 180
+    },
+    "face=floor,facing=west,uses=1": {
+      "model": "antarchy:block/duct_tape_use1",
+      "y": 270
+    },
+    "face=wall,facing=north,uses=1": {
+      "model": "antarchy:block/duct_tape_use1",
+      "x": 90
+    },
+    "face=wall,facing=east,uses=1": {
+      "model": "antarchy:block/duct_tape_use1",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=south,uses=1": {
+      "model": "antarchy:block/duct_tape_use1",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=west,uses=1": {
+      "model": "antarchy:block/duct_tape_use1",
+      "x": 90,
+      "y": 270
+    },
+    "face=floor,facing=north,uses=2": {
+      "model": "antarchy:block/duct_tape_use2"
+    },
+    "face=floor,facing=east,uses=2": {
+      "model": "antarchy:block/duct_tape_use2",
+      "y": 90
+    },
+    "face=floor,facing=south,uses=2": {
+      "model": "antarchy:block/duct_tape_use2",
+      "y": 180
+    },
+    "face=floor,facing=west,uses=2": {
+      "model": "antarchy:block/duct_tape_use2",
+      "y": 270
+    },
+    "face=wall,facing=north,uses=2": {
+      "model": "antarchy:block/duct_tape_use2",
+      "x": 90
+    },
+    "face=wall,facing=east,uses=2": {
+      "model": "antarchy:block/duct_tape_use2",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=south,uses=2": {
+      "model": "antarchy:block/duct_tape_use2",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=west,uses=2": {
+      "model": "antarchy:block/duct_tape_use2",
+      "x": 90,
+      "y": 270
+    },
+    "face=floor,facing=north,uses=3": {
+      "model": "antarchy:block/duct_tape_use3"
+    },
+    "face=floor,facing=east,uses=3": {
+      "model": "antarchy:block/duct_tape_use3",
+      "y": 90
+    },
+    "face=floor,facing=south,uses=3": {
+      "model": "antarchy:block/duct_tape_use3",
+      "y": 180
+    },
+    "face=floor,facing=west,uses=3": {
+      "model": "antarchy:block/duct_tape_use3",
+      "y": 270
+    },
+    "face=wall,facing=north,uses=3": {
+      "model": "antarchy:block/duct_tape_use3",
+      "x": 90
+    },
+    "face=wall,facing=east,uses=3": {
+      "model": "antarchy:block/duct_tape_use3",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=south,uses=3": {
+      "model": "antarchy:block/duct_tape_use3",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=west,uses=3": {
+      "model": "antarchy:block/duct_tape_use3",
+      "x": 90,
+      "y": 270
+    },
+    "face=floor,facing=north,uses=4": {
+      "model": "antarchy:block/duct_tape_use4"
+    },
+    "face=floor,facing=east,uses=4": {
+      "model": "antarchy:block/duct_tape_use4",
+      "y": 90
+    },
+    "face=floor,facing=south,uses=4": {
+      "model": "antarchy:block/duct_tape_use4",
+      "y": 180
+    },
+    "face=floor,facing=west,uses=4": {
+      "model": "antarchy:block/duct_tape_use4",
+      "y": 270
+    },
+    "face=wall,facing=north,uses=4": {
+      "model": "antarchy:block/duct_tape_use4",
+      "x": 90
+    },
+    "face=wall,facing=east,uses=4": {
+      "model": "antarchy:block/duct_tape_use4",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=south,uses=4": {
+      "model": "antarchy:block/duct_tape_use4",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=west,uses=4": {
+      "model": "antarchy:block/duct_tape_use4",
+      "x": 90,
+      "y": 270
+    },
+    "face=ceiling,facing=north,uses=1": { "model": "antarchy:block/duct_tape_use1", "x": 180 },
+    "face=ceiling,facing=east,uses=1":  { "model": "antarchy:block/duct_tape_use1", "x": 180, "y": 90 },
+    "face=ceiling,facing=south,uses=1": { "model": "antarchy:block/duct_tape_use1", "x": 180, "y": 180 },
+    "face=ceiling,facing=west,uses=1":  { "model": "antarchy:block/duct_tape_use1", "x": 180, "y": 270 },
+    "face=ceiling,facing=north,uses=2": { "model": "antarchy:block/duct_tape_use2", "x": 180 },
+    "face=ceiling,facing=east,uses=2":  { "model": "antarchy:block/duct_tape_use2", "x": 180, "y": 90 },
+    "face=ceiling,facing=south,uses=2": { "model": "antarchy:block/duct_tape_use2", "x": 180, "y": 180 },
+    "face=ceiling,facing=west,uses=2":  { "model": "antarchy:block/duct_tape_use2", "x": 180, "y": 270 },
+    "face=ceiling,facing=north,uses=3": { "model": "antarchy:block/duct_tape_use3", "x": 180 },
+    "face=ceiling,facing=east,uses=3":  { "model": "antarchy:block/duct_tape_use3", "x": 180, "y": 90 },
+    "face=ceiling,facing=south,uses=3": { "model": "antarchy:block/duct_tape_use3", "x": 180, "y": 180 },
+    "face=ceiling,facing=west,uses=3":  { "model": "antarchy:block/duct_tape_use3", "x": 180, "y": 270 },
+    "face=ceiling,facing=north,uses=4": { "model": "antarchy:block/duct_tape_use4", "x": 180 },
+    "face=ceiling,facing=east,uses=4":  { "model": "antarchy:block/duct_tape_use4", "x": 180, "y": 90 },
+    "face=ceiling,facing=south,uses=4": { "model": "antarchy:block/duct_tape_use4", "x": 180, "y": 180 },
+    "face=ceiling,facing=west,uses=4":  { "model": "antarchy:block/duct_tape_use4", "x": 180, "y": 270 }
+  }
+}

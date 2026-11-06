@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "antarchy:rockite"
+    }
+  },
+  "result": {
+    "item": "antarchy:polished_rockite",
+    "count": 4
+  }
+}

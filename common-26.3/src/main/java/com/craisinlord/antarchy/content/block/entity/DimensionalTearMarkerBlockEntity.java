@@ -1,0 +1,196 @@
+package com.craisinlord.antarchy.content.block.entity;
+
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
+import java.util.function.Supplier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+public class DimensionalTearMarkerBlockEntity extends BlockEntity {
+    private static final int MAX_ATTEMPT_TICKS = 80;
+    private static final int MIN_LINK_RANGE = 50;
+    private static final int MAX_LINK_RANGE = 500;
+    private static final int PARTNER_ORIGIN_ATTEMPTS = 8;
+    private static final int PARTNER_SEARCH_ATTEMPTS = 32;
+    private static final int LOCAL_SEARCH_ATTEMPTS = 12;
+    private static final int SEARCH_ATTEMPTS_PER_TICK = 1;
+    private static final int MIN_VERTICAL_SEPARATION = 24;
+    private static final int MIN_PARTNER_VERTICAL_OFFSET = 48;
+    private static final int MAX_PARTNER_VERTICAL_OFFSET = 96;
+    private static final int NATURAL_TEAR_LOCAL_RADIUS = 512;
+    private static final int NATURAL_TEAR_LOCAL_CAP = 6;
+
+    private int attemptTicks;
+    private int localAttempts;
+    private int partnerOriginAttempts;
+    private int partnerSearchAttempts;
+    @Nullable
+    private BlockPos firstPocket;
+    @Nullable
+    private BlockPos partnerOrigin;
+
+    public DimensionalTearMarkerBlockEntity(
+            BlockPos pos,
+            BlockState blockState,
+            Supplier<? extends BlockEntityType<DimensionalTearMarkerBlockEntity>> blockEntityTypeSupplier
+    ) {
+        super(blockEntityTypeSupplier.get(), pos, blockState);
+    }
+
+    public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, DimensionalTearMarkerBlockEntity blockEntity) {
+        blockEntity.attemptTicks++;
+        boolean spawned = blockEntity.trySpawnLinkedPair(level, pos);
+        if (spawned || blockEntity.attemptTicks >= MAX_ATTEMPT_TICKS) {
+            level.removeBlock(pos, false);
+        }
+    }
+
+    private boolean trySpawnLinkedPair(ServerLevel level, BlockPos origin) {
+        RandomSource random = level.getRandom();
+        for (int i = 0; i < SEARCH_ATTEMPTS_PER_TICK; i++) {
+            if (firstPocket == null) {
+                if (localAttempts >= LOCAL_SEARCH_ATTEMPTS) {
+                    return false;
+                }
+                localAttempts++;
+                BlockPos candidate = randomCandidate(origin, random);
+                if (isUsablePocket(level, candidate)) {
+                    firstPocket = candidate;
+                }
+                continue;
+            }
+
+            if (partnerOrigin == null && partnerOriginAttempts == 0
+                    && countNearbyTears(level, origin) >= NATURAL_TEAR_LOCAL_CAP) {
+                return false;
+            }
+
+            if (partnerOrigin == null || partnerSearchAttempts >= PARTNER_SEARCH_ATTEMPTS) {
+                if (partnerOriginAttempts >= PARTNER_ORIGIN_ATTEMPTS) {
+                    return false;
+                }
+                partnerOrigin = linkedOrigin(firstPocket, random);
+                partnerOriginAttempts++;
+                partnerSearchAttempts = 0;
+            }
+
+            partnerSearchAttempts++;
+            BlockPos candidate = randomCandidate(partnerOrigin, random);
+            if (Math.abs(candidate.getY() - firstPocket.getY()) < MIN_VERTICAL_SEPARATION
+                    || !isUsablePocket(level, candidate)) {
+                continue;
+            }
+            return spawnPair(level, random, firstPocket, candidate);
+        }
+
+        return false;
+    }
+
+    private boolean spawnPair(ServerLevel level, RandomSource random, BlockPos first, BlockPos second) {
+
+        int lifetime = Math.max(1200, AntarchySettings.dimensionalTearLifetimeTicks());
+        float yawA = random.nextFloat() * 360.0F;
+        float yawB = Mth.wrapDegrees(yawA + 140.0F + random.nextFloat() * 80.0F);
+        DimensionalTearEntity tearA = DimensionalTearEntity.create(level, center(first), yawA, lifetime);
+        DimensionalTearEntity tearB = DimensionalTearEntity.create(level, center(second), yawB, lifetime);
+        tearA.linkTo(tearB);
+        tearB.linkTo(tearA);
+        level.addFreshEntity(tearA);
+        level.addFreshEntity(tearB);
+        return true;
+    }
+
+    private static BlockPos randomCandidate(BlockPos origin, RandomSource random) {
+        return origin.offset(
+                Mth.nextInt(random, -16, 16),
+                Mth.nextInt(random, -24, 24),
+                Mth.nextInt(random, -16, 16)
+        );
+    }
+
+    private static BlockPos linkedOrigin(BlockPos first, RandomSource random) {
+        double angle = random.nextDouble() * Math.PI * 2.0D;
+        int distance = Mth.nextInt(random, MIN_LINK_RANGE, MAX_LINK_RANGE);
+        int dx = Mth.floor(Math.cos(angle) * distance);
+        int dz = Mth.floor(Math.sin(angle) * distance);
+        int verticalOffset = Mth.nextInt(random, MIN_PARTNER_VERTICAL_OFFSET, MAX_PARTNER_VERTICAL_OFFSET);
+        int dy = random.nextBoolean() ? verticalOffset : -verticalOffset;
+        return first.offset(dx, dy, dz);
+    }
+
+    private static int countNearbyTears(ServerLevel level, BlockPos origin) {
+        AABB area = new AABB(origin).inflate(NATURAL_TEAR_LOCAL_RADIUS);
+        return level.getEntitiesOfClass(DimensionalTearEntity.class, area).size();
+    }
+
+    private static boolean isUsablePocket(ServerLevel level, BlockPos pos) {
+        int minY = level.getMinY() + 8;
+        int maxY = level.getMaxY() + 1 - 8;
+        if (pos.getY() < minY || pos.getY() > maxY) {
+            return false;
+        }
+        BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+        LevelChunk chunk = null;
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -4; dz <= 4; dz++) {
+                int chunkX = SectionPos.blockToSectionCoord(pos.getX() + dx);
+                int chunkZ = SectionPos.blockToSectionCoord(pos.getZ() + dz);
+                if (chunk == null || chunk.getPos().x() != chunkX || chunk.getPos().z() != chunkZ) {
+                    chunk = level.getChunkSource().getChunkNow(chunkX, chunkZ);
+                    if (chunk == null) {
+                        return false;
+                    }
+                }
+                for (int dy = -2; dy <= 3; dy++) {
+                    checkPos.set(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
+                    if (!chunk.getBlockState(checkPos).getCollisionShape(level, checkPos).isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static Vec3 center(BlockPos pos) {
+        return new Vec3(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+    }
+
+    @Override
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("attempt_ticks", this.attemptTicks);
+        output.putInt("local_attempts", this.localAttempts);
+        output.putInt("partner_origin_attempts", this.partnerOriginAttempts);
+        output.putInt("partner_search_attempts", this.partnerSearchAttempts);
+        if (this.firstPocket != null) {
+            output.putLong("first_pocket", this.firstPocket.asLong());
+        }
+        if (this.partnerOrigin != null) {
+            output.putLong("partner_origin", this.partnerOrigin.asLong());
+        }
+    }
+
+    @Override
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.attemptTicks = input.getIntOr("attempt_ticks", 0);
+        this.localAttempts = input.getIntOr("local_attempts", 0);
+        this.partnerOriginAttempts = input.getIntOr("partner_origin_attempts", 0);
+        this.partnerSearchAttempts = input.getIntOr("partner_search_attempts", 0);
+        this.firstPocket = input.getLong("first_pocket").map(BlockPos::of).orElse(null);
+        this.partnerOrigin = input.getLong("partner_origin").map(BlockPos::of).orElse(null);
+    }
+}

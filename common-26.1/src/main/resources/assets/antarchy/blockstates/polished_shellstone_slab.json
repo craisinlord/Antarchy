@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/polished_shellstone"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/polished_shellstone_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/polished_shellstone_slab_top"
+    }
+  }
+}
+

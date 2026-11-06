@@ -1,0 +1,58 @@
+package com.craisinlord.antarchy.content.client.hud;
+
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.BloodglassClientState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+
+public final class BloodglassHudRenderer {
+    private static final Identifier HEART_CONTAINER =
+            Identifier.withDefaultNamespace("textures/gui/sprites/hud/heart/container.png");
+    private static final Identifier HEART_FULL =
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/gui/sprites/hud/bloodglass_heart.png");
+    private static final Identifier HEART_CRACKED =
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/gui/sprites/hud/bloodglass_heart_cracked.png");
+    private static final int HEART_SIZE = 9;
+    private static final int HEART_PITCH = 8;
+
+    private BloodglassHudRenderer() {}
+
+    public static void render(GuiGraphicsExtractor gui) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.gui.hud.isHidden()) return;
+        Player player = mc.player;
+        if (player == null || player.isDeadOrDying()) return;
+        if (player.isCreative() || player.isSpectator()) return;
+
+        int total = BloodglassClientState.getShieldsMax();
+        if (total <= 0) return;
+
+        int active = BloodglassClientState.getShieldsActive();
+        int w = mc.getWindow().getGuiScaledWidth();
+        int h = mc.getWindow().getGuiScaledHeight();
+
+        int maxHealth = Mth.ceil(player.getMaxHealth());
+        int absorption = Mth.ceil(player.getAbsorptionAmount());
+        int healthHearts = Mth.ceil(maxHealth / 2.0f);
+        int absorptionHearts = Mth.ceil(absorption / 2.0f);
+        int totalVanillaRows = Mth.ceil((healthHearts + absorptionHearts) / 10.0f);
+        boolean hasArmor = player.getArmorValue() > 0;
+        int baseTop = h - 39 - (totalVanillaRows * 10) - (hasArmor ? 10 : 0);
+
+        int left = w / 2 - 91;
+
+        for (int i = 0; i < total; i++) {
+            int row = i / 10;
+            int col = i % 10;
+            int x = left + col * HEART_PITCH;
+            int y = baseTop - row * 10;
+            Identifier tex = (i < active) ? HEART_FULL : HEART_CRACKED;
+            gui.blit(RenderPipelines.GUI_TEXTURED, HEART_CONTAINER, x, y, 0, 0, HEART_SIZE, HEART_SIZE, HEART_SIZE, HEART_SIZE);
+            gui.blit(RenderPipelines.GUI_TEXTURED, tex, x, y, 0, 0, HEART_SIZE, HEART_SIZE, HEART_SIZE, HEART_SIZE);
+        }
+    }
+}

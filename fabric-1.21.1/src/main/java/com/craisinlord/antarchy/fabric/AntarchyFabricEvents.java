@@ -37,6 +37,7 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.server.level.ServerPlayer;
 import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.AnvilCannonDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
@@ -73,9 +74,11 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunProjectileEntity.releaseAllProjectileTickets());
         ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.transit.AntTransit.clear());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             PortalGunSavedData.clearMissingGuns(handler.player);
+            com.craisinlord.antarchy.content.migration.DimensionResetManager.onPlayerJoin(handler.player);
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
@@ -84,10 +87,14 @@ public final class AntarchyFabricEvents {
             QueenLocateCommand.register(dispatcher);
             RoyalCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.PortalGunCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.ElythiaCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.ThoraxisCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.DimensionResetCommand.register(dispatcher);
         });
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.ANVIL_CANNON.get(), new AnvilCannonDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
@@ -98,6 +105,8 @@ public final class AntarchyFabricEvents {
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.BLUSH_MOSS_BLOCK.get().asItem(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.PRIMORDIAL_MOSS_BLOCK.get().asItem(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.PRIMORDIAL_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.BLUSH_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.HUSHWEED.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.CORNEA_EAR.get(), 0.65f);
@@ -156,6 +165,8 @@ public final class AntarchyFabricEvents {
             }
         });
 
+        net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((player, world, hand, hitResult) ->
+                com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tryStart(player, world, hand, hitResult.getBlockPos()));
         net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.register((player, world, hand) -> {
             InteractionResult result = com.craisinlord.antarchy.content.item.GiantFryingPanItem.handleMainHandUse(world, player, hand);
             if (result == InteractionResult.PASS) {
@@ -191,10 +202,16 @@ public final class AntarchyFabricEvents {
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
+                com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
                 com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+                com.craisinlord.antarchy.content.weather.ElythiaEvents.tick(level);
+                com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
+                com.craisinlord.antarchy.content.weather.ThoraxisEvents.tick(level);
                 com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
+                com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
                 ThoraxisUndersideManager.tick(level);
                 com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
+                com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tick(level);
                 tickInvertedPlayers(level, activeThisTick);
                 tickIchorPlayers(level);
                 tickBloodglassRecharge(level);
@@ -204,6 +221,7 @@ public final class AntarchyFabricEvents {
                 }
             }
             com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(server);
+            com.craisinlord.antarchy.content.transit.AntTransit.tick(server);
             invertedPlayers.retainAll(activeThisTick);
         });
     }

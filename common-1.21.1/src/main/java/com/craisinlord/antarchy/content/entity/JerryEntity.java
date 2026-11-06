@@ -68,6 +68,7 @@ public class JerryEntity extends Monster implements GeoEntity {
     private static final String STAGE_KEY = "JerryStage";
     private static final String STAGE_AGE_KEY = "JerryStageAge";
     private static final int GROWTH_TICKS = 24000;
+    private static final int GROWTH_AMOUNT_SAMPLE_TICKS = 20;
     private static final int ATTACH_DAMAGE_INTERVAL = 20;
     private static final int ATTACK_ANIM_DURATION = 16;
 
@@ -78,6 +79,7 @@ public class JerryEntity extends Monster implements GeoEntity {
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int stageAgeTicks;
+    private int cachedGrowthTickAmount;
     private int attachDamageTicks;
     private int attackCooldownTicks;
     private int alphaDiveCooldownTicks;
@@ -173,7 +175,10 @@ public class JerryEntity extends Monster implements GeoEntity {
         if (stage == Stage.GAMMA) {
             return;
         }
-        this.stageAgeTicks += this.growthTickAmount();
+        if (this.cachedGrowthTickAmount <= 0 || this.tickCount % GROWTH_AMOUNT_SAMPLE_TICKS == 0) {
+            this.cachedGrowthTickAmount = this.growthTickAmount();
+        }
+        this.stageAgeTicks += this.cachedGrowthTickAmount;
         if (this.stageAgeTicks < GROWTH_TICKS) {
             return;
         }

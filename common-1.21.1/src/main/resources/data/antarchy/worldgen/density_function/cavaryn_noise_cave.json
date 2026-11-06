@@ -25,10 +25,7 @@
             "type": "minecraft:weird_scaled_sampler",
             "rarity_value_mapper": "type_1",
             "noise": "minecraft:patch",
-            "input": {
-              "type": "minecraft:interpolated",
-              "argument": 1
-            }
+            "input": 1
           },
           "argument2": {
             "type": "minecraft:cube",

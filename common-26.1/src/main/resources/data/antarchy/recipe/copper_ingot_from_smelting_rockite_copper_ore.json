@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "group": "copper_ingot",
+  "ingredient": "antarchy:rockite_copper_ore",
+  "result": {
+    "id": "minecraft:copper_ingot"
+  },
+  "experience": 0.7,
+  "cookingtime": 200
+}

@@ -1,0 +1,9 @@
+{
+  "pool": "minecraft:village/plains/houses",
+  "element": {
+    "location": "antarchy:village/computer_scientist_house",
+    "processors": "minecraft:empty",
+    "projection": "rigid"
+  },
+  "weight": 1
+}

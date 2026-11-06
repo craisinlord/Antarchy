@@ -1,13 +1,14 @@
 package com.craisinlord.antarchy.content.horde;
 
+import com.craisinlord.antarchy.content.network.HordeIntensityPayload;
+import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.JerryEntity;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
-import com.craisinlord.antarchy.content.network.HordeIntensitySync;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,6 +92,7 @@ public final class CavarynHordeManager {
     private static final int MAX_HORDE_MOBS_PER_ENCOUNTER = 48;
     private static final int MAX_DORMANT_MOBS_PER_AREA = 8;
     private static final int MAX_SPAWN_ATTEMPTS_PER_MOB = 18;
+    private static final int ROOF_BEDROCK_LAYERS = 6;
     private static final double MIN_SPAWN_DISTANCE = 18.0D;
     private static final double MAX_SPAWN_DISTANCE = 36.0D;
     private static final int EGG_HATCH_ACCELERATION_MIN_ATTENTION = ATTENTION_THRESHOLD / 2;
@@ -160,7 +162,7 @@ public final class CavarynHordeManager {
         attention.areaTicks = 0;
         attention.lastSeenGameTime = level.getGameTime();
         data.setDirty();
-        HordeIntensitySync.send(player, attention.attention / (float) ATTENTION_THRESHOLD);
+        AntarchyNetwork.sendToPlayer(player, new HordeIntensityPayload(attention.attention / (float) ATTENTION_THRESHOLD));
     }
 
     public static boolean isHordeBiome(ServerLevelAccessor level, BlockPos pos) {
@@ -231,7 +233,7 @@ public final class CavarynHordeManager {
             data.encounters.removeIf(encounter -> encounter.center.distSqr(player.blockPosition()) <= GROUP_RADIUS_BLOCKS * GROUP_RADIUS_BLOCKS);
         }
         data.setDirty();
-        HordeIntensitySync.send(player, attention.attention / (float) ATTENTION_THRESHOLD);
+        AntarchyNetwork.sendToPlayer(player, new HordeIntensityPayload(attention.attention / (float) ATTENTION_THRESHOLD));
         return attention.attention;
     }
 
@@ -239,7 +241,7 @@ public final class CavarynHordeManager {
         Set<UUID> seen = new HashSet<>();
         for (ServerPlayer player : level.players()) {
             if (player.isSpectator() || player.isCreative()) {
-                HordeIntensitySync.send(player, 0.0F);
+                AntarchyNetwork.sendToPlayer(player, new HordeIntensityPayload(0.0F));
                 PlayerAttention attention = data.players.get(player.getUUID());
                 if (attention != null && attention.attention > 0) {
                     attention.fade(10);
@@ -254,7 +256,7 @@ public final class CavarynHordeManager {
             if (!player.isAlive()) {
                 attention.fade(10);
                 data.setDirty();
-                HordeIntensitySync.send(player, 0.0F);
+                AntarchyNetwork.sendToPlayer(player, new HordeIntensityPayload(0.0F));
                 continue;
             }
 
@@ -262,7 +264,7 @@ public final class CavarynHordeManager {
             if (!inHordeBiome) {
                 attention.fade(10);
                 data.setDirty();
-                HordeIntensitySync.send(player, 0.0F);
+                AntarchyNetwork.sendToPlayer(player, new HordeIntensityPayload(0.0F));
                 continue;
             }
 
@@ -294,7 +296,7 @@ public final class CavarynHordeManager {
             if (encounter == null) {
                 tickDormantPressure(level, data, player, attention, currentArea, gameTime);
             }
-            HordeIntensitySync.send(player, attention.attention / (float) ATTENTION_THRESHOLD);
+            AntarchyNetwork.sendToPlayer(player, new HordeIntensityPayload(attention.attention / (float) ATTENTION_THRESHOLD));
         }
 
         for (Map.Entry<UUID, PlayerAttention> entry : data.players.entrySet()) {
@@ -566,7 +568,7 @@ public final class CavarynHordeManager {
         }
         if (choice.heavyArrivalEffect()) {
             level.playSound(null, spawnPos, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 1.5F, 0.65F);
-            HerculesBeetleImpactShakeSync.send(target, 28);
+            AntarchyNetwork.sendToPlayer(target, new HerculesBeetleImpactShakePayload(28));
         } else {
             level.playSound(null, spawnPos, SoundEvents.GRAVEL_BREAK, SoundSource.HOSTILE, 0.7F, 0.75F + level.random.nextFloat() * 0.25F);
         }
@@ -648,6 +650,9 @@ public final class CavarynHordeManager {
     }
 
     private static boolean isValidFloorSpawn(ServerLevel level, BlockPos pos) {
+        if (pos.getY() >= level.getMaxBuildHeight() - ROOF_BEDROCK_LAYERS) {
+            return false;
+        }
         BlockPos below = pos.below();
         return level.getBlockState(below).isFaceSturdy(level, below, net.minecraft.core.Direction.UP)
                 && level.isEmptyBlock(pos)
@@ -683,7 +688,7 @@ public final class CavarynHordeManager {
     private static void warnHercules(ServerLevel level, BlockPos center, List<ServerPlayer> targets) {
         level.playSound(null, center, AntarchySoundEvents.HERCULES_BEETLE_CRY.get(), SoundSource.HOSTILE, 2.0F, 0.65F);
         for (ServerPlayer player : targets) {
-            HerculesBeetleImpactShakeSync.send(player, 35);
+            AntarchyNetwork.sendToPlayer(player, new HerculesBeetleImpactShakePayload(35));
         }
     }
 
@@ -702,7 +707,7 @@ public final class CavarynHordeManager {
             dirty = true;
         }
         for (ServerPlayer player : level.players()) {
-            HordeIntensitySync.send(player, 0.0F);
+            AntarchyNetwork.sendToPlayer(player, new HordeIntensityPayload(0.0F));
         }
         if (dirty) {
             data.setDirty();

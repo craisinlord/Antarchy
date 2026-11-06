@@ -1,0 +1,17 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "You did what",
+  "body": "Word travels fast out here. You hatched a Princess, and you kept it! What did you name it?\n\nPlease don't bring it to the lab though. I'm still worried it could be too much like its mother.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:long_live_the_princess",
+    "delay_minutes": 3
+  },
+  "conditions": {
+    "advancements": [
+      "antarchy:visit_cavaryn"
+    ]
+  }
+}

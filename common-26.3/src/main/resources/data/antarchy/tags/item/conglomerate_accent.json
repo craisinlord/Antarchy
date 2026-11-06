@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:granite",
+    "minecraft:diorite",
+    "minecraft:andesite",
+    "minecraft:tuff",
+    "minecraft:calcite",
+    "antarchy:zebra_stone",
+    "antarchy:arkrose",
+    "antarchy:tidestone"
+  ]
+}

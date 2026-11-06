@@ -1,6 +1,7 @@
 {
   "category": "antarchy:thoraxis",
   "title": "guide.antarchy.disk.vortex.title",
+  "description": "guide.antarchy.disk.vortex.description",
   "entries": [
     "antarchy:vortex"
   ]

@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:dirt",
+    "minecraft:grass_block",
+    "minecraft:coarse_dirt",
+    "minecraft:podzol",
+    "minecraft:mycelium",
+    "minecraft:farmland",
+    "minecraft:rooted_dirt",
+    "minecraft:moss_block",
+    "antarchy:blush_moss_block"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "vertical_direction=up": {
+      "model": "antarchy:block/duskbell"
+    },
+    "vertical_direction=down": {
+      "model": "antarchy:block/duskbell",
+      "x": 180
+    }
+  }
+}

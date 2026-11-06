@@ -1,0 +1,9 @@
+{
+    "replace":  false,
+    "values":  [
+                   "antarchy:truffalo_log",
+                   "antarchy:truffalo_wood",
+                   "antarchy:stripped_truffalo_log",
+                   "antarchy:stripped_truffalo_wood"
+               ]
+}

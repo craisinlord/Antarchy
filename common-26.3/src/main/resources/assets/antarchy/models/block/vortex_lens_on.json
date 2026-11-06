@@ -1,0 +1,7 @@
+{
+  "parent": "antarchy:block/vortex_lens",
+  "textures": {
+    "0": "antarchy:block/vortex_lens/vortex_lens_on",
+    "particle": "antarchy:block/vortex_lens/vortex_lens_on"
+  }
+}

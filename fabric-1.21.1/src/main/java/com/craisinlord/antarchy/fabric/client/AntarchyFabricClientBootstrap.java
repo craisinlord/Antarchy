@@ -162,6 +162,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.LAUNCHED_ANVIL.get(), com.craisinlord.antarchy.content.client.renderer.LaunchedAnvilRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BRUTALFLY_ORB.get(), BrutalflyOrbRenderer::new);
@@ -206,6 +207,18 @@ public final class AntarchyFabricClientBootstrap {
     }
 
     private static void registerColors() {
+        ColorProviderRegistry.BLOCK.register(
+                (state, level, pos, tintIndex) -> level != null && pos != null
+                        ? com.craisinlord.antarchy.content.block.Fossils.color(com.craisinlord.antarchy.content.block.Fossils.entityAt(level, pos), tintIndex)
+                        : -1,
+                AntarchyFabricBlocks.MYRMITE_FOSSIL.get(),
+                AntarchyFabricBlocks.BROODSTONE_FOSSIL.get()
+        );
+        ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> com.craisinlord.antarchy.content.block.Fossils.color(com.craisinlord.antarchy.content.block.Fossils.entityOf(stack), tintIndex),
+                AntarchyFabricItems.MYRMITE_FOSSIL_ITEM.get(),
+                AntarchyFabricItems.BROODSTONE_FOSSIL_ITEM.get()
+        );
         ColorProviderRegistry.BLOCK.register(
                 (state, level, pos, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(state.getValue(com.craisinlord.antarchy.content.block.BluestoneWireBlock.POWER)) : -1,
                 AntarchyFabricBlocks.BLUESTONE_WIRE.get()
@@ -318,6 +331,8 @@ public final class AntarchyFabricClientBootstrap {
 
     private static void registerParticles() {
         ParticleFactoryRegistry registry = ParticleFactoryRegistry.getInstance();
+        registry.register(AntarchyFabricMisc.REMEMBRANCE_FLAME.get(), DreamFlameParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.REMEMBRANCE_MOTE.get(), com.craisinlord.antarchy.content.client.particle.RemembranceMoteParticle.Provider::new);
         registry.register(AntarchyFabricMisc.DREAM_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
         registry.register(AntarchyFabricMisc.NIGHTMARE_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
         registry.register(AntarchyFabricMisc.STINKY_GAS.get(), HypnoticGasParticle.Provider::new);
@@ -325,6 +340,8 @@ public final class AntarchyFabricClientBootstrap {
         registry.register(AntarchyFabricMisc.PEACH_LEAVES_PARTICLE.get(), PeachLeavesParticle.Provider::new);
         registry.register(AntarchyFabricMisc.BUG_SPRAY_PARTICLE.get(), com.craisinlord.antarchy.content.client.particle.BugSprayParticle.Provider::new);
         registry.register(AntarchyFabricMisc.LOTUS_POLLEN.get(), com.craisinlord.antarchy.content.client.particle.LotusPollenParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.TEMPORAL_GLINT_SLOW.get(), com.craisinlord.antarchy.content.client.particle.TemporalGlintParticle::slow);
+        registry.register(AntarchyFabricMisc.TEMPORAL_GLINT_FAST.get(), com.craisinlord.antarchy.content.client.particle.TemporalGlintParticle::fast);
         registry.register(AntarchyFabricMisc.HYPNOTIC_GAS.get(), HypnoticGasParticle.Provider::new);
         registry.register(AntarchyFabricMisc.HYPNOTIC_GAS_DOWN.get(), sprites -> new HypnoticGasParticle.Provider(sprites, true));
         registry.register(AntarchyFabricMisc.HYPNOTIC_GAS_CLOUD.get(), new HypnoticGasCloudParticle.Provider());
@@ -334,6 +351,8 @@ public final class AntarchyFabricClientBootstrap {
         registry.register(AntarchyFabricMisc.INVERTED_GEYSER_POOF.get(), InvertedGeyserBaseParticle.Provider::new);
         registry.register(AntarchyFabricMisc.INVERTED_GEYSER_ERUPTION.get(), new InvertedGeyserEruptionParticle.Provider());
         registry.register(AntarchyFabricMisc.FIREFLY.get(), FireflyParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.GROUND_MIST.get(), com.craisinlord.antarchy.content.client.particle.GroundMistParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.WIND_LINE.get(), com.craisinlord.antarchy.content.client.particle.WindLineParticle.Provider::new);
         registry.register(AntarchyFabricMisc.ORANGE_ASH.get(), OrangeAshParticle.Provider::new);
         registry.register(AntarchyFabricMisc.LUCID_BOLT_IMPACT_SMALL.get(), LucidBoltImpactParticle.SmallProvider::new);
         registry.register(AntarchyFabricMisc.LUCID_BOLT_IMPACT_LARGE.get(), LucidBoltImpactParticle.LargeProvider::new);
@@ -343,6 +362,8 @@ public final class AntarchyFabricClientBootstrap {
     }
 
     private static void registerRenderLayers() {
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.PRIMORDIAL_GRASS.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.POTTED_PRIMORDIAL_GRASS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_RAIL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_POWERED_RAIL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_DETECTOR_RAIL.get(), RenderType.cutout());
@@ -352,6 +373,10 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.OURANWOOD_TRAPDOOR.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.OURANWOOD_ACORN_BLOCK.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.POTTED_OURANWOOD_ACORN.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CRANBERRY_SAPLING.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CRANBERRY_LEAVES.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CRANBERRY_DOOR.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CRANBERRY_TRAPDOOR.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.PEACH_LEAVES.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.PEACH_HANGING_PEACH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.PEACH_DOOR.get(), RenderType.cutout());
@@ -388,6 +413,8 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.GIANT_LILY_PAD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.HUSHWEED.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CRITTER_CAGE_BLOCK.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.MYRMITE_FOSSIL.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BROODSTONE_FOSSIL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.POTTED_GLOWCAP_MUSHROOM.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CORNEA_STALK.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CORN_CROP.get(), RenderType.cutout());
@@ -416,6 +443,8 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.MEDIUM_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.LARGE_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLOOD_CRYSTAL_CRYSTAL.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.REMEMBRANCE_TORCH.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.REMEMBRANCE_WALL_TORCH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_TORCH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_WALL_TORCH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_CEILING_TORCH.get(), RenderType.cutout());
@@ -432,6 +461,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ELYTHIA_PORTAL.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.THORAXIS_PORTAL.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.FLYTRAP_GOO_BLOCK.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.JELLIED_CRANBERRY_BLOCK.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.VORTEX_LENS.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.URANIUM_DOOR.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.TITANIUM_DOOR.get(), RenderType.cutout());
@@ -464,6 +494,9 @@ public final class AntarchyFabricClientBootstrap {
     }
 
     private static void registerItemProperties() {
+        ItemProperties.register(AntarchyFabricItems.SNOUT_COMPASS.get(),
+                ResourceLocation.fromNamespaceAndPath("antarchy", "angle"),
+                com.craisinlord.antarchy.content.client.SnoutCompassAngle::angle);
         ItemProperties.register(
                 AntarchyFabricItems.ULTIMATE_BOW.get(),
                 ResourceLocation.withDefaultNamespace("pull"),
@@ -555,6 +588,11 @@ public final class AntarchyFabricClientBootstrap {
             HerculesBeetleImpactShakeClientState.tick();
             KingJudgmentFlashClientState.tick();
             HordeClientState.tick();
+            com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
+            com.craisinlord.antarchy.content.client.ElythiaEventClient.tick();
+            com.craisinlord.antarchy.content.client.ThoraxisEventClient.tick();
+            com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
+            com.craisinlord.antarchy.content.client.AntTransitClientState.tick();
             if (client.player != null) {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
             }
@@ -574,6 +612,7 @@ public final class AntarchyFabricClientBootstrap {
             RoyalMountClientHandler.tick();
             GiantFryingPanClientHandler.tick();
             SizeRaySoundHandler.tick(client);
+            com.craisinlord.antarchy.content.client.renderer.PrimordialGrassRenderer.tick(client);
         });
 
         BigBerthaClientHandler.register();

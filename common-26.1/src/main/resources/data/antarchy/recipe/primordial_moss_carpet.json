@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "##"
+  ],
+  "key": {
+    "#": "antarchy:primordial_moss_block"
+  },
+  "result": {
+    "id": "antarchy:primordial_moss_carpet",
+    "count": 3
+  }
+}

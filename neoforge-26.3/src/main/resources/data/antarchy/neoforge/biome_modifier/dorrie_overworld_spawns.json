@@ -1,0 +1,11 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#antarchy:dorrie_overworld_spawn_biomes",
+  "spawners": [
+    {
+      "type": "antarchy:dorrie",
+      "weight": 1,
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "group": "gold_ingot",
+  "ingredient": "antarchy:rockite_gold_ore",
+  "result": {
+    "id": "minecraft:gold_ingot"
+  },
+  "experience": 1,
+  "cookingtime": 100
+}

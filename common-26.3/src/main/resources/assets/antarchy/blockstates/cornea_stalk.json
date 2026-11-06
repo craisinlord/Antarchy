@@ -1,0 +1,32 @@
+{
+  "variants": {
+    "age=0,hanging=false": {
+      "model": "antarchy:block/cornea_stalk_stage0"
+    },
+    "age=0,hanging=true": {
+      "model": "antarchy:block/cornea_stalk_stage0",
+      "x": 180
+    },
+    "age=1,hanging=false": {
+      "model": "antarchy:block/cornea_stalk_stage1"
+    },
+    "age=1,hanging=true": {
+      "model": "antarchy:block/cornea_stalk_stage1",
+      "x": 180
+    },
+    "age=2,hanging=false": {
+      "model": "antarchy:block/cornea_stalk_stage2"
+    },
+    "age=2,hanging=true": {
+      "model": "antarchy:block/cornea_stalk_stage2",
+      "x": 180
+    },
+    "age=3,hanging=false": {
+      "model": "antarchy:block/cornea_stalk_stage2"
+    },
+    "age=3,hanging=true": {
+      "model": "antarchy:block/cornea_stalk_stage2",
+      "x": 180
+    }
+  }
+}

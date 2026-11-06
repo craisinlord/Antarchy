@@ -1,0 +1,39 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "discover_castle": {
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "structures": "antarchy:fallen_kingdom_castle"
+            }
+          }
+        }
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.fallen_kingdom_castle.description"
+    },
+    "frame": "task",
+    "icon": {
+      "id": "minecraft:stone_bricks"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.fallen_kingdom_castle.title"
+    }
+  },
+  "requirements": [
+    [
+      "discover_castle"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

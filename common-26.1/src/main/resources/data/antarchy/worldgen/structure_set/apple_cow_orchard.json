@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:apple_cow_orchard",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 369148227,
+    "spacing": 32,
+    "separation": 24,
+    "type": "integrated_api:advanced_random_spread"
+  }
+}

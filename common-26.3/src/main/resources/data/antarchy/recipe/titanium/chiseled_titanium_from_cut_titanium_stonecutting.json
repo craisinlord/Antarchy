@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:cut_titanium",
+  "result": {
+    "id": "antarchy:chiseled_titanium"
+  }
+}

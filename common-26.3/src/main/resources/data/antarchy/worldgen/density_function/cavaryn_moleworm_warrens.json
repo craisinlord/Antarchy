@@ -1,0 +1,8 @@
+{
+  "type": "antarchy:cavaryn_cavity",
+  "kind": "moleworm_warren",
+  "humidity": "antarchy:cavaryn/humidity",
+  "weirdness": "antarchy:cavaryn/weirdness",
+  "depth": "minecraft:overworld/depth",
+  "noise": "antarchy:cavaryn_moleworm_warren"
+}

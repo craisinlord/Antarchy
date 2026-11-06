@@ -11,9 +11,11 @@ import java.util.Map;
 
 public final class SeparateLargeItemModels {
     private static final Map<Item, ResourceLocation> GUI_MODELS = Map.ofEntries(
+            entry(AntarchyFabricItems.ANVIL_CANNON.get(), "anvil_cannon_gui"),
             entry(AntarchyFabricItems.ATTITUDE_ADJUSTER.get(), "attitude_adjuster_gui"),
             entry(AntarchyFabricItems.BATTLE_AXE.get(), "battle_axe_gui"),
             entry(AntarchyFabricItems.BIG_BERTHA.get(), "big_bertha_gui"),
+            entry(AntarchyFabricItems.BIG_BETSY.get(), "big_betsy_gui"),
             entry(AntarchyFabricItems.EYE_OF_THE_STORM.get(), "eye_of_the_storm_gui"),
             entry(AntarchyFabricItems.GIANT_FRYING_PAN.get(), "giant_frying_pan_gui"),
             entry(AntarchyFabricItems.GRAVITY_GUN.get(), "gravity_gun_gui"),

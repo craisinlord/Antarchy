@@ -1,0 +1,48 @@
+{
+  "feature": "antarchy:typhonite_swirls",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 8
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": 12
+        },
+        "max_inclusive": {
+          "absolute": 228
+        }
+      }
+    },
+    {
+      "type": "minecraft:environment_scan",
+      "direction_of_search": "down",
+      "max_steps": 32,
+      "allowed_search_condition": {
+        "type": "minecraft:matching_blocks",
+        "blocks": "minecraft:air"
+      },
+      "target_condition": {
+        "type": "minecraft:solid"
+      }
+    },
+    {
+      "type": "minecraft:offset",
+      "x": 0,
+      "y": {
+        "type": "minecraft:constant",
+        "value": 1
+      },
+      "z": 0
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

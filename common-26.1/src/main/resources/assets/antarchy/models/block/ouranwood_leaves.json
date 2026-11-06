@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "antarchy:block/ouranwood/ouranwood_leaves"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/jungle_button",
+  "textures": {
+    "texture": "antarchy:block/ouranwood/ouranwood_planks"
+  }
+}

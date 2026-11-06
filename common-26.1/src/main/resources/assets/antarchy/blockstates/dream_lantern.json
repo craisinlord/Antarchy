@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "hanging=false": {
+      "model": "antarchy:block/dream_lantern"
+    },
+    "hanging=true": {
+      "model": "antarchy:block/dream_lantern_hanging"
+    }
+  }
+}

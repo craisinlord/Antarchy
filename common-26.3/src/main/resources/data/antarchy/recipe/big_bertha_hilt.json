@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "AC ",
+    "DBG",
+    "HEF"
+  ],
+  "key": {
+    "A": "antarchy:nightmare_scale",
+    "B": "antarchy:molevore_nose",
+    "C": "antarchy:springbug_leg",
+    "D": "antarchy:jerry_nucleus",
+    "E": "antarchy:primordial_scute",
+    "F": "antarchy:worm_tooth",
+    "G": "antarchy:hercules_horn",
+    "H": "antarchy:flytrap_goo"
+  },
+  "result": {
+    "id": "antarchy:big_bertha_hilt"
+  }
+}

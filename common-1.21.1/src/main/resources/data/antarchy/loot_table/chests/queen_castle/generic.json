@@ -13,4 +13,14 @@
 {"type":"minecraft:item","name":"antos:floppy_disk","weight":3,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:temporal_fields"}}]},
 {"type":"minecraft:item","name":"antos:floppy_disk","weight":3,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:bloodglass"}}]},
 {"type":"minecraft:item","name":"antos:floppy_disk","weight":3,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:vortex"}}]}
-]}],"random_sequence":"antarchy:chests/queen_castle/generic"}
+]},
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "antarchy:inject/antroid_phone"
+        }
+      ]
+    }
+  ],"random_sequence":"antarchy:chests/queen_castle/generic"}

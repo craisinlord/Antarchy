@@ -1,0 +1,45 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": "antarchy:elythia_coast_beach_offset",
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": {
+              "type": "minecraft:noise",
+              "noise": "antarchy:elythia_coast",
+              "xz_scale": 1.0,
+              "y_scale": 0
+            },
+            "points": [
+              {
+                "location": -0.15,
+                "value": 0.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.15,
+                "value": 1.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        },
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": "antarchy:elythia_coast_cliff_offset",
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": -1.0,
+            "argument2": "antarchy:elythia_coast_beach_offset"
+          }
+        }
+      }
+    }
+  }
+}

@@ -67,6 +67,8 @@ public class VortexEntity extends Monster implements GeoEntity {
     private static final int ATTACK_COOLDOWN_TICKS = 70;
     private static final int DEATH_TICKS = 15;
     private static final double ATTACK_RANGE = 14.0D;
+    private static final double HOVER_RANGE = 8.0D;
+    private static final double HOVER_HEIGHT = 2.5D;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -204,7 +206,7 @@ public class VortexEntity extends Monster implements GeoEntity {
         this.faceTowards(target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D), 12.0F, 8.0F);
         Vec3 gravityUp = Vec3.atLowerCornerOf(
                 GravityRotationUtil.getGravityDownDirection(this).getOpposite().getNormal());
-        Vec3 hoverPosition = target.position().add(gravityUp.scale(2.5D));
+        Vec3 hoverPosition = this.findHoverPosition(target, gravityUp);
         this.getMoveControl().setWantedPosition(hoverPosition.x, hoverPosition.y, hoverPosition.z, 0.38D);
 
         if (this.attackCooldown <= 0
@@ -213,6 +215,24 @@ public class VortexEntity extends Monster implements GeoEntity {
                 && this.countOwnedActiveVortexes() < AntarchySettings.vortexMaxActiveVortexes()) {
             this.startAttack();
         }
+    }
+
+    private Vec3 findHoverPosition(LivingEntity target, Vec3 gravityUp) {
+        Vec3 overhead = target.position().add(gravityUp.scale(HOVER_HEIGHT));
+        Vec3 offset = this.position().subtract(target.position());
+        Vec3 away = offset.subtract(gravityUp.scale(offset.dot(gravityUp)));
+        if (away.lengthSqr() < 0.25D) {
+            Vec3 look = this.getLookAngle();
+            away = look.subtract(gravityUp.scale(look.dot(gravityUp))).scale(-1.0D);
+        }
+        if (away.lengthSqr() < 1.0E-4D) {
+            return overhead;
+        }
+        Vec3 standoff = overhead.add(away.normalize().scale(HOVER_RANGE));
+        if (this.level().noCollision(this, this.getBoundingBox().move(standoff.subtract(this.position())))) {
+            return standoff;
+        }
+        return overhead;
     }
 
     private void startAttack() {
@@ -261,7 +281,7 @@ public class VortexEntity extends Monster implements GeoEntity {
         vortex.setTravelDuration(Mth.clamp((int) Math.ceil(distance / drift.length()), 8, 36));
         vortex.setHoming(false);
         serverLevel.addFreshEntity(vortex);
-            serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, this.getSoundSource(), 1.0F, 0.9F);
+        serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PHANTOM_FLAP, this.getSoundSource(), 1.0F, 0.9F);
     }
 
     private int countOwnedActiveVortexes() {
@@ -308,7 +328,6 @@ public class VortexEntity extends Monster implements GeoEntity {
         }
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
-            this.dropExperience();
         }
     }
 
@@ -323,12 +342,12 @@ public class VortexEntity extends Monster implements GeoEntity {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundEvents.GENERIC_HURT;
+        return SoundEvents.BLAZE_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.GENERIC_DEATH;
+        return SoundEvents.BLAZE_DEATH;
     }
 
     @Override

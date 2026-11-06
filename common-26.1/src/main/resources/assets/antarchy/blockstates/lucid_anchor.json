@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "antarchy:block/lucid_anchor"
+    },
+    "lit=true": {
+      "model": "antarchy:block/lucid_anchor"
+    }
+  }
+}

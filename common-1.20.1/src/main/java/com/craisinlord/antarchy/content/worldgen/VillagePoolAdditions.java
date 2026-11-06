@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.mixins.PoiTypesAccessor;
 import com.craisinlord.integrated_api.mixins.structures.StructurePoolAccessor;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -18,8 +17,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.registries.BuiltInRegistries;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,9 +31,6 @@ public final class VillagePoolAdditions {
     }
 
     public static void apply(MinecraftServer server) {
-        registerComputerPoiStates(server);
-        com.craisinlord.antarchy.content.portal.PermanentPortalType.registerPoiStates(
-                server.registryAccess().registryOrThrow(Registries.POINT_OF_INTEREST_TYPE));
         Registry<StructureTemplatePool> pools = server.registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
         Registry<StructureProcessorList> processors = server.registryAccess().registryOrThrow(Registries.PROCESSOR_LIST);
 
@@ -48,21 +42,6 @@ public final class VillagePoolAdditions {
             } catch (IOException | RuntimeException exception) {
                 Antarchy.LOGGER.error("Failed to apply structure pool additions from {}", entry.getKey(), exception);
             }
-        }
-    }
-
-    private static void registerComputerPoiStates(MinecraftServer server) {
-        ResourceLocation poiId = new ResourceLocation(Antarchy.MODID, "computer");
-        Registry<net.minecraft.world.entity.ai.village.poi.PoiType> poiRegistry =
-                server.registryAccess().registryOrThrow(Registries.POINT_OF_INTEREST_TYPE);
-        Holder<net.minecraft.world.entity.ai.village.poi.PoiType> poi = poiRegistry.getHolderOrThrow(
-                ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, poiId));
-        Map<BlockState, Holder<net.minecraft.world.entity.ai.village.poi.PoiType>> stateMap =
-                PoiTypesAccessor.antarchy$getTypeByState();
-        net.minecraft.world.level.block.Block computer = BuiltInRegistries.BLOCK.get(
-                new ResourceLocation("antos", "computer"));
-        for (BlockState state : computer.getStateDefinition().getPossibleStates()) {
-            stateMap.put(state, poi);
         }
     }
 

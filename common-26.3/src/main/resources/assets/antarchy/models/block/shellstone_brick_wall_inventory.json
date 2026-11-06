@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "antarchy:block/shellstone/shellstone_bricks"
+  }
+}
+

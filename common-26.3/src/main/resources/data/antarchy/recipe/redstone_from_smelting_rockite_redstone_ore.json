@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "group": "redstone",
+  "ingredient": "antarchy:rockite_redstone_ore",
+  "result": {
+    "id": "minecraft:redstone"
+  },
+  "experience": 0.7,
+  "cookingtime": 200
+}

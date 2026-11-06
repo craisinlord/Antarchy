@@ -35,7 +35,7 @@ public final class AntDimensionPortalBlock extends Block {
     private static final VoxelShape X_SHAPE = Block.box(0.0D, 0.0D, 6.0D, 16.0D, 16.0D, 10.0D);
     private static final VoxelShape Z_SHAPE = Block.box(6.0D, 0.0D, 0.0D, 10.0D, 16.0D, 16.0D);
     private static final int PORTAL_TRANSITION_TICKS = 20;
-    private static final Map<UUID, Integer> PORTAL_ENTRY_TICKS = new HashMap<>();
+    private static final Map<UUID, PortalEntry> PORTAL_ENTRIES = new HashMap<>();
 
     private final PermanentPortalType type;
 
@@ -82,20 +82,42 @@ public final class AntDimensionPortalBlock extends Block {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide() || !entity.isAlive() || !entity.canChangeDimensions() || entity.isOnPortalCooldown()) {
+        if (level.isClientSide() || !entity.isAlive() || !entity.canChangeDimensions()) {
             return;
         }
         if (!(level instanceof ServerLevel)) {
             return;
         }
 
-        int ticks = PORTAL_ENTRY_TICKS.merge(entity.getUUID(), 1, Integer::sum);
-        if (ticks < PORTAL_TRANSITION_TICKS) {
+        UUID id = entity.getUUID();
+        if (entity.isOnPortalCooldown()) {
+            entity.setPortalCooldown();
+            PORTAL_ENTRIES.remove(id);
             return;
         }
 
-        PORTAL_ENTRY_TICKS.remove(entity.getUUID());
+        long gameTime = level.getGameTime();
+        PortalEntry previous = PORTAL_ENTRIES.get(id);
+        if (previous != null && previous.lastTick() == gameTime) {
+            return;
+        }
+
+        boolean continuing = previous != null && gameTime - previous.lastTick() == 1L;
+        if (!continuing) {
+            PORTAL_ENTRIES.values().removeIf(entry -> gameTime - entry.lastTick() > 1L);
+        }
+
+        int ticks = continuing ? previous.ticks() + 1 : 1;
+        if (ticks < PORTAL_TRANSITION_TICKS) {
+            PORTAL_ENTRIES.put(id, new PortalEntry(gameTime, ticks));
+            return;
+        }
+
+        PORTAL_ENTRIES.remove(id);
         PermanentPortalTeleporter.teleport(entity, this.type);
+    }
+
+    private record PortalEntry(long lastTick, int ticks) {
     }
 
     @Override

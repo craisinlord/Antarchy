@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:broodstone_copper_ore",
+    "antarchy:broodstone_iron_ore",
+    "antarchy:broodstone_gold_ore",
+    "antarchy:broodstone_redstone_ore",
+    "antarchy:broodstone_lapis_ore",
+    "antarchy:broodstone_diamond_ore",
+    "antarchy:broodstone_emerald_ore",
+    "antarchy:broodstone_titanium_ore",
+    "antarchy:broodstone_uranium_ore"
+  ]
+}

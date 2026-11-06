@@ -1,0 +1,58 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.45,
+  "downfall": 0.0,
+  "effects": {
+    "fog_color": 983040,
+    "water_color": 327680,
+    "water_fog_color": 0,
+    "sky_color": 524288,
+    "grass_color": 4211262,
+    "foliage_color": 4211262,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 1200000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "particle": {
+      "probability": 0.006,
+      "options": {
+        "type": "antarchy:orange_ash"
+      }
+    },
+    "music": {
+      "sound": "antarchy:music.game.cavaryn",
+      "min_delay": 600,
+      "max_delay": 1800,
+      "replace_current_music": true
+    }
+  },
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [
+      "antarchy:cavaryn_spire_dressing",
+      "antarchy:cavaryn_ribcage_dressing"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
+}

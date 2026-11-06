@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -20,12 +21,19 @@ import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.RawAnimation;
 
 public class GlimmerAppleCowBehavior implements GlimmerVariantBehavior {
     private static final int SHEAR_REGROW_TICKS = 20 * 60 * 2;
     private static final float EXHAUSTION_REDUCTION = 0.25F;
-    private static final int LOW_FOOD_THRESHOLD = 16;
-    private static final int ABILITY_COOLDOWN_TICKS = 20 * 120;
+    private static final int LOW_FOOD_THRESHOLD = 6;
+    private static final float LOW_HEALTH_FRACTION = 0.5F;
+    private static final int FEED_FOOD = 6;
+    private static final float FEED_SATURATION = 0.6F;
+    private static final int REGEN_DURATION_TICKS = 20 * 8;
+    private static final int ABILITY_COOLDOWN_TICKS = 20 * 90;
+    private static final int QUIRK_ANIM_TICKS = 35;
+    private static final RawAnimation QUIRK_ANIM = RawAnimation.begin().thenPlay("quirk");
 
     private static ResourceLocation rl(String path) {
         return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path);
@@ -125,14 +133,29 @@ public class GlimmerAppleCowBehavior implements GlimmerVariantBehavior {
     }
 
     @Override
+    @Nullable
+    public RawAnimation abilityAnimation() {
+        return QUIRK_ANIM;
+    }
+
+    @Override
     public void tickAbilityCheck(GlimmerEntity entity, Player owner) {
-        if (owner.getFoodData().getFoodLevel() > LOW_FOOD_THRESHOLD) {
+        boolean lowFood = owner.getFoodData().getFoodLevel() <= LOW_FOOD_THRESHOLD;
+        boolean lowHealth = owner.getHealth() <= owner.getMaxHealth() * LOW_HEALTH_FRACTION;
+        if (!lowFood && !lowHealth) {
             return;
         }
 
-        owner.addEffect(new MobEffectInstance(MobEffects.SATURATION, 20, 1, false, false, true));
-        owner.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 20 * 8, 1, false, true, true));
+        if (lowFood) {
+            owner.getFoodData().eat(FEED_FOOD, FEED_SATURATION);
+        }
+        if (lowHealth) {
+            owner.addEffect(new MobEffectInstance(MobEffects.REGENERATION, REGEN_DURATION_TICKS, 1, false, true, true));
+        }
         entity.playSound(SoundEvents.COW_AMBIENT, 1.2F, 0.8F);
+        entity.playAbilityAnimation(QUIRK_ANIM_TICKS);
+        GlimmerParticles.abilityBurst(entity);
+        GlimmerParticles.abilityBurst(owner);
         this.sendAbilityMessage(owner, Component.translatable("entity.antarchy.glimmer.ability.apple_cow"));
         entity.startAbilityCooldown();
     }

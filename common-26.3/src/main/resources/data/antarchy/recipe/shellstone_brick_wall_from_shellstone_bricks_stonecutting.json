@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:shellstone_bricks",
+  "result": {
+    "id": "antarchy:shellstone_brick_wall"
+  }
+}

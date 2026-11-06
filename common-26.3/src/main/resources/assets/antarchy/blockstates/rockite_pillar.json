@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "antarchy:block/rockite_pillar",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "antarchy:block/rockite_pillar"
+    },
+    "axis=z": {
+      "model": "antarchy:block/rockite_pillar",
+      "x": 90
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "category": "antarchy:elythia",
+  "title": "guide.antarchy.disk.elythia.title",
+  "description": "guide.antarchy.disk.elythia.description",
+  "entries": [],
+  "programs": ["antarchy:elythia_quiz"]
+}

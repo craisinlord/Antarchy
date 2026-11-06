@@ -1,0 +1,8 @@
+{
+  "type": "antarchy:elythia_stone_tor",
+  "block": "antarchy:tidestone",
+  "slab": "antarchy:tidestone_slab",
+  "min_height": 3,
+  "max_height": 10,
+  "submerged": true
+}

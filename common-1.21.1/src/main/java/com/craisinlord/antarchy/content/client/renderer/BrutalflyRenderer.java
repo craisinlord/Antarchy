@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.BrutalflyModel;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
@@ -14,15 +15,28 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.util.Color;
 
 public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity> {
 
     private static final double COCOONED_VISUAL_Y_OFFSET = 1.0D;
+    private static final ResourceLocation GLIMMER_TEXTURE = GlimmerEchoRendering.texture("brutalfly");
 
     public BrutalflyRenderer(EntityRendererProvider.Context context) {
         super(context, new BrutalflyModel());
         this.shadowRadius = 1.35F;
         this.addRenderLayer(new BrutalflyEmissiveLayer(this));
+        this.addRenderLayer(new GlimmerEchoRendering.EmissiveLayer<>(this, GlimmerEchoRendering.emissiveTexture("brutalfly")));
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(BrutalflyEntity animatable) {
+        return GlimmerEchoRendering.textureLocation(animatable, GLIMMER_TEXTURE, super.getTextureLocation(animatable));
+    }
+
+    @Override
+    public Color getRenderColor(BrutalflyEntity animatable, float partialTick, int packedLight) {
+        return GlimmerEchoRendering.renderColor(animatable, super.getRenderColor(animatable, partialTick, packedLight));
     }
 
     @Override
@@ -31,7 +45,7 @@ public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity> {
             return RenderType.entityCutoutNoCull(texture);
         }
 
-        return super.getRenderType(animatable, texture, bufferSource, partialTick);
+        return GlimmerEchoRendering.renderType(animatable, texture, super.getRenderType(animatable, texture, bufferSource, partialTick));
     }
 
     @Override
@@ -66,6 +80,9 @@ public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity> {
         public void render(PoseStack poseStack, BrutalflyEntity animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
                            MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
                            int packedLight, int packedOverlay) {
+            if (GlimmerEchoes.isGlimmerEcho(animatable)) {
+                return;
+            }
             RenderType emissiveType = RenderType.eyes(BrutalflyModel.EMISSIVE_TEXTURE);
             VertexConsumer emissiveBuffer = bufferSource.getBuffer(emissiveType);
             this.getRenderer().reRender(

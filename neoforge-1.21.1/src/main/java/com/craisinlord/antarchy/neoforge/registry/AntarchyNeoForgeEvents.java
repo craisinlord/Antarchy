@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
+import com.craisinlord.antarchy.content.dispenser.AnvilCannonDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
@@ -26,19 +27,16 @@ import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
+import com.craisinlord.antarchy.content.loot.AntarchyLootInjections;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.mixins.PoiTypesAccessor;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -66,12 +64,11 @@ import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.living.*;
@@ -99,6 +96,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onMissileSquidDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onPermanentPortalSacrifice);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onLivingBreathe);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onLootTableLoad);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::registerBrewingRecipes);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleNaturalRabbitReplacement);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBlockToolModification);
@@ -120,6 +118,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedAttackEntity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedRightClickBlock);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleKrakenRitualRightClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedRightClickItem);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedEntityInteract);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedEntityInteractSpecific);
@@ -240,9 +239,15 @@ public final class AntarchyNeoForgeEvents {
     static void tickCavarynHordes(ServerTickEvent.Post event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
+            com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+            com.craisinlord.antarchy.content.weather.ElythiaEvents.tick(level);
+            com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
+            com.craisinlord.antarchy.content.weather.ThoraxisEvents.tick(level);
             com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
+            com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
             com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
+            com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tick(level);
         }
     }
 
@@ -254,6 +259,7 @@ public final class AntarchyNeoForgeEvents {
 
     static void tickAntArrivals(ServerTickEvent.Post event) {
         com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(event.getServer());
+        com.craisinlord.antarchy.content.transit.AntTransit.tick(event.getServer());
     }
 
     private static int badOmenLevel(Player player) {
@@ -265,6 +271,12 @@ public final class AntarchyNeoForgeEvents {
         PermanentPortalManager.handleSacrifice(event.getEntity());
         if (event.getEntity() instanceof RainbowAntEntity rainbowAnt) {
             rainbowAnt.tryIgniteInfinityPortalOnDeath();
+        }
+    }
+
+    public static void onLootTableLoad(LootTableLoadEvent event) {
+        if (AntarchyLootInjections.addsPhone(event.getName())) {
+            event.getTable().addPool(AntarchyLootInjections.phonePool().build());
         }
     }
 
@@ -410,7 +422,7 @@ public final class AntarchyNeoForgeEvents {
         }
 
         ServerLevel level = (ServerLevel) event.getLevel();
-        EasterBunnyEntity easterBunny = AntarchyNeoforgeEntites.EASTER_BUNNY.get().create(level);
+        EasterBunnyEntity easterBunny = AntarchyNeoforgeEntities.EASTER_BUNNY.get().create(level);
         if (easterBunny == null) {
             return;
         }
@@ -501,33 +513,6 @@ public final class AntarchyNeoForgeEvents {
         int interval = entity instanceof Player ? ANTIMETAL_PLAYER_SCAN_INTERVAL_TICKS : ANTIMETAL_MOB_SCAN_INTERVAL_TICKS;
         long phase = (long) entity.getUUID().hashCode() + gameTime;
         return Math.floorMod(phase, interval) == 0L;
-    }
-
-    private static boolean isInOrBelowAntimetalScaffolding(LivingEntity entity) {
-        AABB bounds = entity.getBoundingBox().deflate(1.0E-3D);
-        int minX = net.minecraft.util.Mth.floor(bounds.minX);
-        int maxX = net.minecraft.util.Mth.floor(bounds.maxX);
-        int minY = net.minecraft.util.Mth.floor(bounds.minY);
-        int maxY = net.minecraft.util.Mth.floor(bounds.maxY);
-        int minZ = net.minecraft.util.Mth.floor(bounds.minZ);
-        int maxZ = net.minecraft.util.Mth.floor(bounds.maxZ);
-
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z <= maxZ; z++) {
-                for (int y = minY; y <= maxY; y++) {
-                    if (entity.level().getBlockState(new net.minecraft.core.BlockPos(x, y, z))
-                            .getBlock() instanceof com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock) {
-                        return true;
-                    }
-                }
-                net.minecraft.core.BlockPos abovePos = new net.minecraft.core.BlockPos(x, maxY + 1, z);
-                if (entity.level().getBlockState(abovePos)
-                        .getBlock() instanceof com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private static boolean isDirectlyBelowAntimetal(LivingEntity entity) {
@@ -978,6 +963,15 @@ public final class AntarchyNeoForgeEvents {
         event.setCanceled(true);
     }
 
+    static void handleKrakenRitualRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        InteractionResult result = com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tryStart(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getPos());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
     static void handleScorpionWhipRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
@@ -1183,6 +1177,8 @@ public final class AntarchyNeoForgeEvents {
             }
         });
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.LUCID_EYE.get(), AntarchyNeoforgeMisc.INVERSION);
+        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.FADED_MEMORY.get(), AntarchyNeoforgeMisc.REMEMBRANCE_POTION);
+        event.getBuilder().addMix(AntarchyNeoforgeMisc.REMEMBRANCE_POTION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_REMEMBRANCE);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.INVERSION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_INVERSION);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.STINK_BUG.get(), AntarchyNeoforgeMisc.STINKY_POTION);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.STINKY_POTION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_STINKY);
@@ -1285,6 +1281,14 @@ public final class AntarchyNeoForgeEvents {
             return;
         }
 
+        if (state.is(AntarchyNeoforgeBlocks.CRANBERRY_LOG.get())) {
+            event.setFinalState(AntarchyNeoforgeBlocks.STRIPPED_CRANBERRY_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+        if (state.is(AntarchyNeoforgeBlocks.CRANBERRY_WOOD.get())) {
+            event.setFinalState(AntarchyNeoforgeBlocks.STRIPPED_CRANBERRY_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
         if (state.is(AntarchyNeoforgeBlocks.PEACH_LOG.get())) {
             event.setFinalState(AntarchyNeoforgeBlocks.STRIPPED_PEACH_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
             return;
@@ -1316,23 +1320,16 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void onCommonSetup(FMLCommonSetupEvent event) {
-        BloodCrystalShardItem.SYNC_BLOODGLASS = AntarchyNeoForgeEvents::syncBloodglass;
+        BloodCrystalShardItem.setBloodglassSync(AntarchyNeoForgeEvents::syncBloodglass);
         if (com.craisinlord.antarchy.compat.infinity.InfinityCompat.get().isAvailable()) {
             com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh.refreshIfStale(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get());
         }
         event.enqueueWork(() -> {
-            Holder<PoiType> computerPoi = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(
-                    ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE,
-                            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "computer")));
-            Block computerBlock = com.craisinlord.antos.neoforge.AntOSNeoForgeContent.COMPUTER.get();
-            for (BlockState state : computerBlock.getStateDefinition().getPossibleStates()) {
-                PoiTypesAccessor.antarchy$getTypeByState().put(state, computerPoi);
-            }
-
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.ANVIL_CANNON.get(), new AnvilCannonDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
@@ -1355,16 +1352,18 @@ public final class AntarchyNeoForgeEvents {
                                     : AntarchyNeoforgeBlocks.NYXITE.get().defaultBlockState()
                     )
             );
-            LucidEntity.boltEntityTypeSupplier = () -> AntarchyNeoforgeEntites.LUCID_BOLT.get();
+            LucidEntity.boltEntityTypeSupplier = () -> AntarchyNeoforgeEntities.LUCID_BOLT.get();
             LucidBoltEntity.invertedEffectSupplier = AnthologyEffects::inverted;
             LucidEyeProjectileEntity.invertedEffectSupplier = AnthologyEffects::inverted;
-            VortexEntity.windVortexTypeSupplier = () -> AntarchyNeoforgeEntites.WIND_VORTEX.get();
+            VortexEntity.windVortexTypeSupplier = () -> AntarchyNeoforgeEntities.WIND_VORTEX.get();
             VortexChargeProjectileEntity.defaultItemSupplier = () -> AntarchyNeoforgeItems.VORTEX_CHARGE.get();
-            VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get();
-            VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyNeoforgeEntites.WIND_VORTEX.get();
+            VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyNeoforgeEntities.VORTEX_CHARGE_PROJECTILE.get();
+            VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyNeoforgeEntities.WIND_VORTEX.get();
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.BLUSH_MOSS_BLOCK.get().asItem(), 0.65f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.PRIMORDIAL_MOSS_BLOCK.get().asItem(), 0.65f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.PRIMORDIAL_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.BLUSH_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.HUSHWEED.get().asItem(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeItems.CORNEA_EAR.get(), 0.65f);

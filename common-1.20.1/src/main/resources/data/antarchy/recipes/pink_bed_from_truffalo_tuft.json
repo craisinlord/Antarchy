@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "decorations",
+  "category": "misc",
   "pattern": [
     "###",
     "PPP"

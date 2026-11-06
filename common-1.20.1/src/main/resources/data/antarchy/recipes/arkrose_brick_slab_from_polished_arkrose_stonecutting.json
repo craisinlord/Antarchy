@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:polished_arkrose"
+  },
+  "result": "antarchy:arkrose_brick_slab",
+  "count": 2
+}

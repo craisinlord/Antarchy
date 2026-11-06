@@ -65,7 +65,7 @@ public final class JudgmentMarkManager {
     }
 
     public static void tickTarget(LivingEntity target) {
-        if (!(target.level() instanceof ServerLevel level)) {
+        if (!(target.level() instanceof ServerLevel level) || MARKS.isEmpty()) {
             return;
         }
         MarkBook book = MARKS.get(level);

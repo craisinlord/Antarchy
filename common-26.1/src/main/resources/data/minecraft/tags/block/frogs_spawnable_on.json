@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:blush_moss_block",
+    "minecraft:moss_block",
+    "antarchy:primordial_moss_block"
+  ]
+}

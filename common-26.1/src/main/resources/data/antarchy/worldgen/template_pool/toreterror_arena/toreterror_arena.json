@@ -1,0 +1,15 @@
+{
+  "name": "antarchy:toreterror_arena/toreterror_arena",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:toreterror_arena/toreterror_arena",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    }
+  ]
+}

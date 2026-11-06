@@ -1,13 +1,16 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
@@ -30,9 +33,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -45,9 +48,13 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
     private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 0.5D, 16.0D);
     private static final ThreadLocal<Boolean> REMOVING_STRUCTURE = ThreadLocal.withInitial(() -> false);
     private static final Map<TilePosition, Vec2> OFFSETS = createOffsets();
-    private static final double BOUNCE_FACTOR = 0.35D;
-    private static final double FORWARD_BOOST_MULTIPLIER = 1.05D;
-    private static final double MAX_BOOSTED_HORIZONTAL_SPEED = 0.6D;
+    private static final double LAUNCH_VERTICAL_SPEED = 0.82D;
+    private static final double LAUNCH_SPEED_PER_BLOCK = 0.1044D;
+    private static final double NON_LIVING_HORIZONTAL_SCALE = 0.45D;
+    private static final double NON_LIVING_VERTICAL_SCALE = 0.7D;
+    private static final double PAD_SURFACE_HEIGHT = 0.25D;
+    private static final float LAUNCH_SOUND_PITCH = 1.4F;
+    private static final int LAUNCH_PARTICLE_COUNT = 12;
 
     public GiantLilyPadBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -148,31 +155,8 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
     }
 
     @Override
-    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        super.stepOn(level, pos, state, entity);
-        if (!level.isClientSide) {
-            Vec3 movement = entity.getDeltaMovement();
-            double horizontalSpeed = movement.horizontalDistance();
-            if (horizontalSpeed > 0.02D && horizontalSpeed < MAX_BOOSTED_HORIZONTAL_SPEED) {
-                double boosted = Math.min(horizontalSpeed * FORWARD_BOOST_MULTIPLIER, MAX_BOOSTED_HORIZONTAL_SPEED);
-                double scale = boosted / horizontalSpeed;
-                entity.setDeltaMovement(movement.x * scale, movement.y, movement.z * scale);
-            }
-        }
-    }
-
-    @Override
-    public void updateEntityAfterFallOn(BlockGetter level, Entity entity) {
-        if (entity.isSuppressingBounce()) {
-            super.updateEntityAfterFallOn(level, entity);
-            return;
-        }
-
-        Vec3 movement = entity.getDeltaMovement();
-        if (movement.y < 0.0D) {
-            double bounce = entity instanceof LivingEntity ? BOUNCE_FACTOR : BOUNCE_FACTOR * 0.7D;
-            entity.setDeltaMovement(movement.x, -movement.y * bounce, movement.z);
-        }
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+        entity.causeFallDamage(fallDistance, 0.0F, level.damageSources().fall());
     }
 
     @Override
@@ -185,6 +169,51 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
         double z = pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.6D;
         double y = pos.getY() + 0.55D;
         level.addParticle(AntarchyObjects.LOTUS_POLLEN.get(), x, y, z, 0.0D, 0.015D, 0.0D);
+    }
+
+    public static void launchFromJump(Player player) {
+        BlockPos pos = player.getOnPos();
+        BlockState state = player.level().getBlockState(pos);
+        if (!state.is(AntarchyObjects.GIANT_LILY_PAD.get()) || player.isSuppressingBounce()) {
+            return;
+        }
+
+        float yaw = player.getYRot() * Mth.DEG_TO_RAD;
+        double forwardX = -Mth.sin(yaw);
+        double forwardZ = Mth.cos(yaw);
+        launch(player, forwardX, forwardZ);
+
+        if (player.level() instanceof ServerLevel level) {
+            launchOccupants(level, player, centerFrom(pos, state), forwardX, forwardZ);
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, LAUNCH_SOUND_PITCH);
+            level.sendParticles(ParticleTypes.SPLASH, player.getX(), pos.getY() + 0.1D, player.getZ(), LAUNCH_PARTICLE_COUNT, 0.5D, 0.05D, 0.5D, 0.0D);
+        }
+    }
+
+    private static void launchOccupants(ServerLevel level, Player jumper, BlockPos center, double forwardX, double forwardZ) {
+        AABB surface = new AABB(
+                center.getX() - 1.0D,
+                center.getY(),
+                center.getZ() - 1.0D,
+                center.getX() + 2.0D,
+                center.getY() + PAD_SURFACE_HEIGHT,
+                center.getZ() + 2.0D);
+        for (Entity entity : level.getEntities(jumper, surface, GiantLilyPadBlock::canBeLaunched)) {
+            launch(entity, forwardX, forwardZ);
+            entity.hurtMarked = true;
+            entity.hasImpulse = true;
+        }
+    }
+
+    private static boolean canBeLaunched(Entity entity) {
+        return entity.isAlive() && entity.onGround() && !entity.isSpectator() && !entity.isPassenger();
+    }
+
+    private static void launch(Entity entity, double forwardX, double forwardZ) {
+        boolean living = entity instanceof LivingEntity;
+        double horizontal = AntarchySettings.giantLilyPadLaunchDistance() * LAUNCH_SPEED_PER_BLOCK * (living ? 1.0D : NON_LIVING_HORIZONTAL_SCALE);
+        double vertical = LAUNCH_VERTICAL_SPEED * (living ? 1.0D : NON_LIVING_VERTICAL_SCALE);
+        entity.setDeltaMovement(forwardX * horizontal, Math.max(entity.getDeltaMovement().y, vertical), forwardZ * horizontal);
     }
 
     public static boolean canPlaceStructure(LevelAccessor level, BlockPos centerPos) {

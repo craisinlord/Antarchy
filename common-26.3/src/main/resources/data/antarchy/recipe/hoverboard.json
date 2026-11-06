@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NUN",
+    "BLB",
+    "C C"
+  ],
+  "key": {
+    "N": "minecraft:netherite_ingot",
+    "U": "antarchy:uranium_ingot",
+    "B": "antarchy:bluestone",
+    "L": "antarchy:lucid_eye",
+    "C": "antarchy:blood_crystal_shard"
+  },
+  "result": {
+    "id": "antarchy:hoverboard"
+  }
+}

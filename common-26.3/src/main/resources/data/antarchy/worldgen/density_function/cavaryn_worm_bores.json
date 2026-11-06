@@ -1,0 +1,7 @@
+{
+  "type": "antarchy:cavaryn_worm_bore",
+  "humidity": "antarchy:cavaryn/humidity",
+  "weirdness": "antarchy:cavaryn/weirdness",
+  "depth": "minecraft:overworld/depth",
+  "noise": "antarchy:cavaryn_worm_bore"
+}

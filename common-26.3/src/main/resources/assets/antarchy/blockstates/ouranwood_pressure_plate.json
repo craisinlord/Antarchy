@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "antarchy:block/ouranwood_pressure_plate"
+    },
+    "powered=true": {
+      "model": "antarchy:block/ouranwood_pressure_plate_down"
+    }
+  }
+}

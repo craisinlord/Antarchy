@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:cranberry_log",
+    "antarchy:cranberry_wood",
+    "antarchy:stripped_cranberry_log",
+    "antarchy:stripped_cranberry_wood"
+  ]
+}

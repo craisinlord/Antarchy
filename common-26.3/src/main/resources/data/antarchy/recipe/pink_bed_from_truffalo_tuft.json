@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "PPP"
+  ],
+  "key": {
+    "#": "antarchy:pink_truffalo_tuft",
+    "P": "#minecraft:planks"
+  },
+  "result": {
+    "id": "minecraft:pink_bed"
+  }
+}

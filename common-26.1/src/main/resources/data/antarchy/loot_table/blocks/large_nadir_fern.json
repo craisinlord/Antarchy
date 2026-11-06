@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:large_nadir_fern"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        },
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "antarchy:large_nadir_fern",
+          "properties": {
+            "half": "bottom"
+          }
+        }
+      ]
+    }
+  ]
+}

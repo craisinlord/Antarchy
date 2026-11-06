@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:jellied_cranberry_block"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:survives_explosion"
+          },
+          {
+            "type": "minecraft:match_block",
+            "blocks": "antarchy:jellied_cranberry_block",
+            "state": {
+              "servings": "4"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "random_sequence": "antarchy:blocks/jellied_cranberry_block"
+}

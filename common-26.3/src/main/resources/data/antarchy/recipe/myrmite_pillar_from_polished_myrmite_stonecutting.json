@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:polished_myrmite",
+  "result": {
+    "id": "antarchy:myrmite_pillar"
+  }
+}

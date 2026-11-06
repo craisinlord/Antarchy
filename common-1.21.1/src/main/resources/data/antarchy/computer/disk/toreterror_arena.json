@@ -1,5 +1,6 @@
 {
   "category": "antarchy:elythia",
   "title": "guide.antarchy.disk.toreterror_arena.title",
+  "description": "guide.antarchy.disk.toreterror_arena.description",
   "entries": ["antarchy:toreterror_arena"]
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "antarchy:block/cranberry/cranberry_sapling"
+  }
+}

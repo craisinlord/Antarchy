@@ -10,8 +10,10 @@ import com.craisinlord.anthology.portal.PortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
+import com.craisinlord.antarchy.content.client.AntTransitClientState;
 import com.craisinlord.antarchy.content.client.renderer.PortalGunMoonViewRenderer;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.item.AnvilCannonItem;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.anthology.shake.client.CameraShake;
@@ -62,6 +64,8 @@ public final class AntarchyAnthologyHooks {
         PortalClientHooks.setOutlinePolicy(AntarchyAnthologyHooks::outlinesPortal);
         CameraShake.addStrengthSource(cameraPos -> HerculesBeetleImpactShakeClientState.getTicks() / 25.0F * 2.0F);
         CameraShake.addStrengthSource(cameraPos -> BigBerthaItem.clientShakeTicks / 25.0F * 2.0F);
+        CameraShake.addStrengthSource(cameraPos -> AnvilCannonItem.clientShakeTicks / 12.0F * 1.2F);
+        GravityHooks.addCameraRollSource(AntTransitClientState::roll);
         ContractionAfterimages.addActivator(living -> living instanceof Player player
                 && TemporalTunerItem.isAvailable(player)
                 && TimeDilationApi.getRate(living) > 1.0D);

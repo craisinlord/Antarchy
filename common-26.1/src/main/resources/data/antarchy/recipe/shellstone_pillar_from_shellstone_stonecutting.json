@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:shellstone",
+  "result": {
+    "id": "antarchy:shellstone_pillar"
+  }
+}

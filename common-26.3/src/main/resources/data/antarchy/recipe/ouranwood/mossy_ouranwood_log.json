@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "antarchy:ouranwood_log",
+    "minecraft:moss_block"
+  ],
+  "result": {
+    "id": "antarchy:mossy_ouranwood_log"
+  }
+}

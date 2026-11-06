@@ -1,0 +1,9 @@
+{
+  "type": "antarchy:elythia_stone_tor",
+  "block": "antarchy:zebra_stone",
+  "accent": "antarchy:rockite",
+  "slab": "antarchy:zebra_stone_slab",
+  "min_height": 4,
+  "max_height": 12,
+  "submerged": true
+}

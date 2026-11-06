@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "antarchy:truffalo_boat",
+    "minecraft:chest"
+  ],
+  "result": {
+    "id": "antarchy:truffalo_chest_boat"
+  }
+}

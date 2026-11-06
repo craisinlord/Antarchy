@@ -1,0 +1,12 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "You did it!!",
+  "body": "You beat the Kraken!! THE Kraken! I honestly didn't think anyone could do it.\n\nIf you pulled a tooth out of it, bring it by the lab. I'll make it worth your while.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:davy_jones_locker",
+    "delay_minutes": 3
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:ender_dragon",
+    "minecraft:wither",
+    "antarchy:nightmare",
+    "antarchy:kraken",
+    "antarchy:brutalfly"
+  ]
+}

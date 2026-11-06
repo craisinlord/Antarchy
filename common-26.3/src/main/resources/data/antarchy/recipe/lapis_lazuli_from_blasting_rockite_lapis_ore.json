@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "group": "lapis_lazuli",
+  "ingredient": "antarchy:rockite_lapis_ore",
+  "result": {
+    "id": "minecraft:lapis_lazuli"
+  },
+  "experience": 0.2,
+  "cookingtime": 100
+}

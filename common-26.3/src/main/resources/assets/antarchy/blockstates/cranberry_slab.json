@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "antarchy:block/cranberry_slab"
+    },
+    "type=double": {
+      "model": "antarchy:block/cranberry_planks"
+    },
+    "type=top": {
+      "model": "antarchy:block/cranberry_slab_top"
+    }
+  }
+}
+

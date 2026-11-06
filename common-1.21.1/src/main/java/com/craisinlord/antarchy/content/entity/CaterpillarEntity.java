@@ -87,6 +87,7 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     private static final int EAT_CONSUME_TICK = 16;
     private static final int PUPATION_ANIM_TICKS = 25;
     private static final int PUPATION_SEARCH_INTERVAL_TICKS = 20;
+    private static final int PUPATION_RETRY_INTERVAL_TICKS = 5;
     private static final int PUPATION_SEARCH_RADIUS_HORIZONTAL = 8;
     private static final int PUPATION_SEARCH_RADIUS_VERTICAL = 8;
     private static final double PUPATION_BEGIN_DISTANCE_SQR = 0.35D;
@@ -115,6 +116,7 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     private int nextFoodRepathTick;
     private int nextEatSearchTick;
     private int nextPupationSearchTick;
+    private int nextPupationRetryTick;
 
     public CaterpillarEntity(EntityType<? extends CaterpillarEntity> entityType, Level level) {
         super(entityType, level);
@@ -407,9 +409,13 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
             return;
         }
 
-        if (this.getNavigation().isDone() || this.tickCount >= this.nextFoodRepathTick) {
+        boolean navDone = this.getNavigation().isDone();
+        if (navDone ? this.tickCount >= this.nextPupationRetryTick : this.tickCount >= this.nextFoodRepathTick) {
             this.getNavigation().moveTo(targetCenter.x, targetCenter.y, targetCenter.z, PUPATION_SPEED);
             this.nextFoodRepathTick = this.tickCount + FOOD_REPATH_INTERVAL_TICKS;
+            if (navDone) {
+                this.nextPupationRetryTick = this.tickCount + PUPATION_RETRY_INTERVAL_TICKS;
+            }
         }
     }
 
@@ -433,18 +439,42 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
         BlockPos origin = this.blockPosition();
         BlockPos bestPos = null;
         double bestDistance = Double.MAX_VALUE;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        int minY = origin.getY() - PUPATION_SEARCH_RADIUS_VERTICAL;
+        int maxY = origin.getY() + PUPATION_SEARCH_RADIUS_VERTICAL;
 
-        for (BlockPos pos : BlockPos.betweenClosed(
-                origin.offset(-PUPATION_SEARCH_RADIUS_HORIZONTAL, -PUPATION_SEARCH_RADIUS_VERTICAL, -PUPATION_SEARCH_RADIUS_HORIZONTAL),
-                origin.offset(PUPATION_SEARCH_RADIUS_HORIZONTAL, PUPATION_SEARCH_RADIUS_VERTICAL, PUPATION_SEARCH_RADIUS_HORIZONTAL))) {
-            if (!this.isValidPupationStandPos(pos)) {
-                continue;
-            }
+        for (int x = origin.getX() - PUPATION_SEARCH_RADIUS_HORIZONTAL; x <= origin.getX() + PUPATION_SEARCH_RADIUS_HORIZONTAL; x++) {
+            for (int z = origin.getZ() - PUPATION_SEARCH_RADIUS_HORIZONTAL; z <= origin.getZ() + PUPATION_SEARCH_RADIUS_HORIZONTAL; z++) {
+                BlockState supportState = null;
+                int airRun = 0;
+                for (int y = maxY + 3; y >= minY; y--) {
+                    BlockState state = this.level().getBlockState(cursor.set(x, y, z));
+                    if (!state.isAir()) {
+                        supportState = state;
+                        airRun = 0;
+                        continue;
+                    }
 
-            double distance = pos.distSqr(origin);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestPos = pos.immutable();
+                    airRun++;
+                    if (airRun != 3 || supportState == null || y > maxY) {
+                        continue;
+                    }
+
+                    if (!supportState.isFaceSturdy(this.level(), cursor.set(x, y + 3, z), Direction.DOWN)) {
+                        continue;
+                    }
+
+                    cursor.set(x, y, z);
+                    if (!this.isWalkableStandPos(cursor)) {
+                        continue;
+                    }
+
+                    double distance = cursor.distSqr(origin);
+                    if (distance < bestDistance) {
+                        bestDistance = distance;
+                        bestPos = cursor.immutable();
+                    }
+                }
             }
         }
 
@@ -460,7 +490,9 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
         }
 
         BlockState supportState = this.level().getBlockState(ceilingPos);
-        return !supportState.isAir() && supportState.isFaceSturdy(this.level(), ceilingPos, Direction.DOWN);
+        return !supportState.isAir()
+                && supportState.isFaceSturdy(this.level(), ceilingPos, Direction.DOWN)
+                && this.isWalkableStandPos(pos);
     }
 
     private boolean isWalkableStandPos(BlockPos pos) {
@@ -650,22 +682,31 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            return !CaterpillarEntity.this.isBaby() && CaterpillarEntity.this.readyToPupate();
+            return !CaterpillarEntity.this.isBaby()
+                    && (this.isPupatingOrChrysalis()
+                    || (CaterpillarEntity.this.readyToPupate() && CaterpillarEntity.this.getCurrentPupationStandPos() != null));
         }
 
         @Override
         public boolean canContinueToUse() {
             return !CaterpillarEntity.this.isBaby()
-                    && (CaterpillarEntity.this.readyToPupate()
-                    || CaterpillarEntity.this.getLifeStage() == LifeStage.SEEKING_PUPATION
-                    || CaterpillarEntity.this.getLifeStage() == LifeStage.PUPATING
-                    || CaterpillarEntity.this.getLifeStage() == LifeStage.CHRYSALIS);
+                    && (this.isPupatingOrChrysalis()
+                    || ((CaterpillarEntity.this.readyToPupate() || CaterpillarEntity.this.getLifeStage() == LifeStage.SEEKING_PUPATION)
+                    && CaterpillarEntity.this.getCurrentPupationStandPos() != null));
         }
 
         @Override
         public void start() {
+            if (this.isPupatingOrChrysalis()) {
+                return;
+            }
             CaterpillarEntity.this.setLifeStage(LifeStage.SEEKING_PUPATION);
             CaterpillarEntity.this.nextPupationSearchTick = 0;
+        }
+
+        private boolean isPupatingOrChrysalis() {
+            return CaterpillarEntity.this.getLifeStage() == LifeStage.PUPATING
+                    || CaterpillarEntity.this.getLifeStage() == LifeStage.CHRYSALIS;
         }
 
         @Override
@@ -681,7 +722,6 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
             }
 
             CaterpillarEntity.this.setLifeStage(LifeStage.SEEKING_PUPATION);
-            CaterpillarEntity.this.handlePupationSeeking();
         }
     }
 }

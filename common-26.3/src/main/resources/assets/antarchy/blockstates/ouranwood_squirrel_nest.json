@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "squirrels=1": {
+      "model": "antarchy:block/ouranwood_squirrel_nest"
+    },
+    "squirrels=2": {
+      "model": "antarchy:block/ouranwood_squirrel_nest"
+    },
+    "squirrels=3": {
+      "model": "antarchy:block/ouranwood_squirrel_nest"
+    }
+  }
+}

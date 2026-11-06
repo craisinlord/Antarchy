@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_button_pressed",
+  "textures": {
+    "texture": "antarchy:block/peach/peach_planks"
+  }
+}
+

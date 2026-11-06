@@ -30,6 +30,9 @@ public interface RoyalDecree {
         return 4;
     }
 
+    default void onKingDisplaced(LivingEntity target) {
+    }
+
     default void onEnded() {
     }
 }

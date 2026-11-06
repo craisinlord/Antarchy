@@ -33,5 +33,7 @@
     "antarchy:octopus_bomb",
     "antarchy:dorrie",
     "antarchy:butterfly"
-  ]
+  ],
+  "lookup": ["antarchy:mossy_ouranwood_log", "antarchy:brown_ant_nest", "antarchy:brown_ant_spawn_egg"],
+  "unlocked_by_default": true
 }

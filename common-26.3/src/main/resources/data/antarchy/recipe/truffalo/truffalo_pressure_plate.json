@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "wooden_pressure_plate",
+  "key": {
+    "#": "antarchy:truffalo_planks"
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "id": "antarchy:truffalo_pressure_plate"
+  }
+}

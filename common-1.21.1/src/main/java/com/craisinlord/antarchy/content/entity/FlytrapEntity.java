@@ -219,10 +219,7 @@ public class FlytrapEntity extends Monster implements GeoEntity {
             this.preySearchCooldown--;
         } else {
             this.preySearchCooldown = 20;
-            this.setAwake(this.hasNearbyPrey());
-            if (!isValidLivePrey(this.getTarget())) {
-                this.setTarget(this.findNearestPrey());
-            }
+            this.scanForPrey();
         }
 
         LivingEntity target = this.getTarget();
@@ -329,11 +326,15 @@ public class FlytrapEntity extends Monster implements GeoEntity {
     }
 
     private void tryStartAttack(LivingEntity target) {
-        if (this.attackCooldown > 0 || !this.hasLineOfSight(target)) {
+        if (this.attackCooldown > 0) {
             return;
         }
 
         double distance = this.distanceTo(target);
+        if (distance > GRAB_RANGE || !this.hasLineOfSight(target)) {
+            return;
+        }
+
         boolean inSweepRange = distance <= SWEEP_RANGE;
         boolean inGrabRange = distance >= MIN_GRAB_RANGE && distance <= GRAB_RANGE;
 
@@ -488,31 +489,28 @@ public class FlytrapEntity extends Monster implements GeoEntity {
         return currentYaw + Mth.clamp(Mth.wrapDegrees(targetYaw - currentYaw), -maxStep, maxStep);
     }
 
-    private boolean hasNearbyPrey() {
-        return !this.level().getEntitiesOfClass(
-                LivingEntity.class,
-                this.getBoundingBox().inflate(WAKE_RANGE, 4.0D, WAKE_RANGE),
-                FlytrapEntity::isValidLivePrey
-        ).isEmpty();
-    }
-
-    @Nullable
-    private LivingEntity findNearestPrey() {
+    private void scanForPrey() {
         List<LivingEntity> candidates = this.level().getEntitiesOfClass(
                 LivingEntity.class,
                 this.getBoundingBox().inflate(FOLLOW_RANGE, 6.0D, FOLLOW_RANGE),
                 FlytrapEntity::isValidLivePrey
         );
+        AABB wakeArea = this.getBoundingBox().inflate(WAKE_RANGE, 4.0D, WAKE_RANGE);
+        boolean preyInWakeArea = false;
         LivingEntity best = null;
         double bestDistance = Double.MAX_VALUE;
         for (LivingEntity candidate : candidates) {
+            preyInWakeArea = preyInWakeArea || wakeArea.intersects(candidate.getBoundingBox());
             double distance = this.distanceToSqr(candidate);
             if (distance < bestDistance) {
                 bestDistance = distance;
                 best = candidate;
             }
         }
-        return best;
+        this.setAwake(preyInWakeArea);
+        if (!isValidLivePrey(this.getTarget())) {
+            this.setTarget(best);
+        }
     }
 
     @Nullable

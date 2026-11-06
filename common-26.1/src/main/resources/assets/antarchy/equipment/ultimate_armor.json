@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "antarchy:ultimate_armor"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "antarchy:ultimate_armor"
+      }
+    ]
+  }
+}

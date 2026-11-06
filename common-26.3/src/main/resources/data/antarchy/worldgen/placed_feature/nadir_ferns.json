@@ -1,0 +1,78 @@
+{
+  "feature": "antarchy:nadir_fern_patch",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 5,
+        "max_inclusive": 9
+      }
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": 112
+        },
+        "max_inclusive": {
+          "absolute": 244
+        }
+      }
+    },
+    {
+      "type": "minecraft:environment_scan",
+      "direction_of_search": "up",
+      "max_steps": 32,
+      "allowed_search_condition": {
+        "type": "minecraft:matching_blocks",
+        "blocks": "minecraft:air"
+      },
+      "target_condition": {
+        "type": "minecraft:matching_blocks",
+        "blocks": "antarchy:nadir_nyxium"
+      }
+    },
+    {
+      "type": "minecraft:offset",
+      "x": 0,
+      "y": {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      "z": 0
+    },
+    {
+      "type": "minecraft:biome"
+    },
+    {
+      "type": "minecraft:count",
+      "count": 34
+    },
+    {
+      "type": "minecraft:offset",
+      "x": {
+        "type": "minecraft:trapezoid",
+        "max": 5,
+        "min": -5,
+        "plateau": 0
+      },
+      "y": {
+        "type": "minecraft:trapezoid",
+        "max": 2,
+        "min": -2,
+        "plateau": 0
+      },
+      "z": {
+        "type": "minecraft:trapezoid",
+        "max": 5,
+        "min": -5,
+        "plateau": 0
+      }
+    }
+  ]
+}

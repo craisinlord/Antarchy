@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "condition": "minecraft:tool/can_silk_touch",
+              "name": "antarchy:primordial_loam"
+            },
+            {
+              "type": "minecraft:item",
+              "condition": {
+                "type": "minecraft:survives_explosion"
+              },
+              "name": "antarchy:loam"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/primordial_loam"
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "antarchy:rockite_bricks",
+    "antarchy:primordial_moss_block"
+  ],
+  "result": {
+    "id": "antarchy:mossy_rockite_bricks",
+    "count": 1
+  }
+}

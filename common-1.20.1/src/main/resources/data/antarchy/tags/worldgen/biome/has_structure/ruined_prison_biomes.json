@@ -1,7 +1,9 @@
 {
   "replace": false,
   "values": [
-    "antarchy:elythia_meadow",
-    "antarchy:truffalo_forest"
+    "antarchy:primordial_plains",
+    "antarchy:truffalo_forest",
+    "antarchy:cranberry_fields",
+    "antarchy:rockite_barrens"
   ]
 }

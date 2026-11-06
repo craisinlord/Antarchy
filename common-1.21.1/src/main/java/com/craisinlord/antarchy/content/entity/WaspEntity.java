@@ -381,10 +381,9 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
 
         @Override
         public boolean canUse() {
-            boolean hasHive = WaspEntity.this.hasValidHive();
             return WaspEntity.this.getTarget() == null
-                    && (!hasHive || (!WaspEntity.this.level().isNight() && !WaspEntity.this.level().isRaining()))
                     && WaspEntity.this.navigation.isDone()
+                    && (!WaspEntity.this.hasValidHive() || (!WaspEntity.this.level().isNight() && !WaspEntity.this.level().isRaining()))
                     && WaspEntity.this.random.nextInt(10) == 0;
         }
 

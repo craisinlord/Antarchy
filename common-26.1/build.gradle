@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+}
+
+base {
+    archivesName = "${mod_id}-common-26.1"
+}
+
+tasks.named('compileJava').configure {
+    enabled = false
+}
+
+tasks.named('jar').configure {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.allJava
+    from sourceSets.main.resources
+}

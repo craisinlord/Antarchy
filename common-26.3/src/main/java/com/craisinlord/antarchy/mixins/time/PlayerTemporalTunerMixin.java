@@ -1,0 +1,38 @@
+package com.craisinlord.antarchy.mixins.time;
+
+import com.craisinlord.anthology.time.TimeDilationMath;
+import com.craisinlord.antarchy.content.item.TemporalTunerAccess;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.player.Player;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(Player.class)
+public abstract class PlayerTemporalTunerMixin implements TemporalTunerAccess {
+    @Unique
+    private double antarchy$temporalTunerRate = TimeDilationMath.NORMAL_RATE;
+
+    @Override
+    public double antarchy$getTemporalTunerRate() {
+        return antarchy$temporalTunerRate;
+    }
+
+    @Override
+    public void antarchy$setTemporalTunerRate(double rate) {
+        antarchy$temporalTunerRate = TimeDilationMath.clampRate(rate);
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void antarchy$saveTemporalTunerRate(ValueOutput tag, CallbackInfo ci) {
+        tag.putDouble("AntarchyTemporalTunerRate", antarchy$temporalTunerRate);
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void antarchy$loadTemporalTunerRate(ValueInput tag, CallbackInfo ci) {
+        antarchy$temporalTunerRate = TimeDilationMath.clampRate(tag.getDoubleOr("AntarchyTemporalTunerRate", 0.0D));
+    }
+}

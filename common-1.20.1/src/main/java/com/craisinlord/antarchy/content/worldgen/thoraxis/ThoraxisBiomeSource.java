@@ -3,8 +3,8 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
 import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
@@ -13,20 +13,22 @@ import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 public final class ThoraxisBiomeSource extends BiomeSource {
-    private static final int REGION_NOISE_SCALE = 96;
-    private static final int REGION_DETAIL_SCALE = 41;
     private static final int VERTICAL_NOISE_SCALE = 8;
-    private static final double DUNES_SELECTOR_CUTOFF = 0.38D;
+    private static final double REGION_SPREAD = 0.64D;
+    private static final double VERTICAL_SPREAD = 0.75D;
     private static final double DREAM_DUNES_SELECTOR_CUTOFF = 0.42D;
-    private static final double HILLS_SELECTOR_CUTOFF = 0.33D;
-    private static final double NADIR_FOREST_SELECTOR_MIN = 0.54D;
-    private static final double NADIR_FOREST_SELECTOR_MAX = 0.56D;
+    private static final double HILLS_SELECTOR_CUTOFF = 0.31D;
+    private static final double NADIR_FOREST_SELECTOR_MIN = 0.51D;
+    private static final double NADIR_FOREST_SELECTOR_MAX = 0.57D;
+    private static final double DREAM_PEAKS_MASK = 0.22D;
     private static final ResourceKey<Biome> NIGHTMARE_WASTES = ResourceKey.create(
             Registries.BIOME,
             new ResourceLocation(Antarchy.MODID, "nightmare_wastes")
@@ -34,6 +36,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private static final ResourceKey<Biome> DREAM_DUNES = ResourceKey.create(
             Registries.BIOME,
             new ResourceLocation(Antarchy.MODID, "dream_dunes")
+    );
+    private static final ResourceKey<Biome> DREAM_PEAKS = ResourceKey.create(
+            Registries.BIOME,
+            new ResourceLocation(Antarchy.MODID, "dream_peaks")
     );
     private static final ResourceKey<Biome> VORTEX_EXPANSE = ResourceKey.create(
             Registries.BIOME,
@@ -75,16 +81,12 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private volatile boolean biomesResolved;
     private Holder<Biome> nightmareWastesBiome;
     private Holder<Biome> dreamDunesBiome;
+    private Holder<Biome> dreamPeaksBiome;
     private Holder<Biome> vortexExpanseBiome;
     private Holder<Biome> umbralHillsBiome;
     private Holder<Biome> lucidPoolsBiome;
     private Holder<Biome> nadirForestBiome;
     private List<ResolvedRegionalBiomeOverlay> resolvedRegionalOverlays = List.of();
-
-    private static final ThreadLocal<Long2DoubleOpenHashMap> REGION_CACHE =
-            ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(512));
-    private static final ThreadLocal<Long2DoubleOpenHashMap> VERTICAL_CACHE =
-            ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(64));
 
     public ThoraxisBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int dreamDunesMaxY, int umbralHillsMaxY, int lucidPoolsMinY, int nadirForestMinY, List<RegionalBiomeOverlay> regionalOverlays) {
         this.parameters = parameters;
@@ -110,6 +112,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             }
             this.nightmareWastesBiome = this.findBiome(NIGHTMARE_WASTES);
             this.dreamDunesBiome = this.findBiome(DREAM_DUNES);
+            this.dreamPeaksBiome = this.findBiome(DREAM_PEAKS);
             this.vortexExpanseBiome = this.findBiome(VORTEX_EXPANSE);
             this.umbralHillsBiome = this.findBiome(UMBRAL_HILLS);
             this.lucidPoolsBiome = this.findBiome(LUCID_POOLS);
@@ -156,12 +159,17 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
         this.resolveBiomesIfNeeded();
+        DensityFunction.SinglePointContext point = new DensityFunction.SinglePointContext(
+                QuartPos.toBlock(x), QuartPos.toBlock(y), QuartPos.toBlock(z));
         if (y < 0 && this.dreamDunesBiome != null) {
+            if (this.dreamPeaksBiome != null && sampler.temperature().compute(point) >= DREAM_PEAKS_MASK) {
+                return this.dreamPeaksBiome;
+            }
             return this.dreamDunesBiome;
         }
 
-        double region = cachedRegionNoise(x, z);
-        double vertical = cachedVerticalNoise(y);
+        double region = Mth.clamp(0.5D + sampler.continentalness().compute(point) * REGION_SPREAD, 0.0D, 1.0D);
+        double vertical = sampleVertical(y, sampler.depth().compute(point));
         double dreamDunesSelector = region * 0.65D + (1.0D - vertical) * 0.35D;
         double umbralHillsSelector = region * 0.55D + vertical * 0.45D;
         double nadirForestSelector = region * 0.78D + vertical * 0.22D;
@@ -181,7 +189,8 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             return this.dreamDunesBiome;
         }
 
-        if (this.vortexExpanseBiome != null && dreamDunesSelector <= DUNES_SELECTOR_CUTOFF) {
+        if (this.vortexExpanseBiome != null
+                && ThoraxisTerrainRegimes.dominant(sampler.erosion().compute(point), sampler.weirdness().compute(point)) == ThoraxisTerrainRegimes.SPIRES) {
             return this.vortexExpanseBiome;
         }
 
@@ -195,14 +204,13 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             }
         }
 
-        Holder<Biome> delegateBiome = this.delegate.getNoiseBiome(x, y, z, sampler);
-        return this.nightmareWastesBiome != null ? this.nightmareWastesBiome : delegateBiome;
+        return this.nightmareWastesBiome != null ? this.nightmareWastesBiome : this.delegate.getNoiseBiome(x, y, z, sampler);
     }
 
     @Override
     public void addDebugInfo(java.util.List<String> debug, BlockPos pos, Climate.Sampler sampler) {
         this.delegate.addDebugInfo(debug, pos, sampler);
-        debug.add("Thoraxis selector: mixed vertical/region noise");
+        debug.add("Thoraxis selector: seeded vertical/region noise");
         debug.add("Thoraxis Lucid Pools: y>=" + this.lucidPoolsMinY);
         debug.add("Thoraxis Nadir Forest: y>=" + this.nadirForestMinY);
     }
@@ -245,74 +253,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private record ResolvedRegionalBiomeOverlay(Holder<Biome> biome, double minNoise, double maxNoise) {
     }
 
-    private double cachedRegionNoise(int quartX, int quartZ) {
-        long key = net.minecraft.world.level.ChunkPos.asLong(quartX, quartZ);
-        Long2DoubleOpenHashMap cache = REGION_CACHE.get();
-        if (cache.containsKey(key)) {
-            return cache.get(key);
-        }
-        double result = sampleRegionNoise(quartX, quartZ);
-        if (cache.size() >= 512) cache.clear();
-        cache.put(key, result);
-        return result;
-    }
-
-    private double cachedVerticalNoise(int quartY) {
-        long key = (long) quartY;
-        Long2DoubleOpenHashMap cache = VERTICAL_CACHE.get();
-        if (cache.containsKey(key)) {
-            return cache.get(key);
-        }
-        double result = sampleVerticalNoise(quartY);
-        if (cache.size() >= 64) cache.clear();
-        cache.put(key, result);
-        return result;
-    }
-
-    private static double sampleRegionNoise(int quartX, int quartZ) {
-        double broad = sampleNoise(quartX, quartZ, REGION_NOISE_SCALE);
-        double detail = sampleNoise(quartX + 311, quartZ - 197, REGION_DETAIL_SCALE);
-        return broad * 0.82D + detail * 0.18D;
-    }
-
-    private double sampleVerticalNoise(int quartY) {
+    private static double sampleVertical(int quartY, double noise) {
         double scaled = positiveMod((double) quartY / (double) VERTICAL_NOISE_SCALE, 1.0D);
-        double detail = sampleNoise(quartY + 73, quartY - 29, 5);
+        double detail = Mth.clamp(0.5D + noise * VERTICAL_SPREAD, 0.0D, 1.0D);
         return scaled * 0.6D + detail * 0.4D;
-    }
-
-    private static double sampleNoise(int x, int z, int scale) {
-        int cellX = Math.floorDiv(x, scale);
-        int cellZ = Math.floorDiv(z, scale);
-        double fracX = positiveMod((double) x / (double) scale, 1.0D);
-        double fracZ = positiveMod((double) z / (double) scale, 1.0D);
-
-        double n00 = valueNoise(cellX, cellZ);
-        double n10 = valueNoise(cellX + 1, cellZ);
-        double n01 = valueNoise(cellX, cellZ + 1);
-        double n11 = valueNoise(cellX + 1, cellZ + 1);
-
-        double ix0 = lerp(smoothstep(fracX), n00, n10);
-        double ix1 = lerp(smoothstep(fracX), n01, n11);
-        return lerp(smoothstep(fracZ), ix0, ix1);
-    }
-
-    private static double valueNoise(int x, int z) {
-        long seed = x * 341873128712L + z * 132897987541L;
-        seed ^= seed >>> 33;
-        seed *= 0xff51afd7ed558ccdL;
-        seed ^= seed >>> 33;
-        seed *= 0xc4ceb9fe1a85ec53L;
-        seed ^= seed >>> 33;
-        return (double) (seed & 0xFFFFFFFFL) / (double) 0xFFFFFFFFL;
-    }
-
-    private static double smoothstep(double value) {
-        return value * value * (3.0D - 2.0D * value);
-    }
-
-    private static double lerp(double delta, double start, double end) {
-        return start + (end - start) * delta;
     }
 
     private static double positiveMod(double value, double mod) {

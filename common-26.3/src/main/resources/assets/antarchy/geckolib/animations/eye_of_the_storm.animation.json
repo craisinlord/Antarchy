@@ -1,0 +1,45 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"spinning_idle": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"top_ring": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, -360, 0]
+						}
+					}
+				},
+				"eye": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.5": {
+							"vector": [1.02, 1.02, 1.02],
+							"easing": "easeInOutQuad"
+						},
+						"1.0": {
+							"vector": [1, 1, 1]
+						}
+					}
+				},
+				"bottom_ring": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 360, 0]
+						}
+					}
+				}
+			}
+		}
+	}
+}

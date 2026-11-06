@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:manticore",
+    "antarchy:nightmare",
+    "antarchy:lucid",
+    "antarchy:reverie",
+    "antarchy:bed_bug",
+    "antarchy:scorpion",
+    "antarchy:emperor_scorpion"
+  ]
+}

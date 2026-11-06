@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/polished_tidestone"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/polished_tidestone_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/polished_tidestone_slab_top"
+    }
+  }
+}
+

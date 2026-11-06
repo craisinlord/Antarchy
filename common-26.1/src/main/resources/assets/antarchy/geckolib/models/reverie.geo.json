@@ -1,0 +1,45 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 32,
+				"texture_height": 32,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "Reverie",
+					"pivot": [0, 9, 2]
+				},
+				{
+					"name": "trail",
+					"parent": "Reverie",
+					"pivot": [0, 7, 4.5]
+				},
+				{
+					"name": "core",
+					"parent": "Reverie",
+					"pivot": [0, 11, -0.5],
+					"cubes": [
+						{"origin": [-4, 7, -0.5], "size": [8, 8, 0], "pivot": [0, 11, -0.5], "rotation": [0, 45, 0], "uv": [0, 20]},
+						{"origin": [-4, 7, -0.5], "size": [8, 8, 0], "pivot": [0, 11, -0.5], "rotation": [0, -45, 0], "uv": [0, 20], "mirror": true},
+						{"origin": [0, 6, -5.5], "size": [0, 10, 10], "pivot": [0, 11, -0.5], "rotation": [0, -90, 0], "uv": [0, 0]},
+						{"origin": [0, 6, -5.5], "size": [0, 10, 10], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "core_bone",
+					"parent": "core",
+					"pivot": [0, 11, -0.5],
+					"cubes": [
+						{"origin": [-1, 10, -1.5], "size": [2, 2, 2], "uv": [0, 28]}
+					]
+				}
+			]
+		}
+	]
+}

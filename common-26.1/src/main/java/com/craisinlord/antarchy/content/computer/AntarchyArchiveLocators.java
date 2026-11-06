@@ -1,0 +1,41 @@
+package com.craisinlord.antarchy.content.computer;
+
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.command.QueenLocateCommand;
+import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGrid;
+import com.craisinlord.antos.api.archive.ArchiveLocatorRegistry;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
+
+public final class AntarchyArchiveLocators {
+    private AntarchyArchiveLocators() {
+    }
+
+    public static void register() {
+        ArchiveLocatorRegistry.register(id("queen"), (level, origin) -> {
+            QueenLocateCommand.NearestSite nearest = QueenLocateCommand.findNearestSite(level, origin.getX(), origin.getZ());
+            return nearest == null ? null : nearest.marker().getSpawnPos();
+        });
+        ArchiveLocatorRegistry.register(id("kings_tree"), (level, origin) -> {
+            BlockPos center = KingsTreeGrid.nearestTreeCenter(origin);
+            int surfaceY = level.getChunkSource().getGenerator().getBaseHeight(center.getX(), center.getZ(),
+                    Heightmap.Types.WORLD_SURFACE_WG, level, level.getChunkSource().randomState());
+            return new BlockPos(center.getX(), surfaceY, center.getZ());
+        });
+        ArchiveLocatorRegistry.register(id("brutalfly"), (level, origin) -> {
+            AABB searchArea = AABB.ofSize(origin.getCenter(), 1_024.0D, 1_024.0D, 1_024.0D);
+            return level.getEntitiesOfClass(BrutalflyEntity.class, searchArea, BrutalflyEntity::isAlive)
+                    .stream()
+                    .min(java.util.Comparator.comparingDouble(entity -> entity.distanceToSqr(origin.getCenter())))
+                    .map(entity -> entity.blockPosition())
+                    .orElse(null);
+        });
+    }
+
+    private static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(Antarchy.MODID, path);
+    }
+}

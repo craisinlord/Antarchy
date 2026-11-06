@@ -1,18 +1,23 @@
 package com.craisinlord.antarchy.content.fluid;
 
+import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.FluidState;
 
 public class LumenLiquidBlock extends LiquidBlock {
     private static final int SOURCE_PARTICLE_INTERVAL = 8;
@@ -24,12 +29,18 @@ public class LumenLiquidBlock extends LiquidBlock {
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (this.solidifyAgainstWater(level, pos, state)) {
+            return;
+        }
         super.onPlace(state, level, pos, oldState, movedByPiston);
         scheduleCurrentLumenTick(level, pos);
     }
 
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (this.solidifyAgainstWater(level, pos, state)) {
+            return;
+        }
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
         scheduleCurrentLumenTick(level, pos);
     }
@@ -89,6 +100,25 @@ public class LumenLiquidBlock extends LiquidBlock {
         if (random.nextBoolean()) {
             level.addParticle(ParticleTypes.ENCHANT, x, y + 0.05D, z, 0.0D, 0.04D, 0.0D);
         }
+    }
+
+    private boolean solidifyAgainstWater(Level level, BlockPos pos, BlockState state) {
+        boolean source = state.getValue(LEVEL) == 0;
+        for (Direction direction : Direction.values()) {
+            FluidState neighbor = level.getFluidState(pos.relative(direction));
+            Block result = null;
+            if (neighbor.is(FluidTags.WATER)) {
+                result = source ? ElythiaPalette.TIDESTONE.get() : Blocks.CALCITE;
+            } else if (neighbor.is(FluidTags.LAVA)) {
+                result = source ? ElythiaPalette.ZEBRA_STONE.get() : ElythiaPalette.ROCKITE.get();
+            }
+            if (result != null) {
+                level.setBlockAndUpdate(pos, result.defaultBlockState());
+                level.levelEvent(LevelEvent.LAVA_FIZZ, pos, 0);
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isSurfaceExposed(Level level, BlockPos pos) {

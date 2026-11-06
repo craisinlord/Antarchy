@@ -1,0 +1,39 @@
+{
+  "parent": "antarchy:through_the_throat",
+  "criteria": {
+    "discover_castle": {
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "structures": "antarchy:underside_castle"
+            }
+          }
+        }
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.underside_castle.description"
+    },
+    "frame": "task",
+    "icon": {
+      "id": "antarchy:dream_sand"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.underside_castle.title"
+    }
+  },
+  "requirements": [
+    [
+      "discover_castle"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

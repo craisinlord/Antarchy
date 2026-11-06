@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.content.entity.royal;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -23,9 +25,12 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
+public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEcho {
     private static final RawAnimation SPIKE_ANIMATION = RawAnimation.begin().thenPlay("animation");
     private static final String ANIMATION_CONTROLLER = "ice_spike";
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(RoyalIceSpikeEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean impacted;
     @Nullable
@@ -52,6 +57,7 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
     public static RoyalIceSpikeEntity create(ServerLevel level, Vec3 position, LivingEntity owner) {
         RoyalIceSpikeEntity spike = create(level, position);
         spike.ownerId = owner.getUUID();
+        GlimmerEchoes.markSummon(owner, spike);
         return spike;
     }
 
@@ -69,6 +75,17 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
     }
 
     @Override
@@ -85,7 +102,7 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
             this.discard();
         }
         if (this.level().isClientSide && this.tickCount < 10) {
-            this.level().addParticle(ParticleTypes.SNOWFLAKE, this.getX(), this.getY() + this.tickCount * 0.4D, this.getZ(), 0.0D, 0.03D, 0.0D);
+            this.level().addParticle(GlimmerEchoes.particle(this, ParticleTypes.SNOWFLAKE), this.getX(), this.getY() + this.tickCount * 0.4D, this.getZ(), 0.0D, 0.03D, 0.0D);
         }
     }
 
@@ -113,7 +130,7 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
             living.setDeltaMovement(living.getDeltaMovement().add(0.0D, this.customKnockup, 0.0D));
             living.hasImpulse = true;
         }
-        level.sendParticles(ParticleTypes.SNOWFLAKE, this.getX(), this.getY() + 1.5D, this.getZ(), 25, 1.5D, 1.0D, 1.5D, 0.04D);
+        level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.SNOWFLAKE), this.getX(), this.getY() + 1.5D, this.getZ(), 25, 1.5D, 1.0D, 1.5D, 0.04D);
     }
 
     private boolean canHitOwnerTarget(@Nullable Entity owner, LivingEntity target) {
@@ -129,6 +146,7 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         this.impacted = tag.getBoolean("Impacted");
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
         if (tag.hasUUID("Owner")) {
             this.ownerId = tag.getUUID("Owner");
         }
@@ -145,6 +163,7 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         tag.putBoolean("Impacted", this.impacted);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         if (this.ownerId != null) {
             tag.putUUID("Owner", this.ownerId);
         }

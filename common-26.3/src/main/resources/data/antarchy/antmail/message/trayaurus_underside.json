@@ -1,0 +1,12 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "You fell through the floor",
+  "body": "If you're reading this, you made it through the bottom of Thoraxis and came out upside down. The Queen lives down there. She was thrown out of Elythia, a long time ago. I don't think there's anywhere I'd want to be less. She has dominion over time and gravity.\n\nYour old friend,\nDr. T\n\n@archive:antarchy:queen",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:through_the_throat",
+    "delay_minutes": 3
+  }
+}

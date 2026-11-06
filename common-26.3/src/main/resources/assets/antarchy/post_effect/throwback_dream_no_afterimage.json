@@ -1,0 +1,68 @@
+{
+  "targets": {
+    "swap": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "antarchy:post/throwback_dream_no_afterimage",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main"
+        }
+      ],
+      "output": "swap",
+      "uniforms": {
+        "ThrowbackDreamConfig": [
+          {
+            "name": "Baseline",
+            "type": "float",
+            "value": 0.0
+          },
+          {
+            "name": "Wake",
+            "type": "float",
+            "value": 1.0
+          },
+          {
+            "name": "Zone",
+            "type": "float",
+            "value": 0.0
+          },
+          {
+            "name": "Distortion",
+            "type": "float",
+            "value": 1.0
+          },
+          {
+            "name": "DreamTime",
+            "type": "float",
+            "value": 0.0
+          },
+          {
+            "name": "Ghost",
+            "type": "float",
+            "value": 0.0
+          },
+          {
+            "name": "Saturation",
+            "type": "float",
+            "value": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "minecraft:post/blit",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap"
+        }
+      ],
+      "output": "minecraft:main"
+    }
+  ]
+}

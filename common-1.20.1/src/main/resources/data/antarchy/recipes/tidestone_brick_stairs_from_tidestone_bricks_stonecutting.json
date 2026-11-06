@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:tidestone_bricks"
+  },
+  "result": "antarchy:tidestone_brick_stairs",
+  "count": 1
+}

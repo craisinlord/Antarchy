@@ -29,5 +29,7 @@
     "antarchy:worm",
     "antarchy:rolly_polly",
     "antarchy:stink_bug"
-  ]
+  ],
+  "lookup": ["antarchy:myrmite", "antarchy:termite_nest", "antarchy:termite_spawn_egg"],
+  "unlocked_by_default": true
 }

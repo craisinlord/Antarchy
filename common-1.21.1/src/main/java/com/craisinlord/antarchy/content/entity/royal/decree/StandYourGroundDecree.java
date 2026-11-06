@@ -23,6 +23,10 @@ public final class StandYourGroundDecree implements RoyalDecree {
                 ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
     @Override
+    public void onKingDisplaced(LivingEntity target) {
+        this.anchors.put(target.getUUID(), target.position());
+    }
+    @Override
     public void onEnded() {
         this.anchors.clear();
     }

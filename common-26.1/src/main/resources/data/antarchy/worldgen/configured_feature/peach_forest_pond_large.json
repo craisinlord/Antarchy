@@ -1,0 +1,9 @@
+{
+  "type": "antarchy:peach_forest_pond",
+  "config": {
+    "min_radius": 16,
+    "max_radius": 24,
+    "min_depth": 6,
+    "max_depth": 9
+  }
+}

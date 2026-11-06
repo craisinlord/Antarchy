@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_hanging_lantern",
+  "textures": {
+    "lantern": "antarchy:block/dream_lantern"
+  }
+}

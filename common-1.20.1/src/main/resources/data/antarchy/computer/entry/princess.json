@@ -12,5 +12,6 @@
   "entity": "antarchy:princess",
   "cover_entity": "antarchy:princess",
   "rotation": 45,
-  "green_tint": false
+  "green_tint": false,
+  "lookup": ["antarchy:princess_egg", "antarchy:princess_spawn_egg"]
 }

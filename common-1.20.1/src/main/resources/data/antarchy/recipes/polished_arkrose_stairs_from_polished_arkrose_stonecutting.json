@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:polished_arkrose"
+  },
+  "result": "antarchy:polished_arkrose_stairs",
+  "count": 1
+}

@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:royal_shrine",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 718395621,
+    "spacing": 26,
+    "separation": 19,
+    "type": "integrated_api:advanced_random_spread"
+  }
+}

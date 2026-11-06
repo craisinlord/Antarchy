@@ -10,21 +10,31 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 
 public final class KingsTreeGrid {
     public static final int SPACING = 5_000;
-    public static final ResourceKey<Level> ELYTHIA = ResourceKey.create(Registries.DIMENSION,
-            new ResourceLocation(Antarchy.MODID, "elythia"));
-    public static final ResourceKey<Structure> STRUCTURE_KEY = ResourceKey.create(Registries.STRUCTURE,
-            new ResourceLocation(Antarchy.MODID, "kings_tree"));
+    public static final ResourceKey<Level> ELYTHIA = ResourceKey.create(
+            Registries.DIMENSION,
+            new ResourceLocation(Antarchy.MODID, "elythia")
+    );
+    public static final ResourceKey<Structure> STRUCTURE_KEY = ResourceKey.create(
+            Registries.STRUCTURE,
+            new ResourceLocation(Antarchy.MODID, "kings_tree")
+    );
 
-    private KingsTreeGrid() {}
+    private KingsTreeGrid() {
+    }
 
     public static int nearestCoordinate(int coordinate, boolean permitZero) {
         long gridIndex = Math.round(coordinate / (double) SPACING);
-        if (!permitZero && gridIndex == 0) gridIndex = coordinate < 0 ? -1 : 1;
+        if (!permitZero && gridIndex == 0) {
+            gridIndex = coordinate < 0 ? -1 : 1;
+        }
         return Math.toIntExact(gridIndex * SPACING);
     }
 
     public static BlockPos nearestTreeCenter(BlockPos origin) {
-        return new BlockPos(nearestCoordinate(origin.getX(), false), origin.getY(),
-                nearestCoordinate(origin.getZ(), false));
+        return new BlockPos(
+                nearestCoordinate(origin.getX(), false),
+                origin.getY(),
+                nearestCoordinate(origin.getZ(), false)
+        );
     }
 }

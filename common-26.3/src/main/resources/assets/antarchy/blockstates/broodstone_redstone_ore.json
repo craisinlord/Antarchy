@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "antarchy:block/broodstone_redstone_ore"
+    },
+    "lit=true": {
+      "model": "antarchy:block/broodstone_redstone_ore"
+    }
+  }
+}

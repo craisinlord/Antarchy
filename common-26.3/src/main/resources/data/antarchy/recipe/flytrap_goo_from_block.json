@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "antarchy:flytrap_goo_block"
+  ],
+  "result": {
+    "id": "antarchy:flytrap_goo",
+    "count": 9
+  }
+}

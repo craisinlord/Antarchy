@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "hoverboard",
+  "ingredients": [
+    "#antarchy:hoverboards",
+    "minecraft:black_dye"
+  ],
+  "result": {
+    "id": "antarchy:hoverboard_black"
+  }
+}

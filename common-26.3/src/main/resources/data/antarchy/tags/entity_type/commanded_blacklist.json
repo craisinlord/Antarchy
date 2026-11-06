@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:player",
+    "minecraft:ender_dragon",
+    "minecraft:wither",
+    "minecraft:warden",
+    "#antarchy:spell_resistant_boss",
+    "antarchy:king",
+    "antarchy:queen",
+    "antarchy:prince",
+    "antarchy:princess"
+  ]
+}

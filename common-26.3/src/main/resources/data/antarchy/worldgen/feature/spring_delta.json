@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:spring_feature",
+  "state": {
+    "id": "antarchy:ichor",
+    "properties": {
+      "falling": "true"
+    }
+  },
+  "valid_blocks": [
+    "antarchy:nyxite",
+    "minecraft:soul_sand",
+    "minecraft:gravel",
+    "minecraft:magma_block",
+    "minecraft:blackstone"
+  ]
+}

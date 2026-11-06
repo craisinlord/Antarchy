@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "antarchy:block/blood_crystal_cluster"
+  },
+  "display": {
+    "head": {
+      "translation": [0, 14, -5]
+    }
+  }
+}
+

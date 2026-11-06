@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:hoverboard",
+    "antarchy:hoverboard_white",
+    "antarchy:hoverboard_orange",
+    "antarchy:hoverboard_magenta",
+    "antarchy:hoverboard_light_blue",
+    "antarchy:hoverboard_yellow",
+    "antarchy:hoverboard_lime",
+    "antarchy:hoverboard_pink",
+    "antarchy:hoverboard_gray",
+    "antarchy:hoverboard_light_gray",
+    "antarchy:hoverboard_cyan",
+    "antarchy:hoverboard_purple",
+    "antarchy:hoverboard_blue",
+    "antarchy:hoverboard_brown",
+    "antarchy:hoverboard_green",
+    "antarchy:hoverboard_red",
+    "antarchy:hoverboard_black"
+  ]
+}

@@ -574,7 +574,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         @Override
         protected boolean isValidTarget(LevelReader level, BlockPos pos) {
             BlockState state = level.getBlockState(pos);
-            return state.getBlock() instanceof CropBlock crop && !crop.isMaxAge(state);
+            return state.getBlock() instanceof CropBlock crop && crop.isValidBonemealTarget(level, pos, state);
         }
 
         @Override
@@ -626,7 +626,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         private void fertilize() {
             if (RollyPollyEntity.this.level() instanceof ServerLevel serverLevel) {
                 BlockState state = serverLevel.getBlockState(this.blockPos);
-                if (state.getBlock() instanceof CropBlock crop && !crop.isMaxAge(state)) {
+                if (state.getBlock() instanceof CropBlock crop && crop.isValidBonemealTarget(serverLevel, this.blockPos, state)) {
                     crop.performBonemeal(serverLevel, RollyPollyEntity.this.random, this.blockPos, state);
                     serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, this.blockPos, 15);
                 }
@@ -642,6 +642,9 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         private static final int ATTACK_COOLDOWN_TICKS = 20;
 
         private int attackCooldown;
+        private int nextChaseRepathTick;
+        @Nullable
+        private Vec3 lastChaseTargetPos;
 
         BowlingAttackGoal() {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
@@ -693,7 +696,12 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                 return;
             }
 
-            RollyPollyEntity.this.getNavigation().moveTo(target, CHARGE_SPEED);
+            if (RollyPollyEntity.this.tickCount >= this.nextChaseRepathTick
+                    || this.lastChaseTargetPos == null
+                    || target.distanceToSqr(this.lastChaseTargetPos) > 1.0D) {
+                this.lastChaseTargetPos = target.position();
+                this.nextChaseRepathTick = RollyPollyEntity.this.tickCount + (RollyPollyEntity.this.getNavigation().moveTo(target, CHARGE_SPEED) ? 4 : 10);
+            }
 
             if (this.attackCooldown <= 0 && RollyPollyEntity.this.distanceToSqr(target) <= HIT_RANGE_SQR) {
                 this.attackCooldown = ATTACK_COOLDOWN_TICKS;

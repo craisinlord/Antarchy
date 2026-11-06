@@ -1,0 +1,104 @@
+package com.craisinlord.antarchy.content.worldgen;
+
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.integrated_api.mixins.structures.StructurePoolAccessor;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public final class VillagePoolAdditions {
+    private static final Gson GSON = new Gson();
+    private static final String DIRECTORY = "structure_pool_additions";
+
+    private VillagePoolAdditions() {
+    }
+
+    public static void apply(MinecraftServer server) {
+        Registry<StructureTemplatePool> pools = server.registryAccess().lookupOrThrow(Registries.TEMPLATE_POOL);
+        Registry<StructureProcessorList> processors = server.registryAccess().lookupOrThrow(Registries.PROCESSOR_LIST);
+
+        for (Map.Entry<Identifier, Resource> entry : server.getResourceManager()
+                .listResources(DIRECTORY, path -> path.getPath().endsWith(".json")).entrySet()) {
+            try (java.io.Reader reader = entry.getValue().openAsReader()) {
+                JsonObject definition = GSON.fromJson(reader, JsonObject.class);
+                addToPool(pools, processors, definition, entry.getKey());
+            } catch (IOException | RuntimeException exception) {
+                Antarchy.LOGGER.error("Failed to apply structure pool additions from {}", entry.getKey(), exception);
+            }
+        }
+    }
+
+    private static void addToPool(
+            Registry<StructureTemplatePool> pools,
+            Registry<StructureProcessorList> processors,
+            JsonObject definition,
+            Identifier source
+    ) {
+        Identifier poolId = Identifier.parse(definition.get("pool").getAsString());
+        StructureTemplatePool pool = pools.getValue(poolId);
+        if (pool == null) {
+            Antarchy.LOGGER.warn("Skipping structure pool addition {} because pool {} does not exist", source, poolId);
+            return;
+        }
+
+        JsonObject elementDefinition = definition.getAsJsonObject("element");
+        Identifier location = Identifier.parse(elementDefinition.get("location").getAsString());
+        Identifier processorId = Identifier.parse(stringValue(
+                elementDefinition, "processors", "minecraft:empty"));
+        Holder<StructureProcessorList> processor = processors.getOrThrow(
+                ResourceKey.create(Registries.PROCESSOR_LIST, processorId));
+        StructureTemplatePool.Projection projection = projection(stringValue(
+                elementDefinition, "projection", "rigid"));
+        int weight = definition.has("weight") ? definition.get("weight").getAsInt() : 1;
+        if (weight < 1) {
+            throw new IllegalArgumentException("weight must be positive");
+        }
+
+        StructurePoolElement poolElement = StructurePoolElement
+                .legacy(location.toString(), processor)
+                .apply(projection);
+        StructurePoolAccessor accessor = (StructurePoolAccessor) pool;
+        List<Pair<StructurePoolElement, Integer>> templates = new ArrayList<>(accessor.integratedapi_getRawTemplates());
+        templates.add(Pair.of(poolElement, weight));
+        accessor.integratedapi_setRawTemplates(templates);
+
+        ObjectArrayList<StructurePoolElement> expandedTemplates = new ObjectArrayList<>(accessor.integratedapi_getTemplates());
+        for (int i = 0; i < weight; i++) {
+            expandedTemplates.add(poolElement);
+        }
+        accessor.integratedapi_setTemplates(expandedTemplates);
+    }
+
+    private static StructureTemplatePool.Projection projection(String value) {
+        return switch (value) {
+            case "rigid" -> StructureTemplatePool.Projection.RIGID;
+            case "terrain_matching" -> StructureTemplatePool.Projection.TERRAIN_MATCHING;
+            default -> throw new IllegalArgumentException("Unknown structure pool projection: " + value);
+        };
+    }
+
+    private static JsonElement primitive(String value) {
+        return new com.google.gson.JsonPrimitive(value);
+    }
+
+    private static String stringValue(JsonObject object, String key, String fallback) {
+        return object.has(key) ? object.get(key).getAsString() : fallback;
+    }
+}

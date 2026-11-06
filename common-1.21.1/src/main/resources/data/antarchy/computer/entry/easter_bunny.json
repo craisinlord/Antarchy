@@ -9,5 +9,6 @@
   "entity": "antarchy:easter_bunny",
   "cover_entity": "antarchy:easter_bunny",
   "rotation": 45,
-  "green_tint": false
+  "green_tint": false,
+  "lookup": ["antarchy:easter_bunny_spawn_egg"]
 }

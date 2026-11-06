@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "antarchy:blood_crystal"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "antarchy:blood_crystal"
+      }
+    ]
+  }
+}

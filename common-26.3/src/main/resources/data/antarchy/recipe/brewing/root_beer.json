@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "antarchy:high_fructose_corn_syrup"
+  },
+  "output": {
+    "id": "antarchy:root_beer"
+  },
+  "reagent": {
+    "item": "#antarchy:roots"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "antarchy:block/rockite",
+    "side": "antarchy:block/rockite",
+    "top": "antarchy:block/rockite"
+  }
+}
+

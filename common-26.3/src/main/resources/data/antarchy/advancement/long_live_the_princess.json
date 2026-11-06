@@ -1,0 +1,37 @@
+{
+  "parent": "antarchy:fallen_kingdom_castle",
+  "criteria": {
+    "tame_princess": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:princess"
+          }
+        }
+      },
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.long_live_the_princess.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "antarchy:princess_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.long_live_the_princess.title"
+    }
+  },
+  "requirements": [
+    [
+      "tame_princess"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,39 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "discover_ruined_arena": {
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "structures": "antarchy:ruined_arena"
+            }
+          }
+        }
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.challenge_games.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "minecraft:stone_bricks"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.challenge_games.title"
+    }
+  },
+  "requirements": [
+    [
+      "discover_ruined_arena"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
