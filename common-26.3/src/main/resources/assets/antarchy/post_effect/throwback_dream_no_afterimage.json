@@ -62,7 +62,12 @@
           "target": "swap"
         }
       ],
-      "output": "minecraft:main"
+      "output": "minecraft:main",
+      "uniforms": {
+        "BlitConfig": [
+          { "name": "ColorModulate", "type": "vec4", "value": [1.0, 1.0, 1.0, 1.0] }
+        ]
+      }
     }
   ]
 }

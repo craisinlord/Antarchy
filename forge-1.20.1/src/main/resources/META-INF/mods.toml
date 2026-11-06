@@ -36,7 +36,7 @@ displayTest="MATCH_VERSION"
 [[dependencies.${mod_id}]]
     modId="anthology"
     mandatory=true
-    versionRange="[1.0.4,)"
+    versionRange="[1.0.5,)"
     ordering="AFTER"
     side="BOTH"
 

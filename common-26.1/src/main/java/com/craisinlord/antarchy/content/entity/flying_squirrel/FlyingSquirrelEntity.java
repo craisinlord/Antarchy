@@ -20,6 +20,7 @@ import com.craisinlord.antarchy.content.block.OuranwoodLeavesBlock;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -216,7 +217,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
+        return Animal.createAnimalAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.flyingSquirrelHealth())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.flyingSquirrelMovementSpeed())
                 .add(Attributes.FOLLOW_RANGE, 16.0D);
@@ -231,7 +232,23 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 && pos.getY() >= 120
                 && !level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above())
-                && hasNearbyCanopy(level, pos);
+                && hasSpawnCanopy(level, pos);
+    }
+
+    private static boolean hasSpawnCanopy(ServerLevelAccessor level, BlockPos pos) {
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                if (!level.hasChunk(SectionPos.blockToSectionCoord(pos.getX() + dx), SectionPos.blockToSectionCoord(pos.getZ() + dz))) {
+                    continue;
+                }
+                for (int dy = -2; dy <= 2; dy++) {
+                    if (isCanopySupport(level.getBlockState(pos.offset(dx, dy, dz)))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

@@ -15,6 +15,17 @@ public abstract class PrimordialGrassLevelMixin {
         PrimordialGrassRenderer.lightChanged(sectionX, sectionY, sectionZ);
     }
 
+    @Inject(method = "setSectionRangeDirty", at = @At("RETURN"))
+    private void antarchy$grassLightRangeChanged(int minSectionX, int minSectionY, int minSectionZ, int maxSectionX, int maxSectionY, int maxSectionZ, CallbackInfo callback) {
+        for (int x = minSectionX; x <= maxSectionX; x++) {
+            for (int y = minSectionY; y <= maxSectionY; y++) {
+                for (int z = minSectionZ; z <= maxSectionZ; z++) {
+                    PrimordialGrassRenderer.lightChanged(x, y, z);
+                }
+            }
+        }
+    }
+
     @Inject(method = "onChunkLoaded", at = @At("RETURN"))
     private void antarchy$grassChunkLoaded(ChunkPos pos, CallbackInfo callback) {
         PrimordialGrassRenderer.chunkLoaded(pos);

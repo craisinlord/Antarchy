@@ -4,7 +4,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ThrowbackClientState;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Gui.class)
+@Mixin(Hud.class)
 public abstract class ThrowbackHungerBarMixin {
     @Inject(method = "extractFood", at = @At("HEAD"), cancellable = true)
     private void antarchy$hideHungerWhenFullyFaded(GuiGraphicsExtractor graphics, Player player, int x, int y, CallbackInfo ci) {

@@ -1719,7 +1719,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
         return DIAMOND_MINECART_ITEM.get();
     }
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> JELLIED_CRANBERRY_BLOCK_ITEM = ITEMS.register("jellied_cranberry_block", () -> new com.craisinlord.antarchy.content.item.JelliedCranberryBlockItem(AntarchyFabricBlocks.JELLIED_CRANBERRY_BLOCK.get(), DeferredRegister.itemProperties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> JELLIED_CRANBERRY_BLOCK_ITEM = ITEMS.register("jellied_cranberry_block", () -> new com.craisinlord.antarchy.content.item.JelliedCranberryBlockItem(AntarchyFabricBlocks.JELLIED_CRANBERRY_BLOCK.get(), DeferredRegister.blockItemProperties()));
     public static final DeferredItem<Item> ELYTHIAN_TRUFFLE = ITEMS.registerSimpleItem("elythian_truffle", DeferredRegister.itemProperties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).build(), net.minecraft.world.item.component.Consumables.defaultFood().build()));
     public static final DeferredItem<Item> ROASTED_TRUFFLE = ITEMS.registerSimpleItem("roasted_truffle", DeferredRegister.itemProperties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6F).build(), net.minecraft.world.item.component.Consumables.defaultFood().build()));
     public static final DeferredItem<Item> CRANBERRY = ITEMS.registerSimpleItem("cranberry", DeferredRegister.itemProperties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build(), net.minecraft.world.item.component.Consumables.defaultFood().build()));

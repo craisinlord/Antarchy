@@ -56,7 +56,7 @@ public class CranberryLeavesBlock extends LeavesBlock implements BonemealableBlo
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!stack.is(Items.SHEARS) || !state.getValue(FRUITING)) {
+        if (!state.getValue(FRUITING)) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide) {
@@ -64,7 +64,9 @@ public class CranberryLeavesBlock extends LeavesBlock implements BonemealableBlo
             level.setBlock(pos, state.setValue(FRUITING, false), Block.UPDATE_CLIENTS);
             level.playSound(null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F);
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-            stack.hurtAndBreak(1, player, e -> e.broadcastBreakEvent(hand));
+            if (stack.is(Items.SHEARS)) {
+                stack.hurtAndBreak(1, player, e -> e.broadcastBreakEvent(hand));
+            }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

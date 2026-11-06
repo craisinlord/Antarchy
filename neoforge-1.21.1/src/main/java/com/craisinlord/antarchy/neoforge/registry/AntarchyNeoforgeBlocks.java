@@ -132,11 +132,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
             () -> new StandingSignBlock(AntarchyWoodTypes.OURANWOOD, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> OURANWOOD_WALL_SIGN = BLOCKS.register("ouranwood_wall_sign",
-            () -> new WallSignBlock(AntarchyWoodTypes.OURANWOOD, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN)));
+            () -> new WallSignBlock(AntarchyWoodTypes.OURANWOOD, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN).dropsLike(OURANWOOD_SIGN.get())));
     public static final DeferredBlock<CeilingHangingSignBlock> OURANWOOD_HANGING_SIGN = BLOCKS.register("ouranwood_hanging_sign",
             () -> new CeilingHangingSignBlock(AntarchyWoodTypes.OURANWOOD, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> OURANWOOD_WALL_HANGING_SIGN = BLOCKS.register("ouranwood_wall_hanging_sign",
-            () -> new WallHangingSignBlock(AntarchyWoodTypes.OURANWOOD, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            () -> new WallHangingSignBlock(AntarchyWoodTypes.OURANWOOD, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN).dropsLike(OURANWOOD_HANGING_SIGN.get())));
     public static final DeferredBlock<net.minecraft.world.level.block.SaplingBlock> CRANBERRY_SAPLING = BLOCKS.register("cranberry_sapling",
             () -> new net.minecraft.world.level.block.SaplingBlock(com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeGrowers.CRANBERRY, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)));
     public static final DeferredBlock<RotatedPillarBlock> CRANBERRY_LOG = BLOCKS.register("cranberry_log",
@@ -204,11 +204,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> PEACH_SIGN = BLOCKS.register("peach_sign",
             () -> new StandingSignBlock(AntarchyWoodTypes.PEACH, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> PEACH_WALL_SIGN = BLOCKS.register("peach_wall_sign",
-            () -> new WallSignBlock(AntarchyWoodTypes.PEACH, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN)));
+            () -> new WallSignBlock(AntarchyWoodTypes.PEACH, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN).dropsLike(PEACH_SIGN.get())));
     public static final DeferredBlock<CeilingHangingSignBlock> PEACH_HANGING_SIGN = BLOCKS.register("peach_hanging_sign",
             () -> new CeilingHangingSignBlock(AntarchyWoodTypes.PEACH, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> PEACH_WALL_HANGING_SIGN = BLOCKS.register("peach_wall_hanging_sign",
-            () -> new WallHangingSignBlock(AntarchyWoodTypes.PEACH, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            () -> new WallHangingSignBlock(AntarchyWoodTypes.PEACH, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN).dropsLike(PEACH_HANGING_SIGN.get())));
     public static final DeferredBlock<RotatedPillarBlock> NADIR_LOG = BLOCKS.register("nadir_log",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LOG)));
     public static final DeferredBlock<RotatedPillarBlock> NADIR_WOOD = BLOCKS.register("nadir_wood",
@@ -244,11 +244,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> NADIR_SIGN = BLOCKS.register("nadir_sign",
             () -> new StandingSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> NADIR_WALL_SIGN = BLOCKS.register("nadir_wall_sign",
-            () -> new WallSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN)));
+            () -> new WallSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN).dropsLike(NADIR_SIGN.get())));
     public static final DeferredBlock<CeilingHangingSignBlock> NADIR_HANGING_SIGN = BLOCKS.register("nadir_hanging_sign",
             () -> new CeilingHangingSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> NADIR_WALL_HANGING_SIGN = BLOCKS.register("nadir_wall_hanging_sign",
-            () -> new WallHangingSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            () -> new WallHangingSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN).dropsLike(NADIR_HANGING_SIGN.get())));
     public static final DeferredBlock<DuplicatorSaplingBlock> DUPLICATOR_SAPLING = BLOCKS.register("duplicator_sapling",
             () -> new DuplicatorSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
     public static final DeferredBlock<RotatedPillarBlock> ROYAL_LOG = BLOCKS.register("royal_log",
@@ -288,11 +288,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> ROYAL_SIGN = BLOCKS.register("royal_sign",
             () -> new StandingSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> ROYAL_WALL_SIGN = BLOCKS.register("royal_wall_sign",
-            () -> new WallSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN)));
+            () -> new WallSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN).dropsLike(ROYAL_SIGN.get())));
     public static final DeferredBlock<CeilingHangingSignBlock> ROYAL_HANGING_SIGN = BLOCKS.register("royal_hanging_sign",
             () -> new CeilingHangingSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> ROYAL_WALL_HANGING_SIGN = BLOCKS.register("royal_wall_hanging_sign",
-            () -> new WallHangingSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            () -> new WallHangingSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN).dropsLike(ROYAL_HANGING_SIGN.get())));
     public static final DeferredBlock<TruffaloLogBlock> TRUFFALO_LOG = BLOCKS.register("truffalo_log",
             () -> new TruffaloLogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LOG)) {
                 @Override
@@ -342,11 +342,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> TRUFFALO_SIGN = BLOCKS.register("truffalo_sign",
             () -> new StandingSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> TRUFFALO_WALL_SIGN = BLOCKS.register("truffalo_wall_sign",
-            () -> new WallSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN)));
+            () -> new WallSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN).dropsLike(TRUFFALO_SIGN.get())));
     public static final DeferredBlock<CeilingHangingSignBlock> TRUFFALO_HANGING_SIGN = BLOCKS.register("truffalo_hanging_sign",
             () -> new CeilingHangingSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> TRUFFALO_WALL_HANGING_SIGN = BLOCKS.register("truffalo_wall_hanging_sign",
-            () -> new WallHangingSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            () -> new WallHangingSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN).dropsLike(TRUFFALO_HANGING_SIGN.get())));
     public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_WHITE = BLOCKS.register("white_truffalo_tuft",
             () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
     public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_ORANGE = BLOCKS.register("orange_truffalo_tuft",
@@ -790,11 +790,11 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RemembranceTorchBlock> REMEMBRANCE_TORCH = BLOCKS.register("remembrance_torch",
             () -> new com.craisinlord.antarchy.content.block.RemembranceTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TORCH)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock> REMEMBRANCE_WALL_TORCH = BLOCKS.register("remembrance_wall_torch",
-            () -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WALL_TORCH)));
+            () -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WALL_TORCH).dropsLike(REMEMBRANCE_TORCH.get())));
     public static final DeferredBlock<DreamTorchBlock> DREAM_TORCH = BLOCKS.register("dream_torch",
             () -> new DreamTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_TORCH)));
     public static final DeferredBlock<DreamWallTorchBlock> DREAM_WALL_TORCH = BLOCKS.register("dream_wall_torch",
-            () -> new DreamWallTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_WALL_TORCH)));
+            () -> new DreamWallTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_WALL_TORCH).dropsLike(DREAM_TORCH.get())));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
             () -> new com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_TORCH)));
     public static final DeferredBlock<LanternBlock> DREAM_LANTERN = BLOCKS.register("dream_lantern",
@@ -1104,7 +1104,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralFanBlock> DEAD_STAR_CORAL_FAN = BLOCKS.register("dead_star_coral_fan",
             () -> new net.minecraft.world.level.block.BaseCoralFanBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_FAN)));
     public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralWallFanBlock> DEAD_STAR_CORAL_WALL_FAN = BLOCKS.register("dead_star_coral_wall_fan",
-            () -> new net.minecraft.world.level.block.BaseCoralWallFanBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_WALL_FAN)));
+            () -> new net.minecraft.world.level.block.BaseCoralWallFanBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_WALL_FAN).dropsLike(DEAD_STAR_CORAL_FAN.get())));
     public static final DeferredBlock<Block> STAR_CORAL_BLOCK = BLOCKS.register("star_coral_block",
             () -> new com.craisinlord.antarchy.content.block.StarCoralBlock(DEAD_STAR_CORAL_BLOCK.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_BLOCK).lightLevel(state -> 8)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralPlantBlock> STAR_CORAL = BLOCKS.register("star_coral",
@@ -1112,7 +1112,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralFanBlock> STAR_CORAL_FAN = BLOCKS.register("star_coral_fan",
             () -> new com.craisinlord.antarchy.content.block.StarCoralFanBlock(DEAD_STAR_CORAL_FAN.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_FAN).lightLevel(state -> 8)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
-            () -> new com.craisinlord.antarchy.content.block.StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_WALL_FAN).lightLevel(state -> 8)));
+            () -> new com.craisinlord.antarchy.content.block.StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_WALL_FAN).dropsLike(STAR_CORAL_FAN.get()).lightLevel(state -> 8)));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("royal_egg",
             () -> BlockEntityType.Builder.of(

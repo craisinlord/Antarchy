@@ -177,7 +177,7 @@ public class JelliedCranberryBlock extends Block {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!stack.is(Items.GLASS_BOTTLE)) {
-            return InteractionResult.PASS;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (!level.isClientSide()) {
             ItemStack sauce = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("antarchy", "cranberry_sauce")));

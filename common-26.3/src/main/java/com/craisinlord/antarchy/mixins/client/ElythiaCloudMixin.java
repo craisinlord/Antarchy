@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CloudRenderer.class)
 public abstract class ElythiaCloudMixin {
-    @Inject(method = "prepare", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "prepare(ILnet/minecraft/client/CloudStatus;FILnet/minecraft/world/phys/Vec3;JF)V", at = @At("HEAD"), cancellable = true)
     private void antarchy$renderElythiaClouds(int color, net.minecraft.client.CloudStatus cloudStatus, float bottomY, int range,
                                                Vec3 cameraPosition, long gameTime, float partialTicks, CallbackInfo ci) {
         Minecraft minecraft = Minecraft.getInstance();

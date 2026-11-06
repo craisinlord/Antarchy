@@ -221,6 +221,7 @@ public final class PrimordialGrassRenderer {
     }
 
     private static void refreshMode(Minecraft minecraft) {
+        if (minecraft.level == null) return;
         String reason = !AntarchySettings.primordialGrassDynamic() ? "setting"
                 : PrimordialGrassGpuPass.shaderPackActive() ? "shader pack"
                 : !PrimordialGrassGpuPass.available() ? "unsupported" : null;

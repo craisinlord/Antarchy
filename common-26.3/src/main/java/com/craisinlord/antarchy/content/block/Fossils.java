@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.client.FossilEggColors;
 import it.unimi.dsi.fastutil.HashCommon;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -103,6 +104,11 @@ public final class Fossils {
 
     public static int color(@Nullable Identifier entityId, int tintIndex) {
         if (entityId == null || tintIndex < 0 || tintIndex > 1) return -1;
+        SpawnEggItem egg = spawnEgg(entityId);
+        return egg == null ? fallbackColor(entityId, tintIndex) : FossilEggColors.color(egg, tintIndex).orElseGet(() -> fallbackColor(entityId, tintIndex));
+    }
+
+    private static int fallbackColor(Identifier entityId, int tintIndex) {
         double hue = Math.floorMod(entityId.toString().hashCode() + (tintIndex == 0 ? 0 : 72), 360);
         double saturation = tintIndex == 0 ? 0.72D : 0.66D;
         double lightness = tintIndex == 0 ? 0.52D : 0.64D;

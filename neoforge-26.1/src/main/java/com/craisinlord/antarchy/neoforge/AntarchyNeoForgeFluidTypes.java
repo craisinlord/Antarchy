@@ -28,6 +28,7 @@ public final class AntarchyNeoForgeFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> BILE_TYPE = FLUID_TYPES.register("bile",
             () -> new FluidType(FluidType.Properties.create()
                     .descriptionId("block.antarchy.bile")
+                    .isWaterLike(true)
                     .fallDistanceModifier(0.0F)
                     .supportsBoating(true)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
@@ -38,6 +39,7 @@ public final class AntarchyNeoForgeFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> ICHOR_TYPE = FLUID_TYPES.register("ichor",
             () -> new FluidType(FluidType.Properties.create()
                     .descriptionId("block.antarchy.ichor")
+                    .isWaterLike(true)
                     .fallDistanceModifier(0.0F)
                     .supportsBoating(true)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
@@ -48,6 +50,7 @@ public final class AntarchyNeoForgeFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> LUMEN_TYPE = FLUID_TYPES.register("lumen",
             () -> new FluidType(FluidType.Properties.create()
                     .descriptionId("block.antarchy.lumen")
+                    .isWaterLike(true)
                     .fallDistanceModifier(0.0F)
                     .canSwim(true)
                     .supportsBoating(true)

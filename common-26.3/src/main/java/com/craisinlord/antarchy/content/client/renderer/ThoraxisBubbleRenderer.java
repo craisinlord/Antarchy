@@ -8,8 +8,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -129,6 +131,7 @@ public final class ThoraxisBubbleRenderer {
         if (visibility <= 0.01F) return List.of();
         float solidity = ThoraxisEventClient.strength(partialTick);
         double time = minecraft.level.getGameTime() + partialTick;
+        Frustum frustum = minecraft.gameRenderer.mainCamera().getCullFrustum();
         List<Shape> shapes = new ArrayList<>();
         for (ThoraxisBubble bubble : bubbles) {
             Vec3 center = ThoraxisEventClient.bubblePosition(bubble, time);
@@ -139,6 +142,9 @@ public final class ThoraxisBubbleRenderer {
             if (alpha <= 0.01F) continue;
             float squash = ThoraxisEventClient.bubbleSquash(bubble, time) * SQUASH_AMOUNT;
             center = center.add(0.0D, bubble.down() * bubble.radius() * squash, 0.0D);
+            double extent = bubble.radius() * 1.2D + 0.5D;
+            if (!frustum.isVisible(new AABB(center.x - extent, center.y - extent, center.z - extent,
+                    center.x + extent, center.y + extent, center.z + extent))) continue;
             float seed = (bubble.id().hashCode() & 0xFFFF) / 2048.0F;
             Shape shape = new Shape(bubble, bubble.slow() ? SLOW : FAST,
                     new Vector3f((float) (center.x - cameraPos.x), (float) (center.y - cameraPos.y), (float) (center.z - cameraPos.z)),

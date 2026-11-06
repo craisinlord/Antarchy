@@ -135,15 +135,15 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RemembranceTorchBlock> REMEMBRANCE_TORCH = BLOCKS.register("remembrance_torch",
             id -> new com.craisinlord.antarchy.content.block.RemembranceTorchBlock(copyOf(id, Blocks.TORCH)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock> REMEMBRANCE_WALL_TORCH = BLOCKS.register("remembrance_wall_torch",
-            id -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(copyOf(id, Blocks.WALL_TORCH)));
+            id -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(copyOf(id, Blocks.WALL_TORCH).overrideLootTable(REMEMBRANCE_TORCH.get().getLootTable())));
     public static final DeferredBlock<StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
             id -> new StandingSignBlock(AntarchyWoodTypes.OURANWOOD, copyOf(id, Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> OURANWOOD_WALL_SIGN = BLOCKS.register("ouranwood_wall_sign",
-            id -> new WallSignBlock(AntarchyWoodTypes.OURANWOOD, copyOf(id, Blocks.JUNGLE_WALL_SIGN)));
+            id -> new WallSignBlock(AntarchyWoodTypes.OURANWOOD, copyOf(id, Blocks.JUNGLE_WALL_SIGN).overrideLootTable(OURANWOOD_SIGN.get().getLootTable())));
     public static final DeferredBlock<CeilingHangingSignBlock> OURANWOOD_HANGING_SIGN = BLOCKS.register("ouranwood_hanging_sign",
             id -> new CeilingHangingSignBlock(AntarchyWoodTypes.OURANWOOD, copyOf(id, Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> OURANWOOD_WALL_HANGING_SIGN = BLOCKS.register("ouranwood_wall_hanging_sign",
-            id -> new WallHangingSignBlock(AntarchyWoodTypes.OURANWOOD, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            id -> new WallHangingSignBlock(AntarchyWoodTypes.OURANWOOD, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(OURANWOOD_HANGING_SIGN.get().getLootTable())));
     public static final DeferredBlock<RotatedPillarBlock> PEACH_LOG = BLOCKS.register("peach_log",
             id -> new RotatedPillarBlock(copyOf(id, Blocks.JUNGLE_LOG)));
     public static final DeferredBlock<RotatedPillarBlock> PEACH_WOOD = BLOCKS.register("peach_wood",
@@ -181,11 +181,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> PEACH_SIGN = BLOCKS.register("peach_sign",
             id -> new StandingSignBlock(AntarchyWoodTypes.PEACH, copyOf(id, Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> PEACH_WALL_SIGN = BLOCKS.register("peach_wall_sign",
-            id -> new WallSignBlock(AntarchyWoodTypes.PEACH, copyOf(id, Blocks.JUNGLE_WALL_SIGN)));
+            id -> new WallSignBlock(AntarchyWoodTypes.PEACH, copyOf(id, Blocks.JUNGLE_WALL_SIGN).overrideLootTable(PEACH_SIGN.get().getLootTable())));
     public static final DeferredBlock<CeilingHangingSignBlock> PEACH_HANGING_SIGN = BLOCKS.register("peach_hanging_sign",
             id -> new CeilingHangingSignBlock(AntarchyWoodTypes.PEACH, copyOf(id, Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> PEACH_WALL_HANGING_SIGN = BLOCKS.register("peach_wall_hanging_sign",
-            id -> new WallHangingSignBlock(AntarchyWoodTypes.PEACH, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            id -> new WallHangingSignBlock(AntarchyWoodTypes.PEACH, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(PEACH_HANGING_SIGN.get().getLootTable())));
     public static final DeferredBlock<RotatedPillarBlock> NADIR_LOG = BLOCKS.register("nadir_log",
             id -> new RotatedPillarBlock(copyOf(id, Blocks.JUNGLE_LOG)));
     public static final DeferredBlock<RotatedPillarBlock> NADIR_WOOD = BLOCKS.register("nadir_wood",
@@ -221,11 +221,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> NADIR_SIGN = BLOCKS.register("nadir_sign",
             id -> new StandingSignBlock(AntarchyWoodTypes.NADIR, copyOf(id, Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> NADIR_WALL_SIGN = BLOCKS.register("nadir_wall_sign",
-            id -> new WallSignBlock(AntarchyWoodTypes.NADIR, copyOf(id, Blocks.JUNGLE_WALL_SIGN)));
+            id -> new WallSignBlock(AntarchyWoodTypes.NADIR, copyOf(id, Blocks.JUNGLE_WALL_SIGN).overrideLootTable(NADIR_SIGN.get().getLootTable())));
     public static final DeferredBlock<CeilingHangingSignBlock> NADIR_HANGING_SIGN = BLOCKS.register("nadir_hanging_sign",
             id -> new CeilingHangingSignBlock(AntarchyWoodTypes.NADIR, copyOf(id, Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> NADIR_WALL_HANGING_SIGN = BLOCKS.register("nadir_wall_hanging_sign",
-            id -> new WallHangingSignBlock(AntarchyWoodTypes.NADIR, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            id -> new WallHangingSignBlock(AntarchyWoodTypes.NADIR, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(NADIR_HANGING_SIGN.get().getLootTable())));
     public static final DeferredBlock<DuplicatorSaplingBlock> DUPLICATOR_SAPLING = BLOCKS.register("duplicator_sapling",
             id -> new DuplicatorSaplingBlock(copyOf(id, Blocks.OAK_SAPLING).randomTicks().noCollision()));
     public static final DeferredBlock<RotatedPillarBlock> ROYAL_LOG = BLOCKS.register("royal_log",
@@ -265,11 +265,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> ROYAL_SIGN = BLOCKS.register("royal_sign",
             id -> new StandingSignBlock(AntarchyWoodTypes.ROYAL, copyOf(id, Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> ROYAL_WALL_SIGN = BLOCKS.register("royal_wall_sign",
-            id -> new WallSignBlock(AntarchyWoodTypes.ROYAL, copyOf(id, Blocks.JUNGLE_WALL_SIGN)));
+            id -> new WallSignBlock(AntarchyWoodTypes.ROYAL, copyOf(id, Blocks.JUNGLE_WALL_SIGN).overrideLootTable(ROYAL_SIGN.get().getLootTable())));
     public static final DeferredBlock<CeilingHangingSignBlock> ROYAL_HANGING_SIGN = BLOCKS.register("royal_hanging_sign",
             id -> new CeilingHangingSignBlock(AntarchyWoodTypes.ROYAL, copyOf(id, Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> ROYAL_WALL_HANGING_SIGN = BLOCKS.register("royal_wall_hanging_sign",
-            id -> new WallHangingSignBlock(AntarchyWoodTypes.ROYAL, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            id -> new WallHangingSignBlock(AntarchyWoodTypes.ROYAL, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(ROYAL_HANGING_SIGN.get().getLootTable())));
     public static final DeferredBlock<TruffaloLogBlock> TRUFFALO_LOG = BLOCKS.register("truffalo_log",
             id -> new TruffaloLogBlock(copyOf(id, Blocks.JUNGLE_LOG)));
     public static final DeferredBlock<RotatedPillarBlock> TRUFFALO_WOOD = BLOCKS.register("truffalo_wood",
@@ -303,11 +303,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<StandingSignBlock> TRUFFALO_SIGN = BLOCKS.register("truffalo_sign",
             id -> new StandingSignBlock(AntarchyWoodTypes.TRUFFALO, copyOf(id, Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> TRUFFALO_WALL_SIGN = BLOCKS.register("truffalo_wall_sign",
-            id -> new WallSignBlock(AntarchyWoodTypes.TRUFFALO, copyOf(id, Blocks.JUNGLE_WALL_SIGN)));
+            id -> new WallSignBlock(AntarchyWoodTypes.TRUFFALO, copyOf(id, Blocks.JUNGLE_WALL_SIGN).overrideLootTable(TRUFFALO_SIGN.get().getLootTable())));
     public static final DeferredBlock<CeilingHangingSignBlock> TRUFFALO_HANGING_SIGN = BLOCKS.register("truffalo_hanging_sign",
             id -> new CeilingHangingSignBlock(AntarchyWoodTypes.TRUFFALO, copyOf(id, Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> TRUFFALO_WALL_HANGING_SIGN = BLOCKS.register("truffalo_wall_hanging_sign",
-            id -> new WallHangingSignBlock(AntarchyWoodTypes.TRUFFALO, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN)));
+            id -> new WallHangingSignBlock(AntarchyWoodTypes.TRUFFALO, copyOf(id, Blocks.JUNGLE_WALL_HANGING_SIGN).overrideLootTable(TRUFFALO_HANGING_SIGN.get().getLootTable())));
     public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_WHITE = BLOCKS.register("white_truffalo_tuft",
             id -> new TruffaloTuftBlock(copyOf(id, Blocks.WOOL.white())));
     public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_ORANGE = BLOCKS.register("orange_truffalo_tuft",
@@ -589,7 +589,7 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<DreamTorchBlock> DREAM_TORCH = BLOCKS.register("dream_torch",
             id -> new DreamTorchBlock(copyOf(id, Blocks.SOUL_TORCH)));
     public static final DeferredBlock<DreamWallTorchBlock> DREAM_WALL_TORCH = BLOCKS.register("dream_wall_torch",
-            id -> new DreamWallTorchBlock(copyOf(id, Blocks.SOUL_WALL_TORCH)));
+            id -> new DreamWallTorchBlock(copyOf(id, Blocks.SOUL_WALL_TORCH).overrideLootTable(DREAM_TORCH.get().getLootTable())));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
             id -> new com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock(copyOf(id, Blocks.SOUL_TORCH)));
     public static final DeferredBlock<LanternBlock> DREAM_LANTERN = BLOCKS.register("dream_lantern",
@@ -623,7 +623,6 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<SkulkingFrightEggBlock> SKULKING_FRIGHT_EGG = BLOCKS.register("skulking_fright_egg",
             id -> new SkulkingFrightEggBlock(copyOf(id, Blocks.TURTLE_EGG)));
 
-    // Core Elythia geology is registered before its worldgen and ritual consumers.
     public static final DeferredBlock<Block> ROCKITE_COAL_ORE = BLOCKS.register("rockite_coal_ore",
             id -> createOre(id, Blocks.COAL_ORE, 0, 2, MapColor.COLOR_GRAY));
     public static final DeferredBlock<Block> ROCKITE_COPPER_ORE = BLOCKS.register("rockite_copper_ore",
@@ -700,7 +699,6 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<Block> TRUFFLED_LOAM = BLOCKS.register("truffled_loam",
             id -> new Block(copyOf(id, Blocks.MUD)));
 
-    // Decorative geology variants reuse the registered base stone shapes.
     public static final DeferredBlock<StairBlock> ROCKITE_STAIRS = BLOCKS.register("rockite_stairs",
             id -> new StairBlock(ROCKITE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties().setId(blockKey(id))));
     public static final DeferredBlock<WallBlock> ROCKITE_WALL = BLOCKS.register("rockite_wall",
@@ -1048,7 +1046,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralFanBlock> DEAD_STAR_CORAL_FAN = BLOCKS.register("dead_star_coral_fan",
             id -> new net.minecraft.world.level.block.BaseCoralFanBlock(copyOf(id, Blocks.TUBE_CORAL_FAN)));
     public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralWallFanBlock> DEAD_STAR_CORAL_WALL_FAN = BLOCKS.register("dead_star_coral_wall_fan",
-            id -> new net.minecraft.world.level.block.BaseCoralWallFanBlock(copyOf(id, Blocks.TUBE_CORAL_WALL_FAN)));
+            id -> new net.minecraft.world.level.block.BaseCoralWallFanBlock(copyOf(id, Blocks.TUBE_CORAL_WALL_FAN).overrideLootTable(DEAD_STAR_CORAL_FAN.get().getLootTable())));
     public static final DeferredBlock<Block> STAR_CORAL_BLOCK = BLOCKS.register("star_coral_block",
             id -> new com.craisinlord.antarchy.content.block.StarCoralBlock(DEAD_STAR_CORAL_BLOCK.get(), copyOf(id, Blocks.TUBE_CORAL_BLOCK).lightLevel(state -> 8)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralPlantBlock> STAR_CORAL = BLOCKS.register("star_coral",
@@ -1056,7 +1054,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralFanBlock> STAR_CORAL_FAN = BLOCKS.register("star_coral_fan",
             id -> new com.craisinlord.antarchy.content.block.StarCoralFanBlock(DEAD_STAR_CORAL_FAN.get(), copyOf(id, Blocks.TUBE_CORAL_FAN).lightLevel(state -> 8)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
-            id -> new com.craisinlord.antarchy.content.block.StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), copyOf(id, Blocks.TUBE_CORAL_WALL_FAN).lightLevel(state -> 8)));
+            id -> new com.craisinlord.antarchy.content.block.StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), copyOf(id, Blocks.TUBE_CORAL_WALL_FAN).overrideLootTable(STAR_CORAL_FAN.get().getLootTable()).lightLevel(state -> 8)));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("royal_egg",
             () -> new BlockEntityType<>(

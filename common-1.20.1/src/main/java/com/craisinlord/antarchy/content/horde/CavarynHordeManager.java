@@ -37,6 +37,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -96,6 +98,12 @@ public final class CavarynHordeManager {
     private static final double MIN_SPAWN_DISTANCE = 18.0D;
     private static final double MAX_SPAWN_DISTANCE = 36.0D;
     private static final int EGG_HATCH_ACCELERATION_MIN_ATTENTION = ATTENTION_THRESHOLD / 2;
+    private static final int DISTURBANCE_HOLD_TICKS = 20 * 60;
+    private static final int DORMANT_PEAK_MIN_SPAWN_INTERVAL = 20 * 12;
+    private static final int DORMANT_PEAK_RANDOM_SPAWN_INTERVAL = 20 * 8;
+    private static final int DORMANT_RETRY_TICKS = 20 * 5;
+    private static final int TRACKED_SPAWN_ROUNDS = 5;
+    private static final double HORDE_FOLLOW_RANGE = 48.0D;
 
     private CavarynHordeManager() {
     }
@@ -144,7 +152,10 @@ public final class CavarynHordeManager {
         if (!isValidHordeTarget(player) || !isHordeBiome(level, pos) || isPlayerInActiveEncounter(level, player)) {
             return;
         }
-        addAttention(level, player, scaleActionAttention(level, isEggOrNest(brokenState) ? EGG_OR_NEST_BREAK_ATTENTION : BLOCK_BREAK_ATTENTION));
+        int amount = scaleActionAttention(level, isEggOrNest(brokenState) ? EGG_OR_NEST_BREAK_ATTENTION : BLOCK_BREAK_ATTENTION);
+        if (amount > 0) {
+            addAttention(level, player, amount);
+        }
     }
 
     private static void triggerTigersEyeBlockBreak(ServerPlayer player, ServerLevel level, BlockState brokenState) {
@@ -269,12 +280,15 @@ public final class CavarynHordeManager {
             }
 
             attention.lastSeenGameTime = gameTime;
+            boolean recentlyDisturbed = gameTime - attention.lastDisturbanceGameTime < DISTURBANCE_HOLD_TICKS;
             BlockPos pos = player.blockPosition();
             long currentArea = areaKey(pos);
             if (attention.areaKey != currentArea) {
                 attention.areaKey = currentArea;
                 attention.areaTicks = 0;
-                attention.fade(8);
+                if (!recentlyDisturbed) {
+                    attention.fade(8);
+                }
                 data.setDirty();
             } else if (!isPlayerInActiveEncounter(level, player)) {
                 attention.areaTicks += PLAYER_CHECK_INTERVAL;
@@ -282,7 +296,7 @@ public final class CavarynHordeManager {
                     attention.areaTicks = 0;
                     attention.add(6);
                     data.setDirty();
-                } else if (gameTime % DORMANT_ATTENTION_DECAY_INTERVAL == 0L) {
+                } else if (!recentlyDisturbed && gameTime % DORMANT_ATTENTION_DECAY_INTERVAL == 0L) {
                     attention.fade(1);
                     data.setDirty();
                 }
@@ -375,11 +389,28 @@ public final class CavarynHordeManager {
         }
 
         boolean highAttention = attention.attention >= ATTENTION_THRESHOLD * 2 / 3;
-        for (CavarynHordeDefinitions.SpawnChoice choice : definition.buildSpawnList(level, 1, highAttention, level.random)) {
-            spawnDirectMob(level, null, choice, player);
+        List<CavarynHordeDefinitions.SpawnChoice> choices = definition.buildSpawnList(level, 1, highAttention, level.random);
+        int spawned = 0;
+        for (CavarynHordeDefinitions.SpawnChoice choice : choices) {
+            if (spawnDirectMob(level, null, choice, player)) {
+                spawned++;
+            }
         }
-        data.areaSpawnCooldowns.put(areaKey, gameTime + DORMANT_MIN_SPAWN_INTERVAL + level.random.nextInt(DORMANT_RANDOM_SPAWN_INTERVAL));
+        long delay = spawned > 0 || choices.isEmpty()
+                ? dormantMinInterval(attention.attention) + level.random.nextInt(dormantRandomInterval(attention.attention))
+                : DORMANT_RETRY_TICKS;
+        data.areaSpawnCooldowns.put(areaKey, gameTime + delay);
         data.setDirty();
+    }
+
+    private static int dormantMinInterval(int attention) {
+        float pressure = Mth.clamp(attention / (float) ATTENTION_THRESHOLD, 0.0F, 1.0F);
+        return Mth.floor(Mth.lerp(pressure, (float) DORMANT_MIN_SPAWN_INTERVAL, (float) DORMANT_PEAK_MIN_SPAWN_INTERVAL));
+    }
+
+    private static int dormantRandomInterval(int attention) {
+        float pressure = Mth.clamp(attention / (float) ATTENTION_THRESHOLD, 0.0F, 1.0F);
+        return Math.max(1, Mth.floor(Mth.lerp(pressure, (float) DORMANT_RANDOM_SPAWN_INTERVAL, (float) DORMANT_PEAK_RANDOM_SPAWN_INTERVAL)));
     }
 
     private static boolean herculesCleared(ServerLevel level, Encounter encounter, long gameTime) {
@@ -413,11 +444,17 @@ public final class CavarynHordeManager {
         PlayerAttention attention = data.players.computeIfAbsent(player.getUUID(), ignored -> new PlayerAttention());
         attention.lastSeenGameTime = level.getGameTime();
         attention.areaKey = areaKey(player.blockPosition());
+        attention.lastDisturbanceGameTime = level.getGameTime();
         attention.add(amount);
+        long latestNextSpawn = level.getGameTime() + dormantMinInterval(attention.attention);
+        data.areaSpawnCooldowns.computeIfPresent(attention.areaKey, (area, nextSpawn) -> Math.min(nextSpawn, latestNextSpawn));
         data.setDirty();
     }
 
     private static int scaleActionAttention(ServerLevel level, int amount) {
+        if (amount <= 0) {
+            return 0;
+        }
         float multiplier = switch (level.getDifficulty()) {
             case HARD -> 1.5F;
             case EASY -> 0.75F;
@@ -515,9 +552,6 @@ public final class CavarynHordeManager {
 
         int players = Math.max(1, targets.size());
         int capacity = Math.max(0, scaleSpawnCount(level, MAX_HORDE_MOBS_PER_ENCOUNTER) - encounter.hordeMobIds.size());
-        if (capacity <= 0) {
-            return;
-        }
 
         ResourceLocation horde = hordeForWave(encounter.wave);
         if (shouldWarnForTargets(level, horde, targets)) {
@@ -527,11 +561,16 @@ public final class CavarynHordeManager {
         List<TargetedSpawnChoice> choices = buildTargetedSpawnList(level, horde, targets, players, false);
         int spawned = 0;
         for (TargetedSpawnChoice choice : choices) {
-            if (spawned >= capacity) {
-                break;
+            boolean tracked = choice.choice().trackCompletion();
+            if (!tracked && spawned >= capacity) {
+                continue;
             }
-            if (spawnDirectMob(level, encounter, choice.choice(), choice.target())) {
-                spawned++;
+            int rounds = tracked ? TRACKED_SPAWN_ROUNDS : 1;
+            for (int round = 0; round < rounds; round++) {
+                if (spawnDirectMob(level, encounter, choice.choice(), choice.target())) {
+                    spawned++;
+                    break;
+                }
             }
         }
     }
@@ -551,6 +590,7 @@ public final class CavarynHordeManager {
         }
         mob.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, level.random.nextFloat() * 360.0F, 0.0F);
         mob.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.EVENT, null, null);
+        extendFollowRange(mob);
         applyJerryStage(mob, choice.jerryStage(), level.random);
         if (mob.canAttack(target)) {
             mob.setTarget(target);
@@ -574,6 +614,13 @@ public final class CavarynHordeManager {
         }
         level.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, spawnPos.getX() + 0.5D, spawnPos.getY() + 0.2D, spawnPos.getZ() + 0.5D, 8, 0.4D, 0.2D, 0.4D, 0.03D);
         return true;
+    }
+
+    private static void extendFollowRange(Mob mob) {
+        AttributeInstance followRange = mob.getAttribute(Attributes.FOLLOW_RANGE);
+        if (followRange != null && followRange.getBaseValue() < HORDE_FOLLOW_RANGE) {
+            followRange.setBaseValue(HORDE_FOLLOW_RANGE);
+        }
     }
 
     private static void applyJerryStage(Mob mob, String stageName, RandomSource random) {
@@ -876,6 +923,7 @@ public final class CavarynHordeManager {
         private int areaTicks;
         private long areaKey;
         private long lastSeenGameTime;
+        private long lastDisturbanceGameTime;
 
         private void add(int amount) {
             this.attention = Mth.clamp(this.attention + amount, 0, ATTENTION_THRESHOLD);
@@ -892,6 +940,7 @@ public final class CavarynHordeManager {
             tag.putInt("AreaTicks", this.areaTicks);
             tag.putLong("AreaKey", this.areaKey);
             tag.putLong("LastSeenGameTime", this.lastSeenGameTime);
+            tag.putLong("LastDisturbanceGameTime", this.lastDisturbanceGameTime);
             return tag;
         }
 
@@ -901,6 +950,7 @@ public final class CavarynHordeManager {
             attention.areaTicks = tag.getInt("AreaTicks");
             attention.areaKey = tag.getLong("AreaKey");
             attention.lastSeenGameTime = tag.getLong("LastSeenGameTime");
+            attention.lastDisturbanceGameTime = tag.getLong("LastDisturbanceGameTime");
             return attention;
         }
     }

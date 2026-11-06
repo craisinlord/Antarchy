@@ -4,6 +4,8 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.mixins.client.PostChainAccessor;
 import com.craisinlord.antarchy.mixins.client.PostPassUniformAccessor;
 import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.resource.CrossFrameResourcePool;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelTargetBundle;
@@ -13,7 +15,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 import java.nio.ByteOrder;
-import java.util.List;
 import java.util.Map;
 
 public final class ThrowbackDreamRenderer {
@@ -33,17 +34,7 @@ public final class ThrowbackDreamRenderer {
     private ThrowbackDreamRenderer() {
     }
 
-    public static void syncRequestedEffects(List<Identifier> requested) {
-        requested.remove(DREAM_EFFECT);
-        requested.remove(DREAM_NO_AFTERIMAGE_EFFECT);
-        requested.remove(TINT_EFFECT);
-        Selection selection = selection();
-        if (selection != null) {
-            requested.add(selection.effect());
-        }
-    }
-
-    public static void updateUniforms() {
+    public static void process(RenderTarget target, CrossFrameResourcePool resourcePool) {
         Selection selection = selection();
         if (selection == null) {
             return;
@@ -67,6 +58,7 @@ public final class ThrowbackDreamRenderer {
         } else {
             updateUniform(chain, "ThrowbackTintConfig", baseline, wake, prism);
         }
+        chain.process(target, resourcePool);
     }
 
     private static void updateUniform(PostChain chain, String block, float... values) {
