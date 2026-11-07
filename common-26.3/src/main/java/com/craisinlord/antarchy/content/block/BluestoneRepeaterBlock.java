@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -17,7 +18,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.util.RandomSource;
 
 public class BluestoneRepeaterBlock extends RepeaterBlock implements BluestoneSignalSource {
     private static final VoxelShape SHAPE = Block.box(0.0D, 14.0D, 0.0D, 16.0D, 16.0D, 16.0D);
@@ -45,7 +45,7 @@ public class BluestoneRepeaterBlock extends RepeaterBlock implements BluestoneSi
     @Override
     public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (!state.canSurvive(level, pos)) {
-            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+            return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, level, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
@@ -101,7 +101,7 @@ public class BluestoneRepeaterBlock extends RepeaterBlock implements BluestoneSi
     }
 
     @Override
-    public void animateTick(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, RandomSource random) {
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!state.getValue(POWERED)) {
             return;
         }

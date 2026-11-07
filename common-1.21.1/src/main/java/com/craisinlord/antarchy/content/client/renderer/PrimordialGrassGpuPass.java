@@ -189,7 +189,9 @@ final class PrimordialGrassGpuPass {
     }
 
     static boolean available() {
-        if (failed) return false;
+        if (failed) {
+            return false;
+        }
         return ensureInitialized();
     }
 
@@ -258,8 +260,6 @@ final class PrimordialGrassGpuPass {
         return vao;
     }
 
-    // The game asks for a 3.2 core context, which many drivers honor exactly, so the core 3.3 entry point can be
-    // missing even on a modern GPU. The ARB extension is the same feature under another name.
     private static void perInstance(int attribute) {
         if (coreInstancing) {
             GL33.glVertexAttribDivisor(attribute, 1);
@@ -343,10 +343,14 @@ final class PrimordialGrassGpuPass {
     }
 
     private static void beginTimer() {
-        if (!timerSupported) return;
+        if (!timerSupported) {
+            return;
+        }
         int slot = timerSlot;
         if (TIMER_PENDING[slot]) {
-            if (GL15.glGetQueryObjecti(timerEnd[slot], GL15.GL_QUERY_RESULT_AVAILABLE) == GL11.GL_FALSE) return;
+            if (GL15.glGetQueryObjecti(timerEnd[slot], GL15.GL_QUERY_RESULT_AVAILABLE) == GL11.GL_FALSE) {
+                return;
+            }
             long elapsed = GL33.glGetQueryObjecti64(timerEnd[slot], GL15.GL_QUERY_RESULT)
                     - GL33.glGetQueryObjecti64(timerStart[slot], GL15.GL_QUERY_RESULT);
             gpuNanos += (elapsed - gpuNanos) * TIMER_SMOOTHING;
@@ -357,7 +361,9 @@ final class PrimordialGrassGpuPass {
     }
 
     private static void endTimer() {
-        if (!timerActive) return;
+        if (!timerActive) {
+            return;
+        }
         timerActive = false;
         GL33.glQueryCounter(timerEnd[timerSlot], GL33.GL_TIMESTAMP);
         TIMER_PENDING[timerSlot] = true;

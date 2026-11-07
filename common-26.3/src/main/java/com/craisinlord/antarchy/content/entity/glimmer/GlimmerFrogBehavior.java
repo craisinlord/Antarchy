@@ -7,6 +7,7 @@ import com.craisinlord.anthology.multipart.MultipartEntityOwner;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
@@ -73,7 +74,7 @@ public class GlimmerFrogBehavior implements GlimmerVariantBehavior {
             return;
         }
 
-        if (entity.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+        if (entity.level() instanceof ServerLevel serverLevel) {
             entity.spawnAtLocation(serverLevel, AntarchyObjects.LUMEN_FROGLIGHT.get());
         }
     }

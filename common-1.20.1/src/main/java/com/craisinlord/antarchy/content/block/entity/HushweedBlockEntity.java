@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.HushweedBlock;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
+import java.util.Comparator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -43,7 +44,7 @@ public class HushweedBlockEntity extends BlockEntity {
                                 && entity.getType().is(AntarchyTags.Entities.HUSHWEED_TARGETS)
                                 && (!(entity instanceof Player player) || (!player.isCreative() && !player.isSpectator())))
                 .stream()
-                .min(java.util.Comparator.comparingDouble(entity -> entity.distanceToSqr(center)))
+                .min(Comparator.comparingDouble(entity -> entity.distanceToSqr(center)))
                 .orElse(null);
         if (target == null) {
             return;

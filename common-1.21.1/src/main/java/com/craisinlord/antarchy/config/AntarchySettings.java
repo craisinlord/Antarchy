@@ -1,5 +1,9 @@
 package com.craisinlord.antarchy.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -24,7 +28,7 @@ public final class AntarchySettings {
     private static boolean fossilsEnabled = true;
     private static final String DEFAULT_FOSSIL_ENTITY_BLACKLIST = "minecraft:ender_dragon,minecraft:wither,minecraft:elder_guardian,minecraft:warden,antarchy:alpha_mantis,antarchy:brutalfly,antarchy:emperor_scorpion,antarchy:hercules_beetle,antarchy:kraken,antarchy:toreterror,antarchy:king,antarchy:queen,antarchy:prince,antarchy:princess";
     private static String fossilEntityBlacklist = DEFAULT_FOSSIL_ENTITY_BLACKLIST;
-    private static java.util.List<String> fossilEntityBlacklistEntries = parseEntryList(DEFAULT_FOSSIL_ENTITY_BLACKLIST);
+    private static List<String> fossilEntityBlacklistEntries = parseEntryList(DEFAULT_FOSSIL_ENTITY_BLACKLIST);
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
     private static boolean fabricKeybindingConflictFixEnabled = true;
@@ -734,13 +738,13 @@ public final class AntarchySettings {
     private static double bossMagicWardReductionFraction = 0.5D;
     private static int bossMagicWardDurationTicks = 60;
     private static int bossMagicWardTriggerBreaches = 2;
-    private static java.util.List<String> magicBurstDamageNamespaces = new java.util.ArrayList<>(java.util.List.of("irons_spellbooks"));
+    private static List<String> magicBurstDamageNamespaces = new ArrayList<>(List.of("irons_spellbooks"));
 
     private AntarchySettings() {
     }
 
     private static ResourceKey<Level> dimensionKey(String id) {
-        return ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, ResourceLocation.parse(id));
+        return ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(id));
     }
 
     public static boolean disableInfinityBookPortalCreation() {
@@ -815,7 +819,7 @@ public final class AntarchySettings {
         return fossilEntityBlacklist;
     }
 
-    public static java.util.List<String> fossilEntityBlacklistEntries() {
+    public static List<String> fossilEntityBlacklistEntries() {
         return fossilEntityBlacklistEntries;
     }
 
@@ -1534,15 +1538,15 @@ public final class AntarchySettings {
         fossilEntityBlacklistEntries = parseEntryList(fossilEntityBlacklist);
     }
 
-    private static java.util.List<String> parseEntryList(String value) {
-        java.util.List<String> entries = new java.util.ArrayList<>();
+    private static List<String> parseEntryList(String value) {
+        List<String> entries = new ArrayList<>();
         for (String part : value.split(",")) {
-            String entry = part.trim().toLowerCase(java.util.Locale.ROOT);
+            String entry = part.trim().toLowerCase(Locale.ROOT);
             if (!entry.isEmpty()) {
                 entries.add(entry);
             }
         }
-        return java.util.List.copyOf(entries);
+        return List.copyOf(entries);
     }
 
     public static void setGlowVinesUnderLeaves(boolean value) {
@@ -3451,5 +3455,5 @@ public final class AntarchySettings {
     public static double bossMagicWardReductionFraction() { return bossMagicWardReductionFraction; }
     public static int bossMagicWardDurationTicks() { return bossMagicWardDurationTicks; }
     public static int bossMagicWardTriggerBreaches() { return bossMagicWardTriggerBreaches; }
-    public static java.util.List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
+    public static List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
 }

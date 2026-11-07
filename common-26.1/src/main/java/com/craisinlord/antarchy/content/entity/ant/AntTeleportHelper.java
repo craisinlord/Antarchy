@@ -1,28 +1,29 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
-import net.minecraft.util.Util;
-import java.util.concurrent.CompletableFuture;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.content.transit.AntTransit;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.PlayerSpawnFinder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Util;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityReference;
@@ -147,13 +148,13 @@ public final class AntTeleportHelper {
         }
 
         if (entityTypeId.equals(Identifier.fromNamespaceAndPath("antarchy", "brown_ant"))) {
-            return teleportToOrFromConfiguredDimension(player, AntarchySettings.brownAntDestinationDimension(), com.craisinlord.antarchy.content.transit.AntTransit.Kind.ELYTHIA);
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.brownAntDestinationDimension(), AntTransit.Kind.ELYTHIA);
         }
         if (entityTypeId.equals(Identifier.fromNamespaceAndPath("antarchy", "red_ant"))) {
-            return teleportToOrFromConfiguredDimension(player, AntarchySettings.redAntDestinationDimension(), com.craisinlord.antarchy.content.transit.AntTransit.Kind.THORAXIS);
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.redAntDestinationDimension(), AntTransit.Kind.THORAXIS);
         }
         if (entityTypeId.equals(Identifier.fromNamespaceAndPath("antarchy", "termite"))) {
-            return teleportToOrFromConfiguredDimension(player, AntarchySettings.termiteDestinationDimension(), com.craisinlord.antarchy.content.transit.AntTransit.Kind.CAVARYN);
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.termiteDestinationDimension(), AntTransit.Kind.CAVARYN);
         }
         if (entityTypeId.equals(Identifier.fromNamespaceAndPath("antarchy", "rainbow_ant"))) {
             return RainbowAntEntity.teleportPlayerFromStoredData(player, entityData);
@@ -167,7 +168,7 @@ public final class AntTeleportHelper {
     }
 
     private static InteractionResult teleportToOrFromConfiguredDimension(ServerPlayer player, ResourceKey<Level> configuredDimensionKey,
-                                                                          @Nullable com.craisinlord.antarchy.content.transit.AntTransit.Kind transit) {
+                                                                          @Nullable AntTransit.Kind transit) {
         ServerLevel destination = player.level().dimension() == configuredDimensionKey
                 ? resolveReturnDestinationLevel(player)
                 : player.level().getServer().getLevel(configuredDimensionKey);
@@ -175,8 +176,8 @@ public final class AntTeleportHelper {
             return InteractionResult.PASS;
         }
 
-        if (com.craisinlord.antarchy.content.transit.AntTransit.isActive(player)
-                || com.craisinlord.antarchy.content.transit.AntTransit.start(player, destination, transit)) {
+        if (AntTransit.isActive(player)
+                || AntTransit.start(player, destination, transit)) {
             return InteractionResult.CONSUME;
         }
         arriveWithCompanions(player, destination);
@@ -214,9 +215,9 @@ public final class AntTeleportHelper {
         }
 
         return teleportToOrFromConfiguredDimension(serverPlayer, ant.destinationDimension(), ant instanceof BrownAntEntity
-                ? com.craisinlord.antarchy.content.transit.AntTransit.Kind.ELYTHIA
-                : ant instanceof RedAntEntity ? com.craisinlord.antarchy.content.transit.AntTransit.Kind.THORAXIS
-                : ant instanceof TermiteEntity ? com.craisinlord.antarchy.content.transit.AntTransit.Kind.CAVARYN : null);
+                ? AntTransit.Kind.ELYTHIA
+                : ant instanceof RedAntEntity ? AntTransit.Kind.THORAXIS
+                : ant instanceof TermiteEntity ? AntTransit.Kind.CAVARYN : null);
     }
 
     static boolean isRightClickDimensionEnabled(BaseAntEntity ant) {
@@ -408,7 +409,9 @@ public final class AntTeleportHelper {
         for (int radius = 0; radius <= EXPANDED_ARRIVAL_SEARCH_RADIUS; radius++) {
             for (int xOff = -radius; xOff <= radius; xOff++) {
                 for (int zOff = -radius; zOff <= radius; zOff++) {
-                    if (radius > 0 && Math.abs(xOff) != radius && Math.abs(zOff) != radius) continue;
+                    if (radius > 0 && Math.abs(xOff) != radius && Math.abs(zOff) != radius) {
+                        continue;
+                    }
                     int x = centerX + xOff;
                     int z = centerZ + zOff;
                     BlockPos floor = new BlockPos(x, y - 1, z);
@@ -422,7 +425,9 @@ public final class AntTeleportHelper {
                             }
                         }
                     }
-                    if (!withinBorder) continue;
+                    if (!withinBorder) {
+                        continue;
+                    }
                     for (int dx = -2; dx <= 2; dx++) {
                         for (int dz = -2; dz <= 2; dz++) {
                             BlockPos pad = floor.offset(dx, 0, dz);
@@ -433,7 +438,9 @@ public final class AntTeleportHelper {
                         }
                     }
                     Vec3 safePos = new Vec3(x + 0.5D, y, z + 0.5D);
-                    if (isValidArrivalPosition(destination, safePos)) return safePos;
+                    if (isValidArrivalPosition(destination, safePos)) {
+                        return safePos;
+                    }
                 }
             }
         }
@@ -589,7 +596,7 @@ public final class AntTeleportHelper {
             BlockState support = destination.getBlockState(supportPos);
             if (!support.isFaceSturdy(destination, supportPos, Direction.UP)
                     || !support.getFluidState().isEmpty()
-                    || support.is(net.minecraft.tags.BlockTags.LEAVES)) {
+                    || support.is(BlockTags.LEAVES)) {
                 return false;
             }
 
@@ -600,7 +607,7 @@ public final class AntTeleportHelper {
                     BlockState nearbyState = destination.getBlockState(nearby);
                     if (nearbyState.isFaceSturdy(destination, nearby, Direction.UP)
                             && nearbyState.getFluidState().isEmpty()
-                            && !nearbyState.is(net.minecraft.tags.BlockTags.LEAVES)) {
+                            && !nearbyState.is(BlockTags.LEAVES)) {
                         nearbySupports++;
                         break;
                     }

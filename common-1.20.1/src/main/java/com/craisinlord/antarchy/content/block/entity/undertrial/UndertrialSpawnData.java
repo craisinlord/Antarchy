@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.block.entity.undertrial;
 
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,8 +11,6 @@ import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.SpawnData;
-
-import java.util.Optional;
 
 public record UndertrialSpawnData(CompoundTag entityToSpawn, Optional<SpawnData.CustomSpawnRules> customSpawnRules,
                                   Optional<UndertrialEquipmentTable> equipment) {

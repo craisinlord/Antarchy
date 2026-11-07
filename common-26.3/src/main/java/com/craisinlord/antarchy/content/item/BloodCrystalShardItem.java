@@ -1,17 +1,16 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.InteractionResult;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
+import java.util.function.Consumer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-
-import java.util.function.Consumer;
 
 public class BloodCrystalShardItem extends Item {
     private static Consumer<ServerPlayer> bloodglassSync = player -> {};

@@ -2,11 +2,13 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
 import java.util.Locale;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 
 public enum GlimmerVariant {
     APPLE_COW(new GlimmerAppleCowBehavior(), "apple_of_my_eye"),
@@ -16,7 +18,7 @@ public enum GlimmerVariant {
     ELKA(new GlimmerElkaBehavior(), "elkcellent_choice");
 
     public static final Codec<GlimmerVariant> CODEC = Codec.STRING.xmap(GlimmerVariant::byName, GlimmerVariant::name);
-    public static final StreamCodec<io.netty.buffer.ByteBuf, GlimmerVariant> STREAM_CODEC =
+    public static final StreamCodec<ByteBuf, GlimmerVariant> STREAM_CODEC =
             ByteBufCodecs.STRING_UTF8.map(GlimmerVariant::byName, GlimmerVariant::name);
 
     private final GlimmerVariantBehavior behavior;
@@ -39,7 +41,7 @@ public enum GlimmerVariant {
         return Component.translatable("glimmer_variant.antarchy." + this.name().toLowerCase(Locale.ROOT));
     }
 
-    public static GlimmerVariant random(net.minecraft.util.RandomSource random) {
+    public static GlimmerVariant random(RandomSource random) {
         GlimmerVariant[] values = values();
         return values[random.nextInt(values.length)];
     }

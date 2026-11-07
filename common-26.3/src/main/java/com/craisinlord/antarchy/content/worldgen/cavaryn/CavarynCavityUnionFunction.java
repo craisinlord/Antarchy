@@ -2,14 +2,14 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
-import net.minecraft.util.Interval;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
-import net.minecraft.world.level.levelgen.synth.Noise;
-import net.minecraft.world.level.levelgen.densityfunction.*;
-
 import java.util.List;
+import net.minecraft.util.Interval;
+import net.minecraft.world.level.levelgen.densityfunction.DensityBuffer;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DensityVolume;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 
 public record CavarynCavityUnionFunction(List<DensityFunction> arguments) implements DensityFunction {
     public static final MapCodec<CavarynCavityUnionFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -133,7 +133,7 @@ public record CavarynCavityUnionFunction(List<DensityFunction> arguments) implem
             if (!this.loaded || this.qx != currentQx || this.qz != currentQz) {
                 this.load(currentQx, currentQz);
             }
-            double py = blockY + 0.5;
+            double py = blockY + 0.5D;
             if (py < this.activeMinY || py > this.activeMaxY) {
                 return 1.0F;
             }

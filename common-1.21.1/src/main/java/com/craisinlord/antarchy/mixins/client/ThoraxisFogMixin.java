@@ -3,14 +3,16 @@ package com.craisinlord.antarchy.mixins.client;
 import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.FogType;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FogRenderer.class)
@@ -27,9 +29,9 @@ public abstract class ThoraxisFogMixin {
 
     @Inject(method = "setupColor", at = @At("TAIL"))
     private static void modifyThoraxisFogColor(
-            net.minecraft.client.Camera camera,
+            Camera camera,
             float partialTick,
-            net.minecraft.client.multiplayer.ClientLevel level,
+            ClientLevel level,
             int renderDistance,
             float darkenWorldAmount,
             CallbackInfo ci) {
@@ -51,7 +53,7 @@ public abstract class ThoraxisFogMixin {
 
     @Inject(method = "setupFog", at = @At("TAIL"))
     private static void modifyThoraxisFog(
-            net.minecraft.client.Camera camera,
+            Camera camera,
             FogRenderer.FogMode fogMode,
             float renderDistance,
             boolean isFoggy,

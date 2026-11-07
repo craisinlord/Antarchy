@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
-import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.AntarchyGameRules;
-import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
+import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -20,17 +20,18 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -42,6 +43,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -50,6 +52,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -67,8 +70,8 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public abstract class BaseAntEntity extends Animal implements GeoEntity {
@@ -127,7 +130,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenLoop("attack");
     private static final RawAnimation DANCE_ANIM = RawAnimation.begin().thenLoop("dance");
 
-
     @Nullable
     private BlockPos nestPos;
     @Nullable
@@ -179,8 +181,8 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
-        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, this.configuredMaxHealth());
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, this.configuredMaxHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
 
@@ -426,7 +428,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    protected void dropCustomDeathLoot(net.minecraft.world.damagesource.DamageSource damageSource, int lootingLevel, boolean recentlyHit) {
+    protected void dropCustomDeathLoot(DamageSource damageSource, int lootingLevel, boolean recentlyHit) {
         super.dropCustomDeathLoot(damageSource, lootingLevel, recentlyHit);
         if (this.isCarryingFood()) {
             ItemStack droppedFood = this.getCarriedFood().copy();
@@ -477,19 +479,32 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     protected abstract String needsReagentMessageKey();
     protected abstract double configuredMaxHealth();
 
-    protected boolean requiresActivationReagent() { return false; }
-    protected double configuredAttackDamage() { return 1.0D; }
-    protected boolean canForageGroundFood() { return true; }
-    protected boolean canGroupWithNestmates() { return true; }
-    protected boolean canMarch() { return true; }
-    protected boolean canTraverseFluidFloor(FluidState fluidState) { return false; }
+    protected boolean requiresActivationReagent() {
+        return false;
+    }
+    protected double configuredAttackDamage() {
+        return 1.0D;
+    }
+    protected boolean canForageGroundFood() {
+        return true;
+    }
+    protected boolean canGroupWithNestmates() {
+        return true;
+    }
+    protected boolean canMarch() {
+        return true;
+    }
+    protected boolean canTraverseFluidFloor(FluidState fluidState) {
+        return false;
+    }
     protected boolean isAntGriefingEnabled() {
         return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
                 && this.level().getGameRules().getBoolean(AntarchyGameRules.RULE_DO_ANT_GREIFING);
     }
 
-    
-    protected boolean handlePriorityForaging() { return false; }
+    protected boolean handlePriorityForaging() {
+        return false;
+    }
 
     private boolean shouldUseSharedMarchForageGoal() {
         return this.canRunAntMovementGoals()
@@ -1622,7 +1637,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private final class AntReturnToNestGoal extends AbstractAntMoveGoal {
-        
+
         private int navDoneStreak;
 
         @Override
@@ -1677,7 +1692,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
     }
 
-    
     private final class AntFoodEscapeGoal extends AvoidEntityGoal<Player> {
         AntFoodEscapeGoal() {
             super(BaseAntEntity.this, Player.class, 12.0F, ESCAPE_MOVE_SPEED, ESCAPE_MOVE_SPEED);
@@ -1694,7 +1708,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
     }
 
-    
     private final class AntRandomStrollGoal extends WaterAvoidingRandomStrollGoal {
         private static final double FORWARD_BIAS_DISTANCE = 8.0D;
         private static final int FORWARD_SEARCH_RADIUS = 8;
@@ -1730,7 +1743,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             Vec3 heading = getStrollHeading();
             Vec3 forwardBias = position().add(heading.scale(FORWARD_BIAS_DISTANCE));
             Vec3 forward = findStrollTarget(BlockPos.containing(forwardBias), FORWARD_SEARCH_RADIUS);
-            if (forward != null) return forward;
+            if (forward != null) {
+                return forward;
+            }
             return findStrollTarget(blockPosition(), WIDE_SEARCH_RADIUS);
         }
 
@@ -1749,9 +1764,15 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
                     }
                 }
 
-                if (candidate == null) continue;
-                if (candidate.distSqr(blockPosition()) < MIN_DISTANCE_SQR) continue;
-                if (nestPos != null && candidate.distSqr(nestPos) > MAX_NEST_WANDER_DISTANCE_SQR) continue;
+                if (candidate == null) {
+                    continue;
+                }
+                if (candidate.distSqr(blockPosition()) < MIN_DISTANCE_SQR) {
+                    continue;
+                }
+                if (nestPos != null && candidate.distSqr(nestPos) > MAX_NEST_WANDER_DISTANCE_SQR) {
+                    continue;
+                }
 
                 return new Vec3(candidate.getX() + 0.5D, candidate.getY(), candidate.getZ() + 0.5D);
             }
@@ -1761,18 +1782,26 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         private Vec3 getStrollHeading() {
             Vec3 movement = getDeltaMovement();
             Vec3 horizontal = new Vec3(movement.x, 0.0D, movement.z);
-            if (horizontal.lengthSqr() > 1.0E-4D) return horizontal.normalize();
+            if (horizontal.lengthSqr() > 1.0E-4D) {
+                return horizontal.normalize();
+            }
             float yawRad = getYRot() * ((float) Math.PI / 180.0F);
             return new Vec3(-Mth.sin(yawRad), 0.0D, Mth.cos(yawRad));
         }
 
         private boolean isValidStrollPos(BlockPos pos) {
-            if (!level().getBlockState(pos).isAir()) return false;
+            if (!level().getBlockState(pos).isAir()) {
+                return false;
+            }
             BlockPos below = pos.below();
             BlockState floor = level().getBlockState(below);
             FluidState fluidBelow = floor.getFluidState();
-            if (!fluidBelow.isEmpty() && !BaseAntEntity.this.canTraverseFluidFloor(fluidBelow)) return false;
-            if (!floor.isFaceSturdy(level(), below, Direction.UP)) return false;
+            if (!fluidBelow.isEmpty() && !BaseAntEntity.this.canTraverseFluidFloor(fluidBelow)) {
+                return false;
+            }
+            if (!floor.isFaceSturdy(level(), below, Direction.UP)) {
+                return false;
+            }
             AABB box = getBoundingBox().move(
                     pos.getX() + 0.5D - getX(),
                     pos.getY() - getY(),

@@ -1,14 +1,14 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
-import com.craisinlord.anthology.beam.client.BeamRenderTypes;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.model.RoyalBossModel;
-import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
+import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
+import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalHead;
-import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
+import com.craisinlord.anthology.beam.client.BeamRenderTypes;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderer;
@@ -28,8 +28,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
 public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, LivingEntityRenderState> {
     private static final Identifier QUEEN_PURPLE_BEAM_OUTER = Identifier.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_outer.png");
@@ -132,9 +132,13 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
         @Override
         public void submitRenderTask(RenderPassInfo<LivingEntityRenderState> renderPassInfo, SubmitNodeCollector renderTasks) {
             AfterimageData data = renderPassInfo.getGeckolibData(AFTERIMAGE_DATA);
-            if (data == null || !data.active()) return;
+            if (data == null || !data.active()) {
+                return;
+            }
             Vec3 movement = data.movement();
-            if (movement.lengthSqr() < 1.0E-5D) return;
+            if (movement.lengthSqr() < 1.0E-5D) {
+                return;
+            }
             RenderType afterimageType = RenderTypes.entityTranslucent(this.getRenderer().getTextureLocation(renderPassInfo.renderState()));
             int[] colors = data.queen() ? QUEEN_AFTERIMAGE_COLORS : KING_AFTERIMAGE_COLORS;
             float scale = RoyalBossEntity.MODEL_RENDER_SCALE;
@@ -186,9 +190,13 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
         super.preRenderPass(renderPassInfo, renderTasks);
         renderPassInfo.poseStack().scale(RoyalBossEntity.MODEL_RENDER_SCALE, RoyalBossEntity.MODEL_RENDER_SCALE, RoyalBossEntity.MODEL_RENDER_SCALE);
         BeamData beams = renderPassInfo.getGeckolibData(BEAM_DATA);
-        if (beams == null) return;
+        if (beams == null) {
+            return;
+        }
         for (int i = 0; i < beams.slots.length; i++) {
-            if (beams.slots[i] == null) continue;
+            if (beams.slots[i] == null) {
+                continue;
+            }
             BeamAnchor anchor = beams.slots[i].anchor;
             renderPassInfo.addBonePositionListener(RoyalBossModel.BEAM_ANCHORS[i],
                     (worldPos, modelPos, localPos) -> anchor.offer(worldPos));
@@ -292,7 +300,9 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
                        CameraRenderState cameraState) {
         super.submit(renderState, poseStack, renderTasks, cameraState);
         BeamData beams = renderState.getGeckolibData(BEAM_DATA);
-        if (beams == null) return;
+        if (beams == null) {
+            return;
+        }
         for (BeamSlot slot : beams.slots) {
             if (slot != null) {
                 submitBeam(poseStack, renderTasks, slot, BEAM_INNER_RADIUS, BEAM_OUTER_RADIUS, BEAM_INNER_RADIUS);

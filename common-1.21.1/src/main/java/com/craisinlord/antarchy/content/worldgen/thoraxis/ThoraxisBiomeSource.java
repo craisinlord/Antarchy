@@ -208,7 +208,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     }
 
     @Override
-    public void addDebugInfo(java.util.List<String> debug, BlockPos pos, Climate.Sampler sampler) {
+    public void addDebugInfo(List<String> debug, BlockPos pos, Climate.Sampler sampler) {
         this.delegate.addDebugInfo(debug, pos, sampler);
         debug.add("Thoraxis selector: seeded vertical/region noise");
         debug.add("Thoraxis Lucid Pools: y>=" + this.lucidPoolsMinY);
@@ -237,7 +237,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
         }).toList();
     }
 
-    private record RegionalBiomeOverlay(ResourceLocation biome, double minNoise, double maxNoise) {
+    public record RegionalBiomeOverlay(ResourceLocation biome, double minNoise, double maxNoise) {
         private static final Codec<RegionalBiomeOverlay> CODEC = RecordCodecBuilder.<RegionalBiomeOverlay>create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("biome").forGetter(RegionalBiomeOverlay::biome),
                 Codec.DOUBLE.fieldOf("min_noise").forGetter(RegionalBiomeOverlay::minNoise),

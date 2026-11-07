@@ -1,57 +1,71 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
-import com.craisinlord.anthology.beam.BeamOwner;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import com.craisinlord.anthology.beam.BeamController;
+import com.craisinlord.anthology.beam.BeamOwner;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.anthology.multipart.MultipartEntityOwner;
 import com.craisinlord.anthology.multipart.MultipartLayout;
 import com.craisinlord.anthology.multipart.MultipartPartDefinition;
-import com.craisinlord.anthology.beam.BeamController;
-import com.craisinlord.anthology.beam.BeamSettings;
-import com.craisinlord.anthology.beam.BeamTerrainMode;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
-import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler;
-import com.craisinlord.anthology.gravity.GravityApi;
-import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -62,15 +76,16 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -273,7 +288,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private int royalReprisalPressureTicks;
     private int royalReprisalTelegraphTicks;
     @Nullable
-    private java.util.UUID retaliationAttackerId;
+    private UUID retaliationAttackerId;
     private long retaliationHitTime;
     private boolean retaliationHitWasDistant;
     private int glimmerAbandonTicks;
@@ -302,7 +317,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.moveControl = this.groundMoveControl;
             this.navigation = this.groundNavigation;
         }
-        this.bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(
+        this.bossEvent = new EntityLinkedServerBossEvent(
                 this,
                 Component.translatable(entityType.getDescriptionId()),
                 this.bossBarColor(),
@@ -805,21 +820,21 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (this.level().isClientSide) {
             return;
         }
-        java.util.Set<ServerPlayer> recipients = new java.util.LinkedHashSet<>(this.bossEvent.getPlayers());
+        Set<ServerPlayer> recipients = new LinkedHashSet<>(this.bossEvent.getPlayers());
         if (focus instanceof ServerPlayer focusPlayer) {
             recipients.add(focusPlayer);
         }
         for (ServerPlayer player : recipients) {
-            player.connection.send(new net.minecraft.network.protocol.game.ClientboundSoundPacket(
-                    net.minecraft.core.Holder.direct(sound),
-                    net.minecraft.sounds.SoundSource.HOSTILE,
+            player.connection.send(new ClientboundSoundPacket(
+                    Holder.direct(sound),
+                    SoundSource.HOSTILE,
                     player.getX(), player.getY(), player.getZ(),
                     volume, pitch,
                     this.random.nextLong()));
         }
     }
 
-    private final java.util.Map<net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid>, CachedFluidCheck> cachedFluidChecks = new java.util.HashMap<>(2);
+    private final Map<TagKey<Fluid>, CachedFluidCheck> cachedFluidChecks = new HashMap<>(2);
 
     public boolean shouldRunHeavyBlockChecks() {
         return (this.tickCount + this.getId()) % HEAVY_BLOCK_CHECK_INTERVAL_TICKS == 0;
@@ -833,7 +848,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     @Override
-    public boolean updateFluidHeightAndDoFluidPushing(net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid> fluidTag, double motionScale) {
+    public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> fluidTag, double motionScale) {
         CachedFluidCheck cached = this.cachedFluidChecks.get(fluidTag);
         if (cached == null || this.shouldRunHeavyBlockChecks()) {
             boolean inFluid = super.updateFluidHeightAndDoFluidPushing(fluidTag, motionScale);
@@ -1003,7 +1018,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        return source.is(net.minecraft.world.damagesource.DamageTypes.IN_WALL)
+        return source.is(DamageTypes.IN_WALL)
                 || super.isInvulnerableTo(source);
     }
 
@@ -1133,7 +1148,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return clipEnd;
         }
         Vec3 direction = toEnd.scale(1.0D / clipLength);
-        net.minecraft.core.BlockPos blockedPos = net.minecraft.core.BlockPos.containing(clipEnd.add(direction.scale(0.05D)));
+        BlockPos blockedPos = BlockPos.containing(clipEnd.add(direction.scale(0.05D)));
         if (this.level().getBlockState(blockedPos).getCollisionShape(this.level(), blockedPos).isEmpty()) {
             return clipEnd;
         }
@@ -1168,7 +1183,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
         for (LivingEntity living : this.level().getEntitiesOfClass(LivingEntity.class,
-                new AABB(center, center).inflate(radius), net.minecraft.world.entity.EntitySelector.NO_CREATIVE_OR_SPECTATOR)) {
+                new AABB(center, center).inflate(radius), EntitySelector.NO_CREATIVE_OR_SPECTATOR)) {
             if (damaged.contains(living.getId()) || !this.canBeamDamage(living)) {
                 continue;
             }
@@ -1323,7 +1338,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
         AABB candidateArea = this.getBoundingBox().inflate(AntarchySettings.royalBossFollowRange());
-        List<Player> candidates = new java.util.ArrayList<>();
+        List<Player> candidates = new ArrayList<>();
         for (Player player : this.level().players()) {
             if (candidateArea.intersects(player.getBoundingBox()) && player.isAlive() && this.canAttack(player)) {
                 candidates.add(player);
@@ -2028,13 +2043,13 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         Level level = this.level();
         int blockX = Mth.floor(x);
         int blockZ = Mth.floor(z);
-        int surface = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+        int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 blockX, blockZ);
         int startY = Mth.floor(referenceY);
         if (startY >= surface) {
             return surface;
         }
-        net.minecraft.core.BlockPos.MutableBlockPos cursor = new net.minecraft.core.BlockPos.MutableBlockPos(blockX, startY, blockZ);
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(blockX, startY, blockZ);
         if (this.isRoyalGroundBlock(level, cursor)) {
             int top = Math.min(surface, startY + GROUND_SCAN_RISE);
             for (int y = startY + 1; y <= top; y++) {
@@ -2057,7 +2072,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     protected double ceilingYAbove(double x, double z, double referenceY) {
         Level level = this.level();
-        net.minecraft.core.BlockPos.MutableBlockPos cursor = new net.minecraft.core.BlockPos.MutableBlockPos(
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(
                 Mth.floor(x), Mth.floor(referenceY), Mth.floor(z));
         int startY = cursor.getY();
         int top = Math.min(level.getMaxBuildHeight() - 1, startY + GROUND_SCAN_DEPTH);
@@ -2070,9 +2085,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return top;
     }
 
-    private boolean isRoyalGroundBlock(Level level, net.minecraft.core.BlockPos pos) {
-        net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
-        if (state.isAir() || state.is(net.minecraft.tags.BlockTags.LEAVES)) {
+    private boolean isRoyalGroundBlock(Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.isAir() || state.is(BlockTags.LEAVES)) {
             return false;
         }
         return !state.getFluidState().isEmpty() || !state.getCollisionShape(level, pos).isEmpty();
@@ -2422,8 +2437,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     @Override
-    public boolean canBeAffected(net.minecraft.world.effect.MobEffectInstance effectInstance) {
-        if (effectInstance.is(com.craisinlord.antarchy.content.AntarchyObjects.INVERTED_EFFECT.get())) {
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        if (effectInstance.is(AntarchyObjects.INVERTED_EFFECT.get())) {
             return ThoraxisUndersideManager.isThoraxis(this.level());
         }
         return super.canBeAffected(effectInstance);
@@ -2439,7 +2454,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     public boolean isFiringRoyalBeam() {
         for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
-            if (this.isFiringRoyalBeam(slot)) return true;
+            if (this.isFiringRoyalBeam(slot)) {
+                return true;
+            }
         }
         return false;
     }
@@ -2500,14 +2517,18 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     @Nullable
     public Vec3 getRoyalBeamEndPosition(RoyalHead.Slot slot) {
         int index = slot.ordinal();
-        if (!this.entityData.get(BEAM_ACTIVE[index])) return null;
+        if (!this.entityData.get(BEAM_ACTIVE[index])) {
+            return null;
+        }
         return new Vec3(this.entityData.get(BEAM_END_X[index]), this.entityData.get(BEAM_END_Y[index]), this.entityData.get(BEAM_END_Z[index]));
     }
 
     @Nullable
     public RoyalHead.Slot getRoyalBeamHeadSlot() {
         for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
-            if (this.isFiringRoyalBeam(slot)) return slot;
+            if (this.isFiringRoyalBeam(slot)) {
+                return slot;
+            }
         }
         return null;
     }

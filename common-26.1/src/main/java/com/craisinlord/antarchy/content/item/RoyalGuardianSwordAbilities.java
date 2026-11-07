@@ -1,35 +1,40 @@
 package com.craisinlord.antarchy.content.item;
 
-import com.craisinlord.anthology.shake.CameraShakeSync;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
 import com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity;
+import com.craisinlord.anthology.shake.CameraShakeSync;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.ARGB;
 
 public final class RoyalGuardianSwordAbilities {
     private static final ThreadLocal<Integer> SECONDARY_DAMAGE_DEPTH = ThreadLocal.withInitial(() -> 0);
@@ -65,7 +70,9 @@ public final class RoyalGuardianSwordAbilities {
     }
 
     public static boolean applySecondaryDamage(Player owner, LivingEntity target, float amount) {
-        if (amount <= 0.0F || !canDamageTarget(owner, target, false)) return false;
+        if (amount <= 0.0F || !canDamageTarget(owner, target, false)) {
+            return false;
+        }
         int depth = SECONDARY_DAMAGE_DEPTH.get();
         SECONDARY_DAMAGE_DEPTH.set(depth + 1);
         try {
@@ -83,7 +90,9 @@ public final class RoyalGuardianSwordAbilities {
                 || !RoyalGuardianSwordItem.isDischargeReady(swordStack, level.getGameTime())) return;
 
         RoyalGuardianSwordItem.Mode mode = RoyalGuardianSwordItem.getMode(swordStack);
-        if (mode == RoyalGuardianSwordItem.Mode.NONE) return;
+        if (mode == RoyalGuardianSwordItem.Mode.NONE) {
+            return;
+        }
 
         switch (mode) {
             case FIRE -> fireImpact(level, owner, primary);
@@ -118,10 +127,16 @@ public final class RoyalGuardianSwordAbilities {
         int placed = 0;
         BlockPos base = BlockPos.containing(center);
         for (BlockPos pos : BlockPos.betweenClosed(base.offset(-2, -1, -2), base.offset(2, 2, 2))) {
-            if (placed >= cap) return;
-            if (pos.distToCenterSqr(center.x, center.y, center.z) > 7.0D || !level.isEmptyBlock(pos)) continue;
+            if (placed >= cap) {
+                return;
+            }
+            if (pos.distToCenterSqr(center.x, center.y, center.z) > 7.0D || !level.isEmptyBlock(pos)) {
+                continue;
+            }
             BlockPos below = pos.below();
-            if (!level.getBlockState(below).isFaceSturdy(level, below, net.minecraft.core.Direction.UP)) continue;
+            if (!level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+                continue;
+            }
             BlockState fire = Blocks.FIRE.defaultBlockState();
             if (fire.canSurvive(level, pos) && level.setBlockAndUpdate(pos, fire)) placed++;
         }
@@ -130,7 +145,7 @@ public final class RoyalGuardianSwordAbilities {
     private static void frostFan(ServerLevel level, Player owner, LivingEntity primary) {
         if (primary.isAlive()) {
             primary.setTicksFrozen(Math.min(primary.getTicksRequiredToFreeze(), primary.getTicksFrozen() + 50));
-            primary.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.SLOWNESS, 60, 1), owner);
+            primary.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1), owner);
         }
         Vec3 forward = primary.position().subtract(owner.position()).multiply(1.0D, 0.0D, 1.0D);
         if (forward.lengthSqr() < 1.0E-5D) forward = owner.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
@@ -143,7 +158,7 @@ public final class RoyalGuardianSwordAbilities {
                 Vec3 point = owner.position().add(forward.scale(distance))
                         .add(side.scale(lane * (distanceStep % 2 == 0 ? 2.0D : 0.0D)));
                 int groundY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                        net.minecraft.util.Mth.floor(point.x), net.minecraft.util.Mth.floor(point.z));
+                        Mth.floor(point.x), Mth.floor(point.z));
                 Vec3 spawn = new Vec3(point.x, groundY + 0.1D, point.z);
                 RoyalIceSpikeEntity spike = RoyalIceSpikeEntity.create(level, spawn, owner,
                         (float) AntarchySettings.royalGuardianSwordFrostSpikeDamage(), 2.2D, 100, 0, 0);
@@ -169,9 +184,11 @@ public final class RoyalGuardianSwordAbilities {
             LivingEntity next = level.getEntitiesOfClass(LivingEntity.class, new AABB(origin, origin).inflate(jumpRange),
                             candidate -> !struck.contains(candidate.getUUID()) && canDamageTarget(owner, candidate, false)
                                     && candidate.distanceToSqr(origin) <= jumpRange * jumpRange)
-                    .stream().min(java.util.Comparator.comparingDouble((LivingEntity candidate) -> candidate.distanceToSqr(origin))
+                    .stream().min(Comparator.comparingDouble((LivingEntity candidate) -> candidate.distanceToSqr(origin))
                             .thenComparingInt(LivingEntity::getId)).orElse(null);
-            if (next == null) break;
+            if (next == null) {
+                break;
+            }
             struck.add(next.getUUID());
             Vec3 end = next.position().add(0.0D, next.getBbHeight() * 0.5D, 0.0D);
             drawLightning(level, origin, end);
@@ -210,12 +227,24 @@ public final class RoyalGuardianSwordAbilities {
     }
 
     public static boolean canDamageTarget(Player owner, LivingEntity target, boolean primary) {
-        if (target == null || target == owner || (!primary && !target.isAlive())) return false;
-        if (target.isAlliedTo(owner) || owner.isAlliedTo(target)) return false;
-        if (target instanceof OwnableEntity ownable && ownable.getOwnerReference() != null && owner.getUUID().equals(ownable.getOwnerReference().getUUID())) return false;
-        if (target instanceof CommandedEntityAccess access && owner.getUUID().equals(access.antarchy$getCommanderUuid())) return false;
-        if (target instanceof Player other) return owner.canHarmPlayer(other);
-        if (primary) return true;
+        if (target == null || target == owner || (!primary && !target.isAlive())) {
+            return false;
+        }
+        if (target.isAlliedTo(owner) || owner.isAlliedTo(target)) {
+            return false;
+        }
+        if (target instanceof OwnableEntity ownable && ownable.getOwnerReference() != null && owner.getUUID().equals(ownable.getOwnerReference().getUUID())) {
+            return false;
+        }
+        if (target instanceof CommandedEntityAccess access && owner.getUUID().equals(access.antarchy$getCommanderUuid())) {
+            return false;
+        }
+        if (target instanceof Player other) {
+            return owner.canHarmPlayer(other);
+        }
+        if (primary) {
+            return true;
+        }
         return target instanceof Mob mob && (mob.getType().getCategory() == MobCategory.MONSTER
                 || mob.getTarget() == owner || mob.getLastHurtByMob() == owner);
     }

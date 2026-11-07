@@ -1,22 +1,10 @@
 package com.craisinlord.antarchy.content;
 
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.client.player.LocalPlayer;
-import java.util.UUID;
-import com.craisinlord.anthology.portal.client.PortalClientHooks;
-import com.craisinlord.anthology.portal.PortalSettings;
-import com.craisinlord.anthology.portal.PortalHooks;
-import com.craisinlord.anthology.portal.PortalEntity;
-import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
-import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
-import com.craisinlord.antarchy.content.item.PortalGunItem;
-import com.craisinlord.antarchy.content.client.renderer.PortalGunMoonViewRenderer;
-import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.item.AnvilCannonItem;
-import com.craisinlord.antarchy.content.item.BigBerthaItem;
-import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
-import com.craisinlord.anthology.shake.client.CameraShake;
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.client.AntTransitClientState;
+import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
+import com.craisinlord.antarchy.content.client.renderer.PortalGunMoonViewRenderer;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.entity.BedBugEntity;
@@ -24,23 +12,36 @@ import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
+import com.craisinlord.antarchy.content.item.AnvilCannonItem;
+import com.craisinlord.antarchy.content.item.BigBerthaItem;
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.item.TemporalTunerAccess;
 import com.craisinlord.antarchy.content.item.TemporalTunerItem;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityHooks;
+import com.craisinlord.anthology.portal.PortalEntity;
+import com.craisinlord.anthology.portal.PortalHooks;
+import com.craisinlord.anthology.portal.PortalSettings;
+import com.craisinlord.anthology.portal.client.PortalClientHooks;
+import com.craisinlord.anthology.shake.client.CameraShake;
 import com.craisinlord.anthology.time.TimeDilationApi;
 import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import com.craisinlord.anthology.time.TimeDilationHooks;
 import com.craisinlord.anthology.time.TimeDilationMath;
 import com.craisinlord.anthology.time.client.ContractionAfterimages;
+import java.util.UUID;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public final class AntarchyAnthologyHooks {
     private AntarchyAnthologyHooks() {
@@ -64,7 +65,7 @@ public final class AntarchyAnthologyHooks {
         CameraShake.addStrengthSource(cameraPos -> HerculesBeetleImpactShakeClientState.getTicks() / 25.0F * 2.0F);
         CameraShake.addStrengthSource(cameraPos -> BigBerthaItem.clientShakeTicks / 25.0F * 2.0F);
         CameraShake.addStrengthSource(cameraPos -> AnvilCannonItem.clientShakeTicks / 12.0F * 1.2F);
-        GravityHooks.addCameraRollSource(com.craisinlord.antarchy.content.client.AntTransitClientState::roll);
+        GravityHooks.addCameraRollSource(AntTransitClientState::roll);
         ContractionAfterimages.addActivator(living -> living instanceof Player player
                 && TemporalTunerItem.isAvailable(player)
                 && TimeDilationApi.getRate(living) > 1.0D);

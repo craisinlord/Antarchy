@@ -12,6 +12,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.SpeleothemThickness;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -115,7 +116,7 @@ public record TyphoniteSwirlFeature() implements Feature {
             }
             BlockState state = spike.defaultBlockState()
                     .setValue(PointedDripstoneBlock.TIP_DIRECTION, direction)
-                    .setValue(PointedDripstoneBlock.THICKNESS, i == length - 1 ? net.minecraft.world.level.block.state.properties.SpeleothemThickness.TIP : net.minecraft.world.level.block.state.properties.SpeleothemThickness.MIDDLE)
+                    .setValue(PointedDripstoneBlock.THICKNESS, i == length - 1 ? SpeleothemThickness.TIP : SpeleothemThickness.MIDDLE)
                     .setValue(PointedDripstoneBlock.WATERLOGGED, false);
             if (!state.canSurvive(level, spikePos)) {
                 break;

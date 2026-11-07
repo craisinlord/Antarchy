@@ -6,6 +6,8 @@ import com.craisinlord.antarchy.content.block.entity.undervault.UnderVaultConfig
 import com.craisinlord.antarchy.content.block.entity.undervault.UnderVaultData;
 import com.craisinlord.antarchy.content.block.entity.undervault.UnderVaultLogic;
 import com.craisinlord.antarchy.content.block.entity.undervault.UnderVaultState;
+import java.util.Optional;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,9 +25,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.Optional;
-import java.util.function.Supplier;
 
 public final class UnderVaultBlockEntity extends BlockEntity {
     private final UnderVaultData vaultData;

@@ -5,10 +5,10 @@ import com.craisinlord.antarchy.content.entity.ant.BaseAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.BrownAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.RedAntEntity;
-import net.minecraft.resources.Identifier;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class AntModel extends GeoModel<BaseAntEntity> {
     public static final DataTicket<String> VARIANT = DataTicket.create("antarchy_ant_variant", String.class);

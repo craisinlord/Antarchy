@@ -15,7 +15,9 @@ public class OuranwoodCocoonTreeFeature extends OuranwoodTreeFeature {
 
     @Override
     public boolean place(FeaturePlaceContext<OuranwoodTreeConfiguration> context) {
-        if (!super.place(context)) return false;
+        if (!super.place(context)) {
+            return false;
+        }
         placeGuaranteedCocoon(context.level(), context.origin(), context.config(), context.random());
         return true;
     }

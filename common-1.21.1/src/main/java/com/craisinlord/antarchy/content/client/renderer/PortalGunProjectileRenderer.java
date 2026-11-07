@@ -1,12 +1,14 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -122,8 +124,8 @@ public class PortalGunProjectileRenderer extends EntityRenderer<PortalGunProject
         right = right.lengthSqr() < 1.0E-6D ? new Vec3(1.0D, 0.0D, 0.0D) : right.normalize();
         Vec3 down = right.cross(look).normalize().scale(-1.0D);
         boolean rightHanded = livingShooter.getMainArm() == HumanoidArm.RIGHT;
-        boolean offhand = !(livingShooter.getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem)
-                && livingShooter.getOffhandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem;
+        boolean offhand = !(livingShooter.getMainHandItem().getItem() instanceof PortalGunItem)
+                && livingShooter.getOffhandItem().getItem() instanceof PortalGunItem;
         double sideSign = rightHanded != offhand ? 1.0D : -1.0D;
         Vec3 muzzle = eye.add(look.scale(MUZZLE_FORWARD)).add(right.scale(MUZZLE_SIDE * sideSign)).add(down.scale(MUZZLE_DOWN));
         double blend = Mth.clamp(age / MUZZLE_TICKS, 0.0F, 1.0F);
@@ -131,7 +133,7 @@ public class PortalGunProjectileRenderer extends EntityRenderer<PortalGunProject
     }
 
     @Override
-    public boolean shouldRender(PortalGunProjectileEntity entity, net.minecraft.client.renderer.culling.Frustum frustum, double cameraX, double cameraY, double cameraZ) {
+    public boolean shouldRender(PortalGunProjectileEntity entity, Frustum frustum, double cameraX, double cameraY, double cameraZ) {
         return true;
     }
 

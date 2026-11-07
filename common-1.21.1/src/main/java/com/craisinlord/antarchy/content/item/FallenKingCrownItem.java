@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.List;
-import net.minecraft.core.Holder;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlotGroup;

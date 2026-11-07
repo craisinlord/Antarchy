@@ -1,16 +1,23 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.entity.EntitySpawnReason;
-import org.jspecify.annotations.Nullable;
-import net.minecraft.world.InteractionResult;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.renderer.GeoItemRenderer;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import net.minecraft.core.component.DataComponents;
@@ -20,28 +27,21 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import com.geckolib.animatable.GeoItem;
-import com.geckolib.animatable.client.GeoRenderProvider;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import com.geckolib.renderer.GeoItemRenderer;
-import com.geckolib.util.GeckoLibUtil;
+import org.jspecify.annotations.Nullable;
 
 public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem {
     private static final String FIRE_CONTROLLER = "fire_controller";
@@ -135,7 +135,7 @@ public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem {
             private AnimatedHeldItemRenderer<SquidzookaItem> renderer;
 
             @Override
-            public com.geckolib.renderer.GeoItemRenderer<?> getGeoItemRenderer() {
+            public GeoItemRenderer<?> getGeoItemRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }

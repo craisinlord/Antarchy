@@ -4,15 +4,15 @@ import com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState;
 import com.craisinlord.antarchy.content.item.ScorpionWhipItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import java.util.Map;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import org.joml.Matrix4f;
 
 public final class ScorpionWhipTetherRenderHandler {

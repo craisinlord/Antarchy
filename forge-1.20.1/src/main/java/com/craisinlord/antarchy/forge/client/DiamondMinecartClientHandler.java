@@ -4,12 +4,12 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
 import com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.TickEvent;
-import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class DiamondMinecartClientHandler {
@@ -17,17 +17,24 @@ public final class DiamondMinecartClientHandler {
     private DiamondMinecartClientHandler() {
     }
 
-    
     private static byte lastFlags = 0;
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
 
-        if (!AntarchySettings.diamondMinecartEnabled()) return;
-        if (mc.player == null || mc.level == null) return;
-        if (!(mc.player.getVehicle() instanceof DiamondMinecartEntity)) return;
+        if (!AntarchySettings.diamondMinecartEnabled()) {
+            return;
+        }
+        if (mc.player == null || mc.level == null) {
+            return;
+        }
+        if (!(mc.player.getVehicle() instanceof DiamondMinecartEntity)) {
+            return;
+        }
         if (mc.screen != null) {
             if (lastFlags != 0) {
                 AntarchyForgeNetworkCore.sendToServer(new DiamondMinecartInputPayload((byte) 0));

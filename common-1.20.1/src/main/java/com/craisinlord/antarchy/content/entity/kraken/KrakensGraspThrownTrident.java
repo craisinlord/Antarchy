@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.item.KrakensGraspItem;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -43,7 +44,7 @@ public class KrakensGraspThrownTrident extends AbstractArrow implements ItemSupp
     }
 
     @Override
-    protected net.minecraft.sounds.SoundEvent getDefaultHitGroundSoundEvent() {
+    protected SoundEvent getDefaultHitGroundSoundEvent() {
         return SoundEvents.TRIDENT_HIT_GROUND;
     }
 
@@ -79,7 +80,7 @@ public class KrakensGraspThrownTrident extends AbstractArrow implements ItemSupp
     }
 
     @Override
-    protected net.minecraft.world.phys.EntityHitResult findHitEntity(Vec3 startVec, Vec3 endVec) {
+    protected EntityHitResult findHitEntity(Vec3 startVec, Vec3 endVec) {
         return this.dealtDamage ? null : super.findHitEntity(startVec, endVec);
     }
 

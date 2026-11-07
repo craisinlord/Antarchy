@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
@@ -150,7 +150,7 @@ public class ElythiaStoneRuinFeature extends Feature<StoneRuinConfiguration> {
                     state(config.wall()));
         }
 
-        private static BlockState state(net.minecraft.resources.Identifier id) {
+        private static BlockState state(Identifier id) {
             return StoneTorConfiguration.resolve(id).defaultBlockState();
         }
 

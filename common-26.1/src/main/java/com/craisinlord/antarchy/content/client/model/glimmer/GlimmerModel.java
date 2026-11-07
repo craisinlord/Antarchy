@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.client.model.glimmer;
 
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
-import net.minecraft.resources.Identifier;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class GlimmerModel extends GeoModel<GlimmerEntity> {
     public static final DataTicket<Identifier> MODEL = DataTicket.create("antarchy_glimmer_model", Identifier.class);

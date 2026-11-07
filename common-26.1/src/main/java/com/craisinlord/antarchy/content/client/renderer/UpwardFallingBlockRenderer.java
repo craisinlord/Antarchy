@@ -42,10 +42,12 @@ public class UpwardFallingBlockRenderer extends EntityRenderer<UpwardFallingBloc
 
     @Override
     public void submit(UpwardFallingBlockRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
-        if (state.isAir) return;
+        if (state.isAir) {
+            return;
+        }
 
         poseStack.pushPose();
-        poseStack.translate(-0.5, 0.0, -0.5);
+        poseStack.translate(-0.5D, 0.0D, -0.5D);
         state.blockModel.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
         poseStack.popPose();
 

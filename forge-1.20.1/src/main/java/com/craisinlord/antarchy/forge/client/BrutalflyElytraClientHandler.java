@@ -5,14 +5,14 @@ import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.content.network.BrutalflyElytraFlapPayload;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class BrutalflyElytraClientHandler {
@@ -28,7 +28,9 @@ public final class BrutalflyElytraClientHandler {
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         BrutalflyElytraClientState.tick();
 
         Minecraft minecraft = Minecraft.getInstance();

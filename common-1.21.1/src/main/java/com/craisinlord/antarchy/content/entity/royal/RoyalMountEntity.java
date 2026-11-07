@@ -50,6 +50,7 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
@@ -633,7 +634,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     }
 
     @Override
-    public boolean canMate(net.minecraft.world.entity.animal.Animal other) {
+    public boolean canMate(Animal other) {
         return false;
     }
 
@@ -982,9 +983,15 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             return ACTION_NONE;
         }
         float roll = this.random.nextFloat() * total;
-        if ((roll -= signature) < 0.0F) return ACTION_SIGNATURE;
-        if ((roll -= beam) < 0.0F) return ACTION_BEAM;
-        if ((roll -= bite) < 0.0F) return ACTION_BITE;
+        if ((roll -= signature) < 0.0F) {
+            return ACTION_SIGNATURE;
+        }
+        if ((roll -= beam) < 0.0F) {
+            return ACTION_BEAM;
+        }
+        if ((roll -= bite) < 0.0F) {
+            return ACTION_BITE;
+        }
         return ACTION_SPIT;
     }
 
@@ -1144,13 +1151,21 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         return this.position().add(0.0D, 1.05D * scale, 0.0D).add(forward.scale(1.75D * scale)).add(side.scale((head - 1) * 0.85D * scale));
     }
 
-    public int getBeamHead() { return this.entityData.get(BEAM_HEAD); }
-    public boolean isFiringBeam() { return this.entityData.get(BEAM_ACTIVE); }
+    public int getBeamHead() {
+        return this.entityData.get(BEAM_HEAD);
+    }
+    public boolean isFiringBeam() {
+        return this.entityData.get(BEAM_ACTIVE);
+    }
     public Vec3 getBeamEndPosition() {
         return this.entityData.get(HAS_BEAM_END) ? new Vec3(this.entityData.get(BEAM_END_X), this.entityData.get(BEAM_END_Y), this.entityData.get(BEAM_END_Z)) : null;
     }
-    public RoyalBeamElement getBeamElement() { return RoyalBeamElement.GENERIC; }
-    public BeamController beamController() { return this.beamController; }
+    public RoyalBeamElement getBeamElement() {
+        return RoyalBeamElement.GENERIC;
+    }
+    public BeamController beamController() {
+        return this.beamController;
+    }
     private void setBeamEndPosition(@Nullable Vec3 position) {
         this.entityData.set(HAS_BEAM_END, position != null);
         if (position != null) {

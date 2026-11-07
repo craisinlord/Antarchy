@@ -1,16 +1,16 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.phys.Vec3;
@@ -19,7 +19,9 @@ public class MolewormTunnelsFeature implements Feature {
     public static final MapCodec<MolewormTunnelsFeature> CODEC = MapCodec.unit(MolewormTunnelsFeature::new);
 
     @Override
-    public MapCodec<MolewormTunnelsFeature> codec() { return CODEC; }
+    public MapCodec<MolewormTunnelsFeature> codec() {
+        return CODEC;
+    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

@@ -13,14 +13,14 @@ public final class CavarynBiomeTable {
     public static final List<String> BIOMES = List.of(CAVARYN, GLOWCAP_CAVES, BIOWART_CAVES, MOLEWORM_CAVES, WORMY_CAVES, BROODING_TUNNELS);
 
     public static final List<Entry> ENTRIES = List.of(
-            new Entry(CAVARYN, -1.0, 0.05, -1.0, 1.0, -2.0, -0.2),
-            new Entry(GLOWCAP_CAVES, 0.25, 1.0, -1.0, 0.25, -2.0, -0.2),
-            new Entry(MOLEWORM_CAVES, 0.05, 0.25, -1.0, 0.25, -2.0, -0.2),
-            new Entry(BIOWART_CAVES, 0.05, 1.0, 0.25, 1.0, -2.0, -0.2),
-            new Entry(WORMY_CAVES, 0.14, 1.0, -0.7, 0.95, -0.2, 2.0),
-            new Entry(BROODING_TUNNELS, -1.0, 0.14, -1.0, 1.0, -0.2, 2.0),
-            new Entry(BROODING_TUNNELS, 0.14, 1.0, -1.0, -0.7, -0.2, 2.0),
-            new Entry(BROODING_TUNNELS, 0.14, 1.0, 0.95, 1.0, -0.2, 2.0)
+            new Entry(CAVARYN, -1.0D, 0.05D, -1.0D, 1.0D, -2.0D, -0.2D),
+            new Entry(GLOWCAP_CAVES, 0.25D, 1.0D, -1.0D, 0.25D, -2.0D, -0.2D),
+            new Entry(MOLEWORM_CAVES, 0.05D, 0.25D, -1.0D, 0.25D, -2.0D, -0.2D),
+            new Entry(BIOWART_CAVES, 0.05D, 1.0D, 0.25D, 1.0D, -2.0D, -0.2D),
+            new Entry(WORMY_CAVES, 0.14D, 1.0D, -0.7D, 0.95D, -0.2D, 2.0D),
+            new Entry(BROODING_TUNNELS, -1.0D, 0.14D, -1.0D, 1.0D, -0.2D, 2.0D),
+            new Entry(BROODING_TUNNELS, 0.14D, 1.0D, -1.0D, -0.7D, -0.2D, 2.0D),
+            new Entry(BROODING_TUNNELS, 0.14D, 1.0D, 0.95D, 1.0D, -0.2D, 2.0D)
     );
 
     private CavarynBiomeTable() {
@@ -109,7 +109,7 @@ public final class CavarynBiomeTable {
             if (value > max) {
                 return value - max;
             }
-            return 0.0;
+            return 0.0D;
         }
     }
 }

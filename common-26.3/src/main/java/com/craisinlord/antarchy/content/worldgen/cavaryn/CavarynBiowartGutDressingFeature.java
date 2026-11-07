@@ -2,19 +2,20 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.util.RandomSource;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.synth.Noise;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public final class CavarynBiowartGutDressingFeature implements Feature {
@@ -28,7 +29,7 @@ public final class CavarynBiowartGutDressingFeature implements Feature {
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "loam")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double LINING_DEPTH = 1.4;
+    private static final double LINING_DEPTH = 1.4D;
     private static final Identifier BIOMITE_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "biomite");
     private static final Identifier BIOMITE_TURF_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "biomite_turf");
 
@@ -41,10 +42,10 @@ public final class CavarynBiowartGutDressingFeature implements Feature {
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        net.minecraft.world.level.levelgen.synth.Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(GUT_NOISE);
+        Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(GUT_NOISE);
         CavarynCavityGrid grid = CavarynCavityGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.get(1234.567, 89.123, -456.789),
-                noise.get(-987.654, 12.345, 654.321)
+                noise.get(1234.567D, 89.123D, -456.789D),
+                noise.get(-987.654D, 12.345D, 654.321D)
         ));
         Block biomite = block(BIOMITE_ID);
         Block turf = block(BIOMITE_TURF_ID);
@@ -77,7 +78,7 @@ public final class CavarynBiowartGutDressingFeature implements Feature {
                 for (int y = minY; y <= maxY; y++) {
                     double distance = next;
                     next = grid.signedDistance(x, y + 1, z);
-                    if (distance <= 0.0 || distance > LINING_DEPTH) {
+                    if (distance <= 0.0D || distance > LINING_DEPTH) {
                         continue;
                     }
                     pos.set(x, y, z);
@@ -85,7 +86,7 @@ public final class CavarynBiowartGutDressingFeature implements Feature {
                         continue;
                     }
                     above.set(x, y + 1, z);
-                    boolean floor = next <= 0.0 && level.getBlockState(above).isAir();
+                    boolean floor = next <= 0.0D && level.getBlockState(above).isAir();
                     level.setBlock(pos, floor ? turf.defaultBlockState() : biomite.defaultBlockState(), 2);
                     placed = true;
                 }

@@ -1,35 +1,40 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
-import com.craisinlord.antarchy.content.item.AntarchyBoatItem;
-import com.craisinlord.antarchy.content.item.AntarchyChestBoatItem;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
 import com.craisinlord.antarchy.content.entity.SizeRayProjectileEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget;
 import com.craisinlord.antarchy.content.item.*;
-import com.craisinlord.antarchy.content.item.BloodCrystalArmorItem;
+import com.craisinlord.antarchy.content.item.AntarchyBoatItem;
+import com.craisinlord.antarchy.content.item.AntarchyChestBoatItem;
 import com.craisinlord.antarchy.content.item.BloodCrystalAppleItem;
+import com.craisinlord.antarchy.content.item.BloodCrystalArmorItem;
 import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
-import com.craisinlord.antarchy.content.item.ultimate.*;
-import com.craisinlord.antarchy.content.item.NightmareArmorItem;
-import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
-import com.craisinlord.antarchy.content.item.SpringyBootsItem;
-import com.craisinlord.antarchy.content.item.WaterCannonItem;
-import com.craisinlord.antarchy.content.item.NightmareSwordItem;
 import com.craisinlord.antarchy.content.item.LucidEyeItem;
 import com.craisinlord.antarchy.content.item.LucidPearlItem;
+import com.craisinlord.antarchy.content.item.NightmareArmorItem;
+import com.craisinlord.antarchy.content.item.NightmareSwordItem;
+import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
 import com.craisinlord.antarchy.content.item.RainbowSugarItem;
+import com.craisinlord.antarchy.content.item.SpringyBootsItem;
+import com.craisinlord.antarchy.content.item.WaterCannonItem;
+import com.craisinlord.antarchy.content.item.ultimate.*;
+import com.craisinlord.antarchy.content.portalgun.PortalGunVariant;
 import com.google.common.base.Suppliers;
+import java.util.EnumMap;
+import java.util.function.Supplier;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Consumables;
@@ -39,13 +44,10 @@ import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.sounds.SoundEvents;
-
-import java.util.EnumMap;
-import java.util.function.Supplier;
 
 public final class AntarchyNeoforgeItems {
     static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Antarchy.MODID);
@@ -93,7 +95,7 @@ public final class AntarchyNeoforgeItems {
             AntarchyRepairTags.ROYAL_ASSAILANT
     );
 
-    public static final DeferredItem<Item> NIGHTMARE_SCALE = ITEMS.registerSimpleItem("nightmare_scale", props -> props.rarity(Rarity.RARE).fireResistant().trimMaterial(com.craisinlord.antarchy.content.item.AntarchyTrimMaterials.NIGHTMARE_SCALE));
+    public static final DeferredItem<Item> NIGHTMARE_SCALE = ITEMS.registerSimpleItem("nightmare_scale", props -> props.rarity(Rarity.RARE).fireResistant().trimMaterial(AntarchyTrimMaterials.NIGHTMARE_SCALE));
 
     public static final DeferredItem<Item> MUSIC_DISC_UNDERSIDE = ITEMS.registerSimpleItem("music_disc_underside",
             props -> props.stacksTo(1).rarity(Rarity.RARE)
@@ -218,73 +220,73 @@ public final class AntarchyNeoforgeItems {
             equipmentAsset("fallen_king_crown")
     ));
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DUPLICATOR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUPLICATOR_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_OURANWOOD_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_OURANWOOD_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_PLANKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_FENCE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_FENCE_GATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_DOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_TRAPDOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_PRESSURE_PLATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_BUTTON);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_LEAVES);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_ACORN = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_ACORN_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_PEACH_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_PEACH_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_PEACH_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_PEACH_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_PLANKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_FENCE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_FENCE_GATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_DOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_TRAPDOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_PRESSURE_PLATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_BUTTON);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_LEAVES);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_SAPLING);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_NADIR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_NADIR_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_NADIR_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_NADIR_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_PLANKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_FENCE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_FENCE_GATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_DOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_TRAPDOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_PRESSURE_PLATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_BUTTON);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_VEIL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_VEIL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_SAPLING);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ORANGE_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ORANGE_MILKWEED);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PINK_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PINK_MILKWEED);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> GLIMMERING_REED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GLIMMERING_REED);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CAMELLIA_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CAMELLIA);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIDER_LILY_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIDER_LILY);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> GIANT_LILY_PAD_ITEM = ITEMS.register("giant_lily_pad",
-            id -> new com.craisinlord.antarchy.content.item.GiantLilyPadItem(AntarchyNeoforgeBlocks.GIANT_LILY_PAD.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SEASHELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SEASHELL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LUCID_ANCHOR_ITEM = ITEMS.register("lucid_anchor",
+    public static final DeferredItem<BlockItem> DUPLICATOR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUPLICATOR_LOG);
+    public static final DeferredItem<BlockItem> OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_LOG);
+    public static final DeferredItem<BlockItem> OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_WOOD);
+    public static final DeferredItem<BlockItem> MOSSY_OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_LOG);
+    public static final DeferredItem<BlockItem> MOSSY_OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_WOOD);
+    public static final DeferredItem<BlockItem> STRIPPED_OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_OURANWOOD_LOG);
+    public static final DeferredItem<BlockItem> STRIPPED_OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_OURANWOOD_WOOD);
+    public static final DeferredItem<BlockItem> OURANWOOD_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_PLANKS);
+    public static final DeferredItem<BlockItem> OURANWOOD_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_STAIRS);
+    public static final DeferredItem<BlockItem> OURANWOOD_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_SLAB);
+    public static final DeferredItem<BlockItem> OURANWOOD_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_FENCE);
+    public static final DeferredItem<BlockItem> OURANWOOD_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_FENCE_GATE);
+    public static final DeferredItem<BlockItem> OURANWOOD_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_DOOR);
+    public static final DeferredItem<BlockItem> OURANWOOD_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_TRAPDOOR);
+    public static final DeferredItem<BlockItem> OURANWOOD_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> OURANWOOD_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_BUTTON);
+    public static final DeferredItem<BlockItem> OURANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_LEAVES);
+    public static final DeferredItem<BlockItem> OURANWOOD_ACORN = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_ACORN_BLOCK);
+    public static final DeferredItem<BlockItem> PEACH_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_LOG);
+    public static final DeferredItem<BlockItem> PEACH_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_WOOD);
+    public static final DeferredItem<BlockItem> STRIPPED_PEACH_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_PEACH_LOG);
+    public static final DeferredItem<BlockItem> STRIPPED_PEACH_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_PEACH_WOOD);
+    public static final DeferredItem<BlockItem> PEACH_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_PLANKS);
+    public static final DeferredItem<BlockItem> PEACH_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_STAIRS);
+    public static final DeferredItem<BlockItem> PEACH_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_SLAB);
+    public static final DeferredItem<BlockItem> PEACH_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_FENCE);
+    public static final DeferredItem<BlockItem> PEACH_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_FENCE_GATE);
+    public static final DeferredItem<BlockItem> PEACH_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_DOOR);
+    public static final DeferredItem<BlockItem> PEACH_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_TRAPDOOR);
+    public static final DeferredItem<BlockItem> PEACH_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> PEACH_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_BUTTON);
+    public static final DeferredItem<BlockItem> PEACH_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_LEAVES);
+    public static final DeferredItem<BlockItem> PEACH_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PEACH_SAPLING);
+    public static final DeferredItem<BlockItem> NADIR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_LOG);
+    public static final DeferredItem<BlockItem> NADIR_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_WOOD);
+    public static final DeferredItem<BlockItem> STRIPPED_NADIR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_NADIR_LOG);
+    public static final DeferredItem<BlockItem> STRIPPED_NADIR_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_NADIR_WOOD);
+    public static final DeferredItem<BlockItem> NADIR_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_PLANKS);
+    public static final DeferredItem<BlockItem> NADIR_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_STAIRS);
+    public static final DeferredItem<BlockItem> NADIR_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_SLAB);
+    public static final DeferredItem<BlockItem> NADIR_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_FENCE);
+    public static final DeferredItem<BlockItem> NADIR_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_FENCE_GATE);
+    public static final DeferredItem<BlockItem> NADIR_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_DOOR);
+    public static final DeferredItem<BlockItem> NADIR_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_TRAPDOOR);
+    public static final DeferredItem<BlockItem> NADIR_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> NADIR_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_BUTTON);
+    public static final DeferredItem<BlockItem> NADIR_VEIL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_VEIL);
+    public static final DeferredItem<BlockItem> NADIR_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_SAPLING);
+    public static final DeferredItem<BlockItem> ORANGE_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ORANGE_MILKWEED);
+    public static final DeferredItem<BlockItem> PINK_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PINK_MILKWEED);
+    public static final DeferredItem<BlockItem> GLIMMERING_REED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GLIMMERING_REED);
+    public static final DeferredItem<BlockItem> CAMELLIA_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CAMELLIA);
+    public static final DeferredItem<BlockItem> SPIDER_LILY_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIDER_LILY);
+    public static final DeferredItem<BlockItem> GIANT_LILY_PAD_ITEM = ITEMS.register("giant_lily_pad",
+            id -> new GiantLilyPadItem(AntarchyNeoforgeBlocks.GIANT_LILY_PAD.get(), blockItemProps(id)));
+    public static final DeferredItem<BlockItem> SEASHELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SEASHELL);
+    public static final DeferredItem<BlockItem> LUCID_ANCHOR_ITEM = ITEMS.register("lucid_anchor",
             id -> new LucidAnchorBlockItem(AntarchyNeoforgeBlocks.LUCID_ANCHOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> MYRMITE_FOSSIL_ITEM = ITEMS.register("myrmite_fossil", id -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyNeoforgeBlocks.MYRMITE_FOSSIL.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> BROODSTONE_FOSSIL_ITEM = ITEMS.register("broodstone_fossil", id -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_FOSSIL.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> UNDERTRIAL_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UNDERTRIAL_SPAWNER);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> UNDERVAULT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UNDERVAULT);
+    public static final DeferredItem<FossilBlockItem> MYRMITE_FOSSIL_ITEM = ITEMS.register("myrmite_fossil", id -> new FossilBlockItem(AntarchyNeoforgeBlocks.MYRMITE_FOSSIL.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<FossilBlockItem> BROODSTONE_FOSSIL_ITEM = ITEMS.register("broodstone_fossil", id -> new FossilBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_FOSSIL.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> UNDERTRIAL_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UNDERTRIAL_SPAWNER);
+    public static final DeferredItem<BlockItem> UNDERVAULT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UNDERVAULT);
     public static final DeferredItem<Item> UNDERTRIAL_KEY = ITEMS.register("undertrial_key", id -> new Item(itemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LOTUS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOTUS);
-    public static final DeferredItem<net.minecraft.world.item.SignItem> OURANWOOD_SIGN_ITEM = ITEMS.register("ouranwood_sign",
+    public static final DeferredItem<BlockItem> LOTUS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOTUS);
+    public static final DeferredItem<SignItem> OURANWOOD_SIGN_ITEM = ITEMS.register("ouranwood_sign",
             id -> new SignItem(AntarchyNeoforgeBlocks.OURANWOOD_SIGN.get(), AntarchyNeoforgeBlocks.OURANWOOD_WALL_SIGN.get(), blockItemProps(id).stacksTo(16)));
-    public static final DeferredItem<net.minecraft.world.item.HangingSignItem> OURANWOOD_HANGING_SIGN_ITEM = ITEMS.register("ouranwood_hanging_sign",
+    public static final DeferredItem<HangingSignItem> OURANWOOD_HANGING_SIGN_ITEM = ITEMS.register("ouranwood_hanging_sign",
             id -> new HangingSignItem(AntarchyNeoforgeBlocks.OURANWOOD_HANGING_SIGN.get(), AntarchyNeoforgeBlocks.OURANWOOD_WALL_HANGING_SIGN.get(), blockItemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> OURANWOOD_BOAT = ITEMS.register("ouranwood_boat",
             id -> new AntarchyBoatItem(AntarchyNeoforgeEntities.OURANWOOD_BOAT_ENTITY.get(), "ouranwood_boat", itemProps(id).stacksTo(1)));
@@ -324,41 +326,41 @@ public final class AntarchyNeoforgeItems {
             id -> new HoverboardItem(AntarchyNeoforgeEntities.HOVERBOARD.get(), DyeColor.RED, itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item> HOVERBOARD_BLACK = ITEMS.register("hoverboard_black",
             id -> new HoverboardItem(AntarchyNeoforgeEntities.HOVERBOARD.get(), DyeColor.BLACK, itemProps(id).stacksTo(1)));
-    public static final DeferredItem<net.minecraft.world.item.SignItem> PEACH_SIGN_ITEM = ITEMS.register("peach_sign",
+    public static final DeferredItem<SignItem> PEACH_SIGN_ITEM = ITEMS.register("peach_sign",
             id -> new SignItem(AntarchyNeoforgeBlocks.PEACH_SIGN.get(), AntarchyNeoforgeBlocks.PEACH_WALL_SIGN.get(), blockItemProps(id).stacksTo(16)));
-    public static final DeferredItem<net.minecraft.world.item.HangingSignItem> PEACH_HANGING_SIGN_ITEM = ITEMS.register("peach_hanging_sign",
+    public static final DeferredItem<HangingSignItem> PEACH_HANGING_SIGN_ITEM = ITEMS.register("peach_hanging_sign",
             id -> new HangingSignItem(AntarchyNeoforgeBlocks.PEACH_HANGING_SIGN.get(), AntarchyNeoforgeBlocks.PEACH_WALL_HANGING_SIGN.get(), blockItemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> PEACH_BOAT = ITEMS.register("peach_boat",
             id -> new AntarchyBoatItem(AntarchyNeoforgeEntities.PEACH_BOAT_ENTITY.get(), "peach_boat", itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item> PEACH_CHEST_BOAT = ITEMS.register("peach_chest_boat",
             id -> new AntarchyChestBoatItem(AntarchyNeoforgeEntities.PEACH_CHEST_BOAT_ENTITY.get(), "peach_chest_boat", itemProps(id).stacksTo(1)));
-    public static final DeferredItem<net.minecraft.world.item.SignItem> NADIR_SIGN_ITEM = ITEMS.register("nadir_sign",
+    public static final DeferredItem<SignItem> NADIR_SIGN_ITEM = ITEMS.register("nadir_sign",
             id -> new SignItem(AntarchyNeoforgeBlocks.NADIR_SIGN.get(), AntarchyNeoforgeBlocks.NADIR_WALL_SIGN.get(), blockItemProps(id).stacksTo(16)));
-    public static final DeferredItem<net.minecraft.world.item.HangingSignItem> NADIR_HANGING_SIGN_ITEM = ITEMS.register("nadir_hanging_sign",
+    public static final DeferredItem<HangingSignItem> NADIR_HANGING_SIGN_ITEM = ITEMS.register("nadir_hanging_sign",
             id -> new HangingSignItem(AntarchyNeoforgeBlocks.NADIR_HANGING_SIGN.get(), AntarchyNeoforgeBlocks.NADIR_WALL_HANGING_SIGN.get(), blockItemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> NADIR_BOAT = ITEMS.register("nadir_boat",
             id -> new AntarchyBoatItem(AntarchyNeoforgeEntities.NADIR_BOAT_ENTITY.get(), "nadir_boat", itemProps(id).stacksTo(1)));
     public static final DeferredItem<Item> NADIR_CHEST_BOAT = ITEMS.register("nadir_chest_boat",
             id -> new AntarchyChestBoatItem(AntarchyNeoforgeEntities.NADIR_CHEST_BOAT_ENTITY.get(), "nadir_chest_boat", itemProps(id).stacksTo(1)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_ROYAL_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_ROYAL_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_ROYAL_WOOD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_PLANKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_FENCE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_FENCE_GATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_DOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_TRAPDOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_PRESSURE_PLATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_BUTTON);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_LEAVES);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_FLOWERING_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_FLOWERING_LEAVES);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_SAPLING);
-    public static final DeferredItem<net.minecraft.world.item.SignItem> ROYAL_SIGN_ITEM = ITEMS.register("royal_sign",
+    public static final DeferredItem<BlockItem> ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_LOG);
+    public static final DeferredItem<BlockItem> ROYAL_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_WOOD);
+    public static final DeferredItem<BlockItem> STRIPPED_ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_ROYAL_LOG);
+    public static final DeferredItem<BlockItem> STRIPPED_ROYAL_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_ROYAL_WOOD);
+    public static final DeferredItem<BlockItem> ROYAL_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_PLANKS);
+    public static final DeferredItem<BlockItem> ROYAL_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_STAIRS);
+    public static final DeferredItem<BlockItem> ROYAL_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_SLAB);
+    public static final DeferredItem<BlockItem> ROYAL_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_FENCE);
+    public static final DeferredItem<BlockItem> ROYAL_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_FENCE_GATE);
+    public static final DeferredItem<BlockItem> ROYAL_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_DOOR);
+    public static final DeferredItem<BlockItem> ROYAL_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_TRAPDOOR);
+    public static final DeferredItem<BlockItem> ROYAL_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> ROYAL_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_BUTTON);
+    public static final DeferredItem<BlockItem> ROYAL_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_LEAVES);
+    public static final DeferredItem<BlockItem> ROYAL_FLOWERING_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_FLOWERING_LEAVES);
+    public static final DeferredItem<BlockItem> ROYAL_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROYAL_SAPLING);
+    public static final DeferredItem<SignItem> ROYAL_SIGN_ITEM = ITEMS.register("royal_sign",
             id -> new SignItem(AntarchyNeoforgeBlocks.ROYAL_SIGN.get(), AntarchyNeoforgeBlocks.ROYAL_WALL_SIGN.get(), blockItemProps(id).stacksTo(16)));
-    public static final DeferredItem<net.minecraft.world.item.HangingSignItem> ROYAL_HANGING_SIGN_ITEM = ITEMS.register("royal_hanging_sign",
+    public static final DeferredItem<HangingSignItem> ROYAL_HANGING_SIGN_ITEM = ITEMS.register("royal_hanging_sign",
             id -> new HangingSignItem(AntarchyNeoforgeBlocks.ROYAL_HANGING_SIGN.get(), AntarchyNeoforgeBlocks.ROYAL_WALL_HANGING_SIGN.get(), blockItemProps(id).stacksTo(16)));
     public static final DeferredItem<Item> ROYAL_BOAT = ITEMS.register("royal_boat",
             id -> new AntarchyBoatItem(AntarchyNeoforgeEntities.ROYAL_BOAT_ENTITY.get(), "royal_boat", itemProps(id).stacksTo(1)));
@@ -404,30 +406,30 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<BlockItem> TRUFFALO_TUFT_BLACK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TRUFFALO_TUFT_BLACK);
     public static final DeferredItem<CritterCageItem> CRITTER_CAGE = ITEMS.register("critter_cage",
             id -> new CritterCageItem(itemProps(id).stacksTo(16)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DUPLICATOR_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUPLICATOR_SAPLING);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> RED_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.RED_ANT_NEST);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROWN_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROWN_ANT_NEST);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> RAINBOW_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.RAINBOW_ANT_NEST);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TERMITE_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TERMITE_NEST);
+    public static final DeferredItem<BlockItem> DUPLICATOR_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUPLICATOR_SAPLING);
+    public static final DeferredItem<BlockItem> RED_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.RED_ANT_NEST);
+    public static final DeferredItem<BlockItem> BROWN_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROWN_ANT_NEST);
+    public static final DeferredItem<BlockItem> RAINBOW_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.RAINBOW_ANT_NEST);
+    public static final DeferredItem<BlockItem> TERMITE_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TERMITE_NEST);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANT_TRAP_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ANT_TRAP);
+    public static final DeferredItem<BlockItem> ANT_TRAP_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ANT_TRAP);
 
     public static final DeferredItem<Item> BUG_SPRAY = ITEMS.register("bug_spray",
-            id -> new com.craisinlord.antarchy.content.item.BugSprayItem(itemProps(id).durability(128)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_ORE_ITEM = ITEMS.register("uranium_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_URANIUM_ORE_ITEM = ITEMS.register("deepslate_uranium_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_URANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_ORE_ITEM = ITEMS.register("titanium_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_TITANIUM_ORE_ITEM = ITEMS.register("deepslate_titanium_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_TITANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+            id -> new BugSprayItem(itemProps(id).durability(128)));
+    public static final DeferredItem<BlockItem> URANIUM_ORE_ITEM = ITEMS.register("uranium_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.URANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> DEEPSLATE_URANIUM_ORE_ITEM = ITEMS.register("deepslate_uranium_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_URANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> TITANIUM_ORE_ITEM = ITEMS.register("titanium_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.TITANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> DEEPSLATE_TITANIUM_ORE_ITEM = ITEMS.register("deepslate_titanium_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_TITANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> BLUESTONE_DUST = ITEMS.register("bluestone",
-            id -> new BluestoneDustItem(AntarchyNeoforgeBlocks.BLUESTONE_WIRE.get(), itemProps(id).trimMaterial(com.craisinlord.antarchy.content.item.AntarchyTrimMaterials.BLUESTONE)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_ORE_ITEM = ITEMS.register("bluestone_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BLUESTONE_ORE.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_BLOCK_ITEM = ITEMS.register("bluestone_block",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BLUESTONE_BLOCK.get(), blockItemProps(id)));
+            id -> new BluestoneDustItem(AntarchyNeoforgeBlocks.BLUESTONE_WIRE.get(), itemProps(id).trimMaterial(AntarchyTrimMaterials.BLUESTONE)));
+    public static final DeferredItem<BlockItem> BLUESTONE_ORE_ITEM = ITEMS.register("bluestone_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.BLUESTONE_ORE.get(), blockItemProps(id)));
+    public static final DeferredItem<BlockItem> BLUESTONE_BLOCK_ITEM = ITEMS.register("bluestone_block",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.BLUESTONE_BLOCK.get(), blockItemProps(id)));
     public static final DeferredItem<VortexLensBlockItem> VORTEX_LENS_ITEM = ITEMS.register("vortex_lens",
             id -> new VortexLensBlockItem(AntarchyNeoforgeBlocks.VORTEX_LENS.get(), blockItemProps(id)));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_REPEATER_ITEM = ITEMS.register("bluestone_repeater",
@@ -436,62 +438,62 @@ public final class AntarchyNeoforgeItems {
             id -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.BLUESTONE_COMPARATOR.get(), blockItemProps(id)));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_TORCH_ITEM = ITEMS.register("bluestone_torch",
             id -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.BLUESTONE_TORCH.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_LAMP_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLUESTONE_LAMP);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIGERS_EYE_BLOCK_ITEM = ITEMS.register("tigers_eye_block",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TIGERS_EYE_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BLOCK_ITEM = ITEMS.register("uranium_block",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BLOCK_ITEM = ITEMS.register("titanium_block",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> RAW_URANIUM_BLOCK_ITEM = ITEMS.register("raw_uranium_block",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.RAW_URANIUM_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> RAW_TITANIUM_BLOCK_ITEM = ITEMS.register("raw_titanium_block",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.RAW_TITANIUM_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_ITEM = ITEMS.register("cut_uranium",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_ITEM = ITEMS.register("cut_titanium",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_SLAB_ITEM = ITEMS.register("cut_uranium_slab",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM_SLAB.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_SLAB_ITEM = ITEMS.register("cut_titanium_slab",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM_SLAB.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_STAIRS_ITEM = ITEMS.register("cut_uranium_stairs",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM_STAIRS.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_STAIRS_ITEM = ITEMS.register("cut_titanium_stairs",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM_STAIRS.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_URANIUM_ITEM = ITEMS.register("chiseled_uranium",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CHISELED_URANIUM.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_TITANIUM_ITEM = ITEMS.register("chiseled_titanium",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CHISELED_TITANIUM.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BULB_ITEM = ITEMS.register("uranium_bulb",
-            id -> new com.craisinlord.antarchy.content.item.SignalSavingBulbItem(AntarchyNeoforgeBlocks.URANIUM_BULB.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BULB_ITEM = ITEMS.register("titanium_bulb",
-            id -> new com.craisinlord.antarchy.content.item.SignalSavingBulbItem(AntarchyNeoforgeBlocks.TITANIUM_BULB.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_DOOR_ITEM = ITEMS.register("uranium_door",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_DOOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_DOOR_ITEM = ITEMS.register("titanium_door",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_DOOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_TRAPDOOR_ITEM = ITEMS.register("uranium_trapdoor",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_TRAPDOOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_TRAPDOOR_ITEM = ITEMS.register("titanium_trapdoor",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_TRAPDOOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BARS_ITEM = ITEMS.register("uranium_bars",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_BARS.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BARS_ITEM = ITEMS.register("titanium_bars",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_BARS.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_ITEM = ITEMS.register("antimetal",
+    public static final DeferredItem<BlockItem> BLUESTONE_LAMP_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLUESTONE_LAMP);
+    public static final DeferredItem<BlockItem> TIGERS_EYE_BLOCK_ITEM = ITEMS.register("tigers_eye_block",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.TIGERS_EYE_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> URANIUM_BLOCK_ITEM = ITEMS.register("uranium_block",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.URANIUM_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> TITANIUM_BLOCK_ITEM = ITEMS.register("titanium_block",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.TITANIUM_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> RAW_URANIUM_BLOCK_ITEM = ITEMS.register("raw_uranium_block",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.RAW_URANIUM_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> RAW_TITANIUM_BLOCK_ITEM = ITEMS.register("raw_titanium_block",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.RAW_TITANIUM_BLOCK.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> CUT_URANIUM_ITEM = ITEMS.register("cut_uranium",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> CUT_TITANIUM_ITEM = ITEMS.register("cut_titanium",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> CUT_URANIUM_SLAB_ITEM = ITEMS.register("cut_uranium_slab",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM_SLAB.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> CUT_TITANIUM_SLAB_ITEM = ITEMS.register("cut_titanium_slab",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM_SLAB.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> CUT_URANIUM_STAIRS_ITEM = ITEMS.register("cut_uranium_stairs",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM_STAIRS.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> CUT_TITANIUM_STAIRS_ITEM = ITEMS.register("cut_titanium_stairs",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM_STAIRS.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> CHISELED_URANIUM_ITEM = ITEMS.register("chiseled_uranium",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.CHISELED_URANIUM.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> CHISELED_TITANIUM_ITEM = ITEMS.register("chiseled_titanium",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.CHISELED_TITANIUM.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> URANIUM_BULB_ITEM = ITEMS.register("uranium_bulb",
+            id -> new SignalSavingBulbItem(AntarchyNeoforgeBlocks.URANIUM_BULB.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> TITANIUM_BULB_ITEM = ITEMS.register("titanium_bulb",
+            id -> new SignalSavingBulbItem(AntarchyNeoforgeBlocks.TITANIUM_BULB.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> URANIUM_DOOR_ITEM = ITEMS.register("uranium_door",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.URANIUM_DOOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> TITANIUM_DOOR_ITEM = ITEMS.register("titanium_door",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.TITANIUM_DOOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> URANIUM_TRAPDOOR_ITEM = ITEMS.register("uranium_trapdoor",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.URANIUM_TRAPDOOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> TITANIUM_TRAPDOOR_ITEM = ITEMS.register("titanium_trapdoor",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.TITANIUM_TRAPDOOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> URANIUM_BARS_ITEM = ITEMS.register("uranium_bars",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.URANIUM_BARS.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> TITANIUM_BARS_ITEM = ITEMS.register("titanium_bars",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.TITANIUM_BARS.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> ANTIMETAL_ITEM = ITEMS.register("antimetal",
             id -> new AntimetalBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ANTIMETAL_ITEM = ITEMS.register("polished_antimetal",
+    public static final DeferredItem<BlockItem> POLISHED_ANTIMETAL_ITEM = ITEMS.register("polished_antimetal",
             id -> new AntimetalBlockItem(AntarchyNeoforgeBlocks.POLISHED_ANTIMETAL.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_STAIRS_ITEM = ITEMS.register("antimetal_stairs",
+    public static final DeferredItem<BlockItem> ANTIMETAL_STAIRS_ITEM = ITEMS.register("antimetal_stairs",
             id -> new AntimetalBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_STAIRS.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_SLAB_ITEM = ITEMS.register("antimetal_slab",
+    public static final DeferredItem<BlockItem> ANTIMETAL_SLAB_ITEM = ITEMS.register("antimetal_slab",
             id -> new AntimetalBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_SLAB.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ANTIMETAL_STAIRS_ITEM = ITEMS.register("polished_antimetal_stairs",
+    public static final DeferredItem<BlockItem> POLISHED_ANTIMETAL_STAIRS_ITEM = ITEMS.register("polished_antimetal_stairs",
             id -> new AntimetalBlockItem(AntarchyNeoforgeBlocks.POLISHED_ANTIMETAL_STAIRS.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ANTIMETAL_SLAB_ITEM = ITEMS.register("polished_antimetal_slab",
+    public static final DeferredItem<BlockItem> POLISHED_ANTIMETAL_SLAB_ITEM = ITEMS.register("polished_antimetal_slab",
             id -> new AntimetalBlockItem(AntarchyNeoforgeBlocks.POLISHED_ANTIMETAL_SLAB.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_SCAFFOLDING_ITEM = ITEMS.register("antimetal_scaffolding",
+    public static final DeferredItem<BlockItem> ANTIMETAL_SCAFFOLDING_ITEM = ITEMS.register("antimetal_scaffolding",
             id -> new AntimetalScaffoldingItem(AntarchyNeoforgeBlocks.ANTIMETAL_SCAFFOLDING.get(), blockItemProps(id)));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_RAIL_ITEM = ITEMS.register("antimetal_rail",
             id -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_RAIL.get(), blockItemProps(id)));
@@ -501,291 +503,291 @@ public final class AntarchyNeoforgeItems {
             id -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_DETECTOR_RAIL.get(), blockItemProps(id)));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_ACTIVATOR_RAIL_ITEM = ITEMS.register("antimetal_activator_rail",
             id -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_ACTIVATOR_RAIL.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> UPPER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UPPER);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SMALL_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMALL_BLOOD_CRYSTAL_BUD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MEDIUM_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MEDIUM_BLOOD_CRYSTAL_BUD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LARGE_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LARGE_BLOOD_CRYSTAL_BUD);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BUDDING_BLOOD_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BUDDING_BLOOD_CRYSTAL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLOOD_CRYSTAL_ITEM = ITEMS.register("blood_crystal_block",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BLOOD_CRYSTAL.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLOOD_CRYSTAL_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLOOD_CRYSTAL_CRYSTAL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SAND_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SAND);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIGRAVEL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ANTIGRAVEL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRIMORDIAL_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_LOAM);
-    public static final DeferredItem<net.minecraft.world.item.StandingAndWallBlockItem> REMEMBRANCE_TORCH_ITEM = ITEMS.register("remembrance_torch",
-            id -> new net.minecraft.world.item.StandingAndWallBlockItem(AntarchyNeoforgeBlocks.REMEMBRANCE_TORCH.get(), AntarchyNeoforgeBlocks.REMEMBRANCE_WALL_TORCH.get(), net.minecraft.core.Direction.DOWN, blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PACKED_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PACKED_LOAM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_LOAM_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_LOAM_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MUCUS_ITEM = ITEMS.register("mucus",
-            id -> new com.craisinlord.antarchy.content.item.MucusBlockItem(AntarchyNeoforgeBlocks.MUCUS.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SANDSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_DREAM_SANDSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_DREAM_SANDSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SMOOTH_DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMOOTH_DREAM_SANDSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SANDSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SANDSTONE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SANDSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SANDSTONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SANDSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SANDSTONE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SMOOTH_DREAM_SANDSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMOOTH_DREAM_SANDSTONE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SMOOTH_DREAM_SANDSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMOOTH_DREAM_SANDSTONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_DREAM_SANDSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_DREAM_SANDSTONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_NYXIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_NYXIUM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> VERDANT_NYXIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.VERDANT_NYXIUM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_TYPHONITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TYPHONITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> VEINED_TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.VEINED_TYPHONITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_SPIKE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TYPHONITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TYPHONITE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TYPHONITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TYPHONITE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TYPHONITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TYPHONITE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIRALING_VINES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIRALING_VINES);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> GOREVINE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GOREVINE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> WHIRLFLOWER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.WHIRLFLOWER);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_FERN);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LARGE_NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LARGE_NADIR_FERN);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DUSKBELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUSKBELL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_ROOTS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> VERDANT_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.VERDANT_ROOTS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL);
+    public static final DeferredItem<BlockItem> UPPER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UPPER);
+    public static final DeferredItem<BlockItem> SMALL_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMALL_BLOOD_CRYSTAL_BUD);
+    public static final DeferredItem<BlockItem> MEDIUM_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MEDIUM_BLOOD_CRYSTAL_BUD);
+    public static final DeferredItem<BlockItem> LARGE_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LARGE_BLOOD_CRYSTAL_BUD);
+    public static final DeferredItem<BlockItem> BUDDING_BLOOD_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BUDDING_BLOOD_CRYSTAL);
+    public static final DeferredItem<BlockItem> BLOOD_CRYSTAL_ITEM = ITEMS.register("blood_crystal_block",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.BLOOD_CRYSTAL.get(), blockItemProps(id)));
+    public static final DeferredItem<BlockItem> BLOOD_CRYSTAL_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLOOD_CRYSTAL_CRYSTAL);
+    public static final DeferredItem<BlockItem> DREAM_SAND_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SAND);
+    public static final DeferredItem<BlockItem> ANTIGRAVEL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ANTIGRAVEL);
+    public static final DeferredItem<BlockItem> LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM);
+    public static final DeferredItem<BlockItem> PRIMORDIAL_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_LOAM);
+    public static final DeferredItem<StandingAndWallBlockItem> REMEMBRANCE_TORCH_ITEM = ITEMS.register("remembrance_torch",
+            id -> new StandingAndWallBlockItem(AntarchyNeoforgeBlocks.REMEMBRANCE_TORCH.get(), AntarchyNeoforgeBlocks.REMEMBRANCE_WALL_TORCH.get(), Direction.DOWN, blockItemProps(id)));
+    public static final DeferredItem<BlockItem> PACKED_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PACKED_LOAM);
+    public static final DeferredItem<BlockItem> LOAM_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICKS);
+    public static final DeferredItem<BlockItem> LOAM_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> LOAM_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> LOAM_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICK_WALL);
+    public static final DeferredItem<BlockItem> CHISELED_LOAM_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_LOAM_BRICKS);
+    public static final DeferredItem<BlockItem> MUCUS_ITEM = ITEMS.register("mucus",
+            id -> new MucusBlockItem(AntarchyNeoforgeBlocks.MUCUS.get(), blockItemProps(id)));
+    public static final DeferredItem<BlockItem> DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SANDSTONE);
+    public static final DeferredItem<BlockItem> CHISELED_DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_DREAM_SANDSTONE);
+    public static final DeferredItem<BlockItem> CUT_DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_DREAM_SANDSTONE);
+    public static final DeferredItem<BlockItem> SMOOTH_DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMOOTH_DREAM_SANDSTONE);
+    public static final DeferredItem<BlockItem> DREAM_SANDSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SANDSTONE_STAIRS);
+    public static final DeferredItem<BlockItem> DREAM_SANDSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SANDSTONE_SLAB);
+    public static final DeferredItem<BlockItem> DREAM_SANDSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SANDSTONE_WALL);
+    public static final DeferredItem<BlockItem> SMOOTH_DREAM_SANDSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMOOTH_DREAM_SANDSTONE_STAIRS);
+    public static final DeferredItem<BlockItem> SMOOTH_DREAM_SANDSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMOOTH_DREAM_SANDSTONE_SLAB);
+    public static final DeferredItem<BlockItem> CUT_DREAM_SANDSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_DREAM_SANDSTONE_SLAB);
+    public static final DeferredItem<BlockItem> TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE);
+    public static final DeferredItem<BlockItem> NADIR_NYXIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_NYXIUM);
+    public static final DeferredItem<BlockItem> VERDANT_NYXIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.VERDANT_NYXIUM);
+    public static final DeferredItem<BlockItem> TYPHONITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_PILLAR);
+    public static final DeferredItem<BlockItem> TYPHONITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_BRICKS);
+    public static final DeferredItem<BlockItem> CHISELED_TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_TYPHONITE);
+    public static final DeferredItem<BlockItem> POLISHED_TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TYPHONITE);
+    public static final DeferredItem<BlockItem> VEINED_TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.VEINED_TYPHONITE);
+    public static final DeferredItem<BlockItem> TYPHONITE_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_SPIKE);
+    public static final DeferredItem<BlockItem> TYPHONITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_STAIRS);
+    public static final DeferredItem<BlockItem> TYPHONITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_SLAB);
+    public static final DeferredItem<BlockItem> TYPHONITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_WALL);
+    public static final DeferredItem<BlockItem> TYPHONITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> TYPHONITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> TYPHONITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TYPHONITE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> POLISHED_TYPHONITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TYPHONITE_STAIRS);
+    public static final DeferredItem<BlockItem> POLISHED_TYPHONITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TYPHONITE_SLAB);
+    public static final DeferredItem<BlockItem> POLISHED_TYPHONITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TYPHONITE_WALL);
+    public static final DeferredItem<BlockItem> SPIRALING_VINES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIRALING_VINES);
+    public static final DeferredItem<BlockItem> GOREVINE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GOREVINE);
+    public static final DeferredItem<BlockItem> WHIRLFLOWER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.WHIRLFLOWER);
+    public static final DeferredItem<BlockItem> NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_FERN);
+    public static final DeferredItem<BlockItem> LARGE_NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LARGE_NADIR_FERN);
+    public static final DeferredItem<BlockItem> DUSKBELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUSKBELL);
+    public static final DeferredItem<BlockItem> NADIR_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_ROOTS);
+    public static final DeferredItem<BlockItem> VERDANT_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.VERDANT_ROOTS);
+    public static final DeferredItem<BlockItem> DEAD_STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_BLOCK);
+    public static final DeferredItem<BlockItem> DEAD_STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL);
     public static final DeferredItem<StandingAndWallBlockItem> DEAD_STAR_CORAL_FAN_ITEM = ITEMS.register("dead_star_coral_fan",
             id -> new StandingAndWallBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_FAN.get(), AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_WALL_FAN.get(), Direction.UP, blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL);
+    public static final DeferredItem<BlockItem> STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL_BLOCK);
+    public static final DeferredItem<BlockItem> STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL);
     public static final DeferredItem<StandingAndWallBlockItem> STAR_CORAL_FAN_ITEM = ITEMS.register("star_coral_fan",
             id -> new StandingAndWallBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL_FAN.get(), AntarchyNeoforgeBlocks.STAR_CORAL_WALL_FAN.get(), Direction.UP, blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DUCT_TAPE_ITEM = ITEMS.register("duct_tape",
+    public static final DeferredItem<BlockItem> DUCT_TAPE_ITEM = ITEMS.register("duct_tape",
             id -> new DuctTapeBlockItem(AntarchyNeoforgeBlocks.DUCT_TAPE.get(), blockItemProps(id).stacksTo(1)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> INFESTED_ROOTED_DIRT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.INFESTED_ROOTED_DIRT);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> INFESTED_COARSE_DIRT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.INFESTED_COARSE_DIRT);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_MYRMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_MYRMITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_MYRMITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_MYRMITE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_MYRMITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_MYRMITE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_MYRMITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_MYRMITE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_MYRMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_MYRMITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_MYRMITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_MYRMITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_MYRMITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_MYRMITE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_MYRMITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_MYRMITE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_MYRMITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_MYRMITE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOMITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOMITE_TURF_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOMITE_TURF);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOWART_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOWART);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOWART_TENDRILS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOWART_TENDRILS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_BROODSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_BROODSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_BROODSTONE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_BROODSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_BROODSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_BROODSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_BROODSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_BROODSTONE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_BROODSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_BROODSTONE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_BROODSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_BROODSTONE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COAL_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_COAL_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_URANIUM_ORE_ITEM = ITEMS.register("broodstone_uranium_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_URANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.register("broodstone_titanium_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_TITANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_COPPER_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_IRON_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_GOLD_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_REDSTONE_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_LAPIS_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_DIAMOND_ORE_ITEM = ITEMS.register("myrmite_diamond_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.MYRMITE_DIAMOND_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_EMERALD_ORE_ITEM = ITEMS.register("myrmite_emerald_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.MYRMITE_EMERALD_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_COPPER_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_IRON_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_GOLD_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_REDSTONE_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_LAPIS_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_DIAMOND_ORE_ITEM = ITEMS.register("broodstone_diamond_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_DIAMOND_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_EMERALD_ORE_ITEM = ITEMS.register("broodstone_emerald_ore",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_EMERALD_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_NYXITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_NYXITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_NYXITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHITIN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHITIN_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_WALL);
+    public static final DeferredItem<BlockItem> INFESTED_ROOTED_DIRT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.INFESTED_ROOTED_DIRT);
+    public static final DeferredItem<BlockItem> INFESTED_COARSE_DIRT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.INFESTED_COARSE_DIRT);
+    public static final DeferredItem<BlockItem> NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE);
+    public static final DeferredItem<BlockItem> MYRMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE);
+    public static final DeferredItem<BlockItem> MYRMITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_STAIRS);
+    public static final DeferredItem<BlockItem> MYRMITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_SLAB);
+    public static final DeferredItem<BlockItem> MYRMITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_WALL);
+    public static final DeferredItem<BlockItem> POLISHED_MYRMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_MYRMITE);
+    public static final DeferredItem<BlockItem> POLISHED_MYRMITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_MYRMITE_STAIRS);
+    public static final DeferredItem<BlockItem> POLISHED_MYRMITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_MYRMITE_SLAB);
+    public static final DeferredItem<BlockItem> POLISHED_MYRMITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_MYRMITE_WALL);
+    public static final DeferredItem<BlockItem> CHISELED_MYRMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_MYRMITE);
+    public static final DeferredItem<BlockItem> MYRMITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_BRICKS);
+    public static final DeferredItem<BlockItem> MYRMITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> MYRMITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> MYRMITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> MOSSY_MYRMITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_MYRMITE_BRICKS);
+    public static final DeferredItem<BlockItem> MOSSY_MYRMITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_MYRMITE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> MOSSY_MYRMITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_MYRMITE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> MOSSY_MYRMITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_MYRMITE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> MYRMITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_PILLAR);
+    public static final DeferredItem<BlockItem> BIOMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOMITE);
+    public static final DeferredItem<BlockItem> BIOMITE_TURF_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOMITE_TURF);
+    public static final DeferredItem<BlockItem> BIOWART_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOWART);
+    public static final DeferredItem<BlockItem> BIOWART_TENDRILS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOWART_TENDRILS);
+    public static final DeferredItem<BlockItem> BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE);
+    public static final DeferredItem<BlockItem> POLISHED_BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE);
+    public static final DeferredItem<BlockItem> CHISELED_BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_BROODSTONE);
+    public static final DeferredItem<BlockItem> BROODSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICKS);
+    public static final DeferredItem<BlockItem> MOSSY_BROODSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_BROODSTONE_BRICKS);
+    public static final DeferredItem<BlockItem> BROODSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_STAIRS);
+    public static final DeferredItem<BlockItem> BROODSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_SLAB);
+    public static final DeferredItem<BlockItem> BROODSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_WALL);
+    public static final DeferredItem<BlockItem> POLISHED_BROODSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE_STAIRS);
+    public static final DeferredItem<BlockItem> POLISHED_BROODSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE_SLAB);
+    public static final DeferredItem<BlockItem> POLISHED_BROODSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE_WALL);
+    public static final DeferredItem<BlockItem> BROODSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> BROODSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> BROODSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> MOSSY_BROODSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_BROODSTONE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> MOSSY_BROODSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_BROODSTONE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> MOSSY_BROODSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_BROODSTONE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> BROODSTONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_PILLAR);
+    public static final DeferredItem<BlockItem> MYRMITE_COAL_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_COAL_ORE);
+    public static final DeferredItem<BlockItem> BROODSTONE_URANIUM_ORE_ITEM = ITEMS.register("broodstone_uranium_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_URANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.register("broodstone_titanium_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_TITANIUM_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> MYRMITE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_COPPER_ORE);
+    public static final DeferredItem<BlockItem> MYRMITE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_IRON_ORE);
+    public static final DeferredItem<BlockItem> MYRMITE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_GOLD_ORE);
+    public static final DeferredItem<BlockItem> MYRMITE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_REDSTONE_ORE);
+    public static final DeferredItem<BlockItem> MYRMITE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_LAPIS_ORE);
+    public static final DeferredItem<BlockItem> MYRMITE_DIAMOND_ORE_ITEM = ITEMS.register("myrmite_diamond_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.MYRMITE_DIAMOND_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> MYRMITE_EMERALD_ORE_ITEM = ITEMS.register("myrmite_emerald_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.MYRMITE_EMERALD_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> BROODSTONE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_COPPER_ORE);
+    public static final DeferredItem<BlockItem> BROODSTONE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_IRON_ORE);
+    public static final DeferredItem<BlockItem> BROODSTONE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_GOLD_ORE);
+    public static final DeferredItem<BlockItem> BROODSTONE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_REDSTONE_ORE);
+    public static final DeferredItem<BlockItem> BROODSTONE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_LAPIS_ORE);
+    public static final DeferredItem<BlockItem> BROODSTONE_DIAMOND_ORE_ITEM = ITEMS.register("broodstone_diamond_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_DIAMOND_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> BROODSTONE_EMERALD_ORE_ITEM = ITEMS.register("broodstone_emerald_ore",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_EMERALD_ORE.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<BlockItem> POLISHED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE);
+    public static final DeferredItem<BlockItem> CHISELED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_NYXITE);
+    public static final DeferredItem<BlockItem> NYXITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICKS);
+    public static final DeferredItem<BlockItem> MOSSY_NYXITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_NYXITE_BRICKS);
+    public static final DeferredItem<BlockItem> CHITIN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHITIN_BLOCK);
+    public static final DeferredItem<BlockItem> NYXITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_STAIRS);
+    public static final DeferredItem<BlockItem> NYXITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_SLAB);
+    public static final DeferredItem<BlockItem> NYXITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_WALL);
+    public static final DeferredItem<BlockItem> POLISHED_NYXITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_STAIRS);
+    public static final DeferredItem<BlockItem> POLISHED_NYXITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_SLAB);
+    public static final DeferredItem<BlockItem> POLISHED_NYXITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_WALL);
     public static final DeferredItem<CeilingCompatiblePlacementTooltipBlockItem> POLISHED_NYXITE_PRESSURE_PLATE_ITEM = ITEMS.register("polished_nyxite_pressure_plate",
             id -> new CeilingCompatiblePlacementTooltipBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_PRESSURE_PLATE.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_BUTTON);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_NYXITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_NYXITE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_NYXITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_NYXITE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_NYXITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_NYXITE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_COAL_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_COAL_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_COPPER_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_IRON_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_GOLD_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_REDSTONE_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_LAPIS_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_DIAMOND_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_DIAMOND_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_TITANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_TITANIUM_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_URANIUM_ORE);
+    public static final DeferredItem<BlockItem> POLISHED_NYXITE_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_BUTTON);
+    public static final DeferredItem<BlockItem> NYXITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> NYXITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> NYXITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> MOSSY_NYXITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_NYXITE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> MOSSY_NYXITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_NYXITE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> MOSSY_NYXITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_NYXITE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> NYXITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_PILLAR);
+    public static final DeferredItem<BlockItem> ROCKITE_COAL_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_COAL_ORE);
+    public static final DeferredItem<BlockItem> ROCKITE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_COPPER_ORE);
+    public static final DeferredItem<BlockItem> ROCKITE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_IRON_ORE);
+    public static final DeferredItem<BlockItem> ROCKITE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_GOLD_ORE);
+    public static final DeferredItem<BlockItem> ROCKITE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_REDSTONE_ORE);
+    public static final DeferredItem<BlockItem> ROCKITE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_LAPIS_ORE);
+    public static final DeferredItem<BlockItem> ROCKITE_DIAMOND_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_DIAMOND_ORE);
+    public static final DeferredItem<BlockItem> ROCKITE_TITANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_TITANIUM_ORE);
+    public static final DeferredItem<BlockItem> ROCKITE_URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_URANIUM_ORE);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ROCKITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ROCKITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRACKED_ROCKITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRACKED_ROCKITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_ROCKITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_ROCKITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_ROCKITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_ROCKITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZEBRA_STONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ZEBRA_STONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_ZEBRA_STONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_ZEBRA_STONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ARKROSE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ARKROSE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_ARKROSE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_ARKROSE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TIDESTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TIDESTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_TIDESTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_TIDESTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CONGLOMERATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CONGLOMERATE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFLED_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TRUFFLED_LOAM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROCKITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ZEBRA_STONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ARKROSE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TIDESTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> ROCKITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE);
+    public static final DeferredItem<BlockItem> POLISHED_ROCKITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ROCKITE);
+    public static final DeferredItem<BlockItem> ROCKITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_BRICKS);
+    public static final DeferredItem<BlockItem> CRACKED_ROCKITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRACKED_ROCKITE_BRICKS);
+    public static final DeferredItem<BlockItem> MOSSY_ROCKITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_ROCKITE_BRICKS);
+    public static final DeferredItem<BlockItem> CHISELED_ROCKITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_ROCKITE_BRICKS);
+    public static final DeferredItem<BlockItem> ROCKITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_PILLAR);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE);
+    public static final DeferredItem<BlockItem> POLISHED_ZEBRA_STONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ZEBRA_STONE);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_BRICKS);
+    public static final DeferredItem<BlockItem> CHISELED_ZEBRA_STONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_ZEBRA_STONE);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_PILLAR);
+    public static final DeferredItem<BlockItem> ARKROSE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE);
+    public static final DeferredItem<BlockItem> POLISHED_ARKROSE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ARKROSE);
+    public static final DeferredItem<BlockItem> ARKROSE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_BRICKS);
+    public static final DeferredItem<BlockItem> CHISELED_ARKROSE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_ARKROSE);
+    public static final DeferredItem<BlockItem> ARKROSE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_PILLAR);
+    public static final DeferredItem<BlockItem> TIDESTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE);
+    public static final DeferredItem<BlockItem> POLISHED_TIDESTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TIDESTONE);
+    public static final DeferredItem<BlockItem> TIDESTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_BRICKS);
+    public static final DeferredItem<BlockItem> CHISELED_TIDESTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_TIDESTONE);
+    public static final DeferredItem<BlockItem> TIDESTONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_PILLAR);
+    public static final DeferredItem<BlockItem> CONGLOMERATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CONGLOMERATE);
+    public static final DeferredItem<BlockItem> TRUFFLED_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TRUFFLED_LOAM);
+    public static final DeferredItem<BlockItem> ROCKITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_SLAB);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_SLAB);
+    public static final DeferredItem<BlockItem> ARKROSE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_SLAB);
+    public static final DeferredItem<BlockItem> TIDESTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_SLAB);
+    public static final DeferredItem<BlockItem> ROCKITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_STAIRS);
+    public static final DeferredItem<BlockItem> ROCKITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_WALL);
+    public static final DeferredItem<BlockItem> ROCKITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> ROCKITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> ROCKITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROCKITE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_STAIRS);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_WALL);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> ZEBRA_STONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ZEBRA_STONE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> ARKROSE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_STAIRS);
+    public static final DeferredItem<BlockItem> ARKROSE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_WALL);
+    public static final DeferredItem<BlockItem> ARKROSE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> ARKROSE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> ARKROSE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ARKROSE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> TIDESTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_STAIRS);
+    public static final DeferredItem<BlockItem> TIDESTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_WALL);
+    public static final DeferredItem<BlockItem> TIDESTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> TIDESTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> TIDESTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TIDESTONE_BRICK_WALL);
 
-public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_ROCKITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_ROCKITE_BRICK_SLAB);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_ROCKITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_ROCKITE_BRICK_STAIRS);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_ROCKITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_ROCKITE_BRICK_WALL);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ARKROSE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ARKROSE_SLAB);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ARKROSE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ARKROSE_STAIRS);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ARKROSE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ARKROSE_WALL);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ROCKITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ROCKITE_SLAB);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ROCKITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ROCKITE_STAIRS);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ROCKITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ROCKITE_WALL);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TIDESTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TIDESTONE_SLAB);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TIDESTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TIDESTONE_STAIRS);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TIDESTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TIDESTONE_WALL);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZEBRA_STONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ZEBRA_STONE_SLAB);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZEBRA_STONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ZEBRA_STONE_STAIRS);
-public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZEBRA_STONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ZEBRA_STONE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_SHELLSTONE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRACKED_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRACKED_SHELLSTONE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_WALL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_PILLAR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> FLYTRAP_GOO_BLOCK_ITEM = ITEMS.register("flytrap_goo_block",
-            id -> new com.craisinlord.antarchy.content.item.FlytrapGooBlockItem(AntarchyNeoforgeBlocks.FLYTRAP_GOO_BLOCK.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PALE_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PALE_NYXITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_SPIKE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHITIN_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHITIN_SPIKE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> POTENT_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POTENT_NYXITE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> UMBRAL_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UMBRAL_MOSS_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> UMBRAL_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UMBRAL_MOSS_CARPET);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> AMBER_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.AMBER_MOSS_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> AMBER_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.AMBER_MOSS_CARPET);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> AMBER_LICHEN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.AMBER_LICHEN);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BILE_VEIN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BILE_VEIN);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPVINE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPVINE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUSH_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLUSH_MOSS_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUSH_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLUSH_MOSS_CARPET);
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.DreamTorchItem> DREAM_TORCH_ITEM = ITEMS.register("dream_torch",
-            id -> new com.craisinlord.antarchy.content.item.DreamTorchItem(AntarchyNeoforgeBlocks.DREAM_TORCH.get(), AntarchyNeoforgeBlocks.DREAM_WALL_TORCH.get(), AntarchyNeoforgeBlocks.DREAM_CEILING_TORCH.get(), blockItemProps(id)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_LANTERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_LANTERN);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_CAMPFIRE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LUMEN_FROGLIGHT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LUMEN_FROGLIGHT);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROSEATE_FROGLIGHT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROSEATE_FROGLIGHT);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BED_BUG_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRAWLING_BLIGHT_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRAWLING_BLIGHT_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRINCE_EGG_ITEM = ITEMS.register("prince_egg",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.PRINCE_EGG.get(), blockItemProps(id).rarity(Rarity.EPIC).fireResistant()));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRINCESS_EGG_ITEM = ITEMS.register("princess_egg",
-            id -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.PRINCESS_EGG.get(), blockItemProps(id).rarity(Rarity.EPIC).fireResistant()));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SPRINGBUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPRINGBUG_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIT_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIT_BUG_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> JERRY_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.JERRY_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> SKULKING_FRIGHT_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SKULKING_FRIGHT_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> WASP_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.WASP_NEST);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> HUSHWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.HUSHWEED);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> HANGING_CREEPROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.HANGING_CREEPROOTS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> GLOWCAP_MUSHROOM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GLOWCAP_MUSHROOM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> GLOWCAP_MUSHROOM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GLOWCAP_MUSHROOM_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOLTING_VINES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOLTING_VINES);
+public static final DeferredItem<BlockItem> MOSSY_ROCKITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_ROCKITE_BRICK_SLAB);
+public static final DeferredItem<BlockItem> MOSSY_ROCKITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_ROCKITE_BRICK_STAIRS);
+public static final DeferredItem<BlockItem> MOSSY_ROCKITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_ROCKITE_BRICK_WALL);
+public static final DeferredItem<BlockItem> POLISHED_ARKROSE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ARKROSE_SLAB);
+public static final DeferredItem<BlockItem> POLISHED_ARKROSE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ARKROSE_STAIRS);
+public static final DeferredItem<BlockItem> POLISHED_ARKROSE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ARKROSE_WALL);
+public static final DeferredItem<BlockItem> POLISHED_ROCKITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ROCKITE_SLAB);
+public static final DeferredItem<BlockItem> POLISHED_ROCKITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ROCKITE_STAIRS);
+public static final DeferredItem<BlockItem> POLISHED_ROCKITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ROCKITE_WALL);
+public static final DeferredItem<BlockItem> POLISHED_TIDESTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TIDESTONE_SLAB);
+public static final DeferredItem<BlockItem> POLISHED_TIDESTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TIDESTONE_STAIRS);
+public static final DeferredItem<BlockItem> POLISHED_TIDESTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_TIDESTONE_WALL);
+public static final DeferredItem<BlockItem> POLISHED_ZEBRA_STONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ZEBRA_STONE_SLAB);
+public static final DeferredItem<BlockItem> POLISHED_ZEBRA_STONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ZEBRA_STONE_STAIRS);
+public static final DeferredItem<BlockItem> POLISHED_ZEBRA_STONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_ZEBRA_STONE_WALL);
+    public static final DeferredItem<BlockItem> SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE);
+    public static final DeferredItem<BlockItem> POLISHED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE);
+    public static final DeferredItem<BlockItem> SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICKS);
+    public static final DeferredItem<BlockItem> CHISELED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_SHELLSTONE);
+    public static final DeferredItem<BlockItem> MOSSY_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICKS);
+    public static final DeferredItem<BlockItem> CRACKED_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRACKED_SHELLSTONE_BRICKS);
+    public static final DeferredItem<BlockItem> MOSSY_SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> MOSSY_SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> MOSSY_SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_STAIRS);
+    public static final DeferredItem<BlockItem> SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_SLAB);
+    public static final DeferredItem<BlockItem> SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_WALL);
+    public static final DeferredItem<BlockItem> POLISHED_SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_STAIRS);
+    public static final DeferredItem<BlockItem> POLISHED_SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_SLAB);
+    public static final DeferredItem<BlockItem> POLISHED_SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_WALL);
+    public static final DeferredItem<BlockItem> SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> SHELLSTONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_PILLAR);
+    public static final DeferredItem<BlockItem> FLYTRAP_GOO_BLOCK_ITEM = ITEMS.register("flytrap_goo_block",
+            id -> new FlytrapGooBlockItem(AntarchyNeoforgeBlocks.FLYTRAP_GOO_BLOCK.get(), blockItemProps(id)));
+    public static final DeferredItem<BlockItem> PALE_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PALE_NYXITE);
+    public static final DeferredItem<BlockItem> NYXITE_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_SPIKE);
+    public static final DeferredItem<BlockItem> CHITIN_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHITIN_SPIKE);
+    public static final DeferredItem<BlockItem> POTENT_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POTENT_NYXITE);
+    public static final DeferredItem<BlockItem> UMBRAL_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UMBRAL_MOSS_BLOCK);
+    public static final DeferredItem<BlockItem> UMBRAL_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UMBRAL_MOSS_CARPET);
+    public static final DeferredItem<BlockItem> AMBER_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.AMBER_MOSS_BLOCK);
+    public static final DeferredItem<BlockItem> AMBER_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.AMBER_MOSS_CARPET);
+    public static final DeferredItem<BlockItem> AMBER_LICHEN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.AMBER_LICHEN);
+    public static final DeferredItem<BlockItem> BILE_VEIN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BILE_VEIN);
+    public static final DeferredItem<BlockItem> CREEPVINE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPVINE);
+    public static final DeferredItem<BlockItem> BLUSH_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLUSH_MOSS_BLOCK);
+    public static final DeferredItem<BlockItem> BLUSH_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLUSH_MOSS_CARPET);
+    public static final DeferredItem<DreamTorchItem> DREAM_TORCH_ITEM = ITEMS.register("dream_torch",
+            id -> new DreamTorchItem(AntarchyNeoforgeBlocks.DREAM_TORCH.get(), AntarchyNeoforgeBlocks.DREAM_WALL_TORCH.get(), AntarchyNeoforgeBlocks.DREAM_CEILING_TORCH.get(), blockItemProps(id)));
+    public static final DeferredItem<BlockItem> DREAM_LANTERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_LANTERN);
+    public static final DeferredItem<BlockItem> DREAM_CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_CAMPFIRE);
+    public static final DeferredItem<BlockItem> LUMEN_FROGLIGHT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LUMEN_FROGLIGHT);
+    public static final DeferredItem<BlockItem> ROSEATE_FROGLIGHT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROSEATE_FROGLIGHT);
+    public static final DeferredItem<BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BED_BUG_EGG);
+    public static final DeferredItem<BlockItem> CRAWLING_BLIGHT_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRAWLING_BLIGHT_EGG);
+    public static final DeferredItem<BlockItem> PRINCE_EGG_ITEM = ITEMS.register("prince_egg",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.PRINCE_EGG.get(), blockItemProps(id).rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<BlockItem> PRINCESS_EGG_ITEM = ITEMS.register("princess_egg",
+            id -> new BlockItem(AntarchyNeoforgeBlocks.PRINCESS_EGG.get(), blockItemProps(id).rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<BlockItem> SPRINGBUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPRINGBUG_EGG);
+    public static final DeferredItem<BlockItem> SPIT_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIT_BUG_EGG);
+    public static final DeferredItem<BlockItem> JERRY_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.JERRY_EGG);
+    public static final DeferredItem<BlockItem> SKULKING_FRIGHT_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SKULKING_FRIGHT_EGG);
+    public static final DeferredItem<BlockItem> WASP_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.WASP_NEST);
+    public static final DeferredItem<BlockItem> HUSHWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.HUSHWEED);
+    public static final DeferredItem<BlockItem> HANGING_CREEPROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.HANGING_CREEPROOTS);
+    public static final DeferredItem<BlockItem> GLOWCAP_MUSHROOM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GLOWCAP_MUSHROOM);
+    public static final DeferredItem<BlockItem> GLOWCAP_MUSHROOM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GLOWCAP_MUSHROOM_BLOCK);
+    public static final DeferredItem<BlockItem> MOLTING_VINES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOLTING_VINES);
     public static final DeferredItem<BucketItem> BILE_BUCKET = ITEMS.register("bile_bucket",
             id -> new BucketItem(AntarchyNeoforgeMisc.BILE.get(), itemProps(id).craftRemainder(Items.BUCKET).stacksTo(1)));
     public static final DeferredItem<BucketItem> ICHOR_BUCKET = ITEMS.register("ichor_bucket",
@@ -794,10 +796,10 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
             id -> new BucketItem(AntarchyNeoforgeMisc.ANTIWATER.get(), itemProps(id).craftRemainder(Items.BUCKET).stacksTo(1)));
     public static final DeferredItem<BucketItem> LUMEN_BUCKET = ITEMS.register("lumen_bucket",
             id -> new BucketItem(AntarchyNeoforgeMisc.LUMEN.get(), itemProps(id).craftRemainder(Items.BUCKET).stacksTo(1)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.CloudBucketItem> CLOUD_BUCKET = ITEMS.register("cloud_bucket",
-            id -> new com.craisinlord.antarchy.content.item.CloudBucketItem(AntarchyNeoforgeBlocks.CLOUD_BLOCK.get(), itemProps(id).craftRemainder(Items.BUCKET)));
+    public static final DeferredItem<CloudBucketItem> CLOUD_BUCKET = ITEMS.register("cloud_bucket",
+            id -> new CloudBucketItem(AntarchyNeoforgeBlocks.CLOUD_BLOCK.get(), itemProps(id).craftRemainder(Items.BUCKET)));
     public static final DeferredItem<BloodCrystalShardItem> BLOOD_CRYSTAL_SHARD = ITEMS.register("blood_crystal_shard",
-            id -> new BloodCrystalShardItem(itemProps(id).trimMaterial(com.craisinlord.antarchy.content.item.AntarchyTrimMaterials.BLOOD_CRYSTAL)));
+            id -> new BloodCrystalShardItem(itemProps(id).trimMaterial(AntarchyTrimMaterials.BLOOD_CRYSTAL)));
     public static final DeferredItem<TemporalTunerItem> TEMPORAL_TUNER = ITEMS.register("temporal_tuner",
             id -> new TemporalTunerItem(itemProps(id).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredItem<Item> BLOOD_CRYSTAL_APPLE = ITEMS.register("blood_crystal_apple",
@@ -805,9 +807,9 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
                     .rarity(Rarity.RARE)
                     .food(new FoodProperties.Builder()
                             .nutrition(4)
-                            .saturationModifier(1.2f)
+                            .saturationModifier(1.2F)
                             .alwaysEdible()
-                            .build(), Consumables.defaultFood().onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, 100, 1), 1.0f)).build())));
+                            .build(), Consumables.defaultFood().onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 1), 1.0F)).build())));
     public static final DeferredItem<BloodCrystalArmorItem> BLOOD_CRYSTAL_HELMET = ITEMS.register("blood_crystal_helmet",
             id -> new BloodCrystalArmorItem(BLOOD_CRYSTAL_ARMOR_MATERIAL.get(), ArmorType.HELMET, itemProps(id).rarity(Rarity.RARE)));
     public static final DeferredItem<BloodCrystalArmorItem> BLOOD_CRYSTAL_CHESTPLATE = ITEMS.register("blood_crystal_chestplate",
@@ -816,15 +818,15 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
             id -> new BloodCrystalArmorItem(BLOOD_CRYSTAL_ARMOR_MATERIAL.get(), ArmorType.LEGGINGS, itemProps(id).rarity(Rarity.RARE)));
     public static final DeferredItem<BloodCrystalArmorItem> BLOOD_CRYSTAL_BOOTS = ITEMS.register("blood_crystal_boots",
             id -> new BloodCrystalArmorItem(BLOOD_CRYSTAL_ARMOR_MATERIAL.get(), ArmorType.BOOTS, itemProps(id).rarity(Rarity.RARE)));
-    public static final DeferredItem<Item> TIGERS_EYE = ITEMS.registerSimpleItem("tigers_eye", props -> props.rarity(Rarity.UNCOMMON).trimMaterial(com.craisinlord.antarchy.content.item.AntarchyTrimMaterials.TIGERS_EYE));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.TigerEyeArmorItem> TIGERS_EYE_HELMET = ITEMS.register("tigers_eye_helmet",
-            id -> new com.craisinlord.antarchy.content.item.TigerEyeArmorItem(TIGERS_EYE_ARMOR_MATERIAL.get(), ArmorType.HELMET, itemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.TigerEyeArmorItem> TIGERS_EYE_CHESTPLATE = ITEMS.register("tigers_eye_chestplate",
-            id -> new com.craisinlord.antarchy.content.item.TigerEyeArmorItem(TIGERS_EYE_ARMOR_MATERIAL.get(), ArmorType.CHESTPLATE, itemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.TigerEyeArmorItem> TIGERS_EYE_LEGGINGS = ITEMS.register("tigers_eye_leggings",
-            id -> new com.craisinlord.antarchy.content.item.TigerEyeArmorItem(TIGERS_EYE_ARMOR_MATERIAL.get(), ArmorType.LEGGINGS, itemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.TigerEyeArmorItem> TIGERS_EYE_BOOTS = ITEMS.register("tigers_eye_boots",
-            id -> new com.craisinlord.antarchy.content.item.TigerEyeArmorItem(TIGERS_EYE_ARMOR_MATERIAL.get(), ArmorType.BOOTS, itemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<Item> TIGERS_EYE = ITEMS.registerSimpleItem("tigers_eye", props -> props.rarity(Rarity.UNCOMMON).trimMaterial(AntarchyTrimMaterials.TIGERS_EYE));
+    public static final DeferredItem<TigerEyeArmorItem> TIGERS_EYE_HELMET = ITEMS.register("tigers_eye_helmet",
+            id -> new TigerEyeArmorItem(TIGERS_EYE_ARMOR_MATERIAL.get(), ArmorType.HELMET, itemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<TigerEyeArmorItem> TIGERS_EYE_CHESTPLATE = ITEMS.register("tigers_eye_chestplate",
+            id -> new TigerEyeArmorItem(TIGERS_EYE_ARMOR_MATERIAL.get(), ArmorType.CHESTPLATE, itemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<TigerEyeArmorItem> TIGERS_EYE_LEGGINGS = ITEMS.register("tigers_eye_leggings",
+            id -> new TigerEyeArmorItem(TIGERS_EYE_ARMOR_MATERIAL.get(), ArmorType.LEGGINGS, itemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<TigerEyeArmorItem> TIGERS_EYE_BOOTS = ITEMS.register("tigers_eye_boots",
+            id -> new TigerEyeArmorItem(TIGERS_EYE_ARMOR_MATERIAL.get(), ArmorType.BOOTS, itemProps(id).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<BloodCrystalKatanaItem> BLOOD_CRYSTAL_KATANA = ITEMS.register("blood_crystal_katana",
             id -> new BloodCrystalKatanaItem(
                     BLOOD_CRYSTAL_KATANA_TIER,
@@ -846,7 +848,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
     public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.registerSimpleItem("queen_scale", props -> props.rarity(Rarity.RARE).fireResistant());
     public static final DeferredItem<Item> CHITIN = ITEMS.registerSimpleItem("chitin", props -> props.rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.register("jerry_nucleus",
-            id -> new com.craisinlord.antarchy.content.item.JerryNucleusItem(itemProps(id).rarity(Rarity.UNCOMMON)
+            id -> new JerryNucleusItem(itemProps(id).rarity(Rarity.UNCOMMON)
                     .food(new FoodProperties.Builder()
                             .nutrition(2)
                             .saturationModifier(0.1F)
@@ -985,8 +987,8 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
                     .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.0F).alwaysEdible().build())));
     public static final DeferredItem<Item> URANIUM_NUGGET = ITEMS.registerSimpleItem("uranium_nugget", props -> props.rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> TITANIUM_NUGGET = ITEMS.registerSimpleItem("titanium_nugget", props -> props.rarity(Rarity.UNCOMMON));
-    public static final DeferredItem<Item> URANIUM_INGOT = ITEMS.registerSimpleItem("uranium_ingot", props -> props.rarity(Rarity.UNCOMMON).fireResistant().trimMaterial(com.craisinlord.antarchy.content.item.AntarchyTrimMaterials.URANIUM));
-    public static final DeferredItem<Item> TITANIUM_INGOT = ITEMS.registerSimpleItem("titanium_ingot", props -> props.rarity(Rarity.UNCOMMON).fireResistant().trimMaterial(com.craisinlord.antarchy.content.item.AntarchyTrimMaterials.TITANIUM));
+    public static final DeferredItem<Item> URANIUM_INGOT = ITEMS.registerSimpleItem("uranium_ingot", props -> props.rarity(Rarity.UNCOMMON).fireResistant().trimMaterial(AntarchyTrimMaterials.URANIUM));
+    public static final DeferredItem<Item> TITANIUM_INGOT = ITEMS.registerSimpleItem("titanium_ingot", props -> props.rarity(Rarity.UNCOMMON).fireResistant().trimMaterial(AntarchyTrimMaterials.TITANIUM));
     public static final DeferredItem<Item> MOLEVORE_NOSE = ITEMS.registerSimpleItem("molevore_nose", props -> props.rarity(Rarity.RARE));
     public static final DeferredItem<Item> MOLEWORM_ITEM = ITEMS.register("moleworm",
             id -> new Item(itemProps(id)
@@ -1017,10 +1019,10 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
             id -> new ScorpionWhipItem(ToolMaterial.IRON, itemProps(id).rarity(Rarity.RARE).durability(384)));
     public static final DeferredItem<MogglesItem> MOGGLES = ITEMS.register("moggles",
             id -> new MogglesItem(MOGGLES_ARMOR_MATERIAL.get(), itemProps(id).rarity(Rarity.RARE).stacksTo(1)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.SnoutCompassItem> SNOUT_COMPASS = ITEMS.register("snout_compass",
-            id -> new com.craisinlord.antarchy.content.item.SnoutCompassItem(itemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.FallenKingCrownItem> FALLEN_KING_CROWN = ITEMS.register("fallen_king_crown",
-            id -> new com.craisinlord.antarchy.content.item.FallenKingCrownItem(
+    public static final DeferredItem<SnoutCompassItem> SNOUT_COMPASS = ITEMS.register("snout_compass",
+            id -> new SnoutCompassItem(itemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<FallenKingCrownItem> FALLEN_KING_CROWN = ITEMS.register("fallen_king_crown",
+            id -> new FallenKingCrownItem(
                     FALLEN_KING_CROWN_ARMOR_MATERIAL.get(),
                     itemProps(id).rarity(Rarity.RARE)
             ));
@@ -1132,7 +1134,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
                     AntarchyNeoforgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
-                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.DEFAULT
+                    PortalGunVariant.DEFAULT
             ));
     public static final DeferredItem<PortalGunItem> PORTAL_GUN_ATLAS = ITEMS.register("portal_gun_atlas",
             id -> new PortalGunItem(
@@ -1141,7 +1143,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
                     AntarchyNeoforgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
-                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.ATLAS
+                    PortalGunVariant.ATLAS
             ));
     public static final DeferredItem<PortalGunItem> PORTAL_GUN_P_BODY = ITEMS.register("portal_gun_p_body",
             id -> new PortalGunItem(
@@ -1150,7 +1152,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
                     AntarchyNeoforgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
-                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.P_BODY
+                    PortalGunVariant.P_BODY
             ));
     public static final DeferredItem<PortalGunItem> PORTAL_GUN_CRAISIN = ITEMS.register("portal_gun_craisin",
             id -> new PortalGunItem(
@@ -1159,7 +1161,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
                     AntarchyNeoforgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
-                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.CRAISIN
+                    PortalGunVariant.CRAISIN
             ));
     public static final DeferredItem<PortalGunItem> PORTAL_GUN_LAYNCE = ITEMS.register("portal_gun_laynce",
             id -> new PortalGunItem(
@@ -1168,7 +1170,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
                     AntarchyNeoforgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
-                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.LAYNCE
+                    PortalGunVariant.LAYNCE
             ));
     public static final DeferredItem<EyeOfTheStormItem> EYE_OF_THE_STORM = ITEMS.register("eye_of_the_storm",
             id -> new EyeOfTheStormItem(itemProps(id).stacksTo(1).durability(384).rarity(Rarity.EPIC)));
@@ -1228,24 +1230,24 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
             id -> new SpawnEggItem(itemProps(id).spawnEgg(AntarchyNeoforgeEntities.GLIMMER.get())));
     public static final DeferredItem<SpawnEggItem> ELKA_SPAWN_EGG = ITEMS.register("elka_spawn_egg",
             id -> new SpawnEggItem(itemProps(id).spawnEgg(AntarchyNeoforgeEntities.ELKA.get())));
-    public static final DeferredItem<net.minecraft.world.item.Item> SPIRIT_APPLE = ITEMS.register("spirit_apple",
-            id -> new com.craisinlord.antarchy.content.item.SpiritAppleItem(itemProps(id)
+    public static final DeferredItem<Item> SPIRIT_APPLE = ITEMS.register("spirit_apple",
+            id -> new SpiritAppleItem(itemProps(id)
                     .food(new FoodProperties.Builder()
                             .nutrition(4)
                             .saturationModifier(0.3F)
                             .alwaysEdible()
                             .build())));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerBottleItem> GLIMMER_BOTTLE = ITEMS.register("glimmer_bottle",
-            id -> new com.craisinlord.antarchy.content.item.GlimmerBottleItem(itemProps(id)));
+    public static final DeferredItem<GlimmerBottleItem> GLIMMER_BOTTLE = ITEMS.register("glimmer_bottle",
+            id -> new GlimmerBottleItem(itemProps(id)));
     public static final DeferredItem<Item> FADED_MEMORY = ITEMS.register("faded_memory", id -> new Item(itemProps(id).rarity(Rarity.UNCOMMON)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> TORETERROR_GLIMMER_SIGIL = ITEMS.register("toreterror_glimmer_sigil", id -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.TORETERROR, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> ALPHA_MANTIS_GLIMMER_SIGIL = ITEMS.register("alpha_mantis_glimmer_sigil", id -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.ALPHA_MANTIS, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> EMPEROR_SCORPION_GLIMMER_SIGIL = ITEMS.register("emperor_scorpion_glimmer_sigil", id -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.EMPEROR_SCORPION, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> BRUTALFLY_GLIMMER_SIGIL = ITEMS.register("brutalfly_glimmer_sigil", id -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.BRUTALFLY, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> HERCULES_BEETLE_GLIMMER_SIGIL = ITEMS.register("hercules_beetle_glimmer_sigil", id -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.HERCULES_BEETLE, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> KRAKEN_GLIMMER_SIGIL = ITEMS.register("kraken_glimmer_sigil", id -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.KRAKEN, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> KING_GLIMMER_SIGIL = ITEMS.register("king_glimmer_sigil", id -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.KING, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> QUEEN_GLIMMER_SIGIL = ITEMS.register("queen_glimmer_sigil", id -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.QUEEN, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<GlimmerSigilItem> TORETERROR_GLIMMER_SIGIL = ITEMS.register("toreterror_glimmer_sigil", id -> new GlimmerSigilItem(GlimmerSigilTarget.TORETERROR, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<GlimmerSigilItem> ALPHA_MANTIS_GLIMMER_SIGIL = ITEMS.register("alpha_mantis_glimmer_sigil", id -> new GlimmerSigilItem(GlimmerSigilTarget.ALPHA_MANTIS, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<GlimmerSigilItem> EMPEROR_SCORPION_GLIMMER_SIGIL = ITEMS.register("emperor_scorpion_glimmer_sigil", id -> new GlimmerSigilItem(GlimmerSigilTarget.EMPEROR_SCORPION, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<GlimmerSigilItem> BRUTALFLY_GLIMMER_SIGIL = ITEMS.register("brutalfly_glimmer_sigil", id -> new GlimmerSigilItem(GlimmerSigilTarget.BRUTALFLY, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<GlimmerSigilItem> HERCULES_BEETLE_GLIMMER_SIGIL = ITEMS.register("hercules_beetle_glimmer_sigil", id -> new GlimmerSigilItem(GlimmerSigilTarget.HERCULES_BEETLE, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<GlimmerSigilItem> KRAKEN_GLIMMER_SIGIL = ITEMS.register("kraken_glimmer_sigil", id -> new GlimmerSigilItem(GlimmerSigilTarget.KRAKEN, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<GlimmerSigilItem> KING_GLIMMER_SIGIL = ITEMS.register("king_glimmer_sigil", id -> new GlimmerSigilItem(GlimmerSigilTarget.KING, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<GlimmerSigilItem> QUEEN_GLIMMER_SIGIL = ITEMS.register("queen_glimmer_sigil", id -> new GlimmerSigilItem(GlimmerSigilTarget.QUEEN, itemProps(id).stacksTo(16).rarity(Rarity.RARE)));
     public static final DeferredItem<SpawnEggItem> FLYING_SQUIRREL_SPAWN_EGG = ITEMS.register("flying_squirrel_spawn_egg",
             id -> new SpawnEggItem(itemProps(id).spawnEgg(AntarchyNeoforgeEntities.FLYING_SQUIRREL.get())));
     public static final DeferredItem<SpawnEggItem> CATERPILLAR_SPAWN_EGG = ITEMS.register("caterpillar_spawn_egg",
@@ -1361,7 +1363,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
             id -> new SpawnEggItem(itemProps(id).spawnEgg(AntarchyNeoforgeEntities.CHEEP.get())));
     public static final DeferredItem<Item> CHEEP_ITEM = ITEMS.register("cheep",
             id -> new Item(itemProps(id)
-                    .food(new net.minecraft.world.food.FoodProperties.Builder()
+                    .food(new FoodProperties.Builder()
                             .nutrition(2)
                             .saturationModifier(0.1F)
                             .build())));
@@ -1372,7 +1374,7 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
                             .saturationModifier(0.6F)
                             .build())));
     public static final DeferredItem<MobBucketItem> CHEEP_BUCKET = ITEMS.register("cheep_bucket",
-            id -> new MobBucketItem(AntarchyNeoforgeEntities.CHEEP.get(), net.minecraft.world.level.material.Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, itemProps(id).craftRemainder(Items.BUCKET).stacksTo(1)));
+            id -> new MobBucketItem(AntarchyNeoforgeEntities.CHEEP.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, itemProps(id).craftRemainder(Items.BUCKET).stacksTo(1)));
     private AntarchyNeoforgeItems() {}
 
     public static void register(IEventBus modEventBus) {
@@ -1490,43 +1492,43 @@ public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ZE
         defense.put(ArmorType.BODY, 0);
         return defense;
     }
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> JELLIED_CRANBERRY_BLOCK_ITEM = ITEMS.register("jellied_cranberry_block", id -> new com.craisinlord.antarchy.content.item.JelliedCranberryBlockItem(AntarchyNeoforgeBlocks.JELLIED_CRANBERRY_BLOCK.get(), blockItemProps(id)));
-    public static final DeferredItem<Item> ELYTHIAN_TRUFFLE = ITEMS.registerSimpleItem("elythian_truffle", props -> props.food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).build(), net.minecraft.world.item.component.Consumables.defaultFood().build()));
-    public static final DeferredItem<Item> ROASTED_TRUFFLE = ITEMS.registerSimpleItem("roasted_truffle", props -> props.food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6F).build(), net.minecraft.world.item.component.Consumables.defaultFood().build()));
+    public static final DeferredItem<BlockItem> JELLIED_CRANBERRY_BLOCK_ITEM = ITEMS.register("jellied_cranberry_block", id -> new JelliedCranberryBlockItem(AntarchyNeoforgeBlocks.JELLIED_CRANBERRY_BLOCK.get(), blockItemProps(id)));
+    public static final DeferredItem<Item> ELYTHIAN_TRUFFLE = ITEMS.registerSimpleItem("elythian_truffle", props -> props.food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).build(), Consumables.defaultFood().build()));
+    public static final DeferredItem<Item> ROASTED_TRUFFLE = ITEMS.registerSimpleItem("roasted_truffle", props -> props.food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6F).build(), Consumables.defaultFood().build()));
     public static final DeferredItem<Item> CRANBERRY = ITEMS.registerSimpleItem("cranberry", props -> props.food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build()));
     public static final DeferredItem<Item> DRIED_CRANBERRY = ITEMS.registerSimpleItem("dried_cranberry", props -> props.food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build()));
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.CranberrySauceItem> CRANBERRY_SAUCE = ITEMS.register("cranberry_sauce", id -> new com.craisinlord.antarchy.content.item.CranberrySauceItem(itemProps(id).stacksTo(16).craftRemainder(net.minecraft.world.item.Items.GLASS_BOTTLE).food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.5F).alwaysEdible().build())));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_LOG);
+    public static final DeferredItem<CranberrySauceItem> CRANBERRY_SAUCE = ITEMS.register("cranberry_sauce", id -> new CranberrySauceItem(itemProps(id).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE).food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.5F).alwaysEdible().build())));
+    public static final DeferredItem<BlockItem> CRANBERRY_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_LOG);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_WOOD);
+    public static final DeferredItem<BlockItem> CRANBERRY_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_WOOD);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_CRANBERRY_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_CRANBERRY_LOG);
+    public static final DeferredItem<BlockItem> STRIPPED_CRANBERRY_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_CRANBERRY_LOG);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_CRANBERRY_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_CRANBERRY_WOOD);
+    public static final DeferredItem<BlockItem> STRIPPED_CRANBERRY_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STRIPPED_CRANBERRY_WOOD);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_PLANKS);
+    public static final DeferredItem<BlockItem> CRANBERRY_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_PLANKS);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_STAIRS);
+    public static final DeferredItem<BlockItem> CRANBERRY_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_STAIRS);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_SLAB);
+    public static final DeferredItem<BlockItem> CRANBERRY_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_SLAB);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_FENCE);
+    public static final DeferredItem<BlockItem> CRANBERRY_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_FENCE);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_FENCE_GATE);
+    public static final DeferredItem<BlockItem> CRANBERRY_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_FENCE_GATE);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_DOOR);
+    public static final DeferredItem<BlockItem> CRANBERRY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_DOOR);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_TRAPDOOR);
+    public static final DeferredItem<BlockItem> CRANBERRY_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_TRAPDOOR);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> CRANBERRY_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_PRESSURE_PLATE);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_BUTTON);
+    public static final DeferredItem<BlockItem> CRANBERRY_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_BUTTON);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_LEAVES);
+    public static final DeferredItem<BlockItem> CRANBERRY_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_LEAVES);
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRANBERRY_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_SAPLING);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRIMORDIAL_GRASS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_GRASS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRIMORDIAL_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_MOSS_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRIMORDIAL_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_MOSS_CARPET);
+    public static final DeferredItem<BlockItem> CRANBERRY_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRANBERRY_SAPLING);
+    public static final DeferredItem<BlockItem> PRIMORDIAL_GRASS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_GRASS);
+    public static final DeferredItem<BlockItem> PRIMORDIAL_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_MOSS_BLOCK);
+    public static final DeferredItem<BlockItem> PRIMORDIAL_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_MOSS_CARPET);
 
 }

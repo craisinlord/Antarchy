@@ -3,25 +3,37 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.ClimbOnTopOfPowderSnowGoal;
@@ -34,23 +46,17 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Silverfish;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
-import net.minecraft.server.level.ServerLevel;
 
 public class MolewormEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(MolewormEntity.class, EntityDataSerializers.INT);
@@ -86,8 +92,8 @@ public class MolewormEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-            EntitySpawnReason spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+            EntitySpawnReason spawnReason, SpawnGroupData spawnData) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.molewormHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
@@ -262,13 +268,13 @@ public class MolewormEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput output) {
+    public void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
         output.putInt(MoleTruffles.PACIFIED_KEY, this.pacifiedTicks);
     }
 
     @Override
-    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput input) {
+    public void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
         this.pacifiedTicks = input.getIntOr(MoleTruffles.PACIFIED_KEY, 0);
     }
@@ -547,9 +553,9 @@ public class MolewormEntity extends Monster implements GeoEntity {
 
             level.setBlock(infestedPos, hostState, 3);
             level.addFreshEntity(friend);
-            level.playSound(null, emergencePos, AntarchySoundEvents.MOLEWORM_DIG.get(), net.minecraft.sounds.SoundSource.BLOCKS, 0.45F, 0.8F + level.getRandom().nextFloat() * 0.25F);
+            level.playSound(null, emergencePos, AntarchySoundEvents.MOLEWORM_DIG.get(), SoundSource.BLOCKS, 0.45F, 0.8F + level.getRandom().nextFloat() * 0.25F);
             level.addParticle(
-                    net.minecraft.core.particles.ParticleTypes.POOF,
+                    ParticleTypes.POOF,
                     infestedPos.getX() + 0.5D,
                     infestedPos.getY() + 0.45D,
                     infestedPos.getZ() + 0.5D,

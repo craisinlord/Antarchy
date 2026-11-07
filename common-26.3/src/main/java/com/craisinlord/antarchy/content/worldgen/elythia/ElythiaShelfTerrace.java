@@ -3,9 +3,11 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.Mth;
 import net.minecraft.util.Interval;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
 
 public record ElythiaShelfTerrace(DensityFunction argument, DensityFunction mask, DensityFunction lift, DensityFunction phase, DensityFunction step, DensityFunction riser, DensityFunction warp, double tilt, double minOffset, double maxOffset) implements DensityFunction {
     public static final MapCodec<ElythiaShelfTerrace> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -49,10 +51,14 @@ public record ElythiaShelfTerrace(DensityFunction argument, DensityFunction mask
     }
 
     @Override
-    public int domainAxes() { return ElythiaField.planarAxes(this.argument, this.mask, this.lift, this.phase, this.step, this.riser, this.warp); }
+    public int domainAxes() {
+        return ElythiaField.planarAxes(this.argument, this.mask, this.lift, this.phase, this.step, this.riser, this.warp);
+    }
 
     @Override
-    public MapCodec<ElythiaShelfTerrace> codec() { return CODEC; }
+    public MapCodec<ElythiaShelfTerrace> codec() {
+        return CODEC;
+    }
 
     static Shelf sample(ElythiaField.Point context, double offset, double mask, ElythiaField lift, ElythiaField phase,
                         ElythiaField step, ElythiaField riser, ElythiaField warp,

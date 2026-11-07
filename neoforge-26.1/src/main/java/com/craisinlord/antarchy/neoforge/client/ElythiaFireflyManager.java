@@ -2,8 +2,9 @@ package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.client.ElythiaGroundMist;
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeMisc;
 import net.minecraft.client.Minecraft;
@@ -35,13 +36,21 @@ public final class ElythiaFireflyManager {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
-        if (level == null || mc.player == null) return;
-        if (mc.isPaused()) return;
-        if (!ElythiaSkyRenderer.shouldRender(level)) return;
-        com.craisinlord.antarchy.content.client.ElythiaGroundMist.tick(Minecraft.getInstance(), level, AntarchyNeoforgeMisc.GROUND_MIST.get());
+        if (level == null || mc.player == null) {
+            return;
+        }
+        if (mc.isPaused()) {
+            return;
+        }
+        if (!ElythiaSkyRenderer.shouldRender(level)) {
+            return;
+        }
+        ElythiaGroundMist.tick(Minecraft.getInstance(), level, AntarchyNeoforgeMisc.GROUND_MIST.get());
 
         long dayTime = level.getOverworldClockTime() % 24000L;
-        if (dayTime < NIGHT_START || dayTime > NIGHT_END) return;
+        if (dayTime < NIGHT_START || dayTime > NIGHT_END) {
+            return;
+        }
 
         long gameTime = level.getGameTime();
         boolean fireflyBiome = level.getBiome(mc.player.blockPosition()).is(AntarchyTags.Biomes.ELYTHIA_FIREFLY_PARTICLE_BIOMES);
@@ -60,14 +69,16 @@ public final class ElythiaFireflyManager {
                     int oz = level.getRandom().nextInt(SPAWN_RADIUS_H * 2 + 1) - SPAWN_RADIUS_H;
 
                     BlockPos candidate = new BlockPos(px + ox, py + oy, pz + oz);
-                    if (!level.getBlockState(candidate).isAir()) continue;
+                    if (!level.getBlockState(candidate).isAir()) {
+                        continue;
+                    }
 
                     level.addParticle(
                             AntarchyNeoforgeMisc.FIREFLY.get(),
                             candidate.getX() + level.getRandom().nextDouble(),
                             candidate.getY() + level.getRandom().nextDouble(),
                             candidate.getZ() + level.getRandom().nextDouble(),
-                            0.0, 0.0, 0.0
+                            0.0D, 0.0D, 0.0D
                     );
                 }
             }
@@ -81,8 +92,8 @@ public final class ElythiaFireflyManager {
                     player.getX(), player.getY(), player.getZ(),
                     AntarchySoundEvents.ELYTHIA_FIREFLY_AMBIENT.get(),
                     SoundSource.AMBIENT,
-                    0.6f + level.getRandom().nextFloat() * 0.3f,
-                    0.9f + level.getRandom().nextFloat() * 0.2f,
+                    0.6F + level.getRandom().nextFloat() * 0.3F,
+                    0.9F + level.getRandom().nextFloat() * 0.2F,
                     false
             );
         }

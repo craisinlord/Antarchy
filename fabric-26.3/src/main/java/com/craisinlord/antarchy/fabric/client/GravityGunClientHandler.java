@@ -6,10 +6,10 @@ import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
 import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.InputQuirks;
 import net.minecraft.util.Mth;
 

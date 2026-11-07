@@ -2,11 +2,13 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateToolHelper;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +26,6 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class BattleAxeItem extends AxeItem implements GeoItem {
@@ -89,7 +89,7 @@ public class BattleAxeItem extends AxeItem implements GeoItem {
             private AnimatedHeldItemRenderer<BattleAxeItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+            public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }

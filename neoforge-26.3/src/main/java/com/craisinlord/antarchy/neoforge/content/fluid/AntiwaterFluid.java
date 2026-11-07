@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -155,7 +156,7 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
             return this.getFlowing(bestNeighborAmount - 1, false);
         }
 
-        return net.minecraft.world.level.material.Fluids.EMPTY.defaultFluidState();
+        return Fluids.EMPTY.defaultFluidState();
     }
 
     @Override
@@ -165,7 +166,7 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
         }
 
         if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
-            level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             this.scheduleCleanup(level, pos);
             return;
         }
@@ -193,7 +194,7 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
     @Override
     public void tick(ServerLevel level, BlockPos pos, BlockState blockState, FluidState state) {
         if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
-            level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             this.scheduleDependentCleanup(level, pos);
             return;
         }
@@ -432,7 +433,7 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
         }
 
         @Override
-        protected void createFluidStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<Fluid, FluidState> builder) {
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }

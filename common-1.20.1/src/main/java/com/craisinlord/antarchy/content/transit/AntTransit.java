@@ -1,12 +1,12 @@
 package com.craisinlord.antarchy.content.transit;
 
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.ant.AntTeleportHelper;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.network.AntTransitPayload;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.network.TransitStyle;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import java.util.Iterator;

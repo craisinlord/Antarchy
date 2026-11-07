@@ -7,8 +7,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.nio.ByteOrder;
+import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MappableRingBuffer;
@@ -52,7 +55,7 @@ public abstract class ElythiaLightTextureMixin {
                     GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_MAP_WRITE, 16);
         }
         try (var mapped = RenderSystem.getDevice().createCommandEncoder().mapBuffer(antarchy$dreamInfo.currentBuffer(), false, true)) {
-            mapped.data().order(java.nio.ByteOrder.nativeOrder()).putFloat(0, strength);
+            mapped.data().order(ByteOrder.nativeOrder()).putFloat(0, strength);
         }
         antarchy$dreamFrame = true;
     }
@@ -69,11 +72,11 @@ public abstract class ElythiaLightTextureMixin {
                     .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_lightmap"))
                     .withCull(original.isCull())
                     .withPolygonMode(original.getPolygonMode())
-                    .withDepthStencilState(java.util.Optional.ofNullable(original.getDepthStencilState()));
+                    .withDepthStencilState(Optional.ofNullable(original.getDepthStencilState()));
             builder.withVertexShader(original.getVertexShader())
                     .withVertexFormat(original.getVertexFormat(), original.getVertexFormatMode())
                     .withColorTargetState(original.getColorTargetState())
-                    .withUniform("AntarchyDreamInfo", com.mojang.blaze3d.shaders.UniformType.UNIFORM_BUFFER);
+                    .withUniform("AntarchyDreamInfo", UniformType.UNIFORM_BUFFER);
             for (RenderPipeline.UniformDescription uniform : original.getUniforms()) {
                 if (uniform.textureFormat() == null) {
                     builder.withUniform(uniform.name(), uniform.type());

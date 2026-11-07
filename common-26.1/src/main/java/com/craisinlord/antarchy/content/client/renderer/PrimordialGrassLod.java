@@ -63,7 +63,9 @@ final class PrimordialGrassLod {
     static int tierFor(Tier[] tiers, int current, double distance) {
         for (int i = 0; i < tiers.length - 1; i++) {
             double limit = tiers[i].maxDistance + (i == current ? HYSTERESIS : 0.0D);
-            if (distance < limit) return i;
+            if (distance < limit) {
+                return i;
+            }
         }
         return tiers.length - 1;
     }

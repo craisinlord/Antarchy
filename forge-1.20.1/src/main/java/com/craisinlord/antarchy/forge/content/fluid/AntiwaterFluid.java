@@ -8,14 +8,17 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 
 public abstract class AntiwaterFluid extends ForgeFlowingFluid {
@@ -112,7 +115,7 @@ public abstract class AntiwaterFluid extends ForgeFlowingFluid {
             return this.getFlowing(bestNeighborAmount - 1, false);
         }
 
-        return net.minecraft.world.level.material.Fluids.EMPTY.defaultFluidState();
+        return Fluids.EMPTY.defaultFluidState();
     }
 
     @Override
@@ -122,7 +125,7 @@ public abstract class AntiwaterFluid extends ForgeFlowingFluid {
         }
 
         if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
-            level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             this.scheduleCleanup(level, pos);
             return;
         }
@@ -150,7 +153,7 @@ public abstract class AntiwaterFluid extends ForgeFlowingFluid {
     @Override
     public void tick(Level level, BlockPos pos, FluidState state) {
         if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
-            level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             this.scheduleDependentCleanup(level, pos);
             return;
         }
@@ -269,9 +272,9 @@ public abstract class AntiwaterFluid extends ForgeFlowingFluid {
             BlockState result = state.isSource()
                 ? AntarchyForgeBlocks.ANTIMETAL.get().defaultBlockState()
                 : AntarchyForgeBlocks.NYXITE.get().defaultBlockState();
-            net.minecraftforge.event.level.BlockEvent.FluidPlaceBlockEvent fluidPlaceEvent =
-                    new net.minecraftforge.event.level.BlockEvent.FluidPlaceBlockEvent(level, pos, pos, result);
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(fluidPlaceEvent);
+            BlockEvent.FluidPlaceBlockEvent fluidPlaceEvent =
+                    new BlockEvent.FluidPlaceBlockEvent(level, pos, pos, result);
+            MinecraftForge.EVENT_BUS.post(fluidPlaceEvent);
             level.setBlockAndUpdate(pos, fluidPlaceEvent.getNewState());
             level.levelEvent(1501, pos, 0);
             return;
@@ -392,7 +395,7 @@ public abstract class AntiwaterFluid extends ForgeFlowingFluid {
         }
 
         @Override
-        protected void createFluidStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<Fluid, FluidState> builder) {
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }

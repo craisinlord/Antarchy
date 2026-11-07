@@ -1,11 +1,16 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItem;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
+import com.craisinlord.antarchy.content.component.AntarchyItemTag;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.google.common.base.Suppliers;
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
@@ -13,22 +18,23 @@ import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -38,27 +44,24 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoItem;
-import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.constant.DataTickets;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class GravityGunItem extends Item implements GeoItem, com.craisinlord.antarchy.content.client.AntarchyGeoItem {
+public class GravityGunItem extends Item implements GeoItem, AntarchyGeoItem {
     public static final String GRAVITY_GUN_CARRIED_BLOCK_TAG = "antarchy.gravity_gun_carried_block";
     private static final String LOOP_CONTROLLER = "loop_controller";
     private static final String TRANSITION_CONTROLLER = "transition_controller";
@@ -186,11 +189,11 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<net.minecraft.network.chat.Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(net.minecraft.network.chat.Component.translatable("tooltip.antarchy.gravity_gun.primary").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(net.minecraft.network.chat.Component.translatable("tooltip.antarchy.gravity_gun.secondary").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(net.minecraft.network.chat.Component.translatable("tooltip.antarchy.gravity_gun.scroll").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(net.minecraft.network.chat.Component.translatable("tooltip.antarchy.gravity_gun.blacklist").withStyle(ChatFormatting.DARK_GRAY));
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.gravity_gun.primary").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.gravity_gun.secondary").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.gravity_gun.scroll").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.gravity_gun.blacklist").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
@@ -227,7 +230,7 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
             private AnimatedHeldItemRenderer<GravityGunItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }
@@ -237,14 +240,14 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
         });
     }
 
-    private final java.util.function.Supplier<Object> renderProvider = com.google.common.base.Suppliers.memoize(() -> {
+    private final Supplier<Object> renderProvider = Suppliers.memoize(() -> {
         Object[] holder = new Object[1];
         createRenderer(o -> holder[0] = o);
         return holder[0];
     });
 
     @Override
-    public java.util.function.Supplier<Object> getRenderProvider() {
+    public Supplier<Object> getRenderProvider() {
         return this.renderProvider;
     }
 
@@ -559,7 +562,7 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
     }
 
     private static UUID getHeldTargetId(ItemStack stack) {
-        CompoundTag tag = com.craisinlord.antarchy.content.component.AntarchyItemTag.getOrEmpty(stack);
+        CompoundTag tag = AntarchyItemTag.getOrEmpty(stack);
         return tag.hasUUID(HELD_TARGET_UUID_TAG) ? tag.getUUID(HELD_TARGET_UUID_TAG) : null;
     }
 
@@ -568,7 +571,7 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
     }
 
     public static double getHeldDistance(ItemStack stack) {
-        CompoundTag tag = com.craisinlord.antarchy.content.component.AntarchyItemTag.getOrEmpty(stack);
+        CompoundTag tag = AntarchyItemTag.getOrEmpty(stack);
         double maxDistance = Math.max(MIN_HOLD_DISTANCE, AntarchySettings.gravityGunMaxHoldDistance());
         if (!tag.contains(HELD_DISTANCE_TAG)) {
             return Mth.clamp(DEFAULT_HOLD_DISTANCE, MIN_HOLD_DISTANCE, maxDistance);
@@ -578,17 +581,17 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
     }
 
     private static void setHeldTarget(ItemStack stack, UUID targetId) {
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> tag.putUUID(HELD_TARGET_UUID_TAG, targetId));
+        AntarchyItemTag.update(stack, tag -> tag.putUUID(HELD_TARGET_UUID_TAG, targetId));
     }
 
     private static void setHeldDistance(ItemStack stack, double distance) {
         double maxDistance = Math.max(MIN_HOLD_DISTANCE, AntarchySettings.gravityGunMaxHoldDistance());
         double clampedDistance = Mth.clamp(distance, MIN_HOLD_DISTANCE, maxDistance);
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> tag.putDouble(HELD_DISTANCE_TAG, clampedDistance));
+        AntarchyItemTag.update(stack, tag -> tag.putDouble(HELD_DISTANCE_TAG, clampedDistance));
     }
 
     private static void clearHeldTarget(ItemStack stack) {
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> {
+        AntarchyItemTag.update(stack, tag -> {
             tag.remove(HELD_TARGET_UUID_TAG);
             tag.remove(HELD_DISTANCE_TAG);
         });
@@ -690,14 +693,14 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
     }
 
     private void clearLegacyAnimationData(ItemStack stack) {
-        CompoundTag tag = com.craisinlord.antarchy.content.component.AntarchyItemTag.getOrEmpty(stack);
+        CompoundTag tag = AntarchyItemTag.getOrEmpty(stack);
         if (!tag.contains("antarchy.gravity_gun_anim_active")
                 && !tag.contains("antarchy.gravity_gun_anim_target_active")
                 && !tag.contains("antarchy.gravity_gun_anim_transition_ticks")) {
             return;
         }
 
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, customData -> {
+        AntarchyItemTag.update(stack, customData -> {
             customData.remove("antarchy.gravity_gun_anim_active");
             customData.remove("antarchy.gravity_gun_anim_target_active");
             customData.remove("antarchy.gravity_gun_anim_transition_ticks");

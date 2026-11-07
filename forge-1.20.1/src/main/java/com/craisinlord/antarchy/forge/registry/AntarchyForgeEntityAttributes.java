@@ -3,24 +3,31 @@ package com.craisinlord.antarchy.forge.registry;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.*;
 import com.craisinlord.antarchy.content.entity.CrawlingBlightEntity;
-import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
+import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
+import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
-import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity;
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
+import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
-import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
+import com.craisinlord.antarchy.content.entity.royal.KingEntity;
+import com.craisinlord.antarchy.content.entity.royal.PrinceEntity;
+import com.craisinlord.antarchy.content.entity.royal.PrincessEntity;
+import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
+import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.npc.Villager;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 
 public class AntarchyForgeEntityAttributes {
     private AntarchyForgeEntityAttributes() {}
@@ -65,7 +72,7 @@ public class AntarchyForgeEntityAttributes {
         event.put(AntarchyForgeEntities.ALPHA_MANTIS.get(), AlphaMantisEntity.createAttributes().build());
         event.put(AntarchyForgeEntities.FLYTRAP.get(), FlytrapEntity.createAttributes().build());
         event.put(AntarchyForgeEntities.LUCID.get(), LucidEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.VORTEX.get(), com.craisinlord.antarchy.content.entity.vortex.VortexEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.VORTEX.get(), VortexEntity.createAttributes().build());
         event.put(AntarchyForgeEntities.SCORPION.get(), ScorpionEntity.createAttributes().build());
         event.put(AntarchyForgeEntities.BASILISK.get(), BasiliskEntity.createAttributes().build());
         event.put(AntarchyForgeEntities.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
@@ -84,21 +91,21 @@ public class AntarchyForgeEntityAttributes {
         event.put(AntarchyForgeEntities.MOLEWORM.get(), MolewormEntity.createAttributes().build());
         event.put(AntarchyForgeEntities.WORM.get(), WormEntity.createAttributes().build());
         event.put(AntarchyForgeEntities.MOLEVORE.get(), MolevoreEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.CHEEP.get(), com.craisinlord.antarchy.content.entity.CheepEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.DORRIE.get(), com.craisinlord.antarchy.content.entity.DorrieEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.HERCULES_BEETLE.get(), com.craisinlord.antarchy.content.entity.HerculesBeetleEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.PRINCE.get(), com.craisinlord.antarchy.content.entity.royal.PrinceEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.PRINCESS.get(), com.craisinlord.antarchy.content.entity.royal.PrincessEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.KING.get(), com.craisinlord.antarchy.content.entity.royal.KingEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.QUEEN.get(), com.craisinlord.antarchy.content.entity.royal.QueenEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.OURANWOOD_DEER.get(), com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.GLIMMER.get(), com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.CHEEP.get(), CheepEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.DORRIE.get(), DorrieEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.HERCULES_BEETLE.get(), HerculesBeetleEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.PRINCE.get(), PrinceEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.PRINCESS.get(), PrincessEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.KING.get(), KingEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.QUEEN.get(), QueenEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.OURANWOOD_DEER.get(), OuranwoodDeerEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.GLIMMER.get(), GlimmerEntity.createAttributes().build());
         event.put(AntarchyForgeEntities.ELKA.get(), ElkaEntity.createAttributes().build());
-        event.put(AntarchyForgeEntities.HOVERBOARD.get(), com.craisinlord.antarchy.content.entity.HoverboardEntity.createAttributes().build());
+        event.put(AntarchyForgeEntities.HOVERBOARD.get(), HoverboardEntity.createAttributes().build());
     }
 
     private static AttributeSupplier.Builder buildAntAttributes(double health, double speed, double attackDamage) {
-        return net.minecraft.world.entity.Mob.createMobAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, health)
                 .add(Attributes.MOVEMENT_SPEED, speed)
                 .add(Attributes.ATTACK_DAMAGE, attackDamage);

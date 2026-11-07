@@ -1,10 +1,14 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.entity.EntityReach;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
+import com.craisinlord.antarchy.content.component.AntarchyItemTag;
+import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
 import java.util.List;
+import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -26,7 +31,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -37,7 +41,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.tags.TagKey;
 
 public class CritterCageItem extends Item {
     public static final String ENTITY_DATA_TAG = "EntityData";
@@ -128,7 +131,7 @@ public class CritterCageItem extends Item {
     }
 
     public CompoundTag getEntityData(ItemStack stack) {
-        CompoundTag tag = com.craisinlord.antarchy.content.component.AntarchyItemTag.getOrEmpty(stack);
+        CompoundTag tag = AntarchyItemTag.getOrEmpty(stack);
         if (!tag.contains(ENTITY_DATA_TAG, Tag.TAG_COMPOUND)) {
             return null;
         }
@@ -171,7 +174,7 @@ public class CritterCageItem extends Item {
 
         CompoundTag entityData = new CompoundTag();
         entity.saveWithoutId(entityData);
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> tag.put(ENTITY_DATA_TAG, entityData));
+        AntarchyItemTag.update(stack, tag -> tag.put(ENTITY_DATA_TAG, entityData));
 
         if (entity.hasCustomName()) {
             stack.setHoverName(entity.getCustomName());
@@ -223,7 +226,7 @@ public class CritterCageItem extends Item {
     }
 
     private boolean releaseAtLookTarget(ServerLevel level, Player player, InteractionHand hand, ItemStack stack) {
-        HitResult hitResult = player.pick(com.craisinlord.antarchy.compat.entity.EntityReach.blockInteractionRange(player), 0.0F, false);
+        HitResult hitResult = player.pick(EntityReach.blockInteractionRange(player), 0.0F, false);
         Vec3 target = hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHitResult
                 ? blockHitResult.getLocation().add(Vec3.atLowerCornerOf(blockHitResult.getDirection().getNormal()).scale(0.5D))
                 : player.getEyePosition().add(player.getLookAngle().scale(2.0D));
@@ -262,7 +265,7 @@ public class CritterCageItem extends Item {
             return false;
         }
 
-        entity.setUUID(java.util.UUID.randomUUID());
+        entity.setUUID(UUID.randomUUID());
         entity.moveTo(position.x, position.y, position.z, player != null ? player.getYRot() : 0.0F, 0.0F);
         if (!level.noCollision(entity)) {
             return false;
@@ -334,7 +337,7 @@ public class CritterCageItem extends Item {
     private void launchProjectile(Level level, Player player, InteractionHand hand, ItemStack stack) {
         var projectileType = AntarchyObjects.CRITTER_CAGE_PROJECTILE.get();
         var projectile = projectileType.create(level);
-        com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity critterCageProjectile = projectile;
+        CritterCageProjectileEntity critterCageProjectile = projectile;
         if (critterCageProjectile == null) {
             return;
         }

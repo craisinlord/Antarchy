@@ -28,7 +28,7 @@ public final class ParalyzedStoneLivingLayer<T extends LivingEntity, M extends E
             return;
         }
         poseStack.pushPose();
-        poseStack.scale(1.02f, 1.02f, 1.02f);
+        poseStack.scale(1.02F, 1.02F, 1.02F);
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(STONE_TEXTURE));
         this.getParentModel().renderToBuffer(
                 poseStack,

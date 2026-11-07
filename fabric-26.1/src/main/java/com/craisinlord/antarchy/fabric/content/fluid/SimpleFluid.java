@@ -1,22 +1,24 @@
 package com.craisinlord.antarchy.fabric.content.fluid;
 
+import com.craisinlord.antarchy.Antarchy;
 import java.util.Optional;
 import java.util.function.Supplier;
-import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -64,14 +66,14 @@ public abstract class SimpleFluid extends FlowingFluid {
     }
 
     @Override
-    protected boolean canConvertToSource(net.minecraft.server.level.ServerLevel level) {
+    protected boolean canConvertToSource(ServerLevel level) {
         return false;
     }
 
     @Override
     protected void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state) {
         BlockEntity blockEntity = state.hasBlockEntity() ? level.getBlockEntity(pos) : null;
-        net.minecraft.world.level.block.Block.dropResources(state, level, pos, blockEntity);
+        Block.dropResources(state, level, pos, blockEntity);
     }
 
     @Override
@@ -129,7 +131,7 @@ public abstract class SimpleFluid extends FlowingFluid {
         }
 
         @Override
-        protected void createFluidStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<Fluid, FluidState> builder) {
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }

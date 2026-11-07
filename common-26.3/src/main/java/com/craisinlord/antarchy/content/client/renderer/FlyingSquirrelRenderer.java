@@ -2,6 +2,12 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.FlyingSquirrelModel;
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
+import com.geckolib.animation.state.BoneSnapshot;
+import com.geckolib.constant.DataTickets;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.renderer.GeoEntityRenderer;
+import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.RenderPassInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -9,12 +15,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import com.geckolib.animation.state.BoneSnapshot;
-import com.geckolib.constant.DataTickets;
-import com.geckolib.constant.dataticket.DataTicket;
-import com.geckolib.renderer.GeoEntityRenderer;
-import com.geckolib.renderer.base.BoneSnapshots;
-import com.geckolib.renderer.base.RenderPassInfo;
 
 public class FlyingSquirrelRenderer extends GeoEntityRenderer<FlyingSquirrelEntity, LivingEntityRenderState> {
     private static final DataTicket<Boolean> BABY = DataTicket.create("antarchy_flying_squirrel_baby", Boolean.class);

@@ -3,8 +3,11 @@ package com.craisinlord.antarchy.content.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -41,7 +44,7 @@ public class LargeNadirFernBlock extends Block {
     }
 
     @Override
-    public void setPlacedBy(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.LivingEntity placer, net.minecraft.world.item.ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         placeOtherHalf(level, pos, state, Block.UPDATE_ALL);
     }
 
@@ -95,7 +98,7 @@ public class LargeNadirFernBlock extends Block {
     }
 
     @Override
-    public void onRemove(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
             Direction verticalDirection = state.getValue(VERTICAL_DIRECTION);
             BlockPos otherPos = state.getValue(HALF) == Half.BOTTOM

@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.VortexModel;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class VortexRenderer extends GeoEntityRenderer<VortexEntity> {
     public VortexRenderer(EntityRendererProvider.Context context) {

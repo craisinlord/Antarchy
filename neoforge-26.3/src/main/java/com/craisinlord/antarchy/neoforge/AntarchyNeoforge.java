@@ -1,23 +1,22 @@
 package com.craisinlord.antarchy.neoforge;
 
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
-import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
+import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.neoforge.registry.*;
+import com.craisinlord.anthology.effect.AnthologyEffects;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
-
 
 @Mod(Antarchy.MODID)
 public class AntarchyNeoforge {
@@ -278,7 +277,7 @@ public class AntarchyNeoforge {
     }
 
     private static void bindCommonObjects() {
-        com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntities.UPWARD_FALLING_BLOCK;
+        UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntities.UPWARD_FALLING_BLOCK;
         PermanentPortalType.bindBlocks(
                 () -> AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_WOOD.get(),
                 () -> AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get(),

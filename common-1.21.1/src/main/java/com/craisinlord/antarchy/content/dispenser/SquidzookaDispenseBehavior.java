@@ -8,8 +8,8 @@ import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.phys.Vec3;
 
 public class SquidzookaDispenseBehavior extends DefaultDispenseItemBehavior {
     @Override
@@ -18,7 +18,9 @@ public class SquidzookaDispenseBehavior extends DefaultDispenseItemBehavior {
         Position position = DispenserBlock.getDispensePosition(source);
 
         MissileSquidEntity squid = AntarchyObjects.MISSILE_SQUID.get().create(source.level());
-        if (squid == null) return super.execute(source, stack);
+        if (squid == null) {
+            return super.execute(source, stack);
+        }
 
         squid.setPos(position.x(), position.y(), position.z());
         Vec3 vel = new Vec3(direction.getStepX(), direction.getStepY(), direction.getStepZ())

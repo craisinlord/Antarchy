@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -27,8 +28,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -158,7 +159,7 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
         return InteractionResult.CONSUME;
     }
 
@@ -193,7 +194,7 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
 
         if (player.level() instanceof ServerLevel level) {
             launchOccupants(level, player, centerFrom(pos, state), forwardX, forwardZ);
-            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, LAUNCH_SOUND_PITCH);
+            level.playSound(null, pos, SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, LAUNCH_SOUND_PITCH);
             level.sendParticles(ParticleTypes.SPLASH, player.getX(), pos.getY() + 0.1D, player.getZ(), LAUNCH_PARTICLE_COUNT, 0.5D, 0.05D, 0.5D, 0.0D);
         }
     }

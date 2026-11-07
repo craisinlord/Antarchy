@@ -1,67 +1,13 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
-import com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload;
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
-import com.craisinlord.anthology.gravity.GravityApi;
-import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerSite;
-import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.BlockPos;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.BossEvent;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
-import com.craisinlord.anthology.beam.BeamSettings;
-import com.craisinlord.anthology.beam.BeamTerrainMode;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu;
-import com.craisinlord.antarchy.content.menu.RoyalJudgmentState;
 import com.craisinlord.antarchy.content.entity.royal.decree.CloseQuartersDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.ComeNoCloserDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.DoNotRunDecree;
@@ -74,18 +20,79 @@ import com.craisinlord.antarchy.content.entity.royal.decree.ShowNoMercyDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.SkyIsMineDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.StandTallDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.StandYourGroundDecree;
-import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerSite;
+import com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu;
+import com.craisinlord.antarchy.content.menu.RoyalJudgmentState;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.function.Predicate;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 public class KingEntity extends RoyalBossEntity {
     private static final DustParticleOptions KING_GOLD_DUST =
@@ -169,7 +176,7 @@ public class KingEntity extends RoyalBossEntity {
     private static final int LANDING_ROUTE_SAMPLES = 6;
     private static final int[] LANDING_ROUTE_SAMPLE_ORDER = {3, 2, 4, 1, 5};
     private static final int KING_COMBAT_SEARCH_RETRY_TICKS = 10;
-    private static final java.util.function.Predicate<net.minecraft.world.level.block.state.BlockState> LEAVES_STATE =
+    private static final Predicate<BlockState> LEAVES_STATE =
             state -> state.is(BlockTags.LEAVES);
     private static final int LANDING_ROUTE_CHECK_LIMIT = 4;
     private static final double GROUND_COMBAT_BITE_DISTANCE = 19.0D;
@@ -285,7 +292,7 @@ public class KingEntity extends RoyalBossEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return createBaseAttributes(AntarchySettings.kingHealth(),
                         AntarchySettings.kingAttackDamage() * KING_DAMAGE_MULTIPLIER, AntarchySettings.kingArmor())
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE, KING_FOLLOW_RANGE);
+                .add(Attributes.FOLLOW_RANGE, KING_FOLLOW_RANGE);
     }
 
     @Override
@@ -502,10 +509,14 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     @Override
-    protected SoundEvent royalBeamShootSound() { return AntarchySoundEvents.KING_BEAM_SHOOT.get(); }
+    protected SoundEvent royalBeamShootSound() {
+        return AntarchySoundEvents.KING_BEAM_SHOOT.get();
+    }
 
     @Override
-    protected SoundEvent royalBeamStartSound() { return AntarchySoundEvents.KING_BEAM_SHOOT.get(); }
+    protected SoundEvent royalBeamStartSound() {
+        return AntarchySoundEvents.KING_BEAM_SHOOT.get();
+    }
 
     @Override
     protected SoundEvent royalBeamStartSound(RoyalHead head) {
@@ -521,10 +532,14 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     @Override
-    protected SoundEvent royalBeamLoopSound() { return AntarchySoundEvents.KING_BEAM_SHOOT.get(); }
+    protected SoundEvent royalBeamLoopSound() {
+        return AntarchySoundEvents.KING_BEAM_SHOOT.get();
+    }
 
     @Override
-    protected SoundEvent royalBeamEndSound() { return AntarchySoundEvents.KING_BEAM_SHOOT.get(); }
+    protected SoundEvent royalBeamEndSound() {
+        return AntarchySoundEvents.KING_BEAM_SHOOT.get();
+    }
 
     @Override
     protected BeamSettings royalBeamSettings() {
@@ -615,7 +630,7 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void chainLightning(ServerLevel level, Vec3 origin) {
-        java.util.Set<UUID> struck = new java.util.HashSet<>();
+        Set<UUID> struck = new HashSet<>();
         Vec3 from = origin;
         float damage = this.scaleRoyalDamage(AntarchySettings.kingBeamDamage() * 0.6D);
         for (int jump = 0; jump < CHAIN_LIGHTNING_JUMPS; jump++) {
@@ -992,7 +1007,7 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void clearLeavesAhead(ServerLevel level) {
-        if (this.isGlimmerEcho() || !level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) {
+        if (this.isGlimmerEcho() || !level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             return;
         }
         Vec3 movement = this.getDeltaMovement().normalize().scale(1.5D);
@@ -1164,7 +1179,7 @@ public class KingEntity extends RoyalBossEntity {
         this.attackScheduler.cancel(RoyalAttackLane.BODY);
         this.attackScheduler.resetCooldown("stomp");
         this.beginRoyalAttack("stomp", RoyalAttackLane.BODY, this.stompCooldownForPhase(false),
-                1, 1, 23, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                1, 1, 23, new RoyalAttackScheduler.Action() {
                     @Override public void onStart() {
                         KingEntity.this.triggerAnim("body_action", "stomp");
                         KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 0.68F);
@@ -1531,7 +1546,7 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         if (this.beginRoyalAttack("exile_wing_animation", RoyalAttackLane.BODY, 1, 0, 1,
-                this.animationRecovery(55, 0, 1, 0), new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                this.animationRecovery(55, 0, 1, 0), new RoyalAttackScheduler.Action() {
                     @Override
                     public void onStart() {
                         KingEntity.this.exileWingAnimationPending = false;
@@ -1551,7 +1566,9 @@ public class KingEntity extends RoyalBossEntity {
         if (--this.titheTicks <= 0) {
             for (int slot = 0; slot < this.titheTarget.getInventory().getContainerSize(); slot++) {
                 ItemStack stack = this.titheTarget.getInventory().getItem(slot);
-                if (stack.isEmpty() || !isRoyalTitheItem(stack)) continue;
+                if (stack.isEmpty() || !isRoyalTitheItem(stack)) {
+                    continue;
+                }
                 ItemStack thrown = stack.split(1);
                 this.titheTarget.getInventory().setChanged();
                 this.titheTarget.drop(thrown, true);
@@ -1642,7 +1659,7 @@ public class KingEntity extends RoyalBossEntity {
             }
 
             @Override
-            public AbstractContainerMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory inventory,
+            public AbstractContainerMenu createMenu(int containerId, Inventory inventory,
                                                      Player player) {
                 return new RoyalJudgmentMenu(containerId, inventory);
             }
@@ -1661,7 +1678,7 @@ public class KingEntity extends RoyalBossEntity {
             }
 
             @Override
-            public AbstractContainerMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory inventory,
+            public AbstractContainerMenu createMenu(int containerId, Inventory inventory,
                                                      Player player) {
                 return new RoyalJudgmentMenu(containerId, inventory);
             }
@@ -1670,7 +1687,7 @@ public class KingEntity extends RoyalBossEntity {
 
     private void startSeal(ServerPlayer target) {
         this.clearSeal();
-        java.util.Set<Integer> slots = new java.util.HashSet<>();
+        Set<Integer> slots = new HashSet<>();
         for (int slot = 9; slot < 18; slot++) slots.add(slot);
         RoyalJudgmentState.seal(target.getUUID(), slots);
         this.sealedTarget = target;
@@ -1682,7 +1699,7 @@ public class KingEntity extends RoyalBossEntity {
             }
 
             @Override
-            public AbstractContainerMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory inventory,
+            public AbstractContainerMenu createMenu(int containerId, Inventory inventory,
                                                      Player player) {
                 return new RoyalJudgmentMenu(containerId, inventory);
             }
@@ -1728,9 +1745,13 @@ public class KingEntity extends RoyalBossEntity {
                         .filter(candidate -> candidate != target && candidate.isAlive() && candidate.distanceToSqr(target) <= 4096.0D)
                         .min((left, right) -> Double.compare(left.distanceToSqr(target), right.distanceToSqr(target)))
                         .orElse(null);
-                if (victim == null) return false;
+                if (victim == null) {
+                    return false;
+                }
                 ItemStack ranged = findRoyalRangedItem(target);
-                if (ranged.isEmpty()) return false;
+                if (ranged.isEmpty()) {
+                    return false;
+                }
                 target.displayClientMessage(Component.literal("The King chooses your target."), true);
                 this.startTargetShot(target, victim);
                 return true;
@@ -1748,16 +1769,16 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private static boolean isRoyalTitheItem(ItemStack stack) {
-        return stack.is(net.minecraft.world.item.Items.ARROW)
-                || stack.is(net.minecraft.world.item.Items.BREAD)
-                || stack.is(net.minecraft.world.item.Items.COBBLESTONE)
-                || stack.is(net.minecraft.world.item.Items.POTION);
+        return stack.is(Items.ARROW)
+                || stack.is(Items.BREAD)
+                || stack.is(Items.COBBLESTONE)
+                || stack.is(Items.POTION);
     }
 
     private static ItemStack findRoyalRangedItem(ServerPlayer player) {
         for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof net.minecraft.world.item.BowItem
-                    || stack.getItem() instanceof net.minecraft.world.item.CrossbowItem) {
+            if (stack.getItem() instanceof BowItem
+                    || stack.getItem() instanceof CrossbowItem) {
                 return stack;
             }
         }
@@ -1806,7 +1827,7 @@ public class KingEntity extends RoyalBossEntity {
                     && distance <= STOMP_TRIGGER_DISTANCE
                     && this.beginRoyalAttack("stomp", RoyalAttackLane.BODY,
                     this.stompCooldownForPhase(skyIsMine),
-                    STOMP_WINDUP_TICKS, 1, 18, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    STOMP_WINDUP_TICKS, 1, 18, new RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim("body_action", "stomp");
                             KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 0.7F);
@@ -1826,7 +1847,7 @@ public class KingEntity extends RoyalBossEntity {
             } else if (this.attackScheduler.ready("wing_gust", RoyalAttackLane.BODY)
                     && distance <= WING_GUST_RADIUS && (forceFar || this.random.nextInt(this.phase() == Phase.ONE ? 3 : 2) == 0)
                     && this.beginRoyalAttack("wing_gust", RoyalAttackLane.BODY, this.wingGustCooldownForPhase(),
-                    WING_GUST_WINDUP_TICKS, 1, this.animationRecovery(55, WING_GUST_WINDUP_TICKS, 1, 16), new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    WING_GUST_WINDUP_TICKS, 1, this.animationRecovery(55, WING_GUST_WINDUP_TICKS, 1, 16), new RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim("wing_action", "wing_gust");
                             KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_WING_FLAP.get(), 0.85F);
@@ -1842,7 +1863,7 @@ public class KingEntity extends RoyalBossEntity {
                     AntarchySettings.kingRoyalMusterCooldownTicks(),
                     AntarchySettings.kingRoyalMusterWindupTicks(), 1,
                     this.animationRecovery(59, AntarchySettings.kingRoyalMusterWindupTicks(), 1, 20),
-                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    new RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim("body_action", "minion_spawn");
                             KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.34F, 0.72F);
@@ -1886,7 +1907,7 @@ public class KingEntity extends RoyalBossEntity {
         return this.beginRoyalAttack("royal_charge", RoyalAttackLane.MOVEMENT,
                 this.royalChargeCooldownForPhase(), ROYAL_CHARGE_WINDUP_TICKS,
                 ROYAL_CHARGE_ACTIVE_TICKS, ROYAL_CHARGE_RECOVERY_TICKS,
-                new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                new RoyalAttackScheduler.Action() {
                     @Override
                     public void onStart() {
                         KingEntity.this.royalChargeActive = true;
@@ -2081,7 +2102,7 @@ public class KingEntity extends RoyalBossEntity {
         }
         return this.beginRoyalAttack("staggered_volley", RoyalAttackLane.HAZARD, STAGGERED_VOLLEY_COOLDOWN_TICKS,
                 STAGGERED_VOLLEY_WINDUP_TICKS, STAGGERED_VOLLEY_INTERVAL_TICKS * 2 + 1, 12,
-                new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                new RoyalAttackScheduler.Action() {
                     @Override public void onStart() {
                         KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.3F, 1.2F);
                     }
@@ -2138,18 +2159,22 @@ public class KingEntity extends RoyalBossEntity {
                 default -> distance <= 36.0D && this.iceSpikeCooldownTicks <= 0
                         && this.royalHead(RoyalHead.Slot.RIGHT).readyToAttack();
             };
-            if (!ready) return 0;
+            if (!ready) {
+                return 0;
+            }
             return switch (id) {
                 case "fireball" -> this.behaviorScore(Behavior.KEEPING_FAR) + 4;
                 case "iceball" -> this.behaviorScore(Behavior.RETREATING) + 4;
                 default -> this.behaviorScore(Behavior.HUGGING) + 3;
             };
         }, this.random);
-        if (selected == null) return;
+        if (selected == null) {
+            return;
+        }
         if ("fireball".equals(selected)) {
             if (!this.beginRoyalAttack("fireball", RoyalAttackLane.LEFT_HEAD,
                     this.kingElementalCooldown(AntarchySettings.kingFireballCooldownTicks()), 14, 1, 5,
-                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    new RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim(RoyalHead.Slot.LEFT.controllerName(), "shoot");
                         }
@@ -2169,7 +2194,7 @@ public class KingEntity extends RoyalBossEntity {
         } else if ("iceball".equals(selected)) {
             if (!this.beginRoyalAttack("iceball", RoyalAttackLane.RIGHT_HEAD,
                     this.kingElementalCooldown(AntarchySettings.kingIceballCooldownTicks()), 16, 1, 5,
-                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    new RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim(RoyalHead.Slot.RIGHT.controllerName(), "shoot");
                         }
@@ -2187,7 +2212,7 @@ public class KingEntity extends RoyalBossEntity {
         } else {
             if (!this.beginRoyalAttack("ice_spikes", RoyalAttackLane.RIGHT_HEAD,
                     this.kingElementalCooldown(AntarchySettings.kingIceSpikeCooldownTicks()), 20, 1, 5,
-                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    new RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.iceSpikeAimPoint = target.position();
                             KingEntity.this.triggerAnim(RoyalHead.Slot.RIGHT.controllerName(), "shoot");
@@ -2520,7 +2545,7 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         this.beginRoyalAttack("decree_proclamation", RoyalAttackLane.BODY, 1, 0, 1,
-                DECREE_PROCLAMATION_RECOVERY_TICKS, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                DECREE_PROCLAMATION_RECOVERY_TICKS, new RoyalAttackScheduler.Action() {
                     @Override public void onStart() {
                         KingEntity.this.triggerAnim("body_action", "minion_spawn");
                     }
@@ -2554,7 +2579,9 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void sendDecreeTitle(ServerPlayer player) {
-        if (this.activeDecree == null) return;
+        if (this.activeDecree == null) {
+            return;
+        }
         player.connection.send(new ClientboundSetTitlesAnimationPacket(5, DECREE_TITLE_HOLD_TICKS, 10));
         player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable(this.activeDecree.translationKey())
                 .withStyle(style -> style.withColor(ChatFormatting.GOLD).withBold(true))));
@@ -2656,7 +2683,7 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         this.beginRoyalAttack("royal_judgment", RoyalAttackLane.HAZARD, 80,
-                20, this.isGlimmerEcho() ? GLIMMER_JUDGMENT_ACTIVE_TICKS : JUDGMENT_ACTIVE_TICKS, 12, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                20, this.isGlimmerEcho() ? GLIMMER_JUDGMENT_ACTIVE_TICKS : JUDGMENT_ACTIVE_TICKS, 12, new RoyalAttackScheduler.Action() {
                     @Override
                     public void onStart() {
                         for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
@@ -2765,7 +2792,9 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     public void invokeJudgment(LivingEntity target) {
-        if (target == null || !target.isAlive() || this.isDeadOrDying() || target.level() != this.level()) return;
+        if (target == null || !target.isAlive() || this.isDeadOrDying() || target.level() != this.level()) {
+            return;
+        }
         long now = this.level().getGameTime();
         if (this.judgmentCooldowns.getOrDefault(target.getUUID(), 0L) <= now) {
             this.judgmentCooldowns.put(target.getUUID(), now + this.scaledRoyalCooldown(20));
@@ -2846,7 +2875,9 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     public static boolean blocksHealingAround(LivingEntity target) {
-        if (target.level().isClientSide || NO_RESPITE_KINGS.isEmpty()) return false;
+        if (target.level().isClientSide || NO_RESPITE_KINGS.isEmpty()) {
+            return false;
+        }
         return !target.level().getEntitiesOfClass(KingEntity.class, target.getBoundingBox().inflate(128.0D),
                 king -> king.isAlive() && king.blocksHealing()).isEmpty();
     }

@@ -2,12 +2,12 @@ package com.craisinlord.antarchy.content.client.model;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.MolevoreEntity;
+import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import com.geckolib.renderer.base.BoneSnapshots;
-import com.geckolib.model.GeoModel;
-import com.geckolib.renderer.base.GeoRenderState;
 
 public class MolevoreModel extends GeoModel<MolevoreEntity> {
     private static final Identifier MODEL = Identifier.fromNamespaceAndPath(Antarchy.MODID, "molevore");

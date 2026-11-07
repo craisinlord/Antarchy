@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -68,7 +69,7 @@ public final class ThoraxisRibColumnsFeature extends Feature<ThoraxisRibColumnsC
                     BlockPos target = center.offset(x, y, z);
                     BlockState state = level.getBlockState(target);
                     if (state.isAir() || state.canBeReplaced() || !state.getFluidState().isEmpty()) {
-                        level.setBlock(target, com.craisinlord.antarchy.content.AntarchyObjects.NYXITE.get().defaultBlockState(), 2);
+                        level.setBlock(target, AntarchyObjects.NYXITE.get().defaultBlockState(), 2);
                     }
                 }
             }

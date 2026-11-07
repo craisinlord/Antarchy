@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.effect;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import net.minecraft.core.Holder;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffect;
@@ -35,8 +37,8 @@ public final class SaucedMeals {
         float bonusSaturation = food.saturation() * BONUS_MULTIPLIER;
         player.getFoodData().eat(bonusNutrition, bonusSaturation / (2.0F * bonusNutrition));
         player.removeEffect(sauced);
-        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new net.minecraft.network.protocol.game.ClientboundSoundPacket(SoundEvents.HONEY_DRINK, player.getSoundSource(),
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.connection.send(new ClientboundSoundPacket(SoundEvents.HONEY_DRINK, player.getSoundSource(),
                     player.getX(), player.getY(), player.getZ(), 0.8F, 1.2F, player.getRandom().nextLong()));
         }
     }

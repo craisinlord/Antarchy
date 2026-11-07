@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.OuranwoodDeerModel;
 import com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import com.geckolib.renderer.GeoEntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 public class OuranwoodDeerRenderer extends GeoEntityRenderer<OuranwoodDeerEntity, LivingEntityRenderState> {

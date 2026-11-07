@@ -9,6 +9,8 @@ import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -17,8 +19,6 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.registries.Registries;
 import org.joml.Vector3f;
 
 public final class BloodglassManager {
@@ -31,13 +31,23 @@ public final class BloodglassManager {
 
     public static void register() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
-            if (!(entity instanceof Player player)) return true;
-            if (entity.level().isClientSide()) return true;
-            if (amount <= 1.0f) return true;
-            if (source.is(BYPASSES_BLOODGLASS)) return true;
+            if (!(entity instanceof Player player)) {
+                return true;
+            }
+            if (entity.level().isClientSide()) {
+                return true;
+            }
+            if (amount <= 1.0F) {
+                return true;
+            }
+            if (source.is(BYPASSES_BLOODGLASS)) {
+                return true;
+            }
 
             BloodglassAccess access = (BloodglassAccess) player;
-            if (access.antarchy$getTotalShieldsActive() <= 0) return true;
+            if (access.antarchy$getTotalShieldsActive() <= 0) {
+                return true;
+            }
 
             if (access.antarchy$getAppleShieldsActive() > 0) {
                 access.antarchy$setAppleShieldsActive(access.antarchy$getAppleShieldsActive() - 1);
@@ -55,11 +65,11 @@ public final class BloodglassManager {
 
             ServerLevel serverLevel = (ServerLevel) player.level();
             serverLevel.broadcastEntityEvent(player, (byte) 2);
-            serverLevel.playSound(null, player.blockPosition(), AntarchySoundEvents.BLOODGLASS_WARD_HEART_BREAK.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+            serverLevel.playSound(null, player.blockPosition(), AntarchySoundEvents.BLOODGLASS_WARD_HEART_BREAK.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
             serverLevel.sendParticles(
-                    new DustParticleOptions(new Vector3f(0.85f, 0.18f, 0.38f), 1.2f),
+                    new DustParticleOptions(new Vector3f(0.85F, 0.18F, 0.38F), 1.2F),
                     player.getX(), player.getEyeY(), player.getZ(),
-                    35, 0.35, 0.55, 0.35, 0.12
+                    35, 0.35D, 0.55D, 0.35D, 0.12D
             );
 
             syncBloodglass((ServerPlayer) player);
@@ -77,13 +87,17 @@ public final class BloodglassManager {
     }
 
     public static void handleArmorEquipChange(Player player, EquipmentSlot slot, ItemStack from, ItemStack to) {
-        if (player.level().isClientSide()) return;
+        if (player.level().isClientSide()) {
+            return;
+        }
         if (slot != EquipmentSlot.HEAD && slot != EquipmentSlot.CHEST
                 && slot != EquipmentSlot.LEGS && slot != EquipmentSlot.FEET) return;
 
         boolean fromIsBC = from.getItem() instanceof BloodCrystalArmorItem;
         boolean toIsBC = to.getItem() instanceof BloodCrystalArmorItem;
-        if (!fromIsBC && !toIsBC) return;
+        if (!fromIsBC && !toIsBC) {
+            return;
+        }
 
         BloodglassAccess access = (BloodglassAccess) player;
 
@@ -99,7 +113,9 @@ public final class BloodglassManager {
         } else if (!fromIsBC) {
             int bcPieces = 1;
             for (EquipmentSlot s : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-                if (s == slot) continue;
+                if (s == slot) {
+                    continue;
+                }
                 if (player.getItemBySlot(s).getItem() instanceof BloodCrystalArmorItem) bcPieces++;
             }
             int currentTotal = access.antarchy$getArmorShieldsActive() + access.antarchy$getArmorShieldLostCount();
@@ -121,7 +137,9 @@ public final class BloodglassManager {
     }
 
     public static void handleWardApplied(Player player, int amplifier) {
-        if (player.level().isClientSide()) return;
+        if (player.level().isClientSide()) {
+            return;
+        }
         BloodglassAccess access = (BloodglassAccess) player;
         int cap = Math.max(0, AntarchySettings.bloodCrystalHardMaxShields()
                 - access.antarchy$getArmorShieldsActive()
@@ -135,7 +153,9 @@ public final class BloodglassManager {
     }
 
     public static void handleWardRemoved(Player player) {
-        if (player.level().isClientSide()) return;
+        if (player.level().isClientSide()) {
+            return;
+        }
         BloodglassAccess access = (BloodglassAccess) player;
         access.antarchy$setAppleShieldsActive(0);
         access.antarchy$setAppleShieldLostCount(0);
@@ -180,7 +200,7 @@ public final class BloodglassManager {
 
         if (changed) {
             syncBloodglass(player);
-            player.playNotifySound(AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+            player.playNotifySound(AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         }
     }
 

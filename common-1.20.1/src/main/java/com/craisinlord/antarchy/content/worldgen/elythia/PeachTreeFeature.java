@@ -5,8 +5,10 @@ import com.craisinlord.antarchy.content.block.PeachLeavesBlock;
 import com.mojang.serialization.Codec;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,13 +18,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class PeachTreeFeature extends Feature<PeachTreeConfiguration> {
     private static final ResourceLocation PEACH_LOG_ID = new ResourceLocation(Antarchy.MODID, "peach_log");
@@ -350,7 +351,7 @@ public class PeachTreeFeature extends Feature<PeachTreeConfiguration> {
 
     private void refreshLeafDistances(WorldGenLevel level, Set<BlockPos> leafPositions, Set<BlockPos> logPositions) {
         ArrayDeque<BlockPos> queue = new ArrayDeque<>(logPositions);
-        java.util.Map<BlockPos, Integer> distances = new java.util.HashMap<>();
+        Map<BlockPos, Integer> distances = new HashMap<>();
         for (BlockPos logPos : logPositions) {
             distances.put(logPos, 0);
         }

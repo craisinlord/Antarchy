@@ -1,11 +1,12 @@
 package com.craisinlord.antarchy.content.creative;
 
-import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GiantFryingPanToolHelper;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
+import com.craisinlord.antos.content.AntOSObjects;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +23,9 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.ItemLike;
 
 public final class CreativeTabContents {
-    private static final String MODID = "antarchy";
-
     private CreativeTabContents() {}
 
-    private record CatalogEntry(String path, String neoTabPath, String insertAfterPath) {}
+    public record CatalogEntry(String path, String neoTabPath, String insertAfterPath) {}
 
     public interface AntarchyTabOutput {
         void accept(ItemLike item);
@@ -778,8 +777,8 @@ public final class CreativeTabContents {
         }
         for (String diskId : List.of("antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
                 "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:brutalfly", "antarchy:rainbow_ant", "antarchy:kraken", "antarchy:cavaryn", "antarchy:hercules_beetle", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex", "antarchy:basilisk_game", "antarchy:glimmer", "antarchy:king", "antarchy:queen", "antarchy:trayaurus_lab_notes")) {
-            ItemStack disk = new ItemStack(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK.get());
-            com.craisinlord.antos.content.AntOSObjects.setFloppyDiskId(disk, new ResourceLocation(diskId));
+            ItemStack disk = new ItemStack(AntOSObjects.FLOPPY_DISK.get());
+            AntOSObjects.setFloppyDiskId(disk, new ResourceLocation(diskId));
             output.accept(disk);
         }
     }
@@ -872,7 +871,7 @@ public final class CreativeTabContents {
     }
 
     private static Item item(String path) {
-        return BuiltInRegistries.ITEM.get(new ResourceLocation(MODID, path));
+        return BuiltInRegistries.ITEM.get(new ResourceLocation(Antarchy.MODID, path));
     }
 
     private static Item vanillaItem(String path) {
@@ -880,6 +879,6 @@ public final class CreativeTabContents {
     }
 
     private static Potion potion(String path) {
-        return BuiltInRegistries.POTION.get(new ResourceLocation(MODID, path));
+        return BuiltInRegistries.POTION.get(new ResourceLocation(Antarchy.MODID, path));
     }
 }

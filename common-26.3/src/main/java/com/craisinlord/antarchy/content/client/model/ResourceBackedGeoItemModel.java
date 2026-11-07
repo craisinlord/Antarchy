@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.client.model;
 
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 
 public class ResourceBackedGeoItemModel<T extends Item & GeoAnimatable> extends GeoModel<T> {
     private final Identifier modelLocation;

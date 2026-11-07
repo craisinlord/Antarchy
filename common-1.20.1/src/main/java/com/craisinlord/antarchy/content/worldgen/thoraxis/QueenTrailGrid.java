@@ -28,6 +28,8 @@ public final class QueenTrailGrid {
     }
 
     public record Site(long id, int terminalX, int terminalZ, double directionX, double directionZ, int footprints, int stride) {
-        public int length() { return this.footprints * this.stride + 18; }
+        public int length() {
+            return this.footprints * this.stride + 18;
+        }
     }
 }

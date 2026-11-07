@@ -2,11 +2,11 @@ package com.craisinlord.antarchy.fabric.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.blaze3d.platform.InputConstants;
-import org.lwjgl.glfw.GLFW;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
+import org.lwjgl.glfw.GLFW;
 
 public final class AntarchyKeyBindings {
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(Antarchy.MODID, Antarchy.MODID));

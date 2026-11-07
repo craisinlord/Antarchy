@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class RoyalEffectController {
-    private record Effect(Runnable tick, Runnable end, int duration, int age) {
+    public record Effect(Runnable tick, Runnable end, int duration, int age) {
         private Effect advance() {
             return new Effect(this.tick, this.end, this.duration, this.age + 1);
         }

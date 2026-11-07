@@ -1,14 +1,18 @@
 package com.craisinlord.antarchy.content.entity.royal.decree;
+
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+
 public final class SkyIsMineDecree implements RoyalDecree {
     private static final int AIRBORNE_LIMIT_TICKS = 10;
     private final Map<UUID, Integer> airborneTicks = new HashMap<>();
-    public String translationKey() { return "decree.antarchy.the_sky_is_mine"; }
+    public String translationKey() {
+        return "decree.antarchy.the_sky_is_mine";
+    }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) { }
     @Override public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
         if (target.onGround() || target.isPassenger() || target.isInWater() || target.isInLava() || target.onClimbable()) {

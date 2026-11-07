@@ -1,12 +1,11 @@
 package com.craisinlord.antarchy.content.loot;
 
+import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-
-import java.util.Set;
 
 public final class AntarchyLootInjections {
     private static final Identifier ANTROID_PHONE = Identifier.fromNamespaceAndPath("antos", "antroid_phone");

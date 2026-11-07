@@ -30,6 +30,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.ForgeMod;
 
 public class JelliedCranberryBlock extends Block {
     public static final int MAX_SERVINGS = 4;
@@ -40,15 +41,15 @@ public class JelliedCranberryBlock extends Block {
 
     private static final int SLICE_NUTRITION = 3;
     private static final float SLICE_SATURATION_MODIFIER = 0.5F;
-    private static final double EDGE_EPSILON = 1.0E-7;
-    private static final double WALL_INSET = 0.4375;
-    private static final double INPUT_THRESHOLD = 0.05;
-    private static final double CLING_HORIZONTAL_DRAG = 0.6;
-    private static final double SLIDE_SPEED = -0.05;
-    private static final double SLIDE_TRIGGER_SPEED = -0.08;
-    private static final double SLOW_FALL_GRAVITY = 0.01;
-    private static final double WALL_JUMP_HORIZONTAL = 0.5;
-    private static final double WALL_JUMP_VERTICAL = 0.6;
+    private static final double EDGE_EPSILON = 1.0E-7D;
+    private static final double WALL_INSET = 0.4375D;
+    private static final double INPUT_THRESHOLD = 0.05D;
+    private static final double CLING_HORIZONTAL_DRAG = 0.6D;
+    private static final double SLIDE_SPEED = -0.05D;
+    private static final double SLIDE_TRIGGER_SPEED = -0.08D;
+    private static final double SLOW_FALL_GRAVITY = 0.01D;
+    private static final double WALL_JUMP_HORIZONTAL = 0.5D;
+    private static final double WALL_JUMP_VERTICAL = 0.6D;
     private static final int WALL_JUMP_COOLDOWN_TICKS = 8;
 
     private static int lastWallJumpTick = Integer.MIN_VALUE;
@@ -56,8 +57,8 @@ public class JelliedCranberryBlock extends Block {
     static {
         for (int servings = 1; servings <= MAX_SERVINGS; servings++) {
             int height = servings * 16 / MAX_SERVINGS;
-            OUTLINE_SHAPES[servings] = Block.box(0.0, 0.0, 0.0, 16.0, height, 16.0);
-            COLLISION_SHAPES[servings] = Block.box(1.0, 0.0, 1.0, 15.0, height - 1.0, 15.0);
+            OUTLINE_SHAPES[servings] = Block.box(0.0D, 0.0D, 0.0D, 16.0D, height, 16.0D);
+            COLLISION_SHAPES[servings] = Block.box(1.0D, 0.0D, 1.0D, 15.0D, height - 1.0D, 15.0D);
         }
     }
 
@@ -113,7 +114,7 @@ public class JelliedCranberryBlock extends Block {
         }
         Vec3 delta = entity.getDeltaMovement();
         if (delta.y < SLIDE_TRIGGER_SPEED) {
-            double scale = delta.y < -0.13 ? SLIDE_SPEED / delta.y : 1.0;
+            double scale = delta.y < -0.13D ? SLIDE_SPEED / delta.y : 1.0D;
             entity.setDeltaMovement(delta.x * scale, SLIDE_SPEED, delta.z * scale);
             entity.resetFallDistance();
         }
@@ -123,13 +124,13 @@ public class JelliedCranberryBlock extends Block {
         if (entity.onGround()) {
             return false;
         }
-        double top = pos.getY() + state.getValue(SERVINGS) * 1.0 / MAX_SERVINGS - 0.0625;
+        double top = pos.getY() + state.getValue(SERVINGS) * 1.0D / MAX_SERVINGS - 0.0625D;
         if (entity.getY() > top - EDGE_EPSILON) {
             return false;
         }
-        double reach = WALL_INSET + entity.getBbWidth() / 2.0;
-        return Math.abs(pos.getX() + 0.5 - entity.getX()) + EDGE_EPSILON > reach
-                || Math.abs(pos.getZ() + 0.5 - entity.getZ()) + EDGE_EPSILON > reach;
+        double reach = WALL_INSET + entity.getBbWidth() / 2.0D;
+        return Math.abs(pos.getX() + 0.5D - entity.getX()) + EDGE_EPSILON > reach
+                || Math.abs(pos.getZ() + 0.5D - entity.getZ()) + EDGE_EPSILON > reach;
     }
 
     private static boolean canCling(Player player) {
@@ -137,9 +138,9 @@ public class JelliedCranberryBlock extends Block {
     }
 
     private static void tickLocalPlayerCling(BlockPos pos, Player player) {
-        double reach = WALL_INSET + player.getBbWidth() / 2.0;
-        double offsetX = player.getX() - (pos.getX() + 0.5);
-        double offsetZ = player.getZ() - (pos.getZ() + 0.5);
+        double reach = WALL_INSET + player.getBbWidth() / 2.0D;
+        double offsetX = player.getX() - (pos.getX() + 0.5D);
+        double offsetZ = player.getZ() - (pos.getZ() + 0.5D);
 
         float yaw = player.getYRot() * Mth.DEG_TO_RAD;
         double sin = Mth.sin(yaw);
@@ -147,22 +148,22 @@ public class JelliedCranberryBlock extends Block {
         double inputX = player.xxa * cos - player.zza * sin;
         double inputZ = player.zza * cos + player.xxa * sin;
 
-        boolean pressingX = Math.abs(offsetX) + EDGE_EPSILON > reach && inputX * offsetX < 0.0 && Math.abs(inputX) > INPUT_THRESHOLD;
-        boolean pressingZ = Math.abs(offsetZ) + EDGE_EPSILON > reach && inputZ * offsetZ < 0.0 && Math.abs(inputZ) > INPUT_THRESHOLD;
+        boolean pressingX = Math.abs(offsetX) + EDGE_EPSILON > reach && inputX * offsetX < 0.0D && Math.abs(inputX) > INPUT_THRESHOLD;
+        boolean pressingZ = Math.abs(offsetZ) + EDGE_EPSILON > reach && inputZ * offsetZ < 0.0D && Math.abs(inputZ) > INPUT_THRESHOLD;
         if (!pressingX && !pressingZ) {
             return;
         }
 
         if (((LivingEntityJumpingAccessor) player).antarchy$isJumping() && wallJumpReady(player)) {
             lastWallJumpTick = player.tickCount;
-            double awayX = pressingX ? Math.signum(offsetX) : 0.0;
-            double awayZ = pressingZ ? Math.signum(offsetZ) : 0.0;
+            double awayX = pressingX ? Math.signum(offsetX) : 0.0D;
+            double awayZ = pressingZ ? Math.signum(offsetZ) : 0.0D;
             player.setDeltaMovement(awayX * WALL_JUMP_HORIZONTAL, WALL_JUMP_VERTICAL, awayZ * WALL_JUMP_HORIZONTAL);
             player.playSound(SoundEvents.HONEY_BLOCK_SLIDE, 1.0F, 1.3F);
             return;
         }
 
-        double gravity = player.getAttributeValue(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
+        double gravity = player.getAttributeValue(ForgeMod.ENTITY_GRAVITY.get());
         if (player.hasEffect(MobEffects.SLOW_FALLING)) {
             gravity = Math.min(gravity, SLOW_FALL_GRAVITY);
         }

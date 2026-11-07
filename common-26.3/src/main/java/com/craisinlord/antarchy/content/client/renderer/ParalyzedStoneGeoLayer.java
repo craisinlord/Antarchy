@@ -41,7 +41,7 @@ public final class ParalyzedStoneGeoLayer<T extends GeoAnimatable, O, R extends 
         int packedLight = renderPassInfo.packedLight();
         int packedOverlay = renderPassInfo.packedOverlay();
         poseStack.pushPose();
-        poseStack.scale(1.02f, 1.02f, 1.02f);
+        poseStack.scale(1.02F, 1.02F, 1.02F);
         renderTasks.order(1).submitCustomGeometry(poseStack, STONE_RENDER_TYPE, (pose, buffer) -> {
             PoseStack renderPose = renderPassInfo.poseStack();
             renderPose.pushPose();

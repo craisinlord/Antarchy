@@ -1,11 +1,11 @@
 package com.craisinlord.antarchy.content.portal;
 
-import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ant.BrownAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.RedAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.TermiteEntity;
-import com.craisinlord.antarchy.Antarchy;
 import java.util.Objects;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;

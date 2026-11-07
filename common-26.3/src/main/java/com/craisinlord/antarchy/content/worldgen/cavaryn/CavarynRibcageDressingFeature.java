@@ -2,17 +2,18 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.util.RandomSource;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.synth.Noise;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public final class CavarynRibcageDressingFeature implements Feature {
@@ -38,10 +39,10 @@ public final class CavarynRibcageDressingFeature implements Feature {
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        net.minecraft.world.level.levelgen.synth.Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(RIBCAGE_NOISE);
+        Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(RIBCAGE_NOISE);
         CavarynRibcageGrid grid = CavarynRibcageGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.get(1234.567, 89.123, -456.789),
-                noise.get(-987.654, 12.345, 654.321)
+                noise.get(1234.567D, 89.123D, -456.789D),
+                noise.get(-987.654D, 12.345D, 654.321D)
         ));
         Block chitin = BuiltInRegistries.BLOCK.getOptional(CHITIN_ID).orElse(null);
         if (grid == null || chitin == null) {
@@ -64,7 +65,7 @@ public final class CavarynRibcageDressingFeature implements Feature {
                 }
                 int maxY = Math.min(maxBuild, range[1]);
                 for (int y = range[0]; y <= maxY; y++) {
-                    if (grid.boneDistance(x, y, z) > 0.0) {
+                    if (grid.boneDistance(x, y, z) > 0.0D) {
                         continue;
                     }
                     pos.set(x, y, z);

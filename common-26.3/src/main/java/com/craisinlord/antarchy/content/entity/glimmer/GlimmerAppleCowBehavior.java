@@ -3,30 +3,31 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
+import com.geckolib.animation.RawAnimation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.animal.cow.CowSoundVariant;
 import net.minecraft.world.entity.animal.cow.CowSoundVariants;
-import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.TagValueOutput;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animation.RawAnimation;
 
 public class GlimmerAppleCowBehavior implements GlimmerVariantBehavior {
     private static final CowSoundVariant COW_SOUNDS = SoundEvents.COW_SOUNDS.get(CowSoundVariants.SoundSet.CLASSIC);
@@ -111,9 +112,9 @@ public class GlimmerAppleCowBehavior implements GlimmerVariantBehavior {
         entity.startShearCooldown(SHEAR_REGROW_TICKS);
         entity.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
         stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
-                ? net.minecraft.world.entity.EquipmentSlot.MAINHAND
-                : net.minecraft.world.entity.EquipmentSlot.OFFHAND);
-        entity.spawnAtLocation(serverLevel, new net.minecraft.world.item.ItemStack(AntarchyObjects.SPIRIT_APPLE.get()), entity.getBbHeight() * 0.6F);
+                ? EquipmentSlot.MAINHAND
+                : EquipmentSlot.OFFHAND);
+        entity.spawnAtLocation(serverLevel, new ItemStack(AntarchyObjects.SPIRIT_APPLE.get()), entity.getBbHeight() * 0.6F);
         return InteractionResult.SUCCESS;
     }
 

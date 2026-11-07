@@ -1,13 +1,12 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
 import com.craisinlord.antarchy.content.block.BedBugEggBlock;
 import com.craisinlord.antarchy.content.block.CrawlingBlightEggBlock;
 import com.craisinlord.antarchy.content.block.JerryEggBlock;
-import com.craisinlord.antarchy.content.block.SpringbugEggBlock;
 import com.craisinlord.antarchy.content.block.SkulkingFrightEggBlock;
 import com.craisinlord.antarchy.content.block.SpitBugEggBlock;
+import com.craisinlord.antarchy.content.block.SpringbugEggBlock;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -21,6 +20,7 @@ import net.minecraft.world.entity.animal.turtle.Turtle;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.TurtleEggBlock;

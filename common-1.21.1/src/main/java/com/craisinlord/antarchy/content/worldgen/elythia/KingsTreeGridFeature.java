@@ -4,6 +4,16 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.mojang.serialization.Codec;
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -28,16 +38,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.lang.ref.WeakReference;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration> {
     private static final Map<ServerLevel, Set<Long>> CLAIMED_TREE_KINGS = new WeakHashMap<>();
@@ -175,7 +175,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
     private static void queueTreeKing(ServerLevel serverLevel, int centerX, int centerZ, int baseY) {
         long treeKey = KingsTreeSavedData.treeKey(centerX, centerZ);
         synchronized (CLAIMED_TREE_KINGS) {
-            if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new java.util.HashSet<>()).add(treeKey)) {
+            if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new HashSet<>()).add(treeKey)) {
                 return;
             }
         }
@@ -191,7 +191,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
             saved.treeBaseHeights().forEach(heights::putIfAbsent);
         }
         synchronized (CLAIMED_TREE_KINGS) {
-            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new java.util.HashSet<>());
+            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new HashSet<>());
             for (long treeKey : saved.pendingTrees()) {
                 if (claimed.add(treeKey)) {
                     PENDING_KING_SPAWNS.add(new PendingKingSpawn(new WeakReference<>(level),

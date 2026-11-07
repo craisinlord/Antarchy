@@ -37,7 +37,7 @@ public final class CavarynGlowcapGrottoDressingFeature extends Feature<NoneFeatu
             ResourceLocation.withDefaultNamespace("podzol")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double FLOOR_DEPTH = 1.6;
+    private static final double FLOOR_DEPTH = 1.6D;
     private static final float MYCELIUM_CHANCE = 0.4F;
 
     public CavarynGlowcapGrottoDressingFeature(Codec<NoneFeatureConfiguration> codec) {
@@ -49,8 +49,8 @@ public final class CavarynGlowcapGrottoDressingFeature extends Feature<NoneFeatu
         WorldGenLevel level = context.level();
         NormalNoise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(GROTTO_NOISE);
         CavarynCavityGrid grid = CavarynCavityGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.getValue(1234.567, 89.123, -456.789),
-                noise.getValue(-987.654, 12.345, 654.321)
+                noise.getValue(1234.567D, 89.123D, -456.789D),
+                noise.getValue(-987.654D, 12.345D, 654.321D)
         ));
         Block amberMoss = block(AMBER_MOSS_ID);
         if (grid == null || amberMoss == null) {
@@ -83,7 +83,7 @@ public final class CavarynGlowcapGrottoDressingFeature extends Feature<NoneFeatu
                 for (int y = minY; y <= maxY; y++) {
                     double distance = next;
                     next = grid.signedDistance(x, y + 1, z);
-                    if (distance <= 0.0 || distance > FLOOR_DEPTH || next > 0.0) {
+                    if (distance <= 0.0D || distance > FLOOR_DEPTH || next > 0.0D) {
                         continue;
                     }
                     pos.set(x, y, z);

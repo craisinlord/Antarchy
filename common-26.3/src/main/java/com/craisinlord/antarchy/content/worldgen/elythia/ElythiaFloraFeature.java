@@ -1,16 +1,20 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.craisinlord.antarchy.content.worldgen.WorldgenWriteZone;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.block.ElythiaPalette;
+import com.craisinlord.antarchy.content.worldgen.WorldgenWriteZone;
 import com.craisinlord.sizeablefoliage.block.BigBushBlock;
 import com.craisinlord.sizeablefoliage.block.VeryTallGrassBlock;
 import com.mojang.serialization.MapCodec;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
@@ -18,10 +22,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import java.util.HashMap;
-import java.util.Map;
+import net.minecraft.world.level.material.Fluids;
 
 public class ElythiaFloraFeature implements Feature {
     public static final MapCodec<ElythiaFloraFeature> FOREST_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.FOREST));
@@ -57,10 +61,9 @@ public class ElythiaFloraFeature implements Feature {
     private static volatile Block torchflowerBush;
     private static final Identifier CAMELLIA_ID = Identifier.fromNamespaceAndPath("antarchy", "camellia");
     private static final Identifier SPIDER_LILY_ID = Identifier.fromNamespaceAndPath("antarchy", "spider_lily");
-    private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> PRIMORDIAL_GROUND = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, Identifier.fromNamespaceAndPath("antarchy", "primordial_ground"));
+    private static final TagKey<Block> PRIMORDIAL_GROUND = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("antarchy", "primordial_ground"));
 
     private final Variant variant;
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -179,7 +182,7 @@ public class ElythiaFloraFeature implements Feature {
 
     private boolean placeSelectedPlant(WorldGenLevel level, BlockPos plantPos, BlockPos groundPos, RandomSource random) {
         if (this.meadowLike() && level.getBlockState(groundPos).is(PRIMORDIAL_GROUND)) {
-            return placeSingle(level, plantPos, com.craisinlord.antarchy.content.block.ElythiaPalette.PRIMORDIAL_GRASS.get());
+            return placeSingle(level, plantPos, ElythiaPalette.PRIMORDIAL_GRASS.get());
         }
         if (this.variant == Variant.BUTTERFLY_FIELDS) {
             float roll = random.nextFloat();
@@ -513,7 +516,7 @@ public class ElythiaFloraFeature implements Feature {
             BlockPos seagrassPos = new BlockPos(x, y, z);
             BlockPos floorPos = seagrassPos.below();
 
-            if (!level.getFluidState(seagrassPos).isSourceOfType(net.minecraft.world.level.material.Fluids.WATER)) {
+            if (!level.getFluidState(seagrassPos).isSourceOfType(Fluids.WATER)) {
                 continue;
             }
 

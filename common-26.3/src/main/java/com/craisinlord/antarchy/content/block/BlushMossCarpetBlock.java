@@ -3,15 +3,18 @@ package com.craisinlord.antarchy.content.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.WallSide;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -19,10 +22,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlushMossCarpetBlock extends Block {
     public static final BooleanProperty BOTTOM = BlockStateProperties.BOTTOM;
-    public static final net.minecraft.world.level.block.state.properties.EnumProperty<WallSide> NORTH_WALL = BlockStateProperties.NORTH_WALL;
-    public static final net.minecraft.world.level.block.state.properties.EnumProperty<WallSide> EAST_WALL = BlockStateProperties.EAST_WALL;
-    public static final net.minecraft.world.level.block.state.properties.EnumProperty<WallSide> SOUTH_WALL = BlockStateProperties.SOUTH_WALL;
-    public static final net.minecraft.world.level.block.state.properties.EnumProperty<WallSide> WEST_WALL = BlockStateProperties.WEST_WALL;
+    public static final EnumProperty<WallSide> NORTH_WALL = BlockStateProperties.NORTH_WALL;
+    public static final EnumProperty<WallSide> EAST_WALL = BlockStateProperties.EAST_WALL;
+    public static final EnumProperty<WallSide> SOUTH_WALL = BlockStateProperties.SOUTH_WALL;
+    public static final EnumProperty<WallSide> WEST_WALL = BlockStateProperties.WEST_WALL;
 
     private static final VoxelShape FLOOR_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
     private static final VoxelShape NORTH_LOW = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 1.0D);
@@ -50,7 +53,7 @@ public class BlushMossCarpetBlock extends Block {
     }
 
     @Override
-    public BlockState getStateForPlacement(net.minecraft.world.item.context.BlockPlaceContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Direction face = context.getClickedFace();
         BlockState state = this.defaultBlockState()
@@ -95,7 +98,7 @@ public class BlushMossCarpetBlock extends Block {
 
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
-        return state.canSurvive(level, pos) ? state : net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        return state.canSurvive(level, pos) ? state : Blocks.AIR.defaultBlockState();
     }
 
     @Override

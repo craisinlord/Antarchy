@@ -1,18 +1,28 @@
 package com.craisinlord.antarchy.neoforge.network;
 
+import com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState;
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.item.EyeOfTheStormItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
+import com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
-import com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload;
+import com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload;
 import com.craisinlord.antarchy.content.network.EyeOfStormPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
-import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
-import com.craisinlord.antarchy.content.item.TemporalTunerItem;
+import com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload;
+import com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload;
+import com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
+import com.craisinlord.antarchy.content.network.PortalGunResetPayload;
+import com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload;
+import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
+import com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync;
+import com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync;
+import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -24,12 +34,12 @@ public final class AntarchyGravityNetworking {
 
     public static void register(PayloadRegistrar registrar) {
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload.TYPE,
-                com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.update(payload))
+                PortalGunIndicatorPayload.TYPE,
+                PortalGunIndicatorPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> PortalGunIndicatorClientState.update(payload))
         ).playToServer(
-                com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload.TYPE,
-                com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload.STREAM_CODEC,
+                PortalGunIndicatorRequestPayload.TYPE,
+                PortalGunIndicatorRequestPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handlePortalGunIndicatorRequest
         ).playToServer(
                 GravityGunPrimaryPayload.TYPE,
@@ -40,19 +50,19 @@ public final class AntarchyGravityNetworking {
                 PortalGunPrimaryPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handlePortalGunPrimary
         ).playToServer(
-                com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE,
-                com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.STREAM_CODEC,
+                PortalGunMoonAimPayload.TYPE,
+                PortalGunMoonAimPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer serverPlayer) {
-                        com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.handle(serverPlayer, payload);
+                        PortalGunMoonAimSync.handle(serverPlayer, payload);
                     }
                 })
         ).playToServer(
-                com.craisinlord.antarchy.content.network.PortalGunResetPayload.TYPE,
-                com.craisinlord.antarchy.content.network.PortalGunResetPayload.STREAM_CODEC,
+                PortalGunResetPayload.TYPE,
+                PortalGunResetPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer serverPlayer) {
-                        com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.handleInput(serverPlayer, payload.action());
+                        PortalGunResetManager.handleInput(serverPlayer, payload.action());
                     }
                 })
         ).playToServer(
@@ -76,8 +86,8 @@ public final class AntarchyGravityNetworking {
                 RoyalGuardianSwordModeCyclePayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handleRoyalGuardianSwordModeCycle
         ).playToServer(
-                com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload.TYPE,
-                com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload.STREAM_CODEC,
+                DiamondMinecartInputPayload.TYPE,
+                DiamondMinecartInputPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handleDiamondMinecartInput
         );
     }
@@ -96,10 +106,14 @@ public final class AntarchyGravityNetworking {
         });
     }
 
-    private static void handleDiamondMinecartInput(com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload payload, IPayloadContext context) {
+    private static void handleDiamondMinecartInput(DiamondMinecartInputPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player() instanceof ServerPlayer serverPlayer)) return;
-            if (!(serverPlayer.getVehicle() instanceof DiamondMinecartEntity cart)) return;
+            if (!(context.player() instanceof ServerPlayer serverPlayer)) {
+                return;
+            }
+            if (!(serverPlayer.getVehicle() instanceof DiamondMinecartEntity cart)) {
+                return;
+            }
             cart.onInputReceived(payload.inputFlags());
         });
     }
@@ -130,7 +144,7 @@ public final class AntarchyGravityNetworking {
     private static void handleRoyalGuardianSwordModeCycle(RoyalGuardianSwordModeCyclePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer serverPlayer)
-                    || !(serverPlayer.getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem sword)) {
+                    || !(serverPlayer.getMainHandItem().getItem() instanceof RoyalGuardianSwordItem sword)) {
                 return;
             }
             sword.tryCycleModeFromInput(serverPlayer.level(), serverPlayer, serverPlayer.getMainHandItem());
@@ -166,10 +180,10 @@ public final class AntarchyGravityNetworking {
         });
     }
 
-    private static void handlePortalGunIndicatorRequest(com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload payload, IPayloadContext context) {
+    private static void handlePortalGunIndicatorRequest(PortalGunIndicatorRequestPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer serverPlayer) {
-                com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.handleRequest(serverPlayer, payload);
+                PortalGunIndicatorSync.handleRequest(serverPlayer, payload);
             }
         });
     }

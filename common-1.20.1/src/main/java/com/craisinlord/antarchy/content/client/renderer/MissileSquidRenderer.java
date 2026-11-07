@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.core.object.Color;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class MissileSquidRenderer extends GeoEntityRenderer<MissileSquidEntity> {
     private static final ResourceLocation GLIMMER_TEXTURE = GlimmerEchoRendering.texture("missile_squid");

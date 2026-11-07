@@ -18,7 +18,6 @@ public class FossilBlock extends BaseEntityBlock {
         super(properties);
     }
 
-
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;

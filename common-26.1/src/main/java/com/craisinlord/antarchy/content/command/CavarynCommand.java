@@ -5,6 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import java.util.Collection;
+import java.util.List;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -21,12 +22,12 @@ public final class CavarynCommand {
                         .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("horde")
                                 .then(Commands.literal("get")
-                                        .executes(context -> getHordeLevel(context, java.util.List.of(context.getSource().getPlayerOrException())))
+                                        .executes(context -> getHordeLevel(context, List.of(context.getSource().getPlayerOrException())))
                                         .then(Commands.argument("targets", EntityArgument.players())
                                                 .executes(context -> getHordeLevel(context, EntityArgument.getPlayers(context, "targets")))))
                                 .then(Commands.literal("set")
                                         .then(Commands.argument("level", IntegerArgumentType.integer(0, CavarynHordeManager.maxHordeLevel()))
-                                                .executes(context -> setHordeLevel(context, IntegerArgumentType.getInteger(context, "level"), java.util.List.of(context.getSource().getPlayerOrException())))
+                                                .executes(context -> setHordeLevel(context, IntegerArgumentType.getInteger(context, "level"), List.of(context.getSource().getPlayerOrException())))
                                                 .then(Commands.argument("targets", EntityArgument.players())
                                                         .executes(context -> setHordeLevel(context, IntegerArgumentType.getInteger(context, "level"), EntityArgument.getPlayers(context, "targets")))))))
         );

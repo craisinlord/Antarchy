@@ -83,7 +83,7 @@ public final class ElythiaButteFunction implements DensityFunction {
         NoiseHolder mappedNoise = visitor.visitNoise(this.noise);
         ElythiaButteGrid mappedGrid = this.grid;
         if (mappedGrid == null && mappedNoise.noise() != null) {
-            long salt = CavarynWormBoreFunction.saltFor(mappedNoise.getValue(311.713, 47.219, -829.531), mappedNoise.getValue(-613.887, 23.441, 157.093));
+            long salt = CavarynWormBoreFunction.saltFor(mappedNoise.getValue(311.713D, 47.219D, -829.531D), mappedNoise.getValue(-613.887D, 23.441D, 157.093D));
             mappedGrid = ElythiaButteGrid.create(salt, mappedArgument, mappedMask);
         }
         return visitor.apply(new ElythiaButteFunction(this.output, mappedArgument, mappedMask, mappedNoise, mappedGrid));

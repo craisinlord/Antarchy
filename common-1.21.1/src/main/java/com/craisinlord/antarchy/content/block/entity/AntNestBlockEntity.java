@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.AntNestBlock;
+import com.craisinlord.antarchy.content.block.AntTrapBlock;
 import com.craisinlord.antarchy.content.entity.ant.BaseAntEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class AntNestBlockEntity extends BlockEntity {
     private static final String STORED_ANTS = "StoredAnts";
@@ -40,17 +44,17 @@ public class AntNestBlockEntity extends BlockEntity {
     }
 
     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, AntNestBlockEntity nest) {
-        if (state.getBlock() instanceof com.craisinlord.antarchy.content.block.AntTrapBlock) {
+        if (state.getBlock() instanceof AntTrapBlock) {
             if (level.getGameTime() % 20L == 0L && nest.storedAnts.size() < nest.maxOccupants()) {
-                net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(pos).inflate(15.0D);
+                AABB searchArea = new AABB(pos).inflate(15.0D);
                 for (BaseAntEntity ant : level.getEntitiesOfClass(BaseAntEntity.class, searchArea, BaseAntEntity::isAlive)) {
-                    if (ant.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) > 225.0D) {
+                    if (ant.distanceToSqr(Vec3.atCenterOf(pos)) > 225.0D) {
                         continue;
                     }
                     if (!nest.canAccept(ant.getType())) {
                         continue;
                     }
-                    if (ant.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) <= 2.25D) {
+                    if (ant.distanceToSqr(Vec3.atCenterOf(pos)) <= 2.25D) {
                         nest.tryStoreAnt(ant);
                         if (nest.storedAnts.size() >= nest.maxOccupants()) {
                             break;
@@ -160,7 +164,7 @@ public class AntNestBlockEntity extends BlockEntity {
         }
 
         BlockPos origin = this.getBlockPos();
-        java.util.List<BlockPos> candidates = new java.util.ArrayList<>();
+        List<BlockPos> candidates = new ArrayList<>();
         for (int y = 1; y <= 3; y++) {
             candidates.add(origin.above(y));
             for (int radius = 1; radius <= 2; radius++) {
@@ -247,7 +251,7 @@ public class AntNestBlockEntity extends BlockEntity {
         }
 
         private static StoredAnt load(CompoundTag tag) {
-            EntityType<?> antType = BuiltInRegistries.ENTITY_TYPE.getOptional(net.minecraft.resources.ResourceLocation.parse(tag.getString("id"))).orElse(EntityType.SILVERFISH);
+            EntityType<?> antType = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(tag.getString("id"))).orElse(EntityType.SILVERFISH);
             return new StoredAnt(antType, tag.getCompound("data"));
         }
 

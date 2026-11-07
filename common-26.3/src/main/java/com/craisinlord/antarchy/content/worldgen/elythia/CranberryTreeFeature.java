@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.craisinlord.antarchy.content.block.CranberryLeavesBlock;
 import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -17,13 +16,16 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public final class CranberryTreeFeature implements Feature {
     public static final MapCodec<CranberryTreeFeature> CODEC = MapCodec.unit(CranberryTreeFeature::new);
 
     @Override
-    public MapCodec<CranberryTreeFeature> codec() { return CODEC; }
+    public MapCodec<CranberryTreeFeature> codec() {
+        return CODEC;
+    }
     public CranberryTreeFeature() { }
 
     @Override

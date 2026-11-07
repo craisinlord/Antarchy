@@ -5,9 +5,12 @@ import com.craisinlord.antarchy.content.entity.MolewormEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -39,7 +42,7 @@ public class InfestedCoarseDirtBlock extends Block {
     }
 
     @Override
-    public void stepOn(Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.Entity entity) {
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
         super.stepOn(level, pos, state, entity);
         if (!level.isClientSide() && entity instanceof Player && level.getRandom().nextFloat() < 0.22F) {
             this.tryReleaseMoleworm((ServerLevel) level, pos);
@@ -69,8 +72,8 @@ public class InfestedCoarseDirtBlock extends Block {
 
         level.setBlock(pos, Blocks.COARSE_DIRT.defaultBlockState(), 3);
         level.addFreshEntity(moleworm);
-        level.playSound(null, emergencePos, SoundEvents.SILVERFISH_STEP, net.minecraft.sounds.SoundSource.BLOCKS, 0.45F, 0.8F + level.getRandom().nextFloat() * 0.25F);
-        level.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, pos.getX() + 0.5D, pos.getY() + 0.45D, pos.getZ() + 0.5D, 8, 0.18D, 0.08D, 0.18D, 0.01D);
+        level.playSound(null, emergencePos, SoundEvents.SILVERFISH_STEP, SoundSource.BLOCKS, 0.45F, 0.8F + level.getRandom().nextFloat() * 0.25F);
+        level.sendParticles(ParticleTypes.POOF, pos.getX() + 0.5D, pos.getY() + 0.45D, pos.getZ() + 0.5D, 8, 0.18D, 0.08D, 0.18D, 0.01D);
     }
 
     @Nullable

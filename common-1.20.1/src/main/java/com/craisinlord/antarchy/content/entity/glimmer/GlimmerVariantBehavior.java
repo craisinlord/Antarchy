@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.glimmer;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.core.animation.RawAnimation;
 
 public interface GlimmerVariantBehavior {
     static boolean isValidFoe(Player owner, LivingEntity target) {
@@ -69,17 +71,17 @@ public interface GlimmerVariantBehavior {
     }
 
     @Nullable
-    default software.bernie.geckolib.core.animation.RawAnimation abilityAnimation() {
+    default RawAnimation abilityAnimation() {
         return null;
     }
 
     @Nullable
-    default software.bernie.geckolib.core.animation.RawAnimation movingAnimation(GlimmerEntity entity) {
+    default RawAnimation movingAnimation(GlimmerEntity entity) {
         return null;
     }
 
     @Nullable
-    default software.bernie.geckolib.core.animation.RawAnimation idleAnimation(GlimmerEntity entity) {
+    default RawAnimation idleAnimation(GlimmerEntity entity) {
         return null;
     }
 
@@ -87,7 +89,7 @@ public interface GlimmerVariantBehavior {
         return 1.15D;
     }
 
-    default void sendAbilityMessage(Player owner, net.minecraft.network.chat.Component message) {
+    default void sendAbilityMessage(Player owner, Component message) {
         owner.displayClientMessage(message, true);
     }
 

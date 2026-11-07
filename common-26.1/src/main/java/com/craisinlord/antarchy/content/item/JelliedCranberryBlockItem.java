@@ -1,12 +1,13 @@
 package com.craisinlord.antarchy.content.item;
 
-import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.block.Block;
 
 public class JelliedCranberryBlockItem extends BlockItem {
@@ -15,7 +16,7 @@ public class JelliedCranberryBlockItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.accept(Component.translatable("tooltip.antarchy.jellied_cranberry_block.cling").withStyle(ChatFormatting.RED));
         tooltipComponents.accept(Component.translatable("tooltip.antarchy.jellied_cranberry_block.servings").withStyle(ChatFormatting.RED));
         super.appendHoverText(stack, context, display, tooltipComponents, tooltipFlag);

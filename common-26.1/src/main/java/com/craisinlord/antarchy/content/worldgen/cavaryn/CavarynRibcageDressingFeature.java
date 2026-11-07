@@ -6,8 +6,8 @@ import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -38,8 +38,8 @@ public final class CavarynRibcageDressingFeature extends Feature<NoneFeatureConf
         WorldGenLevel level = context.level();
         NormalNoise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(RIBCAGE_NOISE);
         CavarynRibcageGrid grid = CavarynRibcageGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.getValue(1234.567, 89.123, -456.789),
-                noise.getValue(-987.654, 12.345, 654.321)
+                noise.getValue(1234.567D, 89.123D, -456.789D),
+                noise.getValue(-987.654D, 12.345D, 654.321D)
         ));
         Block chitin = BuiltInRegistries.BLOCK.getOptional(CHITIN_ID).orElse(null);
         if (grid == null || chitin == null) {
@@ -62,7 +62,7 @@ public final class CavarynRibcageDressingFeature extends Feature<NoneFeatureConf
                 }
                 int maxY = Math.min(maxBuild, range[1]);
                 for (int y = range[0]; y <= maxY; y++) {
-                    if (grid.boneDistance(x, y, z) > 0.0) {
+                    if (grid.boneDistance(x, y, z) > 0.0D) {
                         continue;
                     }
                     pos.set(x, y, z);

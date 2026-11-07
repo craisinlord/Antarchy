@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.neoforge;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.List;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class AntarchyMiscConfig {
@@ -87,7 +89,7 @@ public final class AntarchyMiscConfig {
 
     private static final ModConfigSpec.BooleanValue DUPLICATOR_TREE_ENABLED;
     private static final ModConfigSpec.BooleanValue FOSSILS_ENABLED;
-    private static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> FOSSIL_ENTITY_BLACKLIST;
+    private static final ModConfigSpec.ConfigValue<List<? extends String>> FOSSIL_ENTITY_BLACKLIST;
     private static final ModConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
     private static final ModConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
     private static final ModConfigSpec.BooleanValue FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED;
@@ -96,7 +98,6 @@ public final class AntarchyMiscConfig {
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
-
 
         b.push("elythia");
         ELYTHIA_FIREFLY_PARTICLES_ENABLED = b
@@ -203,7 +204,6 @@ public final class AntarchyMiscConfig {
         b.pop();
         b.pop();
 
-
         b.push("giantLilyPad");
         GIANT_LILY_PAD_LAUNCH_DISTANCE = b.comment("Roughly how many blocks a Giant Lily Pad launches players and everything else on it when a player jumps from it.").defineInRange("giantLilyPadLaunchDistance", 4.0D, 0.0D, 32.0D);
         b.pop();
@@ -212,20 +212,17 @@ public final class AntarchyMiscConfig {
         DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER = b.comment("Multiplier applied to dream sand's falling-block gravity, i.e. how slowly it falls as a block.").defineInRange("fallingBlockGravityMultiplier", 0.4D, 0.0D, 16.0D);
         b.pop();
 
-
         b.push("ichor");
         ICHOR_WITHER_ENABLED = b
                 .comment("If true, players submerged in ichor receive a Wither effect.")
                 .define("witherEnabled", true);
         b.pop();
 
-
         b.push("hushweed");
         HUSHWEED_SPORE_LIFETIME_SECONDS = b
                 .comment("How long (in seconds) a Hushweed spore projectile stays alive before disappearing.")
                 .defineInRange("sporeLifetimeSeconds", 5.0D, 0.1D, 120.0D);
         b.pop();
-
 
         b.push("infinityDimensions");
         DISABLE_INFINITY_BOOK_PORTAL_CREATION = b
@@ -244,7 +241,6 @@ public final class AntarchyMiscConfig {
                 )
                 .defineInRange("rainbowAntInfinityEasterEggChance", 0.01D, 0.0D, 1.0D);
         b.pop();
-
 
         b.push("permanentPortals");
         PERMANENT_PORTALS_ENABLED = b.comment("Master toggle for sacrifice-activated permanent portals.").define("permanentPortalsEnabled", true);
@@ -270,7 +266,6 @@ public final class AntarchyMiscConfig {
         PORTAL_GUN_MOON_BLOCK_CAP = b.comment("Maximum number of blocks a single moon portal can pull in.").defineInRange("moonBlockCap", 500, 0, 2000);
         b.pop();
 
-
         b.push("diamondMinecart");
         DIAMOND_MINECART_ENABLED            = b.comment("Master toggle for the diamond minecart's custom propulsion and rail-laying behavior.") .define("enabled",           true);
         DIAMOND_MINECART_PLACES_RAILS       = b.comment("Whether the cart automatically places normal rails from the rider's inventory.")       .define("placesRails",       true);
@@ -283,18 +278,16 @@ public final class AntarchyMiscConfig {
         DIAMOND_MINECART_MAX_MOB_DAMAGE     = b.comment("Maximum collision damage dealt at full speed if mob damage is enabled.")               .defineInRange("maxMobDamage",        4.0D,  0.0D, 200.0D);
         b.pop();
 
-
         b.push("hoverboard");
         HOVERBOARD_MAX_SPEED    = b.comment("Maximum hoverboard speed in blocks/tick while moving forward.").defineInRange("maxSpeed", 6.0D, 0.05D, 12.0D);
         HOVERBOARD_ACCELERATION = b.comment("Hoverboard speed gained per tick while moving forward. Lower values take longer to reach top speed.").defineInRange("acceleration", 0.05D, 0.001D, 1.0D);
         b.pop();
 
-
         b.push("world");
         DUPLICATOR_TREE_ENABLED              = b.comment("If false, duplicator trees do not generate and duplicator saplings produce nothing.").define("duplicatorTreeEnabled",           true);
         FOSSILS_ENABLED                      = b.comment("If false, Myrmite and Broodstone fossils no longer generate. Existing fossils still smelt into spawn eggs.").define("fossilsEnabled", true);
         FOSSIL_ENTITY_BLACKLIST              = b.comment("Entity ids fossils can never contain. Use modid:* to exclude every entity from a mod. Fossils that already hold a blacklisted entity are rerolled to an allowed one.")
-                .defineListAllowEmpty("fossilEntityBlacklist", java.util.List.of(com.craisinlord.antarchy.config.AntarchySettings.defaultFossilEntityBlacklist().split(",")), entry -> entry instanceof String);
+                .defineListAllowEmpty("fossilEntityBlacklist", List.of(AntarchySettings.defaultFossilEntityBlacklist().split(",")), entry -> entry instanceof String);
         GLOW_VINES_UNDER_LEAVES              = b.comment("Whether glow vines can be placed and survive when attached under leaf blocks.")       .define("glowVinesUnderLeaves",             true);
         SWING_THROUGH_GRASS_ENABLED          = b.comment("If true, empty collision plants like grass do not block melee target picking.")      .define("swingThroughGrassEnabled",         true);
         FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED = b.define("fabricKeybindingConflictFixEnabled", true);
@@ -309,12 +302,24 @@ public final class AntarchyMiscConfig {
 
     static boolean elythiaFireflyParticlesEnabled()      { return ELYTHIA_FIREFLY_PARTICLES_ENABLED.get(); }
     static boolean elythiaFogEnabled()                   { return ELYTHIA_FOG_ENABLED.get(); }
-    static boolean elythiaGrassWindEnabled() { return ELYTHIA_GRASS_WIND_ENABLED.get(); }
-    static boolean elythiaWindSoundsEnabled() { return ELYTHIA_WIND_SOUNDS_ENABLED.get(); }
-    static boolean elythiaWindLinesEnabled() { return ELYTHIA_WIND_LINES_ENABLED.get(); }
-    static int primordialGrassDrawDistance() { return PRIMORDIAL_GRASS_DRAW_DISTANCE.get(); }
-    static boolean primordialGrassDynamic() { return PRIMORDIAL_GRASS_DYNAMIC.get(); }
-    static int primordialGrassQuality() { return PRIMORDIAL_GRASS_QUALITY.get(); }
+    static boolean elythiaGrassWindEnabled() {
+        return ELYTHIA_GRASS_WIND_ENABLED.get();
+    }
+    static boolean elythiaWindSoundsEnabled() {
+        return ELYTHIA_WIND_SOUNDS_ENABLED.get();
+    }
+    static boolean elythiaWindLinesEnabled() {
+        return ELYTHIA_WIND_LINES_ENABLED.get();
+    }
+    static int primordialGrassDrawDistance() {
+        return PRIMORDIAL_GRASS_DRAW_DISTANCE.get();
+    }
+    static boolean primordialGrassDynamic() {
+        return PRIMORDIAL_GRASS_DYNAMIC.get();
+    }
+    static int primordialGrassQuality() {
+        return PRIMORDIAL_GRASS_QUALITY.get();
+    }
     static void savePrimordialGrass(boolean dynamic, int quality) {
         PRIMORDIAL_GRASS_DYNAMIC.set(dynamic);
         PRIMORDIAL_GRASS_QUALITY.set(quality);
@@ -349,8 +354,12 @@ public final class AntarchyMiscConfig {
     static double  throwbackDreamStrength()              { return THROWBACK_DREAM_STRENGTH.get(); }
     static boolean throwbackAfterimages()                { return THROWBACK_AFTERIMAGES.get(); }
 
-    static double  dreamSandFallingBlockGravityMultiplier() { return DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER.get(); }
-    static double  giantLilyPadLaunchDistance() { return GIANT_LILY_PAD_LAUNCH_DISTANCE.get(); }
+    static double  dreamSandFallingBlockGravityMultiplier() {
+        return DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER.get();
+    }
+    static double  giantLilyPadLaunchDistance() {
+        return GIANT_LILY_PAD_LAUNCH_DISTANCE.get();
+    }
 
     static boolean ichorWitherEnabled()                  { return ICHOR_WITHER_ENABLED.get(); }
 
@@ -366,26 +375,56 @@ public final class AntarchyMiscConfig {
     static double  hushweedSporeLifetimeSeconds()        { return HUSHWEED_SPORE_LIFETIME_SECONDS.get(); }
 
     static boolean disableInfinityBookPortalCreation()   { return DISABLE_INFINITY_BOOK_PORTAL_CREATION.get(); }
-    static boolean rainbowAntsLeadToInfinityDimensions() { return RAINBOW_ANTS_LEAD_TO_INFINITY_DIMENSIONS.get(); }
+    static boolean rainbowAntsLeadToInfinityDimensions() {
+        return RAINBOW_ANTS_LEAD_TO_INFINITY_DIMENSIONS.get();
+    }
     static double  rainbowAntInfinityEasterEggChance()   { return RAINBOW_ANT_INFINITY_EASTER_EGG_CHANCE.get(); }
     public static boolean permanentPortalsEnabled()      { return PERMANENT_PORTALS_ENABLED.get(); }
-    public static boolean permanentPortalsFlintAndSteelEnabled() { return PERMANENT_PORTALS_FLINT_AND_STEEL_ENABLED.get(); }
+    public static boolean permanentPortalsFlintAndSteelEnabled() {
+        return PERMANENT_PORTALS_FLINT_AND_STEEL_ENABLED.get();
+    }
     public static boolean elythiaPortalEnabled()         { return ELYTHIA_PORTAL_ENABLED.get(); }
     public static boolean thoraxisPortalEnabled()        { return THORAXIS_PORTAL_ENABLED.get(); }
     public static boolean cavarynPortalEnabled()         { return CAVARYN_PORTAL_ENABLED.get(); }
-    public static boolean portalGunCanFireThroughGlass() { return PORTAL_GUN_CAN_FIRE_THROUGH_GLASS.get(); }
-    public static boolean portalGunCanFireThroughLiquid() { return PORTAL_GUN_CAN_FIRE_THROUGH_LIQUID.get(); }
-    public static boolean portalGunCanPortalsResizeWhenCreated() { return PORTAL_GUN_CAN_PORTALS_RESIZE_WHEN_CREATED.get(); }
-    public static boolean portalGunCanPortalProjectilesChunkload() { return PORTAL_GUN_CAN_PORTAL_PROJECTILES_CHUNKLOAD.get(); }
-    public static boolean portalGunSeeThroughPortals() { return PORTAL_GUN_SEE_THROUGH_PORTALS.get(); }
-    public static boolean portalGunFancyPortals() { return PORTAL_GUN_FANCY_PORTALS.get(); }
-    public static int portalGunMaxShootDistance() { return PORTAL_GUN_MAX_SHOOT_DISTANCE.get(); }
-    public static double portalGunMinFloorExitSpeed() { return PORTAL_GUN_MIN_FLOOR_EXIT_SPEED.get(); }
-    public static int portalGunMaxLiveViews() { return PORTAL_GUN_MAX_LIVE_VIEWS.get(); }
-    public static double portalGunMaxExitSpeed() { return PORTAL_GUN_MAX_EXIT_SPEED.get(); }
-    public static boolean portalGunMoonPullsBlocks() { return PORTAL_GUN_MOON_PULLS_BLOCKS.get(); }
-    public static int portalGunMoonPortalSeconds() { return PORTAL_GUN_MOON_PORTAL_SECONDS.get(); }
-    public static int portalGunMoonBlockCap() { return PORTAL_GUN_MOON_BLOCK_CAP.get(); }
+    public static boolean portalGunCanFireThroughGlass() {
+        return PORTAL_GUN_CAN_FIRE_THROUGH_GLASS.get();
+    }
+    public static boolean portalGunCanFireThroughLiquid() {
+        return PORTAL_GUN_CAN_FIRE_THROUGH_LIQUID.get();
+    }
+    public static boolean portalGunCanPortalsResizeWhenCreated() {
+        return PORTAL_GUN_CAN_PORTALS_RESIZE_WHEN_CREATED.get();
+    }
+    public static boolean portalGunCanPortalProjectilesChunkload() {
+        return PORTAL_GUN_CAN_PORTAL_PROJECTILES_CHUNKLOAD.get();
+    }
+    public static boolean portalGunSeeThroughPortals() {
+        return PORTAL_GUN_SEE_THROUGH_PORTALS.get();
+    }
+    public static boolean portalGunFancyPortals() {
+        return PORTAL_GUN_FANCY_PORTALS.get();
+    }
+    public static int portalGunMaxShootDistance() {
+        return PORTAL_GUN_MAX_SHOOT_DISTANCE.get();
+    }
+    public static double portalGunMinFloorExitSpeed() {
+        return PORTAL_GUN_MIN_FLOOR_EXIT_SPEED.get();
+    }
+    public static int portalGunMaxLiveViews() {
+        return PORTAL_GUN_MAX_LIVE_VIEWS.get();
+    }
+    public static double portalGunMaxExitSpeed() {
+        return PORTAL_GUN_MAX_EXIT_SPEED.get();
+    }
+    public static boolean portalGunMoonPullsBlocks() {
+        return PORTAL_GUN_MOON_PULLS_BLOCKS.get();
+    }
+    public static int portalGunMoonPortalSeconds() {
+        return PORTAL_GUN_MOON_PORTAL_SECONDS.get();
+    }
+    public static int portalGunMoonBlockCap() {
+        return PORTAL_GUN_MOON_BLOCK_CAP.get();
+    }
 
     static boolean diamondMinecartEnabled()              { return DIAMOND_MINECART_ENABLED.get(); }
     static boolean diamondMinecartPlacesRails()          { return DIAMOND_MINECART_PLACES_RAILS.get(); }

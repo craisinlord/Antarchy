@@ -4,20 +4,19 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.BluestoneBlock;
 import com.craisinlord.antarchy.content.block.BluestoneComparatorBlock;
 import com.craisinlord.antarchy.content.block.BluestoneRepeaterBlock;
-import com.craisinlord.antarchy.content.block.BluestoneSignalHelper;
 import com.craisinlord.antarchy.content.block.BluestoneTorchBlock;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RedstoneWireBlock.class)

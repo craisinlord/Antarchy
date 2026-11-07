@@ -110,12 +110,24 @@ public final class AntimetalMinecartDispenseBehavior extends DefaultDispenseItem
     }
 
     private static AbstractMinecart.Type minecartType(Item item) {
-        if (item == Items.MINECART) return AbstractMinecart.Type.RIDEABLE;
-        if (item == Items.CHEST_MINECART) return AbstractMinecart.Type.CHEST;
-        if (item == Items.FURNACE_MINECART) return AbstractMinecart.Type.FURNACE;
-        if (item == Items.TNT_MINECART) return AbstractMinecart.Type.TNT;
-        if (item == Items.HOPPER_MINECART) return AbstractMinecart.Type.HOPPER;
-        if (item == Items.COMMAND_BLOCK_MINECART) return AbstractMinecart.Type.COMMAND_BLOCK;
+        if (item == Items.MINECART) {
+            return AbstractMinecart.Type.RIDEABLE;
+        }
+        if (item == Items.CHEST_MINECART) {
+            return AbstractMinecart.Type.CHEST;
+        }
+        if (item == Items.FURNACE_MINECART) {
+            return AbstractMinecart.Type.FURNACE;
+        }
+        if (item == Items.TNT_MINECART) {
+            return AbstractMinecart.Type.TNT;
+        }
+        if (item == Items.HOPPER_MINECART) {
+            return AbstractMinecart.Type.HOPPER;
+        }
+        if (item == Items.COMMAND_BLOCK_MINECART) {
+            return AbstractMinecart.Type.COMMAND_BLOCK;
+        }
         return null;
     }
 }

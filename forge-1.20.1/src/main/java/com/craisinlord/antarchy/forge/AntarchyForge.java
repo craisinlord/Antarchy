@@ -1,7 +1,5 @@
 package com.craisinlord.antarchy.forge;
 
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
-import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
@@ -9,15 +7,20 @@ import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
-import com.craisinlord.antarchy.content.portal.PermanentPortalType;
-import com.craisinlord.antarchy.forge.registry.*;
+import com.craisinlord.antarchy.content.effect.AntarchySizeScaling;
 import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
+import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkBridge;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
+import com.craisinlord.antarchy.forge.registry.*;
+import com.craisinlord.anthology.effect.AnthologyEffects;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
 
 @Mod(Antarchy.MODID)
 public class AntarchyForge {
@@ -262,21 +265,21 @@ public class AntarchyForge {
         AntarchyForgeCreativeModeTabs.register(modEventBus);
         AntarchyForgeEntityAttributes.register(modEventBus);
         AntarchyForgePayloadHandlers.register();
-        AntarchyNetwork.bindServer(new com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkBridge());
+        AntarchyNetwork.bindServer(new AntarchyForgeNetworkBridge());
         AntarchyNetwork.bindClient(AntarchyForgeNetworkCore::sendToServer);
         Antarchy.init();
     }
 
     private static void bootstrapGameRules() {
         AntarchyGameRules.bootstrap((name, category, defaultValue) -> {
-            net.minecraft.world.level.GameRules.Type<net.minecraft.world.level.GameRules.BooleanValue> type =
-                    net.minecraft.world.level.GameRules.BooleanValue.create(defaultValue);
-            return net.minecraft.world.level.GameRules.register(name, category, type);
+            GameRules.Type<GameRules.BooleanValue> type =
+                    GameRules.BooleanValue.create(defaultValue);
+            return GameRules.register(name, category, type);
         });
     }
 
     private static void bindCommonObjects() {
-        com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyForgeEntities.UPWARD_FALLING_BLOCK;
+        UpwardFallingBlockEntity.TYPE = AntarchyForgeEntities.UPWARD_FALLING_BLOCK;
         PermanentPortalType.bindBlocks(
                 () -> AntarchyForgeBlocks.MOSSY_OURANWOOD_WOOD.get(),
                 () -> AntarchyForgeBlocks.ELYTHIA_PORTAL.get(),
@@ -293,7 +296,7 @@ public class AntarchyForge {
         AntarchyObjects.setBloodglassMaxHearts(() -> AntarchyForgeMisc.attributeHolder(AntarchyForgeMisc.BLOODGLASS_MAX_HEARTS));
         AntarchyObjects.setBloodglassWard(() -> AntarchyForgeMisc.BLOODGLASS_WARD.get());
         AntarchyEnchantments.bind(() -> AntarchyForgeMisc.FEATHER_RISING.get(), () -> AntarchyForgeMisc.CHRONOSPHERE.get());
-        com.craisinlord.antarchy.content.effect.AntarchySizeScaling.register(AntarchyForgeMisc.SHRINKING_EFFECT, AntarchyForgeMisc.GROWTH_EFFECT);
+        AntarchySizeScaling.register(AntarchyForgeMisc.SHRINKING_EFFECT, AntarchyForgeMisc.GROWTH_EFFECT);
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyForgeMisc.GLIMMERING.get());
         AntarchyObjects.setRemembranceEffect(() -> AntarchyForgeMisc.REMEMBRANCE.get());
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyForgeMisc.ROYAL_VITALITY_PENALTY.get());

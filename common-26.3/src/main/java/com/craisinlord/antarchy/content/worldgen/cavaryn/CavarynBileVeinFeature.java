@@ -2,9 +2,11 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.MapCodec;
-
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,8 +28,8 @@ public record CavarynBileVeinFeature() implements Feature {
     private static final int SEARCH_RADIUS = 10;
     private static final int SEARCH_ATTEMPTS = 24;
     private static final int VERTICAL_SCAN = 12;
-    private static final float BRANCH_CHANCE = 0.12f;
-    private static final float LIQUID_POCKET_CHANCE = 0.008f;
+    private static final float BRANCH_CHANCE = 0.12F;
+    private static final float LIQUID_POCKET_CHANCE = 0.008F;
     private static final int MAX_DISTANCE_FROM_START = 16;
     private static final int MAX_DISTANCE_FROM_START_SQR = MAX_DISTANCE_FROM_START * MAX_DISTANCE_FROM_START;
 
@@ -46,7 +48,6 @@ public record CavarynBileVeinFeature() implements Feature {
             if (bileVeinBlock == null || !(bileBlock instanceof LiquidBlock)) {
                 return false;
             }
-
 
             BlockPos start = findStart(level, origin, random);
             if (start == null) {
@@ -196,7 +197,7 @@ public record CavarynBileVeinFeature() implements Feature {
             if (!isVeinCandidate(level, candidate)) {
                 continue;
             }
-            if (isEnclosed(level, candidate) || random.nextFloat() < 0.01f) {
+            if (isEnclosed(level, candidate) || random.nextFloat() < 0.01F) {
                 BlockState bileState = bileBlock.defaultBlockState();
                 level.setBlock(candidate, bileState, 2);
                 scheduleFluidTick(level, candidate, bileState);

@@ -3,8 +3,10 @@ package com.craisinlord.antarchy.content.item;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageAccess;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -112,8 +114,8 @@ public final class TigerEyeArmorUtil {
         if (observer.getTarget() == player || observer.getLastHurtByMob() == player) {
             return false;
         }
-        if (observer instanceof net.minecraft.world.entity.NeutralMob neutralMob
-                && observer.level() instanceof net.minecraft.server.level.ServerLevel serverLevel
+        if (observer instanceof NeutralMob neutralMob
+                && observer.level() instanceof ServerLevel serverLevel
                 && neutralMob.isAngryAt(player, serverLevel)) {
             return false;
         }

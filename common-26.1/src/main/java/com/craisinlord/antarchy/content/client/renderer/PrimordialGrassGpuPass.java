@@ -82,7 +82,9 @@ final class PrimordialGrassGpuPass {
     }
 
     static boolean available() {
-        if (failed) return false;
+        if (failed) {
+            return false;
+        }
         try {
             return RenderSystem.getDevice().precompilePipeline(PIPELINE).isValid();
         } catch (RuntimeException | LinkageError exception) {
@@ -217,7 +219,9 @@ final class PrimordialGrassGpuPass {
     private static void beginTimer(CommandEncoder encoder) {
         if (pendingQuery != null) {
             OptionalLong elapsed = pendingQuery.getValue();
-            if (elapsed.isEmpty()) return;
+            if (elapsed.isEmpty()) {
+                return;
+            }
             gpuNanos += (elapsed.getAsLong() - gpuNanos) * TIMER_SMOOTHING;
             pendingQuery.close();
             pendingQuery = null;
@@ -230,7 +234,9 @@ final class PrimordialGrassGpuPass {
     }
 
     private static void endTimer() {
-        if (activeQuery == null) return;
+        if (activeQuery == null) {
+            return;
+        }
         RenderSystem.getDevice().createCommandEncoder().timerQueryEnd(activeQuery);
         pendingQuery = activeQuery;
         activeQuery = null;

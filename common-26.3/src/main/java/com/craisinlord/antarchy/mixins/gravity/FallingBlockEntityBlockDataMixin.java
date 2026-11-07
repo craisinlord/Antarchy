@@ -3,14 +3,14 @@ package com.craisinlord.antarchy.mixins.gravity;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.logging.LogUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -19,10 +19,10 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.TypedEntityData;
+import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(FallingBlockEntity.class)
 public abstract class FallingBlockEntityBlockDataMixin {
@@ -48,7 +49,7 @@ public abstract class FallingBlockEntityBlockDataMixin {
 
     @WrapOperation(
             method = "tick",
-            at = @org.spongepowered.asm.mixin.injection.At(
+            at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
             )
@@ -64,7 +65,7 @@ public abstract class FallingBlockEntityBlockDataMixin {
 
     @WrapOperation(
             method = "tick",
-            at = @org.spongepowered.asm.mixin.injection.At(
+            at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/entity/item/ItemEntity;"
             )

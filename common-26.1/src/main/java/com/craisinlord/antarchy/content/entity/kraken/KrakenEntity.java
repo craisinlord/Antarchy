@@ -5,15 +5,24 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.damage.AntarchyDamageTypes;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.multipart.MultipartEntityOwner;
 import com.craisinlord.anthology.multipart.MultipartLayout;
-import com.craisinlord.antarchy.content.damage.AntarchyDamageTypes;
-
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.keyframehandler.AutoPlayingSoundKeyframeHandler;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,14 +33,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,7 +57,14 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -64,22 +81,13 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.animation.keyframehandler.AutoPlayingSoundKeyframeHandler;
-import com.geckolib.util.GeckoLibUtil;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
 
 public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityOwner, GlimmerEcho {
     private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.BOOLEAN);
@@ -235,7 +243,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     private static final Vec3 GRAB_ANCHOR_LOCAL = new Vec3(22.0D / 16.0D, 223.5D / 16.0D, -12.5D / 16.0D);
 
-    private final ServerBossEvent bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, Component.translatable("entity.antarchy.kraken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
+    private final ServerBossEvent bossEvent = new EntityLinkedServerBossEvent(this, Component.translatable("entity.antarchy.kraken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     @Nullable
@@ -780,12 +788,12 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     }
 
     @Override
-    public void startSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
+    public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
     }
 
     @Override
-    public void stopSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
+    public void stopSeenByPlayer(ServerPlayer player) {
         super.stopSeenByPlayer(player);
         this.bossEvent.removePlayer(player);
     }
@@ -1509,7 +1517,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         }
     }
 
-    private void sendRing(ServerLevel serverLevel, Vec3 center, double radius, net.minecraft.core.particles.ParticleOptions particle) {
+    private void sendRing(ServerLevel serverLevel, Vec3 center, double radius, ParticleOptions particle) {
         for (int point = 0; point < 8; point++) {
             double angle = point * Mth.TWO_PI / 8.0D;
             serverLevel.sendParticles(particle, center.x + Math.cos(angle) * radius, center.y + 0.2D, center.z + Math.sin(angle) * radius, 1, 0.0D, 0.0D, 0.0D, 0.0D);
@@ -1627,7 +1635,9 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
             if (spawnBomb) {
                 OctopusBombEntity bomb = AntarchyObjects.OCTOPUS_BOMB.get().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
-                if (bomb == null) continue;
+                if (bomb == null) {
+                    continue;
+                }
                 bomb.snapTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
                 GlimmerEchoes.markSummon(this, bomb);
                 bomb.setKrakenOwner(this.getUUID());
@@ -1637,7 +1647,9 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
                 serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.BUBBLE), bomb.getX(), bomb.getY() + 0.4D, bomb.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
             } else {
                 MissileSquidEntity squid = AntarchyObjects.MISSILE_SQUID.get().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
-                if (squid == null) continue;
+                if (squid == null) {
+                    continue;
+                }
                 squid.snapTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
                 GlimmerEchoes.markSummon(this, squid);
                 squid.setKrakenOwner(this.getUUID());
@@ -1964,7 +1976,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
         double bossBarRange = this.getBossBarRange();
         AABB bossBarArea = this.getBoundingBox().inflate(bossBarRange, 192.0D, bossBarRange);
-        List<ServerPlayer> nearbyPlayers = new java.util.ArrayList<>();
+        List<ServerPlayer> nearbyPlayers = new ArrayList<>();
         for (ServerPlayer player : serverLevel.players()) {
             boolean inRange = bossBarArea.intersects(player.getBoundingBox()) && this.isWithinBossBarRange(player);
             if (player.isAlive() && !player.isSpectator() && (inRange || player == this.getTarget())) {
@@ -1986,7 +1998,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     }
 
     private double getBossBarRange() {
-        return Math.max(40.0D, com.craisinlord.antarchy.config.AntarchySettings.krakenBossBarRange());
+        return Math.max(40.0D, AntarchySettings.krakenBossBarRange());
     }
 
     private boolean isWithinBossBarRange(Entity entity) {

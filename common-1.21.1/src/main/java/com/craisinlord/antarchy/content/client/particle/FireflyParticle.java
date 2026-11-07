@@ -14,15 +14,15 @@ public final class FireflyParticle extends TextureSheetParticle {
     private static final int FADE_TICKS = 8;
 
     private FireflyParticle(ClientLevel level, double x, double y, double z, SpriteSet sprites) {
-        super(level, x, y, z, 0.0, 0.0, 0.0);
+        super(level, x, y, z, 0.0D, 0.0D, 0.0D);
         this.setSprite(sprites.get(0, 1));
         this.lifetime = 30 + this.random.nextInt(78);
         this.quadSize = 0.10F + this.random.nextFloat() * 0.04F;
         this.setColor(0.92F, 0.98F, 0.45F);
         this.setAlpha(0.0F);
-        this.yd = 0.004 + this.random.nextDouble() * 0.003;
-        this.xd = (this.random.nextDouble() - 0.5) * 0.008;
-        this.zd = (this.random.nextDouble() - 0.5) * 0.008;
+        this.yd = 0.004D + this.random.nextDouble() * 0.003D;
+        this.xd = (this.random.nextDouble() - 0.5D) * 0.008D;
+        this.zd = (this.random.nextDouble() - 0.5D) * 0.008D;
         this.hasPhysics = false;
     }
 
@@ -41,9 +41,9 @@ public final class FireflyParticle extends TextureSheetParticle {
         this.xd += bobOffset;
         this.zd -= bobOffset;
 
-        this.xd *= 0.94;
-        this.yd *= 0.98;
-        this.zd *= 0.94;
+        this.xd *= 0.94D;
+        this.yd *= 0.98D;
+        this.zd *= 0.94D;
 
         this.move(this.xd, this.yd, this.zd);
 

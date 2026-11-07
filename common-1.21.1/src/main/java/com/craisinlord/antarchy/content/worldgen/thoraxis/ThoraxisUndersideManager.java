@@ -8,13 +8,16 @@ import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityTransition;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -24,9 +27,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.NaturalSpawner;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -34,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 public final class ThoraxisUndersideManager {
     public static final int GRAVITY_FLIP_Y = 0;
     public static final int MOUNTAIN_SURFACE_Y = -56;
-    private static final net.minecraft.resources.ResourceLocation THORAXIS_DIMENSION = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
+    private static final ResourceLocation THORAXIS_DIMENSION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
     private static final GravityTransition TRANSITION = new GravityTransition(12);
     private static final GravityTransition THROAT_TRANSITION = new GravityTransition(12);
     private static final int EFFECT_DURATION_TICKS = 50;
@@ -174,9 +177,9 @@ public final class ThoraxisUndersideManager {
     private static final class TrackingState {
         private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
         private final Set<Entity> forcedItems = Collections.newSetFromMap(new IdentityHashMap<>());
-        private final Map<UUID, Long> lastFlipTick = new java.util.HashMap<>();
-        private final Map<UUID, PlayerCrossing> playerCrossings = new java.util.HashMap<>();
-        private final Map<UUID, Long> lastUndersideExitTick = new java.util.HashMap<>();
+        private final Map<UUID, Long> lastFlipTick = new HashMap<>();
+        private final Map<UUID, PlayerCrossing> playerCrossings = new HashMap<>();
+        private final Map<UUID, Long> lastUndersideExitTick = new HashMap<>();
         private long lastDiagnosticTick = Long.MIN_VALUE / 2L;
 
         private DiscoveryStats discover(ServerLevel level) {
@@ -189,9 +192,9 @@ public final class ThoraxisUndersideManager {
                         player.getX() + radius, EXIT_UNDERSIDE_Y, player.getZ() + radius
                 );
                 entities.add(player);
-                java.util.List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, area,
+                List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, area,
                         entity -> !entity.isSpectator() && entity.getY() < EXIT_UNDERSIDE_Y);
-                java.util.List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, area,
+                List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, area,
                         entity -> !entity.isSpectator() && entity.getY() < EXIT_UNDERSIDE_Y);
                 discoveredLiving += livingEntities.size();
                 discoveredItems += itemEntities.size();

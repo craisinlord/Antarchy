@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -32,7 +33,7 @@ public class BluestoneDustItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getClickedFace() != net.minecraft.core.Direction.DOWN) {
+        if (context.getClickedFace() != Direction.DOWN) {
             return InteractionResult.FAIL;
         }
 

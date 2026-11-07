@@ -18,10 +18,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -101,7 +102,7 @@ public final class AttitudeAdjusterSlamManager {
         level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 1.0F, 0.7F);
     }
 
-    public static boolean tryStartPlayerSlam(ServerPlayer player, net.minecraft.world.InteractionHand hand) {
+    public static boolean tryStartPlayerSlam(ServerPlayer player, InteractionHand hand) {
         if (player.onGround() || player.isInWaterOrBubble() || player.isInLava() || player.isFallFlying() || player.getAbilities().flying || PLAYER_SLAMS.containsKey(player.getUUID())) {
             return false;
         }
@@ -298,7 +299,7 @@ public final class AttitudeAdjusterSlamManager {
     }
 
     private static double resistanceScale(LivingEntity entity) {
-        return Mth.clamp(1.0D - entity.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE), 0.15D, 1.0D);
+        return Mth.clamp(1.0D - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.15D, 1.0D);
     }
 
     private static final class SlammedTargetState {
@@ -321,12 +322,12 @@ public final class AttitudeAdjusterSlamManager {
 
     private static final class PlayerSlamState {
         private final UUID playerId;
-        private final net.minecraft.world.InteractionHand hand;
+        private final InteractionHand hand;
         private final String dimensionId;
         private final long expiresAt;
         private final float startFallDistance;
 
-        private PlayerSlamState(UUID playerId, net.minecraft.world.InteractionHand hand, String dimensionId, long expiresAt, float startFallDistance) {
+        private PlayerSlamState(UUID playerId, InteractionHand hand, String dimensionId, long expiresAt, float startFallDistance) {
             this.playerId = playerId;
             this.hand = hand;
             this.dimensionId = dimensionId;

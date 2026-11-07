@@ -148,7 +148,7 @@ public class ElythiaStoneRuinFeature extends Feature<StoneRuinConfiguration> {
                     state(config.wall()));
         }
 
-        private static BlockState state(net.minecraft.resources.ResourceLocation id) {
+        private static BlockState state(ResourceLocation id) {
             return StoneTorConfiguration.resolve(id).defaultBlockState();
         }
 

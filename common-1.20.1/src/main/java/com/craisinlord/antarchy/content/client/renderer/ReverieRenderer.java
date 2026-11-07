@@ -128,7 +128,7 @@ public class ReverieRenderer extends GeoEntityRenderer<ReverieEntity> {
             ResourceLocation previousTexture = ReverieModel.textureForMood(previousMood);
             RenderType previousRenderType = RenderType.entityTranslucent(previousTexture);
             VertexConsumer previousBuffer = bufferSource.getBuffer(previousRenderType);
-            
+
             this.getRenderer().reRender(
                     bakedModel,
                     poseStack,

@@ -9,8 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -34,7 +34,7 @@ public final class ParalyzedStoneGeoLayer<T extends GeoAnimatable> extends GeoRe
         }
 
         poseStack.pushPose();
-        poseStack.scale(1.02f, 1.02f, 1.02f);
+        poseStack.scale(1.02F, 1.02F, 1.02F);
         RenderType stoneRenderType = RenderType.entityCutoutNoCull(STONE_TEXTURE);
         VertexConsumer stoneBuffer = bufferSource.getBuffer(stoneRenderType);
         this.getRenderer().reRender(

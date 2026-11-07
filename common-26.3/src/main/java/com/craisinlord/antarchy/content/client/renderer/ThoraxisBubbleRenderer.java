@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -16,6 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
 public final class ThoraxisBubbleRenderer {
     private static final Identifier SHELL_TEXTURE = texture("shell");
     private static final Identifier FRAME_TEXTURE = texture("frame");
@@ -103,9 +105,11 @@ public final class ThoraxisBubbleRenderer {
         return POINT_POOL.get(index);
     }
 
-    public static void render(PoseStack poseStack, net.minecraft.client.renderer.SubmitNodeCollector collector, Vec3 cameraPos, float partialTick) {
+    public static void render(PoseStack poseStack, SubmitNodeCollector collector, Vec3 cameraPos, float partialTick) {
         List<Shape> shapes = shapes(cameraPos, partialTick);
-        if (shapes.isEmpty()) return;
+        if (shapes.isEmpty()) {
+            return;
+        }
         double time = Minecraft.getInstance().level.getGameTime() + partialTick;
         collector.submitCustomGeometry(poseStack, AntarchySkyDraw.additiveTexture(SHELL_TEXTURE), (pose, consumer) -> {
             Matrix4f matrix = pose.pose();
@@ -126,9 +130,13 @@ public final class ThoraxisBubbleRenderer {
     private static List<Shape> shapes(Vec3 cameraPos, float partialTick) {
         List<ThoraxisBubble> bubbles = ThoraxisEventClient.bubbles();
         Minecraft minecraft = Minecraft.getInstance();
-        if (bubbles.isEmpty() || minecraft.level == null) return List.of();
+        if (bubbles.isEmpty() || minecraft.level == null) {
+            return List.of();
+        }
         float visibility = ThoraxisEventClient.bubbleVisibility(partialTick);
-        if (visibility <= 0.01F) return List.of();
+        if (visibility <= 0.01F) {
+            return List.of();
+        }
         float solidity = ThoraxisEventClient.strength(partialTick);
         double time = minecraft.level.getGameTime() + partialTick;
         Frustum frustum = minecraft.gameRenderer.mainCamera().getCullFrustum();
@@ -136,10 +144,14 @@ public final class ThoraxisBubbleRenderer {
         for (ThoraxisBubble bubble : bubbles) {
             Vec3 center = ThoraxisEventClient.bubblePosition(bubble, time);
             double distance = center.distanceTo(cameraPos);
-            if (distance > MAX_DISTANCE) continue;
+            if (distance > MAX_DISTANCE) {
+                continue;
+            }
             float alpha = visibility * bubble.presence(time) * Mth.lerp(solidity, 0.4F, 1.0F)
                     * (float) Mth.clamp((MAX_DISTANCE - distance) / DISTANCE_FADE, 0.0D, 1.0D);
-            if (alpha <= 0.01F) continue;
+            if (alpha <= 0.01F) {
+                continue;
+            }
             float squash = ThoraxisEventClient.bubbleSquash(bubble, time) * SQUASH_AMOUNT;
             center = center.add(0.0D, bubble.down() * bubble.radius() * squash, 0.0D);
             double extent = bubble.radius() * 1.2D + 0.5D;

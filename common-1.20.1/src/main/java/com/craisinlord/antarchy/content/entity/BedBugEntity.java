@@ -1,14 +1,17 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.block.BedBugEggBlock;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import java.util.Comparator;
+import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -18,6 +21,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
@@ -54,12 +58,9 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.Comparator;
-import java.util.EnumSet;
 
 public class BedBugEntity extends Animal implements GeoEntity {
     private static final byte BITE_ANIM_EVENT = 18;
@@ -210,7 +211,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(Entity target) {
         if (!(target instanceof LivingEntity livingTarget)) {
             return false;
         }
@@ -259,7 +260,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag dataTag) {
         BedBugSpawnData bedBugSpawnData = spawnGroupData instanceof BedBugSpawnData data ? data : new BedBugSpawnData();
         super.finalizeSpawn(level, difficulty, spawnReason, null, dataTag);
 
@@ -521,7 +522,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
         for (int attempt = 0; attempt < 12; attempt++) {
             BlockPos candidate = origin.offset(this.random.nextInt(9) - 4, 0, this.random.nextInt(9) - 4);
             BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
-            if (!level.isEmptyBlock(surface) || !level.getBlockState(surface.below()).isFaceSturdy(level, surface.below(), net.minecraft.core.Direction.UP)) {
+            if (!level.isEmptyBlock(surface) || !level.getBlockState(surface.below()).isFaceSturdy(level, surface.below(), Direction.UP)) {
                 continue;
             }
 
@@ -553,7 +554,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
 
     @Nullable
     private BlockPos findEggLayPos() {
-        if (this.eggNestPos != null && this.level().getBlockState(this.eggNestPos).isAir() && this.level().getBlockState(this.eggNestPos.below()).isFaceSturdy(this.level(), this.eggNestPos.below(), net.minecraft.core.Direction.UP)) {
+        if (this.eggNestPos != null && this.level().getBlockState(this.eggNestPos).isAir() && this.level().getBlockState(this.eggNestPos.below()).isFaceSturdy(this.level(), this.eggNestPos.below(), Direction.UP)) {
             return this.eggNestPos;
         }
 
@@ -561,7 +562,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
         for (int attempt = 0; attempt < 12; attempt++) {
             BlockPos candidate = origin.offset(this.random.nextInt(7) - 3, 0, this.random.nextInt(7) - 3);
             BlockPos surface = this.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
-            if (this.level().isEmptyBlock(surface) && this.level().getBlockState(surface.below()).isFaceSturdy(this.level(), surface.below(), net.minecraft.core.Direction.UP)) {
+            if (this.level().isEmptyBlock(surface) && this.level().getBlockState(surface.below()).isFaceSturdy(this.level(), surface.below(), Direction.UP)) {
                 return surface.immutable();
             }
         }

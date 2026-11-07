@@ -8,6 +8,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HugeMushroomBlock;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -36,7 +37,7 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
         double leanAngle = random.nextDouble() * Math.PI * 2;
         double leanDX = Math.cos(leanAngle);
         double leanDZ = Math.sin(leanAngle);
-        double maxLean = 2.0 + random.nextDouble() * 3.5;
+        double maxLean = 2.0D + random.nextDouble() * 3.5D;
 
         int baseY = origin.getY();
         int stemOffset = stemSize == 2 ? 0 : -1;
@@ -66,7 +67,9 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
                     int wx = origin.getX() + stemOffset + dx + leanX;
                     int wz = origin.getZ() + stemOffset + dz + leanZ;
                     BlockPos pos = new BlockPos(wx, baseY + dy, wz);
-                    if (!canReplace(level.getBlockState(pos))) continue;
+                    if (!canReplace(level.getBlockState(pos))) {
+                        continue;
+                    }
                     boolean isEdge = (dx == 0 || dx == stemSize - 1 || dz == 0 || dz == stemSize - 1);
                     BlockState stemState = isEdge ? stemSide : stemPore;
                     level.setBlock(pos, stemState, 2);
@@ -79,8 +82,8 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
             }
         }
 
-        double capCenterX = origin.getX() + (stemSize == 2 ? 0.5 : 0) + leanDX * maxLean;
-        double capCenterZ = origin.getZ() + (stemSize == 2 ? 0.5 : 0) + leanDZ * maxLean;
+        double capCenterX = origin.getX() + (stemSize == 2 ? 0.5D : 0) + leanDX * maxLean;
+        double capCenterZ = origin.getZ() + (stemSize == 2 ? 0.5D : 0) + leanDZ * maxLean;
         int capTopY = baseY + stemHeight;
         int baseCapRadius = stemSize + 2 + random.nextInt(2);
 
@@ -88,7 +91,7 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
         float[][] jitter = new float[jitterRange * 2 + 1][jitterRange * 2 + 1];
         for (float[] row : jitter) {
             for (int j = 0; j < row.length; j++) {
-                row[j] = random.nextFloat() * 1.0f - 0.5f;
+                row[j] = random.nextFloat() * 1.0F - 0.5F;
             }
         }
 
@@ -96,10 +99,12 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
         for (int cl = 0; cl < capLayers; cl++) {
             int capY = capTopY + cl;
             double nomRadius = baseCapRadius - cl;
-            if (nomRadius < 0) break;
+            if (nomRadius < 0) {
+                break;
+            }
 
-            double layerCapX = capCenterX + leanDX * cl * 0.3;
-            double layerCapZ = capCenterZ + leanDZ * cl * 0.3;
+            double layerCapX = capCenterX + leanDX * cl * 0.3D;
+            double layerCapZ = capCenterZ + leanDZ * cl * 0.3D;
 
             for (int dx = -(jitterRange); dx <= jitterRange; dx++) {
                 for (int dz = -(jitterRange); dz <= jitterRange; dz++) {
@@ -110,13 +115,19 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
                     float j = jitter[dx + jitterRange][dz + jitterRange];
                     double effectiveRadius = nomRadius + j;
 
-                    if (dist > effectiveRadius + 0.5) continue;
-                    if (effectiveRadius < 0) continue;
+                    if (dist > effectiveRadius + 0.5D) {
+                        continue;
+                    }
+                    if (effectiveRadius < 0) {
+                        continue;
+                    }
 
                     BlockPos capPos = new BlockPos(origin.getX() + dx, capY, origin.getZ() + dz);
-                    if (!canReplace(level.getBlockState(capPos))) continue;
+                    if (!canReplace(level.getBlockState(capPos))) {
+                        continue;
+                    }
 
-                    boolean isOuter = dist >= effectiveRadius - 0.7;
+                    boolean isOuter = dist >= effectiveRadius - 0.7D;
                     boolean isTop = cl == capLayers - 1;
 
                     BlockState capState = capBlock.defaultBlockState()
@@ -155,9 +166,13 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
             int sy = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, sx, sz);
             BlockPos smallPos = new BlockPos(sx, sy, sz);
 
-            if (!canReplace(level.getBlockState(smallPos))) continue;
+            if (!canReplace(level.getBlockState(smallPos))) {
+                continue;
+            }
             BlockState below = level.getBlockState(smallPos.below());
-            if (!below.isFaceSturdy(level, smallPos.below(), Direction.UP)) continue;
+            if (!below.isFaceSturdy(level, smallPos.below(), Direction.UP)) {
+                continue;
+            }
 
             Block plant = random.nextBoolean() ? smallMushroom
                     : (isRed ? Blocks.BROWN_MUSHROOM : Blocks.RED_MUSHROOM);
@@ -172,6 +187,6 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
 
     private static boolean canReplace(BlockState state) {
         return state.isAir() || state.canBeReplaced()
-                || (state.getBlock() instanceof net.minecraft.world.level.block.LeavesBlock);
+                || (state.getBlock() instanceof LeavesBlock);
     }
 }

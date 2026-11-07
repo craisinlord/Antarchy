@@ -3,7 +3,9 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.Interval;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
 
 public record ElythiaBasinFill(DensityFunction argument) implements DensityFunction {
     public static final MapCodec<ElythiaBasinFill> CODEC = DensityFunction.CODEC
@@ -39,10 +41,14 @@ public record ElythiaBasinFill(DensityFunction argument) implements DensityFunct
     }
 
     @Override
-    public int domainAxes() { return ElythiaField.planarAxes(this.argument); }
+    public int domainAxes() {
+        return ElythiaField.planarAxes(this.argument);
+    }
 
     @Override
-    public MapCodec<ElythiaBasinFill> codec() { return CODEC; }
+    public MapCodec<ElythiaBasinFill> codec() {
+        return CODEC;
+    }
 
     private static double spline(double t, int index) {
         return switch (index) {

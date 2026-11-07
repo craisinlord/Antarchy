@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.command;
 
-import com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload;
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload;
 import com.craisinlord.antarchy.content.weather.ElythiaEvent;
 import com.craisinlord.antarchy.content.weather.ElythiaEvents;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGenProfiler;
@@ -17,13 +17,14 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -183,7 +184,7 @@ public final class ElythiaCommand {
                     }
                     BlockPos pos = peak.pos();
                     visited.add(pos);
-                    player.teleportTo(level, pos.getX() + 0.5D, pos.getY() + 3.0D, pos.getZ() + 0.5D, java.util.Set.of(), player.getYRot(), player.getXRot(), true);
+                    player.teleportTo(level, pos.getX() + 0.5D, pos.getY() + 3.0D, pos.getZ() + 0.5D, Set.of(), player.getYRot(), player.getXRot(), true);
                     source.sendSuccess(() -> Component.literal("Massif peak at " + pos.getX() + ", " + pos.getZ() + ": y " + pos.getY()
                             + " (" + peak.distance() + " blocks away). Run /elythia massif next for another."), false);
                 }));

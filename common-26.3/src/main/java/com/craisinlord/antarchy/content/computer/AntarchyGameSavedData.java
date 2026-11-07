@@ -5,8 +5,10 @@ import com.craisinlord.antarchy.content.util.LegacySavedDataFiles;
 import com.mojang.serialization.Codec;
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -18,11 +20,13 @@ public final class AntarchyGameSavedData extends SavedData {
     private static final SavedDataType<AntarchyGameSavedData> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(Antarchy.MODID, ID), AntarchyGameSavedData::create, CODEC, null);
     private final Map<String, GameState> games = new HashMap<>();
 
-    public static AntarchyGameSavedData create() { return new AntarchyGameSavedData(); }
+    public static AntarchyGameSavedData create() {
+        return new AntarchyGameSavedData();
+    }
 
     public static AntarchyGameSavedData load(CompoundTag tag) {
         AntarchyGameSavedData data = new AntarchyGameSavedData();
-        for (net.minecraft.nbt.Tag raw : tag.getListOrEmpty("Games")) {
+        for (Tag raw : tag.getListOrEmpty("Games")) {
             if (!(raw instanceof CompoundTag item)) {
                 continue;
             }
@@ -64,7 +68,7 @@ public final class AntarchyGameSavedData extends SavedData {
         get(server).setDirty();
     }
 
-    public static String key(net.minecraft.resources.Identifier dimension, net.minecraft.core.BlockPos pos) {
+    public static String key(Identifier dimension, BlockPos pos) {
         return dimension + "|" + pos.asLong();
     }
 

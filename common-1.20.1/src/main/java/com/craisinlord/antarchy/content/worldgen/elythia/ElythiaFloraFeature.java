@@ -1,14 +1,19 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import com.craisinlord.sizeablefoliage.content.block.BigBushBlock;
 import com.craisinlord.sizeablefoliage.content.block.VeryTallGrassBlock;
 import com.mojang.serialization.Codec;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
@@ -20,8 +25,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import java.util.HashMap;
-import java.util.Map;
+import net.minecraft.world.level.material.Fluids;
 
 public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     private static final String SIZEABLE_FOLIAGE_MODID = "sizeable_foliage";
@@ -31,7 +35,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     private static volatile Block torchflowerBush;
     private static final ResourceLocation CAMELLIA_ID = new ResourceLocation("antarchy", "camellia");
     private static final ResourceLocation SPIDER_LILY_ID = new ResourceLocation("antarchy", "spider_lily");
-    private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> PRIMORDIAL_GROUND = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, new ResourceLocation("antarchy", "primordial_ground"));
+    private static final TagKey<Block> PRIMORDIAL_GROUND = TagKey.create(Registries.BLOCK, new ResourceLocation("antarchy", "primordial_ground"));
 
     private final Variant variant;
 
@@ -157,7 +161,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
 
     private boolean placeSelectedPlant(WorldGenLevel level, BlockPos plantPos, BlockPos groundPos, RandomSource random) {
         if (this.meadowLike() && level.getBlockState(groundPos).is(PRIMORDIAL_GROUND)) {
-            return placeSingle(level, plantPos, com.craisinlord.antarchy.content.block.ElythiaPalette.PRIMORDIAL_GRASS.get());
+            return placeSingle(level, plantPos, ElythiaPalette.PRIMORDIAL_GRASS.get());
         }
         if (this.variant == Variant.BUTTERFLY_FIELDS) {
             float roll = random.nextFloat();
@@ -485,7 +489,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             BlockPos seagrassPos = new BlockPos(x, y, z);
             BlockPos floorPos = seagrassPos.below();
 
-            if (!level.getFluidState(seagrassPos).isSourceOfType(net.minecraft.world.level.material.Fluids.WATER)) {
+            if (!level.getFluidState(seagrassPos).isSourceOfType(Fluids.WATER)) {
                 continue;
             }
 

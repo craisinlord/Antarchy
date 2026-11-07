@@ -1,16 +1,16 @@
 package com.craisinlord.antarchy.content.portal;
 
-import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ant.BrownAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.RedAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.TermiteEntity;
-import com.craisinlord.antarchy.Antarchy;
 import java.util.Objects;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.village.poi.PoiType;

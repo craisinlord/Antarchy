@@ -4,22 +4,28 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.mojang.serialization.Codec;
-import net.minecraft.world.entity.EntitySpawnReason;
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.levelgen.Heightmap;
-import java.util.HashMap;
-import java.util.Arrays;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -27,18 +33,12 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.lang.ref.WeakReference;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration> {
     private static final Map<ServerLevel, Set<Long>> CLAIMED_TREE_KINGS = new WeakHashMap<>();
@@ -176,7 +176,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
     private static void queueTreeKing(ServerLevel serverLevel, int centerX, int centerZ, int baseY) {
         long treeKey = KingsTreeSavedData.treeKey(centerX, centerZ);
         synchronized (CLAIMED_TREE_KINGS) {
-            if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new java.util.HashSet<>()).add(treeKey)) {
+            if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new HashSet<>()).add(treeKey)) {
                 return;
             }
         }
@@ -192,7 +192,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
             saved.treeBaseHeights().forEach(heights::putIfAbsent);
         }
         synchronized (CLAIMED_TREE_KINGS) {
-            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new java.util.HashSet<>());
+            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new HashSet<>());
             for (long treeKey : saved.pendingTrees()) {
                 if (claimed.add(treeKey)) {
                     PENDING_KING_SPAWNS.add(new PendingKingSpawn(new WeakReference<>(level),

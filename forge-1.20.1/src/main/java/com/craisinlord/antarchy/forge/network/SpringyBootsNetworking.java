@@ -4,6 +4,8 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.item.SpringyBootsHelper;
 import com.craisinlord.antarchy.content.item.SpringyBootsItem;
 import com.craisinlord.antarchy.content.network.SpringyBootsLaunchPayload;
+import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
+import com.craisinlord.antarchy.forge.network.AntarchyPayloadContext;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -11,11 +13,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import com.craisinlord.antarchy.forge.network.AntarchyPayloadContext;
-import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID)
 public final class SpringyBootsNetworking {
@@ -32,15 +32,25 @@ public final class SpringyBootsNetworking {
 
     private static void handleLaunch(SpringyBootsLaunchPayload payload, AntarchyPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player() instanceof ServerPlayer player)) return;
-            if (!SpringyBootsItem.isWearingSpringyBoots(player)) return;
-            if (player.isSpectator() || player.isPassenger()) return;
+            if (!(context.player() instanceof ServerPlayer player)) {
+                return;
+            }
+            if (!SpringyBootsItem.isWearingSpringyBoots(player)) {
+                return;
+            }
+            if (player.isSpectator() || player.isPassenger()) {
+                return;
+            }
 
             ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
-            if (player.getCooldowns().isOnCooldown(boots.getItem())) return;
+            if (player.getCooldowns().isOnCooldown(boots.getItem())) {
+                return;
+            }
 
             int clampedCharge = Math.min(payload.chargeTicks(), SpringyBootsHelper.CHARGE_TICKS_MAX);
-            if (clampedCharge <= 0) return;
+            if (clampedCharge <= 0) {
+                return;
+            }
 
             float verticalBoost = SpringyBootsHelper.verticalBoostFor(clampedCharge);
             Vec3 current = player.getDeltaMovement();
@@ -56,7 +66,7 @@ public final class SpringyBootsNetworking {
             }
 
             player.setDeltaMovement(newX, newY, newZ);
-            player.setPos(player.getX(), player.getY() + 0.001, player.getZ());
+            player.setPos(player.getX(), player.getY() + 0.001D, player.getZ());
             player.hasImpulse = true;
             player.hurtMarked = true;
             player.resetFallDistance();
@@ -72,8 +82,12 @@ public final class SpringyBootsNetworking {
 
     @SubscribeEvent
     public static void onLivingFall(LivingFallEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!SpringyBootsItem.isWearingSpringyBoots(player)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        if (!SpringyBootsItem.isWearingSpringyBoots(player)) {
+            return;
+        }
         long protectionUntil = player.getPersistentData().getLong(SpringyBootsHelper.FALL_PROTECTION_NBT_KEY);
         if (player.level().getGameTime() < protectionUntil) {
             event.setDamageMultiplier(event.getDamageMultiplier() * 0.25F);

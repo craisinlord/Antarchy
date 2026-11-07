@@ -17,9 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 public final class BloodGodsBladeItem extends SwordItem {

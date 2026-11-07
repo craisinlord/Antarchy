@@ -3,10 +3,9 @@ package com.craisinlord.antarchy.content.item;
 import com.craisinlord.antarchy.compat.item.ArmorDurability;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import java.util.UUID;
-import net.minecraft.world.level.Level;
-import net.minecraft.core.Holder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -15,9 +14,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 
 public final class FallenKingCrownItem extends ArmorItem {
 
@@ -36,7 +35,7 @@ public final class FallenKingCrownItem extends ArmorItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         if (slot != Type.HELMET.getSlot()) {
             return super.getDefaultAttributeModifiers(slot);
         }

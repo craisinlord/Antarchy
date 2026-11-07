@@ -1,9 +1,13 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -26,10 +30,6 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DiamondMinecartEntity extends Minecart {
     private static final long INPUT_TIMEOUT_TICKS = 5L;
@@ -283,7 +283,7 @@ public class DiamondMinecartEntity extends Minecart {
         if (!consumeRailFromInventory(rider)) {
             if (!this.railWarningCooldown) {
                 rider.displayClientMessage(
-                        net.minecraft.network.chat.Component.literal("The Diamond Minecart is out of rails!"),
+                        Component.literal("The Diamond Minecart is out of rails!"),
                         true
                 );
                 this.railWarningCooldown = true;
@@ -361,10 +361,18 @@ public class DiamondMinecartEntity extends Minecart {
         boolean hasSouth = entry == Direction.SOUTH || exit == Direction.SOUTH;
         boolean hasWest = entry == Direction.WEST || exit == Direction.WEST;
 
-        if (hasNorth && hasEast) return RailShape.NORTH_EAST;
-        if (hasNorth && hasWest) return RailShape.NORTH_WEST;
-        if (hasSouth && hasEast) return RailShape.SOUTH_EAST;
-        if (hasSouth && hasWest) return RailShape.SOUTH_WEST;
+        if (hasNorth && hasEast) {
+            return RailShape.NORTH_EAST;
+        }
+        if (hasNorth && hasWest) {
+            return RailShape.NORTH_WEST;
+        }
+        if (hasSouth && hasEast) {
+            return RailShape.SOUTH_EAST;
+        }
+        if (hasSouth && hasWest) {
+            return RailShape.SOUTH_WEST;
+        }
         return getStockShape(newFacing);
     }
 

@@ -4,9 +4,9 @@ import com.craisinlord.antarchy.compat.item.ArmorDurability;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import java.util.UUID;
-import net.minecraft.core.Holder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffects;
@@ -16,7 +16,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +32,7 @@ public class NightmareArmorItem extends ArmorItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         if (slot != this.armorType.getSlot()) {
             return super.getDefaultAttributeModifiers(slot);
         }
@@ -73,7 +72,7 @@ public class NightmareArmorItem extends ArmorItem {
         }
 
         double doubleDamageChance = getDoubleDamageChance();
-        if (doubleDamageChance > 0.0) {
+        if (doubleDamageChance > 0.0D) {
             builder.put(
                     AntarchyObjects.DOUBLE_DAMAGE_CHANCE.get().value(),
                     new AttributeModifier(

@@ -15,7 +15,9 @@ public abstract class PrimordialGrassChunkMixin {
     @Inject(method = "setBlockState", at = @At("RETURN"))
     private void antarchy$grassChanged(BlockPos pos, BlockState state, boolean moving, CallbackInfoReturnable<BlockState> callback) {
         BlockState previous = callback.getReturnValue();
-        if (previous == null || !((LevelChunk) (Object) this).getLevel().isClientSide()) return;
+        if (previous == null || !((LevelChunk) (Object) this).getLevel().isClientSide()) {
+            return;
+        }
         if (previous.getBlock() instanceof PrimordialGrassBlock || state.getBlock() instanceof PrimordialGrassBlock) PrimordialGrassRenderer.blockChanged(pos);
     }
 }

@@ -2,24 +2,23 @@ package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeMisc;
+import java.lang.reflect.Field;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.ClientInput;
-import net.minecraft.world.entity.player.Input;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.ClientInput;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec2;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-
-import java.lang.reflect.Field;
 
 @EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class ParalyzedClientHandler {
@@ -30,7 +29,7 @@ public final class ParalyzedClientHandler {
 
     private static final int PARTICLES_PER_ENTITY = 4;
 
-    private static final double PARTICLE_RADIUS = 24.0;
+    private static final double PARTICLE_RADIUS = 24.0D;
 
     private ParalyzedClientHandler() {
     }
@@ -103,13 +102,13 @@ public final class ParalyzedClientHandler {
         float h = entity.getBbHeight();
 
         for (int i = 0; i < PARTICLES_PER_ENTITY; i++) {
-            double px = entity.getX() + (Math.random() - 0.5) * w;
+            double px = entity.getX() + (Math.random() - 0.5D) * w;
             double py = entity.getY() + Math.random() * h;
-            double pz = entity.getZ() + (Math.random() - 0.5) * w;
+            double pz = entity.getZ() + (Math.random() - 0.5D) * w;
 
-            double vx = (Math.random() - 0.5) * 0.08;
-            double vy = Math.random() * 0.06;
-            double vz = (Math.random() - 0.5) * 0.08;
+            double vx = (Math.random() - 0.5D) * 0.08D;
+            double vy = Math.random() * 0.06D;
+            double vz = (Math.random() - 0.5D) * 0.08D;
 
             level.addParticle(particle, px, py, pz, vx, vy, vz);
         }

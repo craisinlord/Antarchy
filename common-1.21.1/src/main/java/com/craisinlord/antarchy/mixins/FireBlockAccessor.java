@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(FireBlock.class)
-public interface AccessorFireBlock {
+public interface FireBlockAccessor {
     @Accessor("igniteOdds")
     Object2IntMap<Block> antarchy$getIgniteOdds();
 

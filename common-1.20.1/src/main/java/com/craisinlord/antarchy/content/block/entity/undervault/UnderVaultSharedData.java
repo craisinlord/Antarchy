@@ -1,6 +1,9 @@
 package com.craisinlord.antarchy.content.block.entity.undervault;
 
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
@@ -9,10 +12,6 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 public class UnderVaultSharedData {
     public static final String TAG_NAME = "shared_data";

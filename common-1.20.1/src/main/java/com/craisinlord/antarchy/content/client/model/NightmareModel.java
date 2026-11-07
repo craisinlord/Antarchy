@@ -3,10 +3,10 @@ package com.craisinlord.antarchy.content.client.model;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
 public class NightmareModel extends GeoModel<NightmareEntity> {

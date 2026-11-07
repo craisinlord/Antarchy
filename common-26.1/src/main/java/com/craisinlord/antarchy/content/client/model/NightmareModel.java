@@ -4,10 +4,10 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
-import com.geckolib.renderer.base.GeoRenderState;
-import net.minecraft.resources.Identifier;
 import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.GeoRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public class NightmareModel extends GeoModel<NightmareEntity> {

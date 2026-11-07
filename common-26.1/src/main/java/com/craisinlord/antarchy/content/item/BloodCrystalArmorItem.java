@@ -90,7 +90,7 @@ public class BloodCrystalArmorItem extends Item {
                         AntarchyObjects.BLOODGLASS_MAX_HEARTS.get(),
                         new AttributeModifier(
                                 Identifier.fromNamespaceAndPath("antarchy", prefix + "_bloodglass_max"),
-                                1.0,
+                                1.0D,
                                 AttributeModifier.Operation.ADD_VALUE
                         ),
                         slot

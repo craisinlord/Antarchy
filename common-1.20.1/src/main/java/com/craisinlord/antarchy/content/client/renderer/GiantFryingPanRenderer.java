@@ -3,8 +3,11 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.item.GiantFryingPanItem;
 import com.craisinlord.antarchy.content.item.GiantFryingPanStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -21,9 +24,9 @@ public final class GiantFryingPanRenderer extends GeoItemRenderer<GiantFryingPan
             PoseStack poseStack,
             GiantFryingPanItem animatable,
             BakedGeoModel model,
-            net.minecraft.client.renderer.RenderType renderType,
+            RenderType renderType,
             MultiBufferSource bufferSource,
-            com.mojang.blaze3d.vertex.VertexConsumer buffer,
+            VertexConsumer buffer,
             boolean isReRender,
             float partialTick,
             int packedLight,
@@ -34,14 +37,20 @@ public final class GiantFryingPanRenderer extends GeoItemRenderer<GiantFryingPan
             float alpha
     ) {
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-        if (isReRender || this.renderPerspective == ItemDisplayContext.GUI) return;
+        if (isReRender || this.renderPerspective == ItemDisplayContext.GUI) {
+            return;
+        }
         ItemStack pan = this.getCurrentItemStack();
-        net.minecraft.world.entity.player.Player player = Minecraft.getInstance().player;
-        if (player == null) return;
+        Player player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
         GiantFryingPanStorage storage = new GiantFryingPanStorage(pan, player);
         for (int slot = 0; slot < GiantFryingPanStorage.SLOT_COUNT; slot++) {
             ItemStack stack = storage.getItem(slot);
-            if (stack.isEmpty()) continue;
+            if (stack.isEmpty()) {
+                continue;
+            }
             int row = slot / 3;
             int column = slot % 3;
             poseStack.pushPose();

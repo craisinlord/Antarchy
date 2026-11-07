@@ -18,8 +18,8 @@ public final class AutoPlayingSoundKeyframeHandlerCompat {
             if (sound == null) {
                 return;
             }
-            float volume = parts.length > 1 ? Float.parseFloat(parts[1]) : 1f;
-            float pitch = parts.length > 2 ? Float.parseFloat(parts[2]) : 1f;
+            float volume = parts.length > 1 ? Float.parseFloat(parts[1]) : 1F;
+            float pitch = parts.length > 2 ? Float.parseFloat(parts[2]) : 1F;
             A animatable = event.getAnimatable();
             animatable.level().playSound(null, animatable.getX(), animatable.getY(), animatable.getZ(), sound, animatable.getSoundSource(), volume, pitch);
         };

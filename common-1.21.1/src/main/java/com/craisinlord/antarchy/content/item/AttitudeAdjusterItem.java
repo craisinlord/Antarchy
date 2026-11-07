@@ -3,13 +3,13 @@ package com.craisinlord.antarchy.content.item;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.List;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +19,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class AttitudeAdjusterItem extends SwordItem {
     private static final float ATTACK_SPEED = -3.2F;
@@ -81,7 +82,7 @@ public class AttitudeAdjusterItem extends SwordItem {
     }
 
     @Override
-    public boolean canAttackBlock(net.minecraft.world.level.block.state.BlockState state, Level level, net.minecraft.core.BlockPos pos, Player miner) {
+    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player miner) {
         return !miner.isCreative();
     }
 

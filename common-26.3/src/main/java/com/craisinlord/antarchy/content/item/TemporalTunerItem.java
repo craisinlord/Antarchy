@@ -1,18 +1,17 @@
 package com.craisinlord.antarchy.content.item;
 
-import java.util.function.Consumer;
-import net.minecraft.world.item.component.TooltipDisplay;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.sounds.SoundEvents;
-
+import net.minecraft.world.item.component.TooltipDisplay;
 
 public final class TemporalTunerItem extends Item {
     public static final double STEP = 0.1D;

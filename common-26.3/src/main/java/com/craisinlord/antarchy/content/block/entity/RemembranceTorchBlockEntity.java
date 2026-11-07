@@ -5,12 +5,12 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class RemembranceTorchBlockEntity extends BlockEntity {
     private static final String RADIUS_KEY = "Radius";
@@ -45,13 +45,13 @@ public class RemembranceTorchBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+    protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         this.radius = input.getIntOr(RADIUS_KEY, 0);
     }
 
     @Override
-    protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+    protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         if (this.radius > 0) {
             output.putInt(RADIUS_KEY, this.radius);

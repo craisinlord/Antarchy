@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.network;
 
 import com.craisinlord.antarchy.Antarchy;
-import io.netty.buffer.ByteBuf;
 import com.craisinlord.anthology.network.ByteBufCodecs;
-import com.craisinlord.anthology.network.StreamCodec;
 import com.craisinlord.anthology.network.CustomPacketPayload;
+import com.craisinlord.anthology.network.StreamCodec;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 public record DiamondMinecartInputPayload(byte inputFlags) implements CustomPacketPayload {
@@ -19,7 +19,9 @@ public record DiamondMinecartInputPayload(byte inputFlags) implements CustomPack
     public static final byte FLAG_LEFT    = 0x04;
     public static final byte FLAG_RIGHT   = 0x08;
 
-    public boolean isForward() { return (inputFlags & FLAG_FORWARD) != 0; }
+    public boolean isForward() {
+        return (inputFlags & FLAG_FORWARD) != 0;
+    }
     public boolean isBack()    { return (inputFlags & FLAG_BACK)    != 0; }
     public boolean isLeft()    { return (inputFlags & FLAG_LEFT)    != 0; }
     public boolean isRight()   { return (inputFlags & FLAG_RIGHT)   != 0; }

@@ -11,16 +11,22 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowParentGoal;
@@ -30,17 +36,15 @@ import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -85,7 +89,7 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return net.minecraft.world.entity.Mob.createMobAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.ouranwoodDeerHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.3D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D);
@@ -111,7 +115,7 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.8D));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.1D, Ingredient.of(AntarchyTags.Items.OURANWOOD_DEER_FOOD), false));
-        this.goalSelector.addGoal(4, new net.minecraft.world.entity.ai.goal.AvoidEntityGoal<>(this, Monster.class, 8.0F, 1.1D, 1.5D));
+        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Monster.class, 8.0F, 1.1D, 1.5D));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(6, new OuranwoodDeerMigrateGoal());
         this.goalSelector.addGoal(7, new OuranwoodDeerStrollGoal());
@@ -183,11 +187,11 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+    public EntityDimensions getDefaultDimensions(Pose pose) {
         if (this.isBaby()) {
-            return net.minecraft.world.entity.EntityDimensions.scalable(BABY_HITBOX_WIDTH, BABY_HITBOX_HEIGHT);
+            return EntityDimensions.scalable(BABY_HITBOX_WIDTH, BABY_HITBOX_HEIGHT);
         }
-        return net.minecraft.world.entity.EntityDimensions.scalable(
+        return EntityDimensions.scalable(
                 ADULT_HITBOX_WIDTH,
                 ADULT_HITBOX_HEIGHT
         );

@@ -1,34 +1,34 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.effect.CommandedBehavior;
+import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
-import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
-import com.craisinlord.antarchy.content.effect.CommandedBehavior;
-import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Comparator;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 import java.util.function.Supplier;
+import java.util.stream.StreamSupport;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -79,7 +79,9 @@ public class RoyalGuardianShieldItem extends ShieldItem {
         }
         int rosterSize = Math.max(0, AntarchySettings.royalGuardianMusterMobCap());
         int duration = Math.max(1, AntarchySettings.royalGuardianMusterDurationTicks());
-        if (rosterSize == 0) return InteractionResultHolder.fail(stack);
+        if (rosterSize == 0) {
+            return InteractionResultHolder.fail(stack);
+        }
 
         Set<UUID> rosterIds = new HashSet<>();
         List<Mob> existingRoster = StreamSupport.stream(serverLevel.getAllEntities().spliterator(), false)
@@ -103,8 +105,12 @@ public class RoyalGuardianShieldItem extends ShieldItem {
                         .thenComparingDouble(player::distanceToSqr).thenComparingInt(Mob::getId))
                 .toList();
         for (Mob target : candidates) {
-            if (recruited >= slotsRemaining) break;
-            if (!target.addEffect(new MobEffectInstance(commanded, duration), player)) continue;
+            if (recruited >= slotsRemaining) {
+                break;
+            }
+            if (!target.addEffect(new MobEffectInstance(commanded, duration), player)) {
+                continue;
+            }
             CommandedEntityAccess access = (CommandedEntityAccess) target;
             access.antarchy$setRoyalInvested(true);
             CommandedBehavior.syncInvestiture(target, true);

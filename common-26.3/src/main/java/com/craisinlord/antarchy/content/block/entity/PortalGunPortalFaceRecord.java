@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.block.entity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunVariant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.util.Mth;
 
 public record PortalGunPortalFaceRecord(
         UUID ownerId,
@@ -90,7 +92,7 @@ public record PortalGunPortalFaceRecord(
             return null;
         }
         ListTag spotsTag = tag.getListOrEmpty("PortalSpots");
-        List<BlockPos> spots = new java.util.ArrayList<>(spotsTag.size());
+        List<BlockPos> spots = new ArrayList<>(spotsTag.size());
         for (int i = 0; i < spotsTag.size(); i++) {
             spots.add(loadPos(spotsTag.getCompoundOrEmpty(i)));
         }
@@ -102,8 +104,8 @@ public record PortalGunPortalFaceRecord(
         PortalGunPortalEntity.PortalSide side = tag.getIntOr("Side", 0) == PortalGunPortalEntity.PortalSide.ORANGE.ordinal()
                 ? PortalGunPortalEntity.PortalSide.ORANGE
                 : PortalGunPortalEntity.PortalSide.BLUE;
-        int width = net.minecraft.util.Mth.clamp(tag.getIntOr("PortalWidth", 0), 1, 16);
-        int height = net.minecraft.util.Mth.clamp(tag.getIntOr("PortalHeight", 0), 2, 16);
+        int width = Mth.clamp(tag.getIntOr("PortalWidth", 0), 1, 16);
+        int height = Mth.clamp(tag.getIntOr("PortalHeight", 0), 2, 16);
         return new PortalGunPortalFaceRecord(
                 ownerId,
                 tag.read("GunId", UUIDUtil.CODEC).orElse(null),

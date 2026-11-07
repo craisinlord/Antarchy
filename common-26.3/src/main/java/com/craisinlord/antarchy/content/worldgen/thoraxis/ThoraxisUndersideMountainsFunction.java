@@ -4,9 +4,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Interval;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
+import net.minecraft.world.level.levelgen.densityfunction.DensityBuffer;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DensityVolume;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import net.minecraft.world.level.levelgen.synth.Noise;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public record ThoraxisUndersideMountainsFunction(DensityFunction mask, DensityFunction style, Holder<NormalNoise> shape) implements DensityFunction {
     public static final MapCodec<ThoraxisUndersideMountainsFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -23,7 +28,6 @@ public record ThoraxisUndersideMountainsFunction(DensityFunction mask, DensityFu
     public static final double PEAK_START = 0.36D;
     private static final double STYLE_BLEND = 0.08D;
     private static final double TERRACE_HEIGHT = 20.0D;
-
 
     @Override
     public DensitySampler compileSampler(CompileContext context) {

@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;

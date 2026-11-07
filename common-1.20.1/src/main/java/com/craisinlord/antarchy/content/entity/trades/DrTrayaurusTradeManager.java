@@ -3,28 +3,29 @@ package com.craisinlord.antarchy.content.entity.trades;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.logging.LogUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import org.slf4j.Logger;
 
 public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListener {
@@ -41,9 +42,9 @@ public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListe
     }
 
     @Override
-    protected void apply(java.util.Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
         List<TradeEntry> parsedTrades = new ArrayList<>();
-        for (java.util.Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
+        for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
             TRADE_FILE_CODEC.parse(JsonOps.INSTANCE, entry.getValue())
                     .resultOrPartial(message -> {
                         throw new JsonParseException("Failed to parse " + entry.getKey() + ": " + message);
@@ -125,7 +126,7 @@ public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListe
 
         private Optional<Item> item() {
             return BuiltInRegistries.ITEM.getOptional(this.itemId)
-                    .filter(item -> item != net.minecraft.world.item.Items.AIR);
+                    .filter(item -> item != Items.AIR);
         }
 
         private ItemStack toStack(HolderLookup.Provider registries) {

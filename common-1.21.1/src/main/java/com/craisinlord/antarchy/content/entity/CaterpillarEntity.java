@@ -1,15 +1,15 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.config.AntarchySettings;
-
-import java.util.UUID;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import java.util.EnumSet;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -20,15 +20,17 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
@@ -57,11 +59,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class CaterpillarEntity extends Animal implements GeoEntity {
     private static final ResourceKey<Level> ELYTHIA_DIMENSION = ResourceKey.create(
-            net.minecraft.core.registries.Registries.DIMENSION,
+            Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia")
     );
     private static final TagKey<Biome> CAN_SPAWN_BIOMES = TagKey.create(
-            net.minecraft.core.registries.Registries.BIOME,
+            Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "caterpillar_can_spawn_biomes")
     );
     private static final EntityDataAccessor<Integer> LIFE_STAGE =
@@ -131,7 +133,7 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, SpawnGroupData spawnData) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.caterpillarHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }

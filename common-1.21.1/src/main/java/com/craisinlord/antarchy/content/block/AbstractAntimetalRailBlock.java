@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.minecart.AntimetalRailHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -33,7 +34,7 @@ public abstract class AbstractAntimetalRailBlock extends BaseRailBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         RailShape shape = state.getValue(getShapeProperty());
         return shape.isAscending() ? CEILING_SLOPE_SHAPE : CEILING_FLAT_SHAPE;
     }

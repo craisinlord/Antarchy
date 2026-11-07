@@ -2,33 +2,35 @@ package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.UnderVaultBlock;
+import java.util.Optional;
+import java.util.function.Supplier;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.vault.VaultConfig;
-import net.minecraft.world.level.block.entity.vault.VaultState;
-import net.minecraft.world.level.block.entity.vault.VaultBlockEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.vault.VaultBlockEntity;
+import net.minecraft.world.level.block.entity.vault.VaultConfig;
+import net.minecraft.world.level.block.entity.vault.VaultState;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-
-import java.util.Optional;
-import java.util.function.Supplier;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public final class UnderVaultBlockEntity extends BlockEntity {
     private final VaultBlockEntity vaultData;
@@ -41,7 +43,7 @@ public final class UnderVaultBlockEntity extends BlockEntity {
     }
 
     private static VaultConfig createConfig() {
-        return new VaultConfig(ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE,
+        return new VaultConfig(ResourceKey.create(Registries.LOOT_TABLE,
                         Identifier.fromNamespaceAndPath(Antarchy.MODID, "chests/undertrial_vault")), 4.0D, 4.0D,
                 new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(Antarchy.MODID, "undertrial_key"))),
                 Optional.empty());
@@ -86,13 +88,13 @@ public final class UnderVaultBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return vaultData.saveCustomOnly(registries);
     }
 
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     public VaultBlockEntity getVaultData() {

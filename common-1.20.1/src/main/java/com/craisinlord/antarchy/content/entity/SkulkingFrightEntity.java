@@ -4,11 +4,17 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -23,18 +29,18 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class SkulkingFrightEntity extends Monster implements GeoEntity {
@@ -63,8 +69,8 @@ public class SkulkingFrightEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+            MobSpawnType spawnReason, SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.skulkingFrightHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
@@ -142,7 +148,7 @@ public class SkulkingFrightEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(Entity target) {
         boolean result = super.doHurtTarget(target);
         if (result) {
             this.playSound(AntarchySoundEvents.SKULKING_FRIGHT_BITE.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
@@ -158,7 +164,7 @@ public class SkulkingFrightEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) {
+    protected SoundEvent getHurtSound(DamageSource source) {
         return AntarchySoundEvents.SKULKING_FRIGHT_HURT.get();
     }
 
@@ -204,7 +210,7 @@ public class SkulkingFrightEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, net.minecraft.world.damagesource.DamageSource source) {
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
         return false;
     }
 }

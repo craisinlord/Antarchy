@@ -1,9 +1,8 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.item.component.TooltipDisplay;
+import com.craisinlord.antarchy.content.entity.ant.AntTeleportHelper;
 import java.util.Set;
 import java.util.function.Consumer;
-import com.craisinlord.antarchy.content.entity.ant.AntTeleportHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -15,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
 public class RainbowSugarItem extends Item {

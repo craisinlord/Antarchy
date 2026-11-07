@@ -2,19 +2,20 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.util.RandomSource;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.synth.Noise;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public final class CavarynCarapaceRiftDressingFeature implements Feature {
@@ -29,9 +30,9 @@ public final class CavarynCarapaceRiftDressingFeature implements Feature {
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "biomite")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double LINING_DEPTH = 1.5;
-    private static final double BAND_SPACING = 9.0;
-    private static final double BAND_THICKNESS = 2.5;
+    private static final double LINING_DEPTH = 1.5D;
+    private static final double BAND_SPACING = 9.0D;
+    private static final double BAND_THICKNESS = 2.5D;
 
     public static final MapCodec<CavarynCarapaceRiftDressingFeature> CODEC = MapCodec.unit(CavarynCarapaceRiftDressingFeature::new);
 
@@ -42,10 +43,10 @@ public final class CavarynCarapaceRiftDressingFeature implements Feature {
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        net.minecraft.world.level.levelgen.synth.Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(RIFT_NOISE);
+        Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(RIFT_NOISE);
         CavarynCavityGrid grid = CavarynCavityGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.get(1234.567, 89.123, -456.789),
-                noise.get(-987.654, 12.345, 654.321)
+                noise.get(1234.567D, 89.123D, -456.789D),
+                noise.get(-987.654D, 12.345D, 654.321D)
         ));
         Block chitin = block(CHITIN_ID);
         if (grid == null || chitin == null) {
@@ -72,14 +73,14 @@ public final class CavarynCarapaceRiftDressingFeature implements Feature {
                 }
                 int minY = Math.max(minBuild, range[0]);
                 int maxY = Math.min(maxBuild, range[1]);
-                double warp = 2.5 * Math.sin(x * 0.05) + 2.5 * Math.sin(z * 0.043);
+                double warp = 2.5D * Math.sin(x * 0.05D) + 2.5D * Math.sin(z * 0.043D);
                 for (int y = minY; y <= maxY; y++) {
-                    double band = Math.floorMod((long) Math.floor((y + warp) * 4.0), (long) (BAND_SPACING * 4.0)) / 4.0;
+                    double band = Math.floorMod((long) Math.floor((y + warp) * 4.0D), (long) (BAND_SPACING * 4.0D)) / 4.0D;
                     if (band >= BAND_THICKNESS) {
                         continue;
                     }
                     double distance = grid.signedDistance(x, y, z);
-                    if (distance <= 0.0 || distance > LINING_DEPTH) {
+                    if (distance <= 0.0D || distance > LINING_DEPTH) {
                         continue;
                     }
                     pos.set(x, y, z);

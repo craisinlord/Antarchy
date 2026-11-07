@@ -1,21 +1,25 @@
 package com.craisinlord.antarchy.forge.client;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.ElythiaEchoes;
+import com.craisinlord.antarchy.content.client.ElythiaEventClient;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState;
+import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
+import com.craisinlord.antarchy.content.client.ThrowbackClientState;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.network.HerculesBeetleFlightTogglePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedAttackPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedChargePayload;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.TickEvent;
-import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class HerculesBeetleClientHandler {
@@ -29,14 +33,16 @@ public final class HerculesBeetleClientHandler {
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         HerculesBeetleImpactShakeClientState.tick();
         KingJudgmentFlashClientState.tick();
         HordeClientState.tick();
-        com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
-            com.craisinlord.antarchy.content.client.ElythiaEventClient.tick();
-            com.craisinlord.antarchy.content.client.ThoraxisEventClient.tick();
-        com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
+        ThrowbackClientState.tick();
+            ElythiaEventClient.tick();
+            ThoraxisEventClient.tick();
+        ElythiaEchoes.tick();
 
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;

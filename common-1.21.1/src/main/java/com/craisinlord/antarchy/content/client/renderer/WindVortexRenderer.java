@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
     private static final int RINGS = 11;
@@ -67,28 +68,28 @@ public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
     private static void addSquareSide(VertexConsumer consumer, Matrix4f pose, WindVortexEntity.Basis basis,
             float halfSide, float axisDistance, float lineThickness, float sideAngle,
             float alpha, int red, int green, int blue) {
-        org.joml.Vector3f start = squarePoint(basis, halfSide, axisDistance, sideAngle, -halfSide);
-        org.joml.Vector3f end = squarePoint(basis, halfSide, axisDistance, sideAngle, halfSide);
-        org.joml.Vector3f axisOffset = new org.joml.Vector3f(
+        Vector3f start = squarePoint(basis, halfSide, axisDistance, sideAngle, -halfSide);
+        Vector3f end = squarePoint(basis, halfSide, axisDistance, sideAngle, halfSide);
+        Vector3f axisOffset = new Vector3f(
                 (float) basis.axis.x, (float) basis.axis.y, (float) basis.axis.z).mul(lineThickness);
         int a = Mth.clamp((int) (alpha * 255.0F), 0, 255);
         addQuad(consumer, pose, start, end, axisOffset, red, green, blue, a);
     }
 
-    private static org.joml.Vector3f squarePoint(WindVortexEntity.Basis basis, float halfSide,
+    private static Vector3f squarePoint(WindVortexEntity.Basis basis, float halfSide,
             float axisDistance, float sideAngle, float along) {
         float x = Mth.cos(sideAngle) * halfSide;
         float z = Mth.sin(sideAngle) * halfSide;
         float tangentX = -Mth.sin(sideAngle) * along;
         float tangentZ = Mth.cos(sideAngle) * along;
-        return new org.joml.Vector3f(
+        return new Vector3f(
                 (float) (basis.axis.x * axisDistance + basis.sideA.x * (x + tangentX) + basis.sideB.x * (z + tangentZ)),
                 (float) (basis.axis.y * axisDistance + basis.sideA.y * (x + tangentX) + basis.sideB.y * (z + tangentZ)),
                 (float) (basis.axis.z * axisDistance + basis.sideA.z * (x + tangentX) + basis.sideB.z * (z + tangentZ)));
     }
 
-    private static void addQuad(VertexConsumer consumer, Matrix4f pose, org.joml.Vector3f start,
-            org.joml.Vector3f end, org.joml.Vector3f offset, int red, int green, int blue, int alpha) {
+    private static void addQuad(VertexConsumer consumer, Matrix4f pose, Vector3f start,
+            Vector3f end, Vector3f offset, int red, int green, int blue, int alpha) {
         addVertex(consumer, pose, start.x - offset.x, start.y - offset.y, start.z - offset.z, red, green, blue, alpha);
         addVertex(consumer, pose, end.x - offset.x, end.y - offset.y, end.z - offset.z, red, green, blue, alpha);
         addVertex(consumer, pose, end.x + offset.x, end.y + offset.y, end.z + offset.z, red, green, blue, alpha);

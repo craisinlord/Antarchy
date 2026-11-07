@@ -2,13 +2,16 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
+import java.util.UUID;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -17,21 +20,24 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -52,11 +58,11 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.CropBlock;
@@ -69,8 +75,8 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
@@ -88,8 +94,8 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     private static final int UNROLL_TICKS = 9;
     private static final int DEFENSIVE_CURL_TICKS = 100;
     private static final int ROLL_SOUND_INTERVAL_TICKS = 25;
-    private static final java.util.UUID ROLLED_ARMOR_MODIFIER_ID =
-            java.util.UUID.nameUUIDFromBytes((Antarchy.MODID + ":rolly_polly_rolled_armor").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    private static final UUID ROLLED_ARMOR_MODIFIER_ID =
+            UUID.nameUUIDFromBytes((Antarchy.MODID + ":rolly_polly_rolled_armor").getBytes(StandardCharsets.UTF_8));
 
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(RollyPollyEntity.class, EntityDataSerializers.INT);
@@ -108,8 +114,8 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         super(entityType, level);
     }
 
-    public static boolean canSpawn(EntityType<RollyPollyEntity> entityType, net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.entity.MobSpawnType spawnReason, BlockPos pos, net.minecraft.util.RandomSource random) {
-        if (spawnReason == net.minecraft.world.entity.MobSpawnType.SPAWN_EGG || spawnReason == net.minecraft.world.entity.MobSpawnType.SPAWNER || spawnReason == net.minecraft.world.entity.MobSpawnType.COMMAND) {
+    public static boolean canSpawn(EntityType<RollyPollyEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
 
@@ -136,7 +142,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.rollyPollyHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
@@ -241,7 +247,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     @Override
     @Nullable
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return com.craisinlord.antarchy.content.AntarchyObjects.ROLLY_POLLY.get().create(level);
+        return AntarchyObjects.ROLLY_POLLY.get().create(level);
     }
 
     private static boolean isCompostable(ItemStack stack) {

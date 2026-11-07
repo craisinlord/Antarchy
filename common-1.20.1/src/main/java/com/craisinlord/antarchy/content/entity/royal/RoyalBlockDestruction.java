@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.royal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Block;
@@ -26,12 +27,12 @@ public final class RoyalBlockDestruction {
             return 0;
         }
 
-        int minX = net.minecraft.util.Mth.floor(center.x - radius);
-        int minY = net.minecraft.util.Mth.floor(center.y - radius);
-        int minZ = net.minecraft.util.Mth.floor(center.z - radius);
-        int maxX = net.minecraft.util.Mth.floor(center.x + radius);
-        int maxY = net.minecraft.util.Mth.floor(center.y + radius);
-        int maxZ = net.minecraft.util.Mth.floor(center.z + radius);
+        int minX = Mth.floor(center.x - radius);
+        int minY = Mth.floor(center.y - radius);
+        int minZ = Mth.floor(center.z - radius);
+        int maxX = Mth.floor(center.x + radius);
+        int maxY = Mth.floor(center.y + radius);
+        int maxZ = Mth.floor(center.z + radius);
         double radiusSqr = radius * radius;
 
         int destroyed = 0;

@@ -2,8 +2,11 @@ package com.craisinlord.antarchy.content.entity.lucid;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnContext;
+import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
+import java.util.EnumSet;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -13,6 +16,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -20,6 +24,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -33,6 +38,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -41,12 +47,9 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.EnumSet;
-import java.util.function.Supplier;
 
 public class LucidEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
@@ -109,15 +112,15 @@ public class LucidEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.lucidHealth());
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+            MobSpawnType spawnReason, SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.lucidHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
 
     public static boolean canSpawn(EntityType<LucidEntity> entityType, ServerLevelAccessor level,
             MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        if (com.craisinlord.antarchy.content.block.entity.UndertrialSpawnContext.isTrialSpawn(spawnReason)) {
+        if (UndertrialSpawnContext.isTrialSpawn(spawnReason)) {
             return level.getDifficulty() != Difficulty.PEACEFUL;
         }
         return level.getDifficulty() != Difficulty.PEACEFUL
@@ -390,7 +393,7 @@ public class LucidEntity extends Monster implements GeoEntity {
 
     @Override
     protected void checkFallDamage(double y, boolean onGround,
-            net.minecraft.world.level.block.state.BlockState state, BlockPos pos) {
+            BlockState state, BlockPos pos) {
     }
 
     @Override
@@ -589,4 +592,3 @@ public class LucidEntity extends Monster implements GeoEntity {
     }
 
 }
-

@@ -19,17 +19,25 @@ public abstract class BloodglassEffectMixin {
     @Inject(method = "onEffectAdded", at = @At("TAIL"))
     private void antarchy$onBloodglassWardAdded(MobEffectInstance effectInstance, @Nullable Entity source, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (!effectInstance.is(AntarchyObjects.BLOODGLASS_WARD.get())) return;
-        if (!(entity instanceof Player player)) return;
+        if (!effectInstance.is(AntarchyObjects.BLOODGLASS_WARD.get())) {
+            return;
+        }
+        if (!(entity instanceof Player player)) {
+            return;
+        }
         BloodglassManager.handleWardApplied(player, effectInstance.getAmplifier());
     }
 
     @Inject(method = "onEffectsRemoved", at = @At("HEAD"))
     private void antarchy$onBloodglassWardRemoved(Collection<MobEffectInstance> effects, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (!(entity instanceof Player player)) return;
+        if (!(entity instanceof Player player)) {
+            return;
+        }
         for (MobEffectInstance effectInstance : effects) {
-            if (!effectInstance.is(AntarchyObjects.BLOODGLASS_WARD.get())) continue;
+            if (!effectInstance.is(AntarchyObjects.BLOODGLASS_WARD.get())) {
+                continue;
+            }
             BloodglassManager.handleWardRemoved(player);
         }
     }

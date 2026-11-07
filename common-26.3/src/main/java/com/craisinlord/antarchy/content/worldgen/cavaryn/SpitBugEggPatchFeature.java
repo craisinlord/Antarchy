@@ -37,7 +37,6 @@ public record SpitBugEggPatchFeature() implements Feature {
             return false;
         }
 
-
         boolean placedAny = false;
         int placements = 0;
         int targetPlacements = MIN_PLACEMENTS + random.nextInt(MAX_PLACEMENTS - MIN_PLACEMENTS + 1);

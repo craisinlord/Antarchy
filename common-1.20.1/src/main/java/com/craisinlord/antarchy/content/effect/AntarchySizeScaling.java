@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.effect;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,8 +12,6 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleModifier;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleTypes;
-
-import java.util.function.Supplier;
 
 public final class AntarchySizeScaling {
     private AntarchySizeScaling() {
@@ -24,7 +24,7 @@ public final class AntarchySizeScaling {
         ScaleTypes.BASE.getDefaultBaseValueModifiers().add(growth);
     }
 
-    private static ScaleModifier potionModifier(Supplier<? extends MobEffect> effectSupplier, int sign, java.util.function.DoubleSupplier deltaPerLevel) {
+    private static ScaleModifier potionModifier(Supplier<? extends MobEffect> effectSupplier, int sign, DoubleSupplier deltaPerLevel) {
         return new ScaleModifier() {
             @Override
             public float modifyScale(ScaleData data, float currentValue, float baseValue) {

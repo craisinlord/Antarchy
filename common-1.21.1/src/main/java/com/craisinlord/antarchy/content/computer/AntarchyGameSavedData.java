@@ -1,12 +1,13 @@
 package com.craisinlord.antarchy.content.computer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 
@@ -14,11 +15,13 @@ public final class AntarchyGameSavedData extends SavedData {
     private static final String ID = "antarchy_computer_games";
     private final Map<String, GameState> games = new HashMap<>();
 
-    public static AntarchyGameSavedData create() { return new AntarchyGameSavedData(); }
+    public static AntarchyGameSavedData create() {
+        return new AntarchyGameSavedData();
+    }
 
     public static AntarchyGameSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         AntarchyGameSavedData data = new AntarchyGameSavedData();
-        for (net.minecraft.nbt.Tag raw : tag.getList("Games", net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+        for (Tag raw : tag.getList("Games", Tag.TAG_COMPOUND)) {
             CompoundTag item = (CompoundTag) raw;
             GameState state = new GameState();
             state.basiliskScore = item.getInt("BasiliskScore");
@@ -56,7 +59,7 @@ public final class AntarchyGameSavedData extends SavedData {
                 new SavedData.Factory<>(AntarchyGameSavedData::create, AntarchyGameSavedData::load, null), ID).setDirty();
     }
 
-    public static String key(net.minecraft.resources.ResourceLocation dimension, net.minecraft.core.BlockPos pos) {
+    public static String key(ResourceLocation dimension, BlockPos pos) {
         return dimension + "|" + pos.asLong();
     }
 

@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.portalgun;
 
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload;
 import com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload;
 import java.util.Optional;

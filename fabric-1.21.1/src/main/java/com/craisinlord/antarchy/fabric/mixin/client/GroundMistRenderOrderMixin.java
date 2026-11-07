@@ -3,13 +3,12 @@ package com.craisinlord.antarchy.fabric.mixin.client;
 import com.craisinlord.antarchy.content.client.particle.GroundMistRenderType;
 import com.google.common.collect.ImmutableList;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import java.util.List;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleRenderType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-
-import java.util.List;
 
 @Mixin(ParticleEngine.class)
 public abstract class GroundMistRenderOrderMixin {

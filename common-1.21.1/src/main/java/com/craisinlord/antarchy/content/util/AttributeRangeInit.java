@@ -1,13 +1,12 @@
 package com.craisinlord.antarchy.content.util;
 
-import com.craisinlord.antarchy.mixins.AccessorRangedAttribute;
+import com.craisinlord.antarchy.mixins.RangedAttributeAccessor;
 import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
-
-import java.util.Set;
 
 public class AttributeRangeInit {
 
@@ -24,7 +23,7 @@ public class AttributeRangeInit {
     public static void apply() {
         for (ResourceLocation id : TARGETS) {
             Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(id);
-            if (attribute instanceof RangedAttribute ranged && ranged instanceof AccessorRangedAttribute accessor) {
+            if (attribute instanceof RangedAttribute ranged && ranged instanceof RangedAttributeAccessor accessor) {
                 if (ranged.getMaxValue() < MAX) {
                     accessor.antarchyAttributefix$setMaxValue(MAX);
                 }

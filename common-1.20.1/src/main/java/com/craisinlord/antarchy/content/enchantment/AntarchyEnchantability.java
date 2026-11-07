@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.enchantment;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -48,7 +49,7 @@ public final class AntarchyEnchantability {
     private static final Predicate<Holder<Item>> BOW = item -> item.is(ENCHANTABLE_BOW);
     private static final Predicate<Holder<Item>> CROSSBOW = item -> item.is(ENCHANTABLE_CROSSBOW);
     private static final Predicate<Holder<Item>> TRIDENT = item -> item.is(ENCHANTABLE_TRIDENT);
-    private static final Predicate<Holder<Item>> MULTISHOT = CROSSBOW.or(item -> item.is(com.craisinlord.antarchy.content.AntarchyTags.Items.MULTISHOT_ENCHANTABLE));
+    private static final Predicate<Holder<Item>> MULTISHOT = CROSSBOW.or(item -> item.is(AntarchyTags.Items.MULTISHOT_ENCHANTABLE));
     private static final Predicate<Holder<Item>> DURABILITY = ARMOR.or(SWORD).or(MINING_LOOT).or(BOW).or(CROSSBOW).or(TRIDENT).or(MACE)
             .or(item -> item.is(ENCHANTABLE_DURABILITY));
     private static final Predicate<Holder<Item>> EQUIPPABLE = ARMOR.or(item -> item.is(ENCHANTABLE_EQUIPPABLE));

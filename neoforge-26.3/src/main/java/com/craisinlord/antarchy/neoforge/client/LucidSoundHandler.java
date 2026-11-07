@@ -3,6 +3,11 @@ package com.craisinlord.antarchy.neoforge.client;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeSounds;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
@@ -15,12 +20,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class LucidSoundHandler {

@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -36,7 +37,7 @@ public record CornPatchFeature() implements Feature {
             BlockPos lowerPos = new BlockPos(x, surfaceY, z);
             BlockPos upperPos = lowerPos.above();
 
-            if (!level.getBlockState(lowerPos.below()).is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)) {
+            if (!level.getBlockState(lowerPos.below()).is(Blocks.GRASS_BLOCK)) {
                 continue;
             }
             if (!level.getBlockState(lowerPos).canBeReplaced() || !level.getBlockState(upperPos).canBeReplaced()) {

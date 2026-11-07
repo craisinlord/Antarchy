@@ -2,22 +2,23 @@ package com.craisinlord.antarchy.content.command;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.entity.QueenTrailSpawnMarkerBlockEntity;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.QueenTrailGrid;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.QueenTrailGrid;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -71,7 +72,7 @@ public final class QueenLocateCommand {
             source.sendSuccess(() -> Component.literal("Nearest Queen spawn in " + THORAXIS.identifier() + state + ": ")
                     .append(Component.literal(coordinates)
                             .withStyle(Style.EMPTY
-                                    .withColor(net.minecraft.ChatFormatting.AQUA)
+                                    .withColor(ChatFormatting.AQUA)
                                     .withUnderlined(true)
                                     .withClickEvent(new ClickEvent.SuggestCommand(teleportCommand))))
                     .append(Component.literal(" (" + distance + " blocks away)")), false);

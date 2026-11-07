@@ -2,10 +2,16 @@ package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.SeashellBlock;
+import com.geckolib.animatable.GeoBlockEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -15,6 +21,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Prediction;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -30,13 +37,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoBlockEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
 
 public final class SeashellBlockEntity extends RandomizableContainerBlockEntity implements GeoBlockEntity {
     private static final String MAIN_CONTROLLER = "main_controller";
@@ -265,7 +265,7 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         if (!this.trySaveLootTable(output)) {
-            net.minecraft.world.ContainerHelper.saveAllItems(output, this.items);
+            ContainerHelper.saveAllItems(output, this.items);
         }
         output.putBoolean("VisualOpen", this.visualOpen);
         output.putBoolean("VisualInitialized", this.initializedVisualState);
@@ -289,7 +289,7 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
         super.loadAdditional(input);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         if (!this.tryLoadLootTable(input)) {
-            net.minecraft.world.ContainerHelper.loadAllItems(input, this.items);
+            ContainerHelper.loadAllItems(input, this.items);
         }
         this.visualOpen = input.getBooleanOr("VisualOpen", false);
         this.initializedVisualState = input.getBooleanOr("VisualInitialized", false);

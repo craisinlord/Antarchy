@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.block;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -51,7 +52,7 @@ public class PortalGunPortalBaseBlock extends BaseEntityBlock {
             return null;
         }
         return createTickerHelper(blockEntityType, this.blockEntityTypeSupplier.get(), (tickLevel, tickPos, tickState, blockEntity) -> {
-            if (tickLevel instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            if (tickLevel instanceof ServerLevel serverLevel) {
                 PortalGunPortalBaseBlockEntity.serverTick(serverLevel, tickPos, tickState, blockEntity);
             }
         });

@@ -1,13 +1,12 @@
 package com.craisinlord.antarchy.fabric.client;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.client.ElythiaGroundMist;
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
-import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
@@ -30,14 +29,22 @@ public final class ElythiaFireflyManager {
     public static void register() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             ClientLevel level = client.level;
-            if (level == null || client.player == null) return;
-            if (client.isPaused()) return;
-            if (!ElythiaSkyRenderer.shouldRender(level)) return;
+            if (level == null || client.player == null) {
+                return;
+            }
+            if (client.isPaused()) {
+                return;
+            }
+            if (!ElythiaSkyRenderer.shouldRender(level)) {
+                return;
+            }
 
-            com.craisinlord.antarchy.content.client.ElythiaGroundMist.tick(client, level, AntarchyFabricMisc.GROUND_MIST.get());
+            ElythiaGroundMist.tick(client, level, AntarchyFabricMisc.GROUND_MIST.get());
 
             long dayTime = level.getDayTime() % 24000L;
-            if (dayTime < NIGHT_START || dayTime > NIGHT_END) return;
+            if (dayTime < NIGHT_START || dayTime > NIGHT_END) {
+                return;
+            }
 
             long gameTime = level.getGameTime();
             boolean fireflyBiome = level.getBiome(client.player.blockPosition()).is(AntarchyTags.Biomes.ELYTHIA_FIREFLY_PARTICLE_BIOMES);
@@ -56,14 +63,16 @@ public final class ElythiaFireflyManager {
                         int oz = level.random.nextInt(SPAWN_RADIUS_H * 2 + 1) - SPAWN_RADIUS_H;
 
                         BlockPos candidate = new BlockPos(px + ox, py + oy, pz + oz);
-                        if (!level.getBlockState(candidate).isAir()) continue;
+                        if (!level.getBlockState(candidate).isAir()) {
+                            continue;
+                        }
 
                         level.addParticle(
                                 AntarchyFabricMisc.FIREFLY.get(),
                                 candidate.getX() + level.random.nextDouble(),
                                 candidate.getY() + level.random.nextDouble(),
                                 candidate.getZ() + level.random.nextDouble(),
-                                0.0, 0.0, 0.0
+                                0.0D, 0.0D, 0.0D
                         );
                     }
                 }
@@ -77,8 +86,8 @@ public final class ElythiaFireflyManager {
                         player.getX(), player.getY(), player.getZ(),
                         AntarchySoundEvents.ELYTHIA_FIREFLY_AMBIENT.get(),
                         SoundSource.AMBIENT,
-                        0.6f + level.random.nextFloat() * 0.3f,
-                        0.9f + level.random.nextFloat() * 0.2f,
+                        0.6F + level.random.nextFloat() * 0.3F,
+                        0.9F + level.random.nextFloat() * 0.2F,
                         false
                 );
             }

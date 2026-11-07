@@ -3,11 +3,11 @@ package com.craisinlord.antarchy.content.effect;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -149,8 +149,8 @@ public final class StinkyBehavior {
                 source.getBoundingBox().inflate(ARTHROPOD_ALERT_RADIUS),
                 mob -> mob.isAlive() && mob != source
         )) {
-            if (mob.getMobType() == net.minecraft.world.entity.MobType.ARTHROPOD) {
-                if (source.getMobType() == net.minecraft.world.entity.MobType.ARTHROPOD) {
+            if (mob.getMobType() == MobType.ARTHROPOD) {
+                if (source.getMobType() == MobType.ARTHROPOD) {
                     continue;
                 }
                 attractArthropod(mob, source);

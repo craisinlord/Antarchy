@@ -3,9 +3,9 @@ package com.craisinlord.antarchy.content.client.model;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.WormEntity;
 import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
 import net.minecraft.resources.Identifier;
-import com.geckolib.model.GeoModel;
 
 public class WormModel extends GeoModel<WormEntity> {
     public static final DataTicket<WormEntity.GrowthStage> GROWTH_STAGE = DataTicket.create("antarchy_worm_growth_stage", WormEntity.GrowthStage.class);

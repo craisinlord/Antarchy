@@ -1,18 +1,18 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.component.AntarchyItemTag;
+import java.util.Objects;
 import java.util.Optional;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import com.craisinlord.antarchy.content.component.AntarchyItemTag;
-import java.util.Objects;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -48,8 +48,12 @@ public final class GiantFryingPanStorage implements Container {
     }
 
     public ItemStack pan() {
-        if (this.fixedPan != null) return this.fixedPan;
-        if (this.panSlot < 0 || this.panSlot >= this.player.getInventory().getContainerSize()) return ItemStack.EMPTY;
+        if (this.fixedPan != null) {
+            return this.fixedPan;
+        }
+        if (this.panSlot < 0 || this.panSlot >= this.player.getInventory().getContainerSize()) {
+            return ItemStack.EMPTY;
+        }
         return this.player.getInventory().getItem(this.panSlot);
     }
 
@@ -67,27 +71,43 @@ public final class GiantFryingPanStorage implements Container {
     }
 
     public static int findPanSlot(Player player) {
-        if (player.getMainHandItem().getItem() instanceof GiantFryingPanItem) return player.getInventory().selected;
-        if (player.getOffhandItem().getItem() instanceof GiantFryingPanItem) return 40;
+        if (player.getMainHandItem().getItem() instanceof GiantFryingPanItem) {
+            return player.getInventory().selected;
+        }
+        if (player.getOffhandItem().getItem() instanceof GiantFryingPanItem) {
+            return 40;
+        }
         for (int i = 0; i < player.getInventory().items.size(); i++) {
-            if (player.getInventory().items.get(i).getItem() instanceof GiantFryingPanItem) return i;
+            if (player.getInventory().items.get(i).getItem() instanceof GiantFryingPanItem) {
+                return i;
+            }
         }
         return -1;
     }
 
     public static void tick(Player player, ItemStack pan, Level level) {
-        if (level.isClientSide || !(pan.getItem() instanceof GiantFryingPanItem)) return;
-        if (!pan.hasTag()) return;
+        if (level.isClientSide || !(pan.getItem() instanceof GiantFryingPanItem)) {
+            return;
+        }
+        if (!pan.hasTag()) {
+            return;
+        }
         GiantFryingPanStorage storage = new GiantFryingPanStorage(pan, player);
-        if (storage.isEmpty()) return;
+        if (storage.isEmpty()) {
+            return;
+        }
         long now = level.getGameTime();
         boolean changed = false;
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack input = storage.items.get(slot);
-            if (input.isEmpty() || now - storage.startTimes[slot] < cookTime()) continue;
+            if (input.isEmpty() || now - storage.startTimes[slot] < cookTime()) {
+                continue;
+            }
             Optional<CampfireCookingRecipe> recipe = level.getRecipeManager().getRecipeFor(
                     RecipeType.CAMPFIRE_COOKING, new SimpleContainer(input), level);
-            if (recipe.isEmpty()) continue;
+            if (recipe.isEmpty()) {
+                continue;
+            }
             ItemStack cooked = recipe.get().assemble(new SimpleContainer(input), level.registryAccess());
             input.shrink(1);
             storage.startTimes[slot] = now;
@@ -103,13 +123,17 @@ public final class GiantFryingPanStorage implements Container {
     }
 
     public static boolean isCampfireInput(Player player, ItemStack stack) {
-        if (stack.isEmpty() || stack.getItem() instanceof GiantFryingPanItem) return false;
+        if (stack.isEmpty() || stack.getItem() instanceof GiantFryingPanItem) {
+            return false;
+        }
         Level level = player.level();
         return level.getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(stack), level).isPresent();
     }
 
     public boolean insertOne(ItemStack food) {
-        if (!isCampfireInput(this.player, food)) return false;
+        if (!isCampfireInput(this.player, food)) {
+            return false;
+        }
         this.reloadIfChanged();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack existing = this.items.get(slot);
@@ -132,7 +156,9 @@ public final class GiantFryingPanStorage implements Container {
     public boolean hasSpace(ItemStack food) {
         this.reloadIfChanged();
         for (ItemStack stack : this.items) {
-            if (stack.isEmpty() || canMergeInto(stack, food)) return true;
+            if (stack.isEmpty() || canMergeInto(stack, food)) {
+                return true;
+            }
         }
         return false;
     }
@@ -148,7 +174,9 @@ public final class GiantFryingPanStorage implements Container {
 
     public float cookProgress(int slot) {
         this.reloadIfChanged();
-        if (this.items.get(slot).isEmpty()) return 0.0F;
+        if (this.items.get(slot).isEmpty()) {
+            return 0.0F;
+        }
         long elapsed = this.player.level().getGameTime() - this.startTimes[slot];
         return Math.max(0.0F, Math.min(1.0F, elapsed / (float) cookTime()));
     }
@@ -156,7 +184,9 @@ public final class GiantFryingPanStorage implements Container {
     private void reloadIfChanged() {
         ItemStack pan = this.pan();
         Tag data = pan.hasTag() ? pan.getTag().get(SLOTS) : null;
-        if (pan == this.loadedPan && Objects.equals(data, this.loadedFrom)) return;
+        if (pan == this.loadedPan && Objects.equals(data, this.loadedFrom)) {
+            return;
+        }
         this.loadedPan = pan;
         this.loadedFrom = data == null ? null : data.copy();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
@@ -164,12 +194,16 @@ public final class GiantFryingPanStorage implements Container {
             this.startTimes[slot] = 0L;
             this.startItems[slot] = null;
         }
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         ListTag list = data instanceof ListTag listTag && listTag.getElementType() == Tag.TAG_COMPOUND ? listTag : new ListTag();
         for (int i = 0; i < list.size(); i++) {
             CompoundTag tag = list.getCompound(i);
             int slot = tag.getInt(SLOT);
-            if (slot < 0 || slot >= SLOT_COUNT || !tag.contains(ITEM, Tag.TAG_COMPOUND)) continue;
+            if (slot < 0 || slot >= SLOT_COUNT || !tag.contains(ITEM, Tag.TAG_COMPOUND)) {
+                continue;
+            }
             ItemStack stack = ItemStack.of(tag.getCompound(ITEM));
             this.items.set(slot, stack);
             this.startTimes[slot] = tag.getLong(START);
@@ -200,7 +234,9 @@ public final class GiantFryingPanStorage implements Container {
     public boolean isEmpty() {
         this.reloadIfChanged();
         for (ItemStack stack : this.items) {
-            if (!stack.isEmpty()) return false;
+            if (!stack.isEmpty()) {
+                return false;
+            }
         }
         return true;
     }
@@ -215,7 +251,9 @@ public final class GiantFryingPanStorage implements Container {
     public ItemStack removeItem(int slot, int amount) {
         this.reloadIfChanged();
         ItemStack stack = this.items.get(slot);
-        if (stack.isEmpty() || amount <= 0) return ItemStack.EMPTY;
+        if (stack.isEmpty() || amount <= 0) {
+            return ItemStack.EMPTY;
+        }
         ItemStack result = stack.split(amount);
         this.setChanged();
         return result;
@@ -245,12 +283,16 @@ public final class GiantFryingPanStorage implements Container {
     @Override
     public void setChanged() {
         ItemStack pan = this.pan();
-        if (!(pan.getItem() instanceof GiantFryingPanItem)) return;
+        if (!(pan.getItem() instanceof GiantFryingPanItem)) {
+            return;
+        }
         this.refreshStartTimes();
         ListTag list = new ListTag();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack stack = this.items.get(slot);
-            if (stack.isEmpty()) continue;
+            if (stack.isEmpty()) {
+                continue;
+            }
             CompoundTag tag = new CompoundTag();
             tag.putInt(SLOT, slot);
             tag.putLong(START, this.startTimes[slot]);

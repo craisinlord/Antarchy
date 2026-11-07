@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
@@ -59,7 +60,7 @@ public record HangingCreeprootsFeature() implements Feature {
 
                 BlockPos abovePos = mutable.above();
                 BlockState aboveState = level.getBlockState(abovePos);
-                if (aboveState.isFaceSturdy(level, abovePos, net.minecraft.core.Direction.DOWN)
+                if (aboveState.isFaceSturdy(level, abovePos, Direction.DOWN)
                         && !AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
                     return mutable.immutable();
                 }

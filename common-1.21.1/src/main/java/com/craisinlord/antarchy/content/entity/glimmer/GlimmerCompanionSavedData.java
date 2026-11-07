@@ -9,6 +9,7 @@ import java.util.UUID;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,7 +33,7 @@ public class GlimmerCompanionSavedData extends SavedData {
         RETIRED
     }
 
-    private record Companion(UUID id, @Nullable GlimmerVariant variant) {
+    public record Companion(UUID id, @Nullable GlimmerVariant variant) {
     }
 
     private final Map<UUID, Companion> companionByOwner = new HashMap<>();
@@ -44,12 +45,12 @@ public class GlimmerCompanionSavedData extends SavedData {
 
     public static GlimmerCompanionSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         GlimmerCompanionSavedData data = new GlimmerCompanionSavedData();
-        for (net.minecraft.nbt.Tag rawEntry : tag.getList(ENTRIES_KEY, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+        for (Tag rawEntry : tag.getList(ENTRIES_KEY, Tag.TAG_COMPOUND)) {
             CompoundTag entryTag = (CompoundTag) rawEntry;
             GlimmerVariant variant = entryTag.contains(VARIANT_KEY) ? GlimmerVariant.byName(entryTag.getString(VARIANT_KEY)) : null;
             data.companionByOwner.put(entryTag.getUUID(OWNER_KEY), new Companion(entryTag.getUUID(COMPANION_KEY), variant));
         }
-        for (net.minecraft.nbt.Tag rawEntry : tag.getList(RETIRED_KEY, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+        for (Tag rawEntry : tag.getList(RETIRED_KEY, Tag.TAG_COMPOUND)) {
             data.retired.add(((CompoundTag) rawEntry).getUUID(COMPANION_KEY));
         }
         return data;

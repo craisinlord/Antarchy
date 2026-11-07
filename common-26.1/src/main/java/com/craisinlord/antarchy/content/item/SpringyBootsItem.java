@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.item;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -15,8 +17,8 @@ public final class SpringyBootsItem extends Item {
         super(properties.humanoidArmor(material, ArmorType.BOOTS));
     }
 
-    public static boolean isWearingSpringyBoots(net.minecraft.world.entity.LivingEntity entity) {
-        return entity != null && entity.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET).getItem() instanceof SpringyBootsItem;
+    public static boolean isWearingSpringyBoots(LivingEntity entity) {
+        return entity != null && entity.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof SpringyBootsItem;
     }
 
     @Override

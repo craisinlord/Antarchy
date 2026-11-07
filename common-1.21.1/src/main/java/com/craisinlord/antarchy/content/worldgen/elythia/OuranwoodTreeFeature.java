@@ -2,8 +2,9 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.block.WaspNestBlock;
 import com.craisinlord.antarchy.content.block.OuranwoodLeavesBlock;
+import com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock;
+import com.craisinlord.antarchy.content.block.WaspNestBlock;
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.ints.IntArrayFIFOQueue;
@@ -11,9 +12,9 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Reference2BooleanOpenHashMap;
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,26 +23,26 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelWriter;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CaveVines;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.VineBlock;
-import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.Nullable;
 
 public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
@@ -675,7 +676,7 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
         int squirrelCount = 1 + random.nextInt(3);
         BlockPos markerPos = floorBlocks.get(0);
         setBlock(level, markerPos, AntarchyObjects.SQUIRREL_NEST_BLOCK.get().defaultBlockState()
-                .setValue(com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock.SQUIRREL_COUNT, squirrelCount));
+                .setValue(OuranwoodSquirrelNestBlock.SQUIRREL_COUNT, squirrelCount));
         level.scheduleTick(markerPos, AntarchyObjects.SQUIRREL_NEST_BLOCK.get(), 20);
         for (int i = 1; i < floorBlocks.size(); i++) {
             setBlock(level, floorBlocks.get(i), Blocks.COARSE_DIRT.defaultBlockState());
@@ -799,7 +800,9 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
             for (int dy = canopyDepth / 4; dy >= -canopyDepth / 2; dy--) {
                 pos.set(cx, canopyCenter.getY() + dy, cz);
                 BlockState anchorState = readState(level, pos);
-                if (!anchorState.is(BlockTags.LOGS) && !anchorState.is(BlockTags.LEAVES)) continue;
+                if (!anchorState.is(BlockTags.LOGS) && !anchorState.is(BlockTags.LEAVES)) {
+                    continue;
+                }
 
                 boolean clear = true;
                 outer:
@@ -812,7 +815,9 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
                         }
                     }
                 }
-                if (clear) return new BlockPos(cx, canopyCenter.getY() + dy, cz);
+                if (clear) {
+                    return new BlockPos(cx, canopyCenter.getY() + dy, cz);
+                }
             }
         }
         return null;

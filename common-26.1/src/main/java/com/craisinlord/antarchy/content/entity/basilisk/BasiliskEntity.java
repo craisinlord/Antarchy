@@ -1,31 +1,50 @@
 package com.craisinlord.antarchy.content.entity.basilisk;
 
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-
+import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.keyframehandler.AutoPlayingSoundKeyframeHandler;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -41,33 +60,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.animation.keyframehandler.AutoPlayingSoundKeyframeHandler;
-import com.geckolib.util.GeckoLibUtil;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Predicate;
 
 public class BasiliskEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(BasiliskEntity.class, EntityDataSerializers.INT);
     private static final byte ATTACK_ENTITY_EVENT = 4;
-    private static final net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> FUNGAL_RESERVE = net.minecraft.resources.ResourceKey.create(
-            net.minecraft.core.registries.Registries.BIOME,
-            net.minecraft.resources.Identifier.fromNamespaceAndPath(com.craisinlord.antarchy.Antarchy.MODID, "fungal_reserve"));
+    private static final ResourceKey<Biome> FUNGAL_RESERVE = ResourceKey.create(
+            Registries.BIOME,
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "fungal_reserve"));
     private static final int DEATH_TICKS = 25;
     private static final String TAG_HISS_COOLDOWN = "BasiliskHissCooldown";
     private static final String TAG_PREY_PETRIFY_COOLDOWN = "BasiliskPreyPetrifyCooldown";
@@ -122,7 +128,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
             amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
         }
@@ -130,8 +136,8 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.EntitySpawnReason spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
-        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.basiliskHealth());
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnReason, SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.basiliskHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
 
@@ -166,7 +172,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.server.level.ServerLevel level, Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         boolean hurt;
         if (this.level() instanceof ServerLevel serverLevel) {
             hurt = target.hurtServer(
@@ -186,7 +192,9 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     private void performAoeAttack() {
-        if (this.level().isClientSide()) return;
+        if (this.level().isClientSide()) {
+            return;
+        }
         this.committedAttackYaw = this.resolveCommittedAttackYaw();
         this.attackAnimTicks = AntarchySettings.basiliskAttackAnimTicks();
         this.attackDamagePending = true;
@@ -197,9 +205,15 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     private void tickAoeDamage() {
-        if (!this.attackDamagePending) return;
-        if (this.attackAnimTicks > AntarchySettings.basiliskAttackDamageTick()) return;
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        if (!this.attackDamagePending) {
+            return;
+        }
+        if (this.attackAnimTicks > AntarchySettings.basiliskAttackDamageTick()) {
+            return;
+        }
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
 
         this.attackDamagePending = false;
 
@@ -591,14 +605,18 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     @Override
     public boolean canBeAffected(MobEffectInstance effectInstance) {
         Holder<MobEffect> effect = effectInstance.getEffect();
-        if (effect == MobEffects.POISON) return false;
-        if (effect == AntarchyObjects.PARALYZED_EFFECT.get()) return false;
+        if (effect == MobEffects.POISON) {
+            return false;
+        }
+        if (effect == AntarchyObjects.PARALYZED_EFFECT.get()) {
+            return false;
+        }
         return super.canBeAffected(effectInstance);
     }
 
     @Override
     public boolean isWithinMeleeAttackRange(LivingEntity target) {
-        double reach = AntarchySettings.basiliskAttackReach() + 4.0;
+        double reach = AntarchySettings.basiliskAttackReach() + 4.0D;
         return this.distanceToSqr(target) <= reach * reach;
     }
 
@@ -695,12 +713,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                 double dx = this.wantedX - this.mob.getX();
                 double dz = this.wantedZ - this.mob.getZ();
                 double dy = this.wantedY - this.mob.getY();
-                if (dx * dx + dy * dy + dz * dz < 2.5E-7) {
+                if (dx * dx + dy * dy + dz * dz < 2.5E-7D) {
                     this.mob.setZza(0.0F);
                     return;
                 }
                 float turnRate = this.getDynamicTurnRate();
-                float targetYaw = (float)(Mth.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0F;
+                float targetYaw = (float)(Mth.atan2(dz, dx) * (180.0D / Math.PI)) - 90.0F;
                 this.mob.setYRot(this.rotlerp(this.mob.getYRot(), targetYaw, turnRate));
                 this.mob.setSpeed((float)(this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
                 this.mob.setZza(1.0F);
@@ -766,8 +784,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                 return false;
             }
             LivingEntity target = BasiliskEntity.this.getTarget();
-            if (target == null || !target.isAlive()) return false;
-            if (target instanceof Player p && (p.isCreative() || p.isSpectator())) return false;
+            if (target == null || !target.isAlive()) {
+                return false;
+            }
+            if (target instanceof Player p && (p.isCreative() || p.isSpectator())) {
+                return false;
+            }
             return true;
         }
 
@@ -795,10 +817,18 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
         @Override
         protected void checkAndPerformAttack(LivingEntity target) {
-            if (BasiliskEntity.this.attackAnimTicks > 0) return;
-            if (BasiliskEntity.this.attackCooldown > 0) return;
-            if (!BasiliskEntity.this.isWithinMeleeAttackRange(target)) return;
-            if (!BasiliskEntity.this.getSensing().hasLineOfSight(target)) return;
+            if (BasiliskEntity.this.attackAnimTicks > 0) {
+                return;
+            }
+            if (BasiliskEntity.this.attackCooldown > 0) {
+                return;
+            }
+            if (!BasiliskEntity.this.isWithinMeleeAttackRange(target)) {
+                return;
+            }
+            if (!BasiliskEntity.this.getSensing().hasLineOfSight(target)) {
+                return;
+            }
 
             BasiliskEntity.this.attackCooldown = 20;
             BasiliskEntity.this.performAoeAttack();

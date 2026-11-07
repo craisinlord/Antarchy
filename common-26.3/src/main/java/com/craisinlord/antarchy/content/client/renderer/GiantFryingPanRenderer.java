@@ -49,7 +49,9 @@ public final class GiantFryingPanRenderer extends GeoItemRenderer<GiantFryingPan
             GiantFryingPanStorage storage = new GiantFryingPanStorage(relatedObject.itemStack(), player);
             for (int slot = 0; slot < GiantFryingPanStorage.SLOT_COUNT; slot++) {
                 ItemStack stack = storage.getItem(slot);
-                if (stack.isEmpty()) continue;
+                if (stack.isEmpty()) {
+                    continue;
+                }
                 ItemStackRenderState itemState = new ItemStackRenderState();
                 minecraft.getItemModelResolver().updateForTopItem(itemState, stack, ItemDisplayContext.FIXED, minecraft.level, null, 0);
                 items.add(new PanItem(slot, itemState));
@@ -66,7 +68,9 @@ public final class GiantFryingPanRenderer extends GeoItemRenderer<GiantFryingPan
             int packedLight = renderPassInfo.packedLight();
             int packedOverlay = renderPassInfo.packedOverlay();
             for (PanItem item : items) {
-                if (item.state().isEmpty()) continue;
+                if (item.state().isEmpty()) {
+                    continue;
+                }
                 int row = item.slot() / 3;
                 int column = item.slot() % 3;
                 poseStack.pushPose();

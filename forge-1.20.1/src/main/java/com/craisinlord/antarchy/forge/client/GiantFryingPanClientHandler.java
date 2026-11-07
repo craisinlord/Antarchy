@@ -3,13 +3,13 @@ package com.craisinlord.antarchy.forge.client;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.item.GiantFryingPanItem;
 import com.craisinlord.antarchy.content.network.OpenGiantFryingPanPayload;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.TickEvent;
-import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class GiantFryingPanClientHandler {
@@ -20,7 +20,9 @@ public final class GiantFryingPanClientHandler {
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null || mc.screen != null) {

@@ -8,6 +8,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -42,8 +43,8 @@ public class PrimordialGrassBlock extends BushBlock {
     }
 
     @Override
-    protected net.minecraft.world.level.block.RenderShape getRenderShape(BlockState state) {
-        return chunkModel ? net.minecraft.world.level.block.RenderShape.MODEL : net.minecraft.world.level.block.RenderShape.INVISIBLE;
+    protected RenderShape getRenderShape(BlockState state) {
+        return chunkModel ? RenderShape.MODEL : RenderShape.INVISIBLE;
     }
 
     @Override

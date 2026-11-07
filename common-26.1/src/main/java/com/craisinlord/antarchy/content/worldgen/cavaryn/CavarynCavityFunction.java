@@ -63,7 +63,7 @@ public final class CavarynCavityFunction implements DensityFunction, CavarynColu
     @Override
     public double compute(FunctionContext context) {
         if (this.grid == null) {
-            return 1.0;
+            return 1.0D;
         }
         return CavarynColumn.density(this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), CavarynColumn.FLOOR));
     }
@@ -96,7 +96,7 @@ public final class CavarynCavityFunction implements DensityFunction, CavarynColu
         NoiseHolder mappedNoise = visitor.visitNoise(this.noise);
         CavarynCavityGrid mappedGrid = null;
         if (mappedNoise.noise() != null) {
-            long salt = CavarynWormBoreFunction.saltFor(mappedNoise.getValue(1234.567, 89.123, -456.789), mappedNoise.getValue(-987.654, 12.345, 654.321));
+            long salt = CavarynWormBoreFunction.saltFor(mappedNoise.getValue(1234.567D, 89.123D, -456.789D), mappedNoise.getValue(-987.654D, 12.345D, 654.321D));
             String biome = this.kind.biome();
             boolean strict = this.kind.strict();
             mappedGrid = CavarynCavityGrid.create(this.kind, salt, biome == null ? (x, y, z) -> true : (x, y, z) -> {
@@ -117,12 +117,12 @@ public final class CavarynCavityFunction implements DensityFunction, CavarynColu
 
     @Override
     public double minValue() {
-        return -1.0;
+        return -1.0D;
     }
 
     @Override
     public double maxValue() {
-        return 1.0;
+        return 1.0D;
     }
 
     @Override

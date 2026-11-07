@@ -2,13 +2,17 @@ package com.craisinlord.antarchy.content.effect;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.UUID;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 
 public final class CommandedBehavior {
     private static final ResourceLocation INVESTITURE_ATTACK = ResourceLocation.fromNamespaceAndPath("antarchy", "royal_investiture_attack");
@@ -52,13 +56,13 @@ public final class CommandedBehavior {
         }
         LivingEntity candidate = commander instanceof Mob commanderMob ? commanderMob.getTarget() : null;
         if (!isValidTarget(mob, commander, candidate)) {
-            candidate = commander instanceof net.minecraft.world.entity.player.Player player ? player.getLastHurtByMob() : null;
+            candidate = commander instanceof Player player ? player.getLastHurtByMob() : null;
         }
         if (!isValidTarget(mob, commander, candidate)) {
             candidate = mob.getLastHurtByMob();
         }
         if (!isValidTarget(mob, commander, candidate)) {
-            candidate = commander instanceof net.minecraft.world.entity.player.Player player ? player.getLastHurtMob() : null;
+            candidate = commander instanceof Player player ? player.getLastHurtMob() : null;
         }
         if (!isValidTarget(mob, commander, candidate)) {
             candidate = mob.getLastHurtByMob();
@@ -107,15 +111,17 @@ public final class CommandedBehavior {
 
     private static LivingEntity findCommanderTarget(Mob mob, Entity commander) {
         if (mob instanceof CommandedEntityAccess access && access.antarchy$isRoyalInvested()
-                && commander instanceof net.minecraft.world.entity.player.Player player) {
+                && commander instanceof Player player) {
             LivingEntity marked = JudgmentMarkManager.markedTarget(player);
-            if (isValidTarget(mob, commander, marked)) return marked;
+            if (isValidTarget(mob, commander, marked)) {
+                return marked;
+            }
         }
         LivingEntity target = commander instanceof Mob commanderMob ? commanderMob.getTarget() : null;
         if (isValidTarget(mob, commander, target)) {
             return target;
         }
-        if (commander instanceof net.minecraft.world.entity.player.Player player) {
+        if (commander instanceof Player player) {
             target = player.getLastHurtMob();
             if (isValidTarget(mob, commander, target)) {
                 return target;
@@ -144,7 +150,7 @@ public final class CommandedBehavior {
         float damage = mob instanceof CommandedEntityAccess access && access.antarchy$isRoyalInvested()
                 ? (float) AntarchySettings.royalGuardianMusterPassiveDamageFloor() : 1.0F;
         if (target.hurt(mob.damageSources().mobAttack(mob), damage)) {
-            mob.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+            mob.swing(InteractionHand.MAIN_HAND);
         }
     }
 
@@ -176,10 +182,12 @@ public final class CommandedBehavior {
                 active ? AntarchySettings.royalGuardianMusterSpeedBonus() : 0.0D);
     }
 
-    private static void setModifier(Mob mob, net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+    private static void setModifier(Mob mob, Holder<Attribute> attribute,
             ResourceLocation id, double amount) {
         var instance = mob.getAttribute(attribute);
-        if (instance == null) return;
+        if (instance == null) {
+            return;
+        }
         if (amount > 0.0D) {
             if (!instance.hasModifier(id)) {
                 instance.addTransientModifier(new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));

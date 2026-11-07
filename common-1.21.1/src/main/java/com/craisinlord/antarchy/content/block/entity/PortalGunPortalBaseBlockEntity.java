@@ -2,10 +2,14 @@ package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -17,7 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class PortalGunPortalBaseBlockEntity extends BlockEntity implements PortalGunPortalCellAccess {
-    private final Map<net.minecraft.core.Direction, PortalGunPortalFaceRecord> faceRecords = new EnumMap<>(net.minecraft.core.Direction.class);
+    private final Map<Direction, PortalGunPortalFaceRecord> faceRecords = new EnumMap<>(Direction.class);
     private UUID ownerId;
     private UUID portalId;
     private PortalGunPortalEntity.PortalSide side = PortalGunPortalEntity.PortalSide.BLUE;
@@ -30,7 +34,7 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity implements Porta
     }
 
     @Override
-    public Map<net.minecraft.core.Direction, PortalGunPortalFaceRecord> portalGun$getFaceRecords() {
+    public Map<Direction, PortalGunPortalFaceRecord> portalGun$getFaceRecords() {
         return this.faceRecords;
     }
 
@@ -69,7 +73,7 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity implements Porta
     public void updatePair(UUID linkedPortalId, int pairTime) {
         this.linkedPortalId = linkedPortalId;
         this.pairTime = pairTime;
-        for (PortalGunPortalFaceRecord record : java.util.List.copyOf(this.faceRecords.values())) {
+        for (PortalGunPortalFaceRecord record : List.copyOf(this.faceRecords.values())) {
             if (record.portalId().equals(this.portalId)) {
                 this.portalGun$putFaceRecord(record.withPair(linkedPortalId, pairTime));
             }
@@ -85,7 +89,7 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity implements Porta
         if (!(this.level instanceof ServerLevel serverLevel)) {
             return;
         }
-        java.util.Set<UUID> portalIds = new java.util.HashSet<>();
+        Set<UUID> portalIds = new HashSet<>();
         if (this.portalId != null) {
             portalIds.add(this.portalId);
         }

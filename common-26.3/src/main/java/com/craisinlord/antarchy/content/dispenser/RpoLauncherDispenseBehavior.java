@@ -4,13 +4,13 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.phys.Vec3;
 
 public class RpoLauncherDispenseBehavior extends DefaultDispenseItemBehavior {
     @Override
@@ -19,7 +19,9 @@ public class RpoLauncherDispenseBehavior extends DefaultDispenseItemBehavior {
         Position position = DispenserBlock.getDispensePosition(source);
 
         OctopusBombEntity bomb = AntarchyObjects.OCTOPUS_BOMB.get().create(source.level(), EntitySpawnReason.DISPENSER);
-        if (bomb == null) return super.execute(source, stack);
+        if (bomb == null) {
+            return super.execute(source, stack);
+        }
 
         bomb.setPos(position.x(), position.y(), position.z());
         Vec3 vel = new Vec3(direction.getStepX(), direction.getStepY(), direction.getStepZ())

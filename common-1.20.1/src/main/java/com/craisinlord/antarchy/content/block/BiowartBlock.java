@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.AntarchyTags;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -10,8 +11,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.function.Supplier;
 
 public class BiowartBlock extends Block implements BonemealableBlock {
     private static Supplier<? extends Block> biowartTendrils;

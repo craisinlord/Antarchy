@@ -1,8 +1,5 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
-import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,13 +8,14 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.Nullable;
 
 final class AntMarchManager {
     private static final Object INSTANCES_LOCK = new Object();
     private static final WeakHashMap<ServerLevel, AntMarchManager> INSTANCES = new WeakHashMap<>();
     private static final long CLEANUP_INTERVAL_TICKS = 200L;
 
-    
     private final Map<UUID, TreeMap<Integer, BaseAntEntity>> marches = new HashMap<>();
 
     private long lastCleanupGameTime = -CLEANUP_INTERVAL_TICKS;
@@ -30,47 +28,49 @@ final class AntMarchManager {
         }
     }
 
-    
     synchronized void register(UUID leaderUuid, int marchOrder, BaseAntEntity ant) {
         marches.computeIfAbsent(leaderUuid, k -> new TreeMap<>()).put(marchOrder, ant);
     }
 
-    
     synchronized void unregister(UUID leaderUuid, int marchOrder) {
         TreeMap<Integer, BaseAntEntity> march = marches.get(leaderUuid);
-        if (march == null) return;
+        if (march == null) {
+            return;
+        }
         march.remove(marchOrder);
         if (march.isEmpty()) marches.remove(leaderUuid);
     }
 
-    
     @Nullable
     synchronized BaseAntEntity getLeader(UUID leaderUuid) {
         return getByOrder(leaderUuid, 0);
     }
 
-    
     @Nullable
     synchronized BaseAntEntity getPredecessor(UUID leaderUuid, int order) {
         return order > 0 ? getByOrder(leaderUuid, order - 1) : null;
     }
 
-    
     synchronized int getNextOrder(UUID leaderUuid) {
         TreeMap<Integer, BaseAntEntity> march = marches.get(leaderUuid);
-        if (march == null || march.isEmpty()) return 1;
+        if (march == null || march.isEmpty()) {
+            return 1;
+        }
         return march.lastKey() + 1;
     }
 
-    
     synchronized List<BaseAntEntity> getParticipantsNear(BaseAntEntity seeker, double radius, double verticalRange) {
         double radiusSqr = radius * radius;
         List<BaseAntEntity> result = new ArrayList<>();
         for (TreeMap<Integer, BaseAntEntity> march : marches.values()) {
             for (BaseAntEntity ant : march.values()) {
-                if (ant == seeker || !ant.isAlive()) continue;
+                if (ant == seeker || !ant.isAlive()) {
+                    continue;
+                }
                 double dy = Math.abs(ant.getY() - seeker.getY());
-                if (dy > verticalRange) continue;
+                if (dy > verticalRange) {
+                    continue;
+                }
                 double dx = ant.getX() - seeker.getX();
                 double dz = ant.getZ() - seeker.getZ();
                 if (dx * dx + dz * dz <= radiusSqr) {
@@ -81,7 +81,6 @@ final class AntMarchManager {
         return result;
     }
 
-    
     synchronized void cleanup(long gameTime) {
         if (gameTime - this.lastCleanupGameTime < CLEANUP_INTERVAL_TICKS) {
             return;
@@ -100,9 +99,13 @@ final class AntMarchManager {
     @Nullable
     private BaseAntEntity getByOrder(UUID leaderUuid, int order) {
         TreeMap<Integer, BaseAntEntity> march = marches.get(leaderUuid);
-        if (march == null) return null;
+        if (march == null) {
+            return null;
+        }
         BaseAntEntity ant = march.get(order);
-        if (ant == null) return null;
+        if (ant == null) {
+            return null;
+        }
         if (!ant.isAlive()) {
             march.remove(order);
             if (march.isEmpty()) marches.remove(leaderUuid);

@@ -2,10 +2,11 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
+import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnContext;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
@@ -22,16 +23,20 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -41,6 +46,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -67,8 +73,8 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEntity {
@@ -203,14 +209,14 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+            MobSpawnType spawnReason, SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.reverieHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
 
     public static boolean canSpawn(EntityType<ReverieEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || com.craisinlord.antarchy.content.block.entity.UndertrialSpawnContext.isTrialSpawn(spawnReason) || spawnReason == MobSpawnType.COMMAND) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || UndertrialSpawnContext.isTrialSpawn(spawnReason) || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
 
@@ -412,7 +418,7 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
             }
         }
 
-        serverLevel.playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.BOTTLE_FILL, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+        serverLevel.playSound(null, this.blockPosition(), SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 1.0F, 1.0F);
         this.discard();
         return InteractionResult.CONSUME;
     }
@@ -427,7 +433,7 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
     }
 
     @Override
-    protected void jumpInLiquid(net.minecraft.tags.TagKey<Fluid> fluidTag) {
+    protected void jumpInLiquid(TagKey<Fluid> fluidTag) {
         this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.01D, 0.0D));
     }
 

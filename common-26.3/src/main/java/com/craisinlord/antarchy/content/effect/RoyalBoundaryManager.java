@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -20,6 +21,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -33,33 +36,41 @@ public final class RoyalBoundaryManager {
     }
 
     public static boolean activate(ServerPlayer owner) {
-        if (!(owner.level() instanceof ServerLevel level) || !wearsGuardianChestplate(owner)) return false;
+        if (!(owner.level() instanceof ServerLevel level) || !wearsGuardianChestplate(owner)) {
+            return false;
+        }
         long now = level.getGameTime();
         Map<UUID, Boundary> boundaries = BOUNDARIES.computeIfAbsent(level, ignored -> new HashMap<>());
-        net.minecraft.world.item.ItemStack chestplate = owner.getItemBySlot(EquipmentSlot.CHEST);
+        ItemStack chestplate = owner.getItemBySlot(EquipmentSlot.CHEST);
         if (owner.getCooldowns().isOnCooldown(chestplate) || boundaries.containsKey(owner.getUUID())) {
-            owner.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.royal_boundary.recharging"));
+            owner.sendOverlayMessage(Component.translatable("message.antarchy.royal_boundary.recharging"));
             return false;
         }
         double radius = Math.max(0.5D, AntarchySettings.royalGuardianBoundaryRadius());
         boundaries.put(owner.getUUID(), new Boundary(now + Math.max(1, AntarchySettings.royalGuardianBoundaryDurationTicks()), radius));
         owner.getCooldowns().addCooldown(chestplate, Math.max(0, AntarchySettings.royalGuardianBoundaryCooldownTicks()));
-        owner.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.royal_boundary.activated"));
+        owner.sendOverlayMessage(Component.translatable("message.antarchy.royal_boundary.activated"));
         level.playSound(null, owner.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0F, 1.25F);
         burst(level, center(owner), radius, 36);
         return true;
     }
 
     public static void tickOwner(ServerPlayer owner) {
-        if (!(owner.level() instanceof ServerLevel level)) return;
+        if (!(owner.level() instanceof ServerLevel level)) {
+            return;
+        }
         UUID ownerId = owner.getUUID();
         for (ServerLevel otherLevel : BOUNDARIES.keySet().toArray(ServerLevel[]::new)) {
             if (otherLevel != level) removeBoundary(otherLevel, ownerId);
         }
         Map<UUID, Boundary> boundaries = BOUNDARIES.get(level);
-        if (boundaries == null) return;
+        if (boundaries == null) {
+            return;
+        }
         Boundary boundary = boundaries.get(ownerId);
-        if (boundary == null) return;
+        if (boundary == null) {
+            return;
+        }
         long now = level.getGameTime();
         if (!owner.isAlive() || owner.isRemoved() || !wearsGuardianChestplate(owner) || now >= boundary.expiresAt) {
             boundaries.remove(ownerId);
@@ -91,7 +102,9 @@ public final class RoyalBoundaryManager {
     }
 
     public static void prepareProjectile(Projectile projectile) {
-        if (!(projectile.level() instanceof ServerLevel level) || projectile.isRemoved()) return;
+        if (!(projectile.level() instanceof ServerLevel level) || projectile.isRemoved()) {
+            return;
+        }
         Map<UUID, ArrestedProjectile> arrested = ARRESTED.get(level);
         if (arrested != null && arrested.containsKey(projectile.getUUID())) {
             ArrestedProjectile state = arrested.get(projectile.getUUID());
@@ -109,7 +122,9 @@ public final class RoyalBoundaryManager {
     }
 
     public static void tickProjectile(Projectile projectile) {
-        if (!(projectile.level() instanceof ServerLevel level)) return;
+        if (!(projectile.level() instanceof ServerLevel level)) {
+            return;
+        }
         Map<UUID, ArrestedProjectile> arrested = ARRESTED.get(level);
         ArrestedProjectile state = arrested == null ? null : arrested.get(projectile.getUUID());
         if (state != null) {
@@ -121,7 +136,9 @@ public final class RoyalBoundaryManager {
 
     private static void tryCapture(ServerLevel level, Projectile projectile, Vec3 start, Vec3 end) {
         Map<UUID, Boundary> boundaries = BOUNDARIES.get(level);
-        if (boundaries == null || boundaries.isEmpty() || projectile.isRemoved()) return;
+        if (boundaries == null || boundaries.isEmpty() || projectile.isRemoved()) {
+            return;
+        }
         var boundaryIterator = boundaries.entrySet().iterator();
         while (boundaryIterator.hasNext()) {
             Map.Entry<UUID, Boundary> entry = boundaryIterator.next();
@@ -133,10 +150,16 @@ public final class RoyalBoundaryManager {
             }
             Map<UUID, ArrestedProjectile> states = ARRESTED.computeIfAbsent(level, ignored -> new HashMap<>());
             long ownedArrests = states.values().stream().filter(arrest -> entry.getKey().equals(arrest.ownerId)).count();
-            if (ownedArrests >= Math.max(0, AntarchySettings.royalGuardianBoundaryProjectileCap())) continue;
-            if (isProjectileAlly(owner, projectile)) continue;
+            if (ownedArrests >= Math.max(0, AntarchySettings.royalGuardianBoundaryProjectileCap())) {
+                continue;
+            }
+            if (isProjectileAlly(owner, projectile)) {
+                continue;
+            }
             Vec3 crossing = inwardIntersection(start, end, center(owner), entry.getValue().radius);
-            if (crossing == null) continue;
+            if (crossing == null) {
+                continue;
+            }
             projectile.setPos(crossing.x, crossing.y, crossing.z);
             projectile.setDeltaMovement(Vec3.ZERO);
             boolean noGravity = projectile.isNoGravity();
@@ -190,14 +213,20 @@ public final class RoyalBoundaryManager {
 
     private static Vec3 inwardIntersection(Vec3 start, Vec3 end, Vec3 center, double radius) {
         Vec3 offset = start.subtract(center);
-        if (offset.lengthSqr() <= radius * radius) return null;
+        if (offset.lengthSqr() <= radius * radius) {
+            return null;
+        }
         Vec3 segment = end.subtract(start);
         double a = segment.lengthSqr();
-        if (a < 1.0E-8D) return null;
+        if (a < 1.0E-8D) {
+            return null;
+        }
         double b = 2.0D * offset.dot(segment);
         double c = offset.lengthSqr() - radius * radius;
         double discriminant = b * b - 4.0D * a * c;
-        if (discriminant < 0.0D) return null;
+        if (discriminant < 0.0D) {
+            return null;
+        }
         double t = (-b - Math.sqrt(discriminant)) / (2.0D * a);
         return t >= 0.0D && t <= 1.0D ? start.add(segment.scale(t)) : null;
     }
@@ -209,14 +238,18 @@ public final class RoyalBoundaryManager {
     }
 
     private static boolean isAlly(ServerPlayer owner, LivingEntity entity) {
-        if (entity == owner || entity.isAlliedTo(owner) || owner.isAlliedTo(entity)) return true;
-        if (entity instanceof OwnableEntity ownable && ownable.getOwnerReference() != null && owner.getUUID().equals(ownable.getOwnerReference().getUUID())) return true;
+        if (entity == owner || entity.isAlliedTo(owner) || owner.isAlliedTo(entity)) {
+            return true;
+        }
+        if (entity instanceof OwnableEntity ownable && ownable.getOwnerReference() != null && owner.getUUID().equals(ownable.getOwnerReference().getUUID())) {
+            return true;
+        }
         return entity instanceof CommandedEntityAccess access && owner.getUUID().equals(access.antarchy$getCommanderUuid());
     }
 
     private static boolean wearsGuardianChestplate(ServerPlayer player) {
         return player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof RoyalGuardianArmorItem armor
-                && armor.getArmorType() == net.minecraft.world.item.equipment.ArmorType.CHESTPLATE;
+                && armor.getArmorType() == ArmorType.CHESTPLATE;
     }
 
     private static Vec3 center(ServerPlayer owner) {

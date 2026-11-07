@@ -1,10 +1,14 @@
 package com.craisinlord.antarchy.fabric.client;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.DeathScreen;
@@ -15,17 +19,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-
 public final class DreadClientHandler {
-    private static final Holder<net.minecraft.world.effect.MobEffect> DREAD_EFFECT =
+    private static final Holder<MobEffect> DREAD_EFFECT =
             BuiltInRegistries.MOB_EFFECT.wrapAsHolder(AntarchyFabricMisc.DREAD.get());
     private static final int FOOTSTEP_MIN_INTERVAL_TICKS = 10;
     private static final int FOOTSTEP_MAX_INTERVAL_TICKS = 22;

@@ -1,7 +1,5 @@
 package com.craisinlord.antarchy.neoforge;
 
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
-import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
@@ -9,19 +7,21 @@ import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
+import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.neoforge.registry.*;
+import com.craisinlord.anthology.effect.AnthologyEffects;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.minecraft.core.registries.Registries;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 @Mod(Antarchy.MODID)
 public class AntarchyNeoforge {
@@ -281,18 +281,18 @@ public class AntarchyNeoforge {
     private static void bootstrapGameRules() {
         AntarchyGameRules.bootstrap((name, category, defaultValue) -> {
             try {
-                Method create = net.minecraft.world.level.GameRules.BooleanValue.class.getDeclaredMethod("create", boolean.class);
+                Method create = GameRules.BooleanValue.class.getDeclaredMethod("create", boolean.class);
                 create.setAccessible(true);
-                net.minecraft.world.level.GameRules.Type<net.minecraft.world.level.GameRules.BooleanValue> type =
-                        (net.minecraft.world.level.GameRules.Type<net.minecraft.world.level.GameRules.BooleanValue>) create.invoke(null, defaultValue);
-                Method register = net.minecraft.world.level.GameRules.class.getDeclaredMethod(
+                GameRules.Type<GameRules.BooleanValue> type =
+                        (GameRules.Type<GameRules.BooleanValue>) create.invoke(null, defaultValue);
+                Method register = GameRules.class.getDeclaredMethod(
                         "register",
                         String.class,
-                        net.minecraft.world.level.GameRules.Category.class,
-                        net.minecraft.world.level.GameRules.Type.class
+                        GameRules.Category.class,
+                        GameRules.Type.class
                 );
                 register.setAccessible(true);
-                return (net.minecraft.world.level.GameRules.Key<net.minecraft.world.level.GameRules.BooleanValue>) register.invoke(null, name, category, type);
+                return (GameRules.Key<GameRules.BooleanValue>) register.invoke(null, name, category, type);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalStateException("Failed to register boolean gamerule " + name, e);
             }
@@ -300,7 +300,7 @@ public class AntarchyNeoforge {
     }
 
     private static void bindCommonObjects() {
-        com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntities.UPWARD_FALLING_BLOCK;
+        UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntities.UPWARD_FALLING_BLOCK;
         PermanentPortalType.bindBlocks(
                 () -> AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_WOOD.get(),
                 () -> AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get(),

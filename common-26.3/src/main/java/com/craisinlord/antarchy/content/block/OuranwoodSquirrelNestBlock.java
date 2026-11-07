@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -32,10 +31,14 @@ public class OuranwoodSquirrelNestBlock extends Block {
         int count = state.getValue(SQUIRREL_COUNT);
         for (int i = 0; i < count; i++) {
             BlockPos spawnPos = findSpawnPos(level, pos, random);
-            if (spawnPos == null) continue;
+            if (spawnPos == null) {
+                continue;
+            }
 
             FlyingSquirrelEntity squirrel = AntarchyObjects.FLYING_SQUIRREL.get().create(level, EntitySpawnReason.TRIGGERED);
-            if (squirrel == null) continue;
+            if (squirrel == null) {
+                continue;
+            }
 
             squirrel.snapTo(
                     spawnPos.getX() + 0.2D + random.nextDouble() * 0.6D,

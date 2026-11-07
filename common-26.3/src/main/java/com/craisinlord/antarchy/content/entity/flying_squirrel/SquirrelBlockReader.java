@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.flying_squirrel;
 
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -7,8 +8,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Predicate;
 
 final class SquirrelBlockReader {
     private static final BlockState AIR = Blocks.AIR.defaultBlockState();

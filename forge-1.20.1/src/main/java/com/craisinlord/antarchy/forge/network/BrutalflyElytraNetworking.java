@@ -1,10 +1,13 @@
 package com.craisinlord.antarchy.forge.network;
 
+import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.content.network.BrutalflyElytraAnimationPayload;
 import com.craisinlord.antarchy.content.network.BrutalflyElytraFlapPayload;
-import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
+import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
+import com.craisinlord.antarchy.forge.network.AntarchyPayloadContext;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -12,9 +15,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
-import com.craisinlord.antarchy.forge.network.AntarchyPayloadContext;
-import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
 
 public final class BrutalflyElytraNetworking {
     private BrutalflyElytraNetworking() {
@@ -32,7 +32,7 @@ public final class BrutalflyElytraNetworking {
         );
     }
 
-    private static void handleFlap(com.craisinlord.antarchy.content.network.BrutalflyElytraFlapPayload payload, AntarchyPayloadContext context) {
+    private static void handleFlap(BrutalflyElytraFlapPayload payload, AntarchyPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer serverPlayer)) {
                 return;

@@ -1,19 +1,21 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
-import com.craisinlord.anthology.beam.client.BeamRenderTypes;
 import com.craisinlord.antarchy.content.client.model.RoyalMountModel;
+import com.craisinlord.antarchy.content.entity.royal.PrinceEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity;
+import com.craisinlord.anthology.beam.client.BeamRenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import com.craisinlord.antarchy.content.entity.royal.PrinceEntity;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
@@ -61,7 +63,9 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
                        MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         Vec3 end = entity.getBeamEndPosition();
-        if (!entity.isFiringBeam() || end == null) return;
+        if (!entity.isFiringBeam() || end == null) {
+            return;
+        }
         double x = Mth.lerp(partialTick, entity.xo, entity.getX());
         double y = Mth.lerp(partialTick, entity.yo, entity.getY());
         double z = Mth.lerp(partialTick, entity.zo, entity.getZ());
@@ -71,7 +75,9 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         Vec3 finish = end.subtract(x, y, z);
         Vec3 axis = finish.subtract(start);
         double length = axis.length();
-        if (length < 0.05D) return;
+        if (length < 0.05D) {
+            return;
+        }
         Vec3 dir = axis.scale(1.0D / length);
         Vec3 side = dir.cross(new Vec3(0.0D, 1.0D, 0.0D));
         if (side.lengthSqr() < 1.0E-4D) side = dir.cross(new Vec3(1.0D, 0.0D, 0.0D));
@@ -94,10 +100,10 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         float pitch = (float) Math.acos(dir.y);
         poseStack.pushPose();
         poseStack.translate(start.x, start.y, start.z);
-        poseStack.mulPose(com.mojang.math.Axis.YP.rotation((float) (Math.PI * 0.5D - yaw)));
-        poseStack.mulPose(com.mojang.math.Axis.XP.rotation((float) (-Math.PI * 0.5D + pitch)));
-        poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(45.0F));
-        org.joml.Matrix4f pose = poseStack.last().pose();
+        poseStack.mulPose(Axis.YP.rotation((float) (Math.PI * 0.5D - yaw)));
+        poseStack.mulPose(Axis.XP.rotation((float) (-Math.PI * 0.5D + pitch)));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
+        Matrix4f pose = poseStack.last().pose();
         VertexConsumer innerBuffer = bufferSource.getBuffer(BeamRenderTypes.beam(inner));
         drawLocalBeam(innerBuffer, pose, length, 0.375F, 4, innerV, 0.5F);
         VertexConsumer outerBuffer = bufferSource.getBuffer(BeamRenderTypes.beam(outer));
@@ -108,7 +114,7 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         poseStack.popPose();
     }
 
-    private static void drawLocalBeam(VertexConsumer vertices, org.joml.Matrix4f pose, double length,
+    private static void drawLocalBeam(VertexConsumer vertices, Matrix4f pose, double length,
                                       float radius, int sections, float scroll, float uvLengthScale) {
         float endV = scroll + (float) length * uvLengthScale;
         float previousX = -radius;
@@ -130,7 +136,7 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         }
     }
 
-    private static void drawBeamTube(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 start, Vec3 end,
+    private static void drawBeamTube(VertexConsumer vertices, Matrix4f pose, Vec3 start, Vec3 end,
                                      Vec3 side1, Vec3 side2, float radius, int sections, float scroll, float phase,
                                      float startScale, float uvLengthScale, int endAlpha) {
         Vec3[] startRing = new Vec3[sections];
@@ -149,7 +155,7 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         }
     }
 
-    private static void emitBeamQuad(VertexConsumer vertices, org.joml.Matrix4f pose,
+    private static void emitBeamQuad(VertexConsumer vertices, Matrix4f pose,
                                      Vec3 a, Vec3 b, Vec3 c, Vec3 d,
                                      float minU, float minV, float maxU, float maxV, int endAlpha) {
         beamVertex(vertices, pose, a, minU, minV, 255);
@@ -158,7 +164,7 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         beamVertex(vertices, pose, d, minU, maxV, 255);
     }
 
-    private static void drawBeamImpact(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 center, Vec3 direction,
+    private static void drawBeamImpact(VertexConsumer vertices, Matrix4f pose, Vec3 center, Vec3 direction,
                                        Vec3 side1, Vec3 side2, float size) {
         drawBillboard(vertices, pose, center, side1.scale(size), side2.scale(size));
         for (int i = 0; i < 8; i++) {
@@ -170,27 +176,27 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         }
     }
 
-    private static void drawBillboard(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 center, Vec3 left, Vec3 up) {
+    private static void drawBillboard(VertexConsumer vertices, Matrix4f pose, Vec3 center, Vec3 left, Vec3 up) {
         emitQuad(vertices, pose, center.add(left).add(up), center.subtract(left).add(up),
                 center.subtract(left).subtract(up), center.add(left).subtract(up));
         emitQuad(vertices, pose, center.subtract(left).add(up), center.add(left).add(up),
                 center.add(left).subtract(up), center.subtract(left).subtract(up));
     }
 
-    private static void emitQuad(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 a, Vec3 b, Vec3 c, Vec3 d) {
+    private static void emitQuad(VertexConsumer vertices, Matrix4f pose, Vec3 a, Vec3 b, Vec3 c, Vec3 d) {
         vertex(vertices, pose, a, 0.0F, 0.0F);
         vertex(vertices, pose, b, 1.0F, 0.0F);
         vertex(vertices, pose, c, 1.0F, 1.0F);
         vertex(vertices, pose, d, 0.0F, 1.0F);
     }
 
-    private static void vertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v) {
+    private static void vertex(VertexConsumer vertices, Matrix4f pose, Vec3 pos, float u, float v) {
         vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z).setColor(1.0F, 1.0F, 1.0F, 1.0F).setUv(u, v)
-                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(240).setNormal(0.0F, 1.0F, 0.0F);
+                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(240).setNormal(0.0F, 1.0F, 0.0F);
     }
 
-    private static void beamVertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v, int alpha) {
+    private static void beamVertex(VertexConsumer vertices, Matrix4f pose, Vec3 pos, float u, float v, int alpha) {
         vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z).setColor(1.0F, 1.0F, 1.0F, alpha / 255.0F).setUv(u, v)
-                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(240).setNormal(0.0F, -1.0F, 0.0F);
+                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(240).setNormal(0.0F, -1.0F, 0.0F);
     }
 }

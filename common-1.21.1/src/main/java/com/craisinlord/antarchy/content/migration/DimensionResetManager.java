@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -409,7 +410,7 @@ public final class DimensionResetManager {
         try {
             Path temp = file.resolveSibling(STATE_FILE + ".tmp");
             Files.writeString(temp, GSON.toJson(json), StandardCharsets.UTF_8);
-            Files.move(temp, file, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             Antarchy.LOGGER.error("[Antarchy] Could not write {}", file, e);
         }

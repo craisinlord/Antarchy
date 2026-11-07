@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
-import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.compat.item.ArmorDurability;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;

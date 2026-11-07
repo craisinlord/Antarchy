@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.client.model.ButterflyModel;
 import com.craisinlord.antarchy.content.client.renderer.GlimmerEchoRendering;
 import com.craisinlord.antarchy.content.entity.ButterflyEntity;
+import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.geckolib.renderer.layer.GeoRenderLayer;
@@ -14,7 +15,6 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import com.geckolib.renderer.GeoEntityRenderer;
 
 public class ButterflyRenderer extends GeoEntityRenderer<ButterflyEntity, LivingEntityRenderState> {
     private static final float VISUAL_SCALE = 0.8F;

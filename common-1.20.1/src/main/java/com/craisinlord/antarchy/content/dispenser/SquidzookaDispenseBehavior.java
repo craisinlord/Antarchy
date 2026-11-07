@@ -3,13 +3,13 @@ package com.craisinlord.antarchy.content.dispenser;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
+import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.phys.Vec3;
 
 public class SquidzookaDispenseBehavior extends DefaultDispenseItemBehavior {
     @Override
@@ -18,7 +18,9 @@ public class SquidzookaDispenseBehavior extends DefaultDispenseItemBehavior {
         Position position = DispenserBlock.getDispensePosition(source);
 
         MissileSquidEntity squid = AntarchyObjects.MISSILE_SQUID.get().create(source.getLevel());
-        if (squid == null) return super.execute(source, stack);
+        if (squid == null) {
+            return super.execute(source, stack);
+        }
 
         squid.setPos(position.x(), position.y(), position.z());
         Vec3 vel = new Vec3(direction.getStepX(), direction.getStepY(), direction.getStepZ())

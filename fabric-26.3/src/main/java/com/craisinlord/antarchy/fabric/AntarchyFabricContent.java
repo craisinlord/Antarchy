@@ -1,34 +1,35 @@
 package com.craisinlord.antarchy.fabric;
 
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricRegistries;
-import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.fabric.registry.DeferredHolder;
-import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
+import com.craisinlord.antarchy.content.block.*;
+import com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior;
+import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
+import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricRegistries;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
+import com.craisinlord.antarchy.fabric.registry.DeferredHolder;
+import com.craisinlord.anthology.effect.AnthologyEffects;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.fabricmc.loader.api.FabricLoader;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricCreativeModeTabs;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntityAttributes;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSpawnPlacements;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.material.FlowingFluid;
 
 public final class AntarchyFabricContent {
 
@@ -40,8 +41,8 @@ public final class AntarchyFabricContent {
         return FabricLoader.getInstance().isModLoaded(modId);
     }
 
-    public static net.minecraft.world.level.material.FlowingFluid lookupFlowingFluid(String path) {
-        return (net.minecraft.world.level.material.FlowingFluid) BuiltInRegistries.FLUID.getValue(Identifier.fromNamespaceAndPath(Antarchy.MODID, path));
+    public static FlowingFluid lookupFlowingFluid(String path) {
+        return (FlowingFluid) BuiltInRegistries.FLUID.getValue(Identifier.fromNamespaceAndPath(Antarchy.MODID, path));
     }
 
     public static Item lookupItem(String path) {
@@ -53,7 +54,7 @@ public final class AntarchyFabricContent {
     }
 
     public static void register() {
-        com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyFabricEntities.UPWARD_FALLING_BLOCK;
+        UpwardFallingBlockEntity.TYPE = AntarchyFabricEntities.UPWARD_FALLING_BLOCK;
 
         AntarchyFabricRegistries.registerAll();
         bindCommonContent();
@@ -61,8 +62,8 @@ public final class AntarchyFabricContent {
     }
 
     private static void bindCommonContent() {
-        DispenserBlock.registerBehavior(AntarchyFabricItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
-        DispenserBlock.registerBehavior(AntarchyFabricItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.VORTEX_CHARGE.get(), new VortexChargeDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.EYE_OF_THE_STORM.get(), new EyeOfTheStormDispenseBehavior());
 
         PermanentPortalType.bindBlocks(
                 () -> AntarchyFabricBlocks.MOSSY_OURANWOOD_WOOD.get(),
@@ -317,6 +318,5 @@ public final class AntarchyFabricContent {
         VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyFabricEntities.WIND_VORTEX.get();
 
     }
-
 
 }

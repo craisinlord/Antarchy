@@ -2,10 +2,10 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.FlytrapModel;
 import com.craisinlord.antarchy.content.entity.FlytrapEntity;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 public class FlytrapRenderer extends GeoEntityRenderer<FlytrapEntity, LivingEntityRenderState> {
     public FlytrapRenderer(EntityRendererProvider.Context context) {

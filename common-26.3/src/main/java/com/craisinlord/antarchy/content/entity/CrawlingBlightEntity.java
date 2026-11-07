@@ -1,23 +1,35 @@
 package com.craisinlord.antarchy.content.entity;
 
-import net.minecraft.server.level.ServerLevel;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -32,16 +44,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.state.BlockState;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
+import net.minecraft.world.phys.Vec3;
 
 public class CrawlingBlightEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Boolean> CLIMBING =
@@ -79,7 +83,7 @@ public class CrawlingBlightEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.EntitySpawnReason spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnReason, SpawnGroupData spawnData) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.crawlingBlightHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
@@ -154,7 +158,7 @@ public class CrawlingBlightEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         boolean result = super.doHurtTarget(level, target);
         if (result) {
             this.playSound(AntarchySoundEvents.CRAWLING_BLIGHT_BITE.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
@@ -181,7 +185,7 @@ public class CrawlingBlightEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) {
+    protected SoundEvent getHurtSound(DamageSource source) {
         return AntarchySoundEvents.CRAWLING_BLIGHT_HURT.get();
     }
 
@@ -207,7 +211,9 @@ public class CrawlingBlightEntity extends Monster implements GeoEntity {
         if (attackAnimTicks > 0) {
             this.setAttackAnimTicks(attackAnimTicks - 1);
         }
-        if (this.level().isClientSide()) return;
+        if (this.level().isClientSide()) {
+            return;
+        }
 
         boolean climbing = this.horizontalCollision;
         if (this.entityData.get(CLIMBING) != climbing) {

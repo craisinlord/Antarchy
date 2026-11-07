@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.mixins.client;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ThrowbackClientState;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.contextualbar.ExperienceBar;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ExperienceBar.class)
 public abstract class ThrowbackExperienceBarMixin {
     @Inject(method = "extractBackground", at = @At("HEAD"), cancellable = true)
-    private void antarchy$hideExperienceBarWhenFullyFaded(GuiGraphicsExtractor graphics, net.minecraft.client.DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void antarchy$hideExperienceBarWhenFullyFaded(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (AntarchySettings.throwbackClassicFood() && antarchy$hiddenAmount() >= 0.99F) {
             ci.cancel();
         }

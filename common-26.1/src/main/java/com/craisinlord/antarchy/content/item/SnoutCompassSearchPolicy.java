@@ -5,10 +5,10 @@ public final class SnoutCompassSearchPolicy {
     }
 
     public static boolean shouldRestart(boolean running, double movementSquared) {
-        return movementSquared > (running ? 16384.0 : 64.0);
+        return movementSquared > (running ? 16384.0D : 64.0D);
     }
 
     public static int refreshDelay(double movementSquared) {
-        return movementSquared > 64.0 ? 1 : 100;
+        return movementSquared > 64.0D ? 1 : 100;
     }
 }

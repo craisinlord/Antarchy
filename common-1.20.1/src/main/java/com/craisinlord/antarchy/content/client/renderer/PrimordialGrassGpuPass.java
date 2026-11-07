@@ -190,7 +190,9 @@ final class PrimordialGrassGpuPass {
     }
 
     static boolean available() {
-        if (failed) return false;
+        if (failed) {
+            return false;
+        }
         return ensureInitialized();
     }
 
@@ -342,10 +344,14 @@ final class PrimordialGrassGpuPass {
     }
 
     private static void beginTimer() {
-        if (!timerSupported) return;
+        if (!timerSupported) {
+            return;
+        }
         int slot = timerSlot;
         if (TIMER_PENDING[slot]) {
-            if (GL15.glGetQueryObjecti(timerEnd[slot], GL15.GL_QUERY_RESULT_AVAILABLE) == GL11.GL_FALSE) return;
+            if (GL15.glGetQueryObjecti(timerEnd[slot], GL15.GL_QUERY_RESULT_AVAILABLE) == GL11.GL_FALSE) {
+                return;
+            }
             long elapsed = GL33.glGetQueryObjecti64(timerEnd[slot], GL15.GL_QUERY_RESULT)
                     - GL33.glGetQueryObjecti64(timerStart[slot], GL15.GL_QUERY_RESULT);
             gpuNanos += (elapsed - gpuNanos) * TIMER_SMOOTHING;
@@ -356,7 +362,9 @@ final class PrimordialGrassGpuPass {
     }
 
     private static void endTimer() {
-        if (!timerActive) return;
+        if (!timerActive) {
+            return;
+        }
         timerActive = false;
         GL33.glQueryCounter(timerEnd[timerSlot], GL33.GL_TIMESTAMP);
         TIMER_PENDING[timerSlot] = true;

@@ -2,16 +2,18 @@ package com.craisinlord.antarchy.content.worldgen.elythia.reef;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.minecraft.util.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 
 final class ReefFloorGrid {
     static final int STEP = 16;
@@ -19,10 +21,10 @@ final class ReefFloorGrid {
     static final byte SPIKES = 2;
     static final byte OTHER = 3;
 
-    record Sampler(ChunkGenerator generator, LevelHeightAccessor heightAccessor, RandomState randomState, net.minecraft.world.level.biome.BiomeResolver resolver) {
+    record Sampler(ChunkGenerator generator, LevelHeightAccessor heightAccessor, RandomState randomState, BiomeResolver resolver) {
         Sampler(ChunkGenerator generator, LevelHeightAccessor heightAccessor, RandomState randomState) {
             this(generator, heightAccessor, randomState, generator.getBiomeSource().createResolver(
-                    randomState.createClimateSampler(net.minecraft.world.level.levelgen.densityfunction.SamplerContext.EMPTY_UNCACHED)));
+                    randomState.createClimateSampler(SamplerContext.EMPTY_UNCACHED)));
         }
     }
 

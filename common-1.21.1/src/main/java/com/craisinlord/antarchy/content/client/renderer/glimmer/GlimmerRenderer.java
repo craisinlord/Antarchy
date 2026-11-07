@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.util.Color;
 
 public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity> {
     private static final float SHADOW_RADIUS = 0.0F;
@@ -117,9 +118,9 @@ public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity> {
     }
 
     @Override
-    public software.bernie.geckolib.util.Color getRenderColor(GlimmerEntity animatable, float partialTick, int packedLight) {
+    public Color getRenderColor(GlimmerEntity animatable, float partialTick, int packedLight) {
         float brightness = brightnessFor(animatable, partialTick);
-        return software.bernie.geckolib.util.Color.ofRGBA(brightness, brightness, brightness, animatable.getFadeAlpha(partialTick));
+        return Color.ofRGBA(brightness, brightness, brightness, animatable.getFadeAlpha(partialTick));
     }
 
     @Override

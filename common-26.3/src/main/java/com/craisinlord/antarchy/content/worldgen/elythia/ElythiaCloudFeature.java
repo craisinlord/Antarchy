@@ -1,19 +1,21 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public final class ElythiaCloudFeature implements Feature {
     public static final MapCodec<ElythiaCloudFeature> CODEC = MapCodec.unit(ElythiaCloudFeature::new);
 
     @Override
-    public MapCodec<ElythiaCloudFeature> codec() { return CODEC; }
+    public MapCodec<ElythiaCloudFeature> codec() {
+        return CODEC;
+    }
 
     private enum CloudSize {
         WISPY,
@@ -51,8 +53,12 @@ public final class ElythiaCloudFeature implements Feature {
 
     private static CloudSize pickSize(RandomSource random) {
         float roll = random.nextFloat();
-        if (roll < 0.40F) return CloudSize.WISPY;
-        if (roll < 0.75F) return CloudSize.SMALL;
+        if (roll < 0.40F) {
+            return CloudSize.WISPY;
+        }
+        if (roll < 0.75F) {
+            return CloudSize.SMALL;
+        }
         return CloudSize.LARGE;
     }
 

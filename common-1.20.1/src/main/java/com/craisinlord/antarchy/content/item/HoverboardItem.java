@@ -1,7 +1,9 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.entity.HoverboardEntity;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -23,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public class HoverboardItem extends Item {
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
 
-    private final java.util.function.Supplier<? extends EntityType<? extends HoverboardEntity>> entityType;
+    private final Supplier<? extends EntityType<? extends HoverboardEntity>> entityType;
     @Nullable
     private final DyeColor color;
 
@@ -31,7 +33,7 @@ public class HoverboardItem extends Item {
         this(() -> entityType, color, properties);
     }
 
-    public HoverboardItem(java.util.function.Supplier<? extends EntityType<? extends HoverboardEntity>> entityType, @Nullable DyeColor color, Properties properties) {
+    public HoverboardItem(Supplier<? extends EntityType<? extends HoverboardEntity>> entityType, @Nullable DyeColor color, Properties properties) {
         super(properties);
         this.entityType = entityType;
         this.color = color;
@@ -58,8 +60,8 @@ public class HoverboardItem extends Item {
 
         HoverboardEntity hoverboard = new HoverboardEntity(this.entityType.get(), level);
         Vec3 spawnPos = hitResult.getLocation();
-        boolean invertedPlacement = com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager.isThoraxis(level)
-                && spawnPos.y < com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager.GRAVITY_FLIP_Y;
+        boolean invertedPlacement = ThoraxisUndersideManager.isThoraxis(level)
+                && spawnPos.y < ThoraxisUndersideManager.GRAVITY_FLIP_Y;
         double spawnY = invertedPlacement ? spawnPos.y - hoverboard.getBbHeight() : spawnPos.y;
         hoverboard.moveTo(spawnPos.x, spawnY, spawnPos.z, player.getYRot(), 0.0F);
         hoverboard.setColor(this.color);

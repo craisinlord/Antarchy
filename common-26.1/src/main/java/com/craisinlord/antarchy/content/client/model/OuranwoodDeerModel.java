@@ -3,9 +3,9 @@ package com.craisinlord.antarchy.content.client.model;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity;
 import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
 import net.minecraft.resources.Identifier;
-import com.geckolib.model.GeoModel;
 
 public class OuranwoodDeerModel extends GeoModel<OuranwoodDeerEntity> {
     public static final DataTicket<Boolean> BABY = DataTicket.create("antarchy_ouranwood_deer_baby", Boolean.class);

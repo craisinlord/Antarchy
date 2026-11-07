@@ -1,11 +1,11 @@
 package com.craisinlord.antarchy.content.client.model;
 
-import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.geckolib.constant.dataticket.DataTicket;
-import net.minecraft.resources.Identifier;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class OctopusBombModel extends GeoModel<OctopusBombEntity> {
     public static final DataTicket<Boolean> GLIMMER_ECHO = DataTicket.create("antarchy_octopus_bomb_glimmer_echo", Boolean.class);

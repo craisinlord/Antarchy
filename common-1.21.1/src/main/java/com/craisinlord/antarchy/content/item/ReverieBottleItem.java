@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -127,7 +128,7 @@ public class ReverieBottleItem extends Item {
 
         serverLevel.addFreshEntity(reverie);
         serverLevel.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
-        player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(this));
+        player.awardStat(Stats.ITEM_USED.get(this));
         this.clearStoredReverie(stack);
         this.returnGlassBottle(player, stack, hand);
         return true;

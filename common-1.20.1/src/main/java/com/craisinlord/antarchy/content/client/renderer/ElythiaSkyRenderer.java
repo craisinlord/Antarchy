@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.ElythiaFog;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -12,11 +12,10 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexSorting;
-
+import com.mojang.math.Axis;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -27,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 public final class ElythiaSkyRenderer {
@@ -46,9 +46,9 @@ public final class ElythiaSkyRenderer {
     private static final int HORIZON_FOG_SEGMENTS = 48;
     private static final int GLOW_SEGMENTS = 16;
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     private static VertexBuffer coloredStarBuffer = null;
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     private static VertexBuffer horizonFogBuffer = null;
     private static boolean horizonFogEmpty;
     private static float horizonFogStart = Float.NaN;
@@ -274,10 +274,18 @@ public final class ElythiaSkyRenderer {
 
     private static float[] pickStarColor(Random random) {
         float roll = random.nextFloat();
-        if (roll < 0.72F) return new float[]{1.0F, 0.97F, 1.0F};
-        if (roll < 0.82F) return new float[]{0.82F, 0.62F, 1.0F};
-        if (roll < 0.89F) return new float[]{1.0F, 0.74F, 0.45F};
-        if (roll < 0.96F) return new float[]{0.72F, 1.0F, 0.7F};
+        if (roll < 0.72F) {
+            return new float[]{1.0F, 0.97F, 1.0F};
+        }
+        if (roll < 0.82F) {
+            return new float[]{0.82F, 0.62F, 1.0F};
+        }
+        if (roll < 0.89F) {
+            return new float[]{1.0F, 0.74F, 0.45F};
+        }
+        if (roll < 0.96F) {
+            return new float[]{0.72F, 1.0F, 0.7F};
+        }
         return new float[]{1.0F, 0.56F, 0.62F};
     }
 

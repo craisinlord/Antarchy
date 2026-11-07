@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.menu.DorrieInventoryMenu;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
@@ -19,15 +20,21 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Entity.MoveFunction;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -36,9 +43,9 @@ import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.TryFindWaterGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
@@ -46,9 +53,8 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -57,8 +63,8 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class DorrieEntity extends Animal implements GeoEntity {
@@ -164,7 +170,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.dorrieHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
@@ -421,7 +427,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
                 Vec3 mov = this.getDeltaMovement();
                 Vec3 localMotion = this.toLocal(mov);
                 this.setDeltaMovement(this.toWorld(localMotion.x * 0.91D, localMotion.y - 0.08D, localMotion.z * 0.91D));
-                this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
+                this.move(MoverType.SELF, this.getDeltaMovement());
                 return;
             }
 
@@ -442,7 +448,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
                         localMotion.y * 0.90D + vertical,
                         localMotion.z * 0.92D
                 ));
-                this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
+                this.move(MoverType.SELF, this.getDeltaMovement());
                 return;
             }
         }
@@ -451,8 +457,8 @@ public class DorrieEntity extends Animal implements GeoEntity {
     }
 
     public void applyJumpImpulseClient() {
-        float power = this.getJumpCharge() / 100f;
-        if (power > 0.05f) {
+        float power = this.getJumpCharge() / 100F;
+        if (power > 0.05F) {
             Vec3 look = this.getLookAngle();
             Vec3 flatLook = this.toLocalPlane(look).normalize();
             Vec3 current = this.toLocal(this.getDeltaMovement());
@@ -535,7 +541,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
             return;
         }
         player.openMenu(new SimpleMenuProvider(
-                (containerId, playerInventory, ignored) -> new com.craisinlord.antarchy.content.menu.DorrieInventoryMenu(containerId, playerInventory, this.inventory, this),
+                (containerId, playerInventory, ignored) -> new DorrieInventoryMenu(containerId, playerInventory, this.inventory, this),
                 this.getDisplayName()
         ));
     }

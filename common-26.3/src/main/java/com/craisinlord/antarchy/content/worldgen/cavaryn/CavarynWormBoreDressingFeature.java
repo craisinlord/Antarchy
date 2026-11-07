@@ -2,22 +2,23 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.util.RandomSource;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.synth.Noise;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public final class CavarynWormBoreDressingFeature implements Feature {
@@ -40,7 +41,7 @@ public final class CavarynWormBoreDressingFeature implements Feature {
             Identifier.withDefaultNamespace("podzol")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double LINING_DEPTH = 1.8;
+    private static final double LINING_DEPTH = 1.8D;
     private static final float MUD_CHANCE = 0.16F;
     private static final float CASTING_CHANCE = 0.035F;
     private static final float MUCUS_CHANCE = 0.05F;
@@ -54,10 +55,10 @@ public final class CavarynWormBoreDressingFeature implements Feature {
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        net.minecraft.world.level.levelgen.synth.Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(BORE_NOISE);
+        Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(BORE_NOISE);
         CavarynWormBoreGrid grid = CavarynWormBoreGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.get(1234.567, 89.123, -456.789),
-                noise.get(-987.654, 12.345, 654.321)
+                noise.get(1234.567D, 89.123D, -456.789D),
+                noise.get(-987.654D, 12.345D, 654.321D)
         ));
         Block loam = block(LOAM_ID);
         Block mucus = block(MUCUS_ID);
@@ -92,14 +93,14 @@ public final class CavarynWormBoreDressingFeature implements Feature {
                     }
                     pos.set(x, y, z);
                     BlockState state = level.getBlockState(pos);
-                    if (distance > 0.0) {
+                    if (distance > 0.0D) {
                         if (isLineable(state)) {
                             level.setBlock(pos, random.nextFloat() < MUD_CHANCE ? Blocks.MUD.defaultBlockState() : loam.defaultBlockState(), 2);
                             placed = true;
                         }
                         continue;
                     }
-                    if (distance < -2.5 || !state.isAir()) {
+                    if (distance < -2.5D || !state.isAir()) {
                         continue;
                     }
                     if (random.nextFloat() < CASTING_CHANCE && placeCasting(level, pos, loam, random)) {

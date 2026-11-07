@@ -10,7 +10,9 @@ public final class RoyalBoundaryClientHandler {
 
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || minecraft.level == null) return;
+        if (minecraft.player == null || minecraft.level == null) {
+            return;
+        }
         while (AntarchyKeyBindings.consumeRoyalBoundaryPressed()) {
             ClientPlayNetworking.send(new ActivateRoyalBoundaryPayload());
         }

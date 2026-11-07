@@ -1,10 +1,17 @@
 package com.craisinlord.antarchy.forge.registry;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler;
+import com.craisinlord.antarchy.content.migration.DimensionResetManager;
+import com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync;
+import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
+import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
+import com.craisinlord.antarchy.content.transit.AntTransit;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID)
 public final class PortalGunServerEvents {
@@ -13,17 +20,17 @@ public final class PortalGunServerEvents {
 
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
-        com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.clear(event.getServer());
-        com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear();
-        com.craisinlord.antarchy.content.transit.AntTransit.clear();
-        com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear();
+        PortalGunResetManager.clear(event.getServer());
+        AntArrivalScheduler.clear();
+        AntTransit.clear();
+        PortalGunMoonAimSync.clear();
     }
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
-            com.craisinlord.antarchy.content.portalgun.PortalGunSavedData.clearMissingGuns(player);
-            com.craisinlord.antarchy.content.migration.DimensionResetManager.onPlayerJoin(player);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PortalGunSavedData.clearMissingGuns(player);
+            DimensionResetManager.onPlayerJoin(player);
         }
     }
 }

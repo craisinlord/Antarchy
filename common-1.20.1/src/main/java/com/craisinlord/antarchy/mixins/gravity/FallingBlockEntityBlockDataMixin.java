@@ -14,9 +14,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.material.Fluids;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(FallingBlockEntity.class)
 public abstract class FallingBlockEntityBlockDataMixin {
@@ -36,7 +37,7 @@ public abstract class FallingBlockEntityBlockDataMixin {
 
     @WrapOperation(
             method = "tick",
-            at = @org.spongepowered.asm.mixin.injection.At(
+            at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
             )
@@ -52,7 +53,7 @@ public abstract class FallingBlockEntityBlockDataMixin {
 
     @WrapOperation(
             method = "tick",
-            at = @org.spongepowered.asm.mixin.injection.At(
+            at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/entity/item/ItemEntity;"
             )

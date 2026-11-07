@@ -1,24 +1,50 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityTransition;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.keyframehandler.AutoPlayingSoundKeyframeHandler;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -34,27 +60,11 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.keyframehandler.AutoPlayingSoundKeyframeHandler;
-import com.geckolib.util.GeckoLibUtil;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.core.UUIDUtil;
-import net.minecraft.util.ARGB;
 
 public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final DustParticleOptions OCTOPUS_BOMB_INK_PARTICLE =
@@ -107,7 +117,7 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
     private boolean spawnedByKraken;
 
     private boolean explosiveImpact;
-    private java.util.UUID explosiveLauncherId;
+    private UUID explosiveLauncherId;
     private int explosiveArmTicks;
 
     @Nullable
@@ -132,9 +142,9 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.4D);
     }
 
-    public static boolean canSpawn(EntityType<OctopusBombEntity> entityType, ServerLevelAccessor level, EntitySpawnReason spawnReason, net.minecraft.core.BlockPos pos, RandomSource random) {
-        return level.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER)
-                && level.getFluidState(pos.above()).is(net.minecraft.tags.FluidTags.WATER);
+    public static boolean canSpawn(EntityType<OctopusBombEntity> entityType, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
+        return level.getFluidState(pos).is(FluidTags.WATER)
+                && level.getFluidState(pos.above()).is(FluidTags.WATER);
     }
 
     @Override
@@ -194,7 +204,7 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
         if (!this.isGlimmerEcho()) {
             return ticks;
         }
-        return Math.max(1, (int) Math.round(ticks * com.craisinlord.antarchy.config.AntarchySettings.glimmerKrakenCooldownMultiplier()));
+        return Math.max(1, (int) Math.round(ticks * AntarchySettings.glimmerKrakenCooldownMultiplier()));
     }
 
     @Override
@@ -243,9 +253,9 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
     }
 
     public void applyConfiguredStats() {
-        Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(com.craisinlord.antarchy.config.AntarchySettings.octopusBombHealth());
-        this.setHealth((float) com.craisinlord.antarchy.config.AntarchySettings.octopusBombHealth());
-        Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(com.craisinlord.antarchy.config.AntarchySettings.octopusBombAttackDamage());
+        Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(AntarchySettings.octopusBombHealth());
+        this.setHealth((float) AntarchySettings.octopusBombHealth());
+        Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(AntarchySettings.octopusBombAttackDamage());
     }
 
     @Override
@@ -454,21 +464,21 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
         }
     }
 
-    public void launchAsProjectile(net.minecraft.world.entity.Entity owner, Vec3 velocity) {
+    public void launchAsProjectile(Entity owner, Vec3 velocity) {
         this.spawnedByKraken = true;
         this.setCanFly(true);
         this.setDeltaMovement(velocity);
     }
 
-    public void launchAsExplosiveProjectile(net.minecraft.world.entity.Entity launcher, Vec3 velocity) {
+    public void launchAsExplosiveProjectile(Entity launcher, Vec3 velocity) {
         this.explosiveImpact = true;
         this.explosiveLauncherId = launcher != null ? launcher.getUUID() : null;
-        if (launcher != null && com.craisinlord.anthology.gravity.GravityApi.isGravityInverted(launcher)) {
-            com.craisinlord.anthology.gravity.GravityApi.setAirborneGravityDirection(
+        if (launcher != null && GravityApi.isGravityInverted(launcher)) {
+            GravityApi.setAirborneGravityDirection(
                     this,
-                    com.craisinlord.anthology.gravity.GravityApi.getGravityDirection(launcher),
+                    GravityApi.getGravityDirection(launcher),
                     true,
-                    com.craisinlord.anthology.gravity.GravityTransition.INSTANT
+                    GravityTransition.INSTANT
             );
         }
         this.setDeltaMovement(velocity);
@@ -479,14 +489,14 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
         if (--this.wanderRetargetTicks <= 0) {
             this.wanderRetargetTicks = 40 + this.random.nextInt(40);
             float angle = this.random.nextFloat() * (float) (Math.PI * 2);
-            this.wanderDx = Mth.cos(angle) * 0.015f;
-            this.wanderDz = Mth.sin(angle) * 0.015f;
-            this.wanderDy = -0.01f + this.random.nextFloat() * 0.01f;
+            this.wanderDx = Mth.cos(angle) * 0.015F;
+            this.wanderDz = Mth.sin(angle) * 0.015F;
+            this.wanderDy = -0.01F + this.random.nextFloat() * 0.01F;
         }
 
         float dy = this.wanderDy;
-        if (!this.level().getFluidState(this.blockPosition().above()).is(net.minecraft.tags.FluidTags.WATER)) {
-            dy = -0.03f;
+        if (!this.level().getFluidState(this.blockPosition().above()).is(FluidTags.WATER)) {
+            dy = -0.03F;
         }
 
         this.setDeltaMovement(this.getDeltaMovement().add(this.wanderDx, dy, this.wanderDz));
@@ -503,8 +513,8 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
             return;
         }
 
-        double radius = com.craisinlord.antarchy.config.AntarchySettings.rpoLauncherExplosionRadius();
-        float damage = (float) com.craisinlord.antarchy.config.AntarchySettings.rpoLauncherExplosionDamage();
+        double radius = AntarchySettings.rpoLauncherExplosionRadius();
+        float damage = (float) AntarchySettings.rpoLauncherExplosionDamage();
         AABB blastArea = this.getBoundingBox().inflate(radius);
         for (LivingEntity victim : serverLevel.getEntitiesOfClass(LivingEntity.class, blastArea,
                 e -> e.isAlive() && !e.isSpectator())) {
@@ -524,7 +534,7 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
         }
 
         serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
-                net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE, net.minecraft.sounds.SoundSource.HOSTILE, 2.0F, 0.9F);
+                SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 2.0F, 0.9F);
         serverLevel.sendParticles(GlimmerEchoes.particle(this, OCTOPUS_BOMB_INK_PARTICLE), this.getX(), this.getY(), this.getZ(), 125, radius * 0.5D, radius * 0.5D, radius * 0.5D, 0.1D);
         serverLevel.sendParticles(GlimmerEchoes.particle(this, OCTOPUS_BOMB_INK_PARTICLE), this.getX(), this.getY(), this.getZ(), 75, radius * 0.2D, radius * 0.2D, radius * 0.2D, 0.2D);
         serverLevel.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 4, 0.5D, 0.5D, 0.5D, 0.0D);
@@ -532,10 +542,14 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
     }
 
     private void tickInkSpray() {
-        if (this.inkSprayCooldown > 0 || !(this.level() instanceof ServerLevel serverLevel)) return;
+        if (this.inkSprayCooldown > 0 || !(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
 
         Player nearbyPlayer = this.level().getNearestPlayer(this, INK_SPRAY_RANGE);
-        if (nearbyPlayer == null || nearbyPlayer.isCreative() || nearbyPlayer.isSpectator()) return;
+        if (nearbyPlayer == null || nearbyPlayer.isCreative() || nearbyPlayer.isSpectator()) {
+            return;
+        }
 
         this.inkSprayCooldown = this.glimmerCooldown(INK_SPRAY_COOLDOWN);
         this.playSound(AntarchySoundEvents.KRAKEN_HURT.get(), 1.0F, 1.49F);
@@ -633,12 +647,16 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
         double distSqr = this.distanceToSqr(target);
         boolean canGrab = distSqr <= 42.25D;
         boolean canSwipe = distSqr <= 81.0D && this.isTargetInFront(target, -0.15D);
-        if (!canGrab && !canSwipe) return ATTACK_NONE;
+        if (!canGrab && !canSwipe) {
+            return ATTACK_NONE;
+        }
 
         int grabWeight = canGrab ? (this.lastAttackState == ATTACK_GRAB ? 1 : 4) : 0;
         int swipeWeight = canSwipe ? (this.lastAttackState == ATTACK_SWIPE ? 1 : 5) : 0;
         int total = grabWeight + swipeWeight;
-        if (total == 0) return ATTACK_NONE;
+        if (total == 0) {
+            return ATTACK_NONE;
+        }
 
         int roll = this.random.nextInt(total);
         return roll < grabWeight ? ATTACK_GRAB : ATTACK_SWIPE;
@@ -687,8 +705,10 @@ public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho
 
     @Nullable
     private LivingEntity getGrabbedTarget() {
-        if (this.grabbedTargetId < 0) return null;
-        net.minecraft.world.entity.Entity e = this.level().getEntity(this.grabbedTargetId);
+        if (this.grabbedTargetId < 0) {
+            return null;
+        }
+        Entity e = this.level().getEntity(this.grabbedTargetId);
         return e instanceof LivingEntity le ? le : null;
     }
 

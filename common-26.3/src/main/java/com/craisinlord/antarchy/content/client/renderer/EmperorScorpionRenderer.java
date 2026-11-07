@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.EmperorScorpionModel;
-import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
 import com.craisinlord.antarchy.content.client.renderer.GlimmerEchoRendering;
+import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderState;

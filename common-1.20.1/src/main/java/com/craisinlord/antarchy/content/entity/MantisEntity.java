@@ -1,31 +1,38 @@
 package com.craisinlord.antarchy.content.entity;
 
-import net.minecraft.resources.ResourceLocation;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import java.util.EnumSet;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -35,15 +42,14 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -51,12 +57,9 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.EnumSet;
-import java.util.UUID;
 
 public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
@@ -94,10 +97,10 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final double ATTACK_VERTICAL_TOLERANCE = 3.0D;
     private static final float WINDUP_TURN_RATE = 18.0F;
 
-    private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> ANIMATION_STATE =
-            net.minecraft.network.syncher.SynchedEntityData.defineId(MantisEntity.class, net.minecraft.network.syncher.EntityDataSerializers.INT);
-    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> GLIMMER_ECHO =
-            net.minecraft.network.syncher.SynchedEntityData.defineId(MantisEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ANIMATION_STATE =
+            SynchedEntityData.defineId(MantisEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(MantisEntity.class, EntityDataSerializers.BOOLEAN);
     private static final int BASE_XP_REWARD = 12;
     private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
 
@@ -143,7 +146,7 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData, @Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, this.configuredMaxHealth());
         this.syncConfiguredAttributes(false);
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
@@ -405,7 +408,7 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(Entity target) {
         if (target instanceof LivingEntity livingTarget && this.canBeginCommittedAttack(livingTarget)) {
             this.beginCommittedAttack(livingTarget);
             return true;
@@ -694,7 +697,6 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
         this.yHeadRot = this.getYRot();
     }
 
-
     private boolean isFlyingNow() {
         return this.flyBurstTicks > 0;
     }
@@ -748,7 +750,7 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
 
         float currentHealth = this.getHealth();
         float syncedHealth = previousValue > 0.0D
-                ? (float) net.minecraft.util.Mth.clamp((currentHealth / (float) previousValue) * desiredValue, 0.0D, desiredValue)
+                ? (float) Mth.clamp((currentHealth / (float) previousValue) * desiredValue, 0.0D, desiredValue)
                 : (float) desiredValue;
         this.setHealth(syncedHealth);
     }
@@ -818,8 +820,5 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
             }
         }
     }
-
-
-
 
 }

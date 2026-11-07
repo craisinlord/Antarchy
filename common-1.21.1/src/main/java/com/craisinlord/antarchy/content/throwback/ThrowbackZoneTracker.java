@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.throwback;
 
-import com.craisinlord.antarchy.content.network.ThrowbackZonePayload;
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.network.ThrowbackZonePayload;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.core.Holder;

@@ -3,12 +3,13 @@ package com.craisinlord.antarchy.content.worldgen.truffalo;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.IntProviders;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 public record TruffaloTreeConfiguration(
-        net.minecraft.core.Holder<BlockStateProvider> trunkProvider,
+        Holder<BlockStateProvider> trunkProvider,
         IntProvider height,
         int tuftRadius,
         int tuftHeight

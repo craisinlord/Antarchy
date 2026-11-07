@@ -17,7 +17,9 @@ public final class RoyalBoundaryClientHandler {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || minecraft.level == null) return;
+        if (minecraft.player == null || minecraft.level == null) {
+            return;
+        }
         while (AntarchyKeyBindings.consumeRoyalBoundaryPressed()) {
             PacketDistributor.sendToServer(new ActivateRoyalBoundaryPayload());
         }

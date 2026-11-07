@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,8 +11,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class SpiritAppleItem extends Item {
     public static final int GLIMMERING_DURATION_TICKS = 20 * 8;

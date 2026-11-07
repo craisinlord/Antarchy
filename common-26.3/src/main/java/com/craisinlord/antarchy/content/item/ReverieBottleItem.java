@@ -1,17 +1,18 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.Prediction;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -22,11 +23,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.Prediction;
 
 public class ReverieBottleItem extends Item {
     private static final String STORED_REVERIE_TAG = "StoredReverie";
@@ -130,7 +131,7 @@ public class ReverieBottleItem extends Item {
 
         serverLevel.addFreshEntity(reverie);
         serverLevel.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
-        player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(this));
+        player.awardStat(Stats.ITEM_USED.get(this));
         this.clearStoredReverie(stack);
         this.returnGlassBottle(player, stack, hand);
         return true;

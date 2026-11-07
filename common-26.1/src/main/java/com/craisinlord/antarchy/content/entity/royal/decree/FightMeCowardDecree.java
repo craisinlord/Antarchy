@@ -1,4 +1,5 @@
 package com.craisinlord.antarchy.content.entity.royal.decree;
+
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +7,7 @@ import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+
 public final class FightMeCowardDecree implements RoyalDecree {
     private static final long APPROACH_TICKS = 80L;
     private static final int EXIT_GRACE_TICKS = 40;
@@ -13,8 +15,12 @@ public final class FightMeCowardDecree implements RoyalDecree {
     private static final double REQUIRED_RANGE_SQR = 784.0D;
     private final Map<UUID, Long> deadlines = new HashMap<>();
     private final Map<UUID, Integer> outsideTicks = new HashMap<>();
-    public String name() { return "FIGHT ME, COWARD!"; }
-    public String translationKey() { return "decree.antarchy.fight_me_coward"; }
+    public String name() {
+        return "FIGHT ME, COWARD!";
+    }
+    public String translationKey() {
+        return "decree.antarchy.fight_me_coward";
+    }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) {
         this.deadlines.computeIfAbsent(target.getUUID(), ignored -> level.getGameTime() + APPROACH_TICKS);
         if (target.distanceToSqr(king) > REQUIRED_RANGE_SQR && target.tickCount % PULL_INTERVAL_TICKS == 0) {

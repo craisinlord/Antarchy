@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.minecart.AntimetalMinecartAccess;
 import com.mojang.serialization.MapCodec;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -21,8 +22,6 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.AABB;
-
-import java.util.List;
 
 public class AntimetalDetectorRailBlock extends AbstractAntimetalRailBlock {
     public static final MapCodec<AntimetalDetectorRailBlock> CODEC = simpleCodec(AntimetalDetectorRailBlock::new);

@@ -30,4 +30,3 @@ public record ThoraxisBloodCrystalConfiguration(
             Codec.floatRange(0.0F, 1.0F).fieldOf("branch_chance").forGetter(ThoraxisBloodCrystalConfiguration::branchChance)
     ).apply(instance, ThoraxisBloodCrystalConfiguration::new));
 }
-

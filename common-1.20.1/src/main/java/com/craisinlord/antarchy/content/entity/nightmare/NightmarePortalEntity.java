@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.nightmare;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,8 +22,6 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.UUID;
 
 public class NightmarePortalEntity extends Entity implements GeoEntity {
     private static final int OPEN_TICKS = 10;

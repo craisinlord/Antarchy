@@ -4,12 +4,14 @@ import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +27,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -35,14 +36,14 @@ public class UpperBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", direction -> direction != Direction.DOWN);
     public static final BooleanProperty ENABLED = BlockStateProperties.ENABLED;
 
-    private static final VoxelShape TOP = Block.box(0.0, 0.0, 0.0, 16.0, 6.0, 16.0);
-    private static final VoxelShape MIDDLE = Block.box(4.0, 6.0, 4.0, 12.0, 12.0, 12.0);
+    private static final VoxelShape TOP = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D);
+    private static final VoxelShape MIDDLE = Block.box(4.0D, 6.0D, 4.0D, 12.0D, 12.0D, 12.0D);
     private static final VoxelShape BASE = Shapes.or(TOP, MIDDLE);
-    private static final VoxelShape UP_SHAPE = Shapes.or(BASE, Block.box(6.0, 12.0, 6.0, 10.0, 16.0, 10.0));
-    private static final VoxelShape NORTH_SHAPE = Shapes.or(BASE, Block.box(6.0, 8.0, 0.0, 10.0, 12.0, 4.0));
-    private static final VoxelShape SOUTH_SHAPE = Shapes.or(BASE, Block.box(6.0, 8.0, 12.0, 10.0, 12.0, 16.0));
-    private static final VoxelShape WEST_SHAPE = Shapes.or(BASE, Block.box(0.0, 8.0, 6.0, 4.0, 12.0, 10.0));
-    private static final VoxelShape EAST_SHAPE = Shapes.or(BASE, Block.box(12.0, 8.0, 6.0, 16.0, 12.0, 10.0));
+    private static final VoxelShape UP_SHAPE = Shapes.or(BASE, Block.box(6.0D, 12.0D, 6.0D, 10.0D, 16.0D, 10.0D));
+    private static final VoxelShape NORTH_SHAPE = Shapes.or(BASE, Block.box(6.0D, 8.0D, 0.0D, 10.0D, 12.0D, 4.0D));
+    private static final VoxelShape SOUTH_SHAPE = Shapes.or(BASE, Block.box(6.0D, 8.0D, 12.0D, 10.0D, 12.0D, 16.0D));
+    private static final VoxelShape WEST_SHAPE = Shapes.or(BASE, Block.box(0.0D, 8.0D, 6.0D, 4.0D, 12.0D, 10.0D));
+    private static final VoxelShape EAST_SHAPE = Shapes.or(BASE, Block.box(12.0D, 8.0D, 6.0D, 16.0D, 12.0D, 10.0D));
 
     private final Supplier<? extends BlockEntityType<UpperBlockEntity>> blockEntityTypeSupplier;
 
@@ -106,7 +107,7 @@ public class UpperBlock extends BaseEntityBlock {
             return null;
         }
         return createTickerHelper(blockEntityType, this.blockEntityTypeSupplier.get(), (tickLevel, tickPos, tickState, blockEntity) -> {
-            if (tickLevel instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            if (tickLevel instanceof ServerLevel serverLevel) {
                 UpperBlockEntity.serverTick(serverLevel, tickPos, tickState, blockEntity);
             }
         });

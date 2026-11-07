@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MinecartItem;
 import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
@@ -27,7 +28,7 @@ public final class AntimetalMinecartDispenseBehavior extends DefaultDispenseItem
             return this.fallback.dispense(source, stack);
         }
 
-        Direction direction = source.state().getValue(net.minecraft.world.level.block.DispenserBlock.FACING);
+        Direction direction = source.state().getValue(DispenserBlock.FACING);
         BlockPos frontPos = source.pos().relative(direction);
         BlockState frontState = source.level().getBlockState(frontPos);
 
@@ -107,12 +108,24 @@ public final class AntimetalMinecartDispenseBehavior extends DefaultDispenseItem
     }
 
     private static EntityType<? extends AbstractMinecart> minecartType(Item item) {
-        if (item == Items.MINECART) return EntityType.MINECART;
-        if (item == Items.CHEST_MINECART) return EntityType.CHEST_MINECART;
-        if (item == Items.FURNACE_MINECART) return EntityType.FURNACE_MINECART;
-        if (item == Items.TNT_MINECART) return EntityType.TNT_MINECART;
-        if (item == Items.HOPPER_MINECART) return EntityType.HOPPER_MINECART;
-        if (item == Items.COMMAND_BLOCK_MINECART) return EntityType.COMMAND_BLOCK_MINECART;
+        if (item == Items.MINECART) {
+            return EntityType.MINECART;
+        }
+        if (item == Items.CHEST_MINECART) {
+            return EntityType.CHEST_MINECART;
+        }
+        if (item == Items.FURNACE_MINECART) {
+            return EntityType.FURNACE_MINECART;
+        }
+        if (item == Items.TNT_MINECART) {
+            return EntityType.TNT_MINECART;
+        }
+        if (item == Items.HOPPER_MINECART) {
+            return EntityType.HOPPER_MINECART;
+        }
+        if (item == Items.COMMAND_BLOCK_MINECART) {
+            return EntityType.COMMAND_BLOCK_MINECART;
+        }
         return null;
     }
 }

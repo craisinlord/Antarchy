@@ -1,60 +1,61 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.entity.EntityTypes;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
+import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.anthology.gravity.GravityApi;
-import com.craisinlord.antarchy.config.AntarchySettings;
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.renderer.GeoItemRenderer;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.function.Consumer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.component.TooltipDisplay;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import com.geckolib.animatable.GeoItem;
-import com.geckolib.animatable.client.GeoRenderProvider;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import com.geckolib.renderer.GeoItemRenderer;
-import com.geckolib.util.GeckoLibUtil;
+import org.jetbrains.annotations.Nullable;
 
 public class BigBerthaItem extends Item implements GeoItem {
     private static final Identifier MODEL_LOCATION = Identifier.fromNamespaceAndPath("antarchy", "big_bertha");
@@ -246,11 +247,11 @@ public class BigBerthaItem extends Item implements GeoItem {
 
     private void applyBasiliskRightClick(Level level, Player player, ItemStack stack) {
         if (!level.isClientSide()) {
-            double range = player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE) + 1.0;
+            double range = player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE) + 1.0D;
             Vec3 eyePos = player.getEyePosition();
             Vec3 lookDir = player.getLookAngle();
             Vec3 endPos = eyePos.add(lookDir.scale(range));
-            AABB searchBox = player.getBoundingBox().expandTowards(lookDir.scale(range)).inflate(1.0);
+            AABB searchBox = player.getBoundingBox().expandTowards(lookDir.scale(range)).inflate(1.0D);
             EntityHitResult hit = ProjectileUtil.getEntityHitResult(
                     player, eyePos, endPos, searchBox,
                     e -> e != player && !e.isSpectator() && e instanceof LivingEntity,
@@ -369,7 +370,7 @@ public class BigBerthaItem extends Item implements GeoItem {
             target.syncVelocity = true;
         }
 
-        LightningBolt lightningBolt = new LightningBolt(net.minecraft.world.entity.EntityTypes.LIGHTNING_BOLT, level);
+        LightningBolt lightningBolt = new LightningBolt(EntityTypes.LIGHTNING_BOLT, level);
         lightningBolt.snapTo(target.getX(), target.getY(), target.getZ());
         lightningBolt.setVisualOnly(true);
         level.addFreshEntity(lightningBolt);
@@ -378,7 +379,7 @@ public class BigBerthaItem extends Item implements GeoItem {
         target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, AntarchySettings.bigBerthaKrakenSlowTicks(), 1));
         level.sendParticles(ParticleTypes.SPLASH, target.getX(), target.getY(0.7D), target.getZ(), 16, 0.35D, 0.3D, 0.35D, 0.08D);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY(0.7D), target.getZ(), 10, 0.25D, 0.25D, 0.25D, 0.02D);
-        com.craisinlord.antarchy.content.entity.kraken.TentacleEntity.spawnAt(level, target.position(), attacker);
+        TentacleEntity.spawnAt(level, target.position(), attacker);
     }
 
     private void applyHerculesHit(Player attacker, LivingEntity target, ServerLevel level) {
@@ -677,7 +678,7 @@ public class BigBerthaItem extends Item implements GeoItem {
         });
     }
 
-    private enum BossMode {
+    public enum BossMode {
         NONE(0, "tooltip.antarchy.big_bertha.mode.none", "message.antarchy.big_bertha.mode.none"),
         BASILISK(7, "tooltip.antarchy.big_bertha.mode.basilisk", "message.antarchy.big_bertha.mode.basilisk"),
         NIGHTMARE(1, "tooltip.antarchy.big_bertha.mode.nightmare", "message.antarchy.big_bertha.mode.nightmare"),

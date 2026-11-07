@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
@@ -49,10 +50,14 @@ public class RoyalMountModel extends GeoModel<RoyalMountEntity> {
 
     @Nullable
     public Vec3 getTrackedBeamAnchor(int head) {
-        if (head < 0 || head >= HEADS.length) return null;
+        if (head < 0 || head >= HEADS.length) {
+            return null;
+        }
         GeoBone bone = this.getBone(HEADS[head]).orElse(null);
-        if (bone == null || !bone.isTrackingMatrices()) return null;
-        org.joml.Vector3d position = bone.getWorldPosition();
+        if (bone == null || !bone.isTrackingMatrices()) {
+            return null;
+        }
+        Vector3d position = bone.getWorldPosition();
         return new Vec3(position.x, position.y, position.z);
     }
 }

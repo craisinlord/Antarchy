@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.enchantment;
 
 import com.craisinlord.antarchy.Antarchy;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
@@ -50,7 +51,7 @@ public final class AntarchyEnchantments {
         if (enchantment == null) {
             return;
         }
-        Map<Enchantment, Integer> enchantments = new java.util.LinkedHashMap<>(EnchantmentHelper.getEnchantments(stack));
+        Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(EnchantmentHelper.getEnchantments(stack));
         if (enchantments.getOrDefault(enchantment, 0) < level) {
             enchantments.put(enchantment, level);
             EnchantmentHelper.setEnchantments(enchantments, stack);

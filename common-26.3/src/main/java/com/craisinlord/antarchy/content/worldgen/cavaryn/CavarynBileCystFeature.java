@@ -25,7 +25,7 @@ public record CavarynBileCystFeature() implements Feature {
     private static final int SEARCH_RADIUS = 8;
     private static final int SEARCH_ATTEMPTS = 20;
     private static final int VERTICAL_SCAN = 10;
-    private static final float OOZE_CHANCE = 0.02f;
+    private static final float OOZE_CHANCE = 0.02F;
 
     public static final MapCodec<CavarynBileCystFeature> CODEC = MapCodec.unit(CavarynBileCystFeature::new);
 
@@ -41,7 +41,6 @@ public record CavarynBileCystFeature() implements Feature {
         if (bileVeinBlock == null || bileBlock == null) {
             return false;
         }
-
 
         BlockPos center = findCenter(level, origin, random);
         if (center == null) {
@@ -85,22 +84,22 @@ public record CavarynBileCystFeature() implements Feature {
     }
 
     private boolean placeCyst(WorldGenLevel level, BlockPos center, Block veinBlock, Block bileBlock, RandomSource random) {
-        double rx = 1.5 + random.nextDouble() * 12.0;
-        double ry = 1.5 + random.nextDouble() * 12.0;
-        double rz = 1.5 + random.nextDouble() * 12.0;
+        double rx = 1.5D + random.nextDouble() * 12.0D;
+        double ry = 1.5D + random.nextDouble() * 12.0D;
+        double rz = 1.5D + random.nextDouble() * 12.0D;
 
         int stretchAxis = random.nextInt(3);
-        if (stretchAxis == 0) rx *= 1.3 + random.nextDouble() * 0.7;
-        else if (stretchAxis == 1) ry *= 1.3 + random.nextDouble() * 0.7;
-        else rz *= 1.3 + random.nextDouble() * 0.7;
+        if (stretchAxis == 0) rx *= 1.3D + random.nextDouble() * 0.7D;
+        else if (stretchAxis == 1) ry *= 1.3D + random.nextDouble() * 0.7D;
+        else rz *= 1.3D + random.nextDouble() * 0.7D;
 
-        double f1x = 0.6 + random.nextDouble() * 1.2;
-        double f1z = 0.6 + random.nextDouble() * 1.2;
-        double f2y = 0.7 + random.nextDouble() * 1.0;
-        double f2x = 0.5 + random.nextDouble() * 0.9;
-        double f3z = 0.8 + random.nextDouble() * 1.1;
-        double f3y = 0.5 + random.nextDouble() * 0.8;
-        double wobbleAmp = 0.15 + random.nextDouble() * 0.2;
+        double f1x = 0.6D + random.nextDouble() * 1.2D;
+        double f1z = 0.6D + random.nextDouble() * 1.2D;
+        double f2y = 0.7D + random.nextDouble() * 1.0D;
+        double f2x = 0.5D + random.nextDouble() * 0.9D;
+        double f3z = 0.8D + random.nextDouble() * 1.1D;
+        double f3y = 0.5D + random.nextDouble() * 0.8D;
+        double wobbleAmp = 0.15D + random.nextDouble() * 0.2D;
 
         int maxR = (int) Math.ceil(Math.max(Math.max(rx, ry), rz)) + 2;
         List<BlockPos> placed = new ArrayList<>();
@@ -114,12 +113,12 @@ public record CavarynBileCystFeature() implements Feature {
                             (dz * dz) / (rz * rz));
 
                     double wobble = wobbleAmp * (
-                            0.4 * Math.sin(dx * f1x + dz * f1z) +
-                            0.35 * Math.cos(dy * f2y + dx * f2x) +
-                            0.25 * Math.sin(dz * f3z + dy * f3y));
+                            0.4D * Math.sin(dx * f1x + dz * f1z) +
+                            0.35D * Math.cos(dy * f2y + dx * f2x) +
+                            0.25D * Math.sin(dz * f3z + dy * f3y));
 
                     double distorted = baseDist + wobble;
-                    if (distorted > 1.0) {
+                    if (distorted > 1.0D) {
                         continue;
                     }
 
@@ -128,7 +127,7 @@ public record CavarynBileCystFeature() implements Feature {
                         continue;
                     }
 
-                    if (distorted < 0.7) {
+                    if (distorted < 0.7D) {
                         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                     } else {
                         level.setBlock(pos, veinBlock.defaultBlockState(), 2);
@@ -142,7 +141,7 @@ public record CavarynBileCystFeature() implements Feature {
             return false;
         }
 
-        if (random.nextFloat() >= 0.30f) {
+        if (random.nextFloat() >= 0.30F) {
             return true;
         }
 

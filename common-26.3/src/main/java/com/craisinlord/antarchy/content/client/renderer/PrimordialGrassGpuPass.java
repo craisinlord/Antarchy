@@ -98,9 +98,13 @@ final class PrimordialGrassGpuPass {
     }
 
     static boolean available() {
-        if (failed) return false;
+        if (failed) {
+            return false;
+        }
         try {
-            if (RenderSystem.getCompiledPipelineNullable(PIPELINE) != null) return true;
+            if (RenderSystem.getCompiledPipelineNullable(PIPELINE) != null) {
+                return true;
+            }
             fail(new IllegalStateException("Pipeline did not compile"));
             return false;
         } catch (RuntimeException | LinkageError exception) {
@@ -219,7 +223,9 @@ final class PrimordialGrassGpuPass {
         int slot = timerSlot;
         if (TIMER_PENDING[slot]) {
             OptionalLong[] stamps = timerPool.getValues(slot * 2, 2);
-            if (stamps[0].isEmpty() || stamps[1].isEmpty()) return;
+            if (stamps[0].isEmpty() || stamps[1].isEmpty()) {
+                return;
+            }
             double elapsed = (stamps[1].getAsLong() - stamps[0].getAsLong()) * (double) RenderSystem.getDevice().getDeviceInfo().timestampPeriod();
             gpuNanos += (elapsed - gpuNanos) * TIMER_SMOOTHING;
             TIMER_PENDING[slot] = false;
@@ -229,7 +235,9 @@ final class PrimordialGrassGpuPass {
     }
 
     private static void endTimer(RenderPass pass) {
-        if (!timerActive) return;
+        if (!timerActive) {
+            return;
+        }
         timerActive = false;
         pass.writeTimestamp(timerPool, timerSlot * 2 + 1);
         TIMER_PENDING[timerSlot] = true;

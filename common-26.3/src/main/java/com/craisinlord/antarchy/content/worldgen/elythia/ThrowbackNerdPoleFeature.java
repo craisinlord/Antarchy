@@ -2,16 +2,16 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -19,7 +19,9 @@ public class ThrowbackNerdPoleFeature implements Feature {
     public static final MapCodec<ThrowbackNerdPoleFeature> CODEC = MapCodec.unit(ThrowbackNerdPoleFeature::new);
 
     @Override
-    public MapCodec<ThrowbackNerdPoleFeature> codec() { return CODEC; }
+    public MapCodec<ThrowbackNerdPoleFeature> codec() {
+        return CODEC;
+    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

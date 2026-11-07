@@ -51,8 +51,12 @@ public final class GiantFryingPanStorage implements Container {
     }
 
     public ItemStack pan() {
-        if (this.fixedPan != null) return this.fixedPan;
-        if (this.panSlot < 0 || this.panSlot >= this.player.getInventory().getContainerSize()) return ItemStack.EMPTY;
+        if (this.fixedPan != null) {
+            return this.fixedPan;
+        }
+        if (this.panSlot < 0 || this.panSlot >= this.player.getInventory().getContainerSize()) {
+            return ItemStack.EMPTY;
+        }
         return this.player.getInventory().getItem(this.panSlot);
     }
 
@@ -70,27 +74,43 @@ public final class GiantFryingPanStorage implements Container {
     }
 
     public static int findPanSlot(Player player) {
-        if (player.getMainHandItem().getItem() instanceof GiantFryingPanItem) return player.getInventory().getSelectedSlot();
-        if (player.getOffhandItem().getItem() instanceof GiantFryingPanItem) return 40;
+        if (player.getMainHandItem().getItem() instanceof GiantFryingPanItem) {
+            return player.getInventory().getSelectedSlot();
+        }
+        if (player.getOffhandItem().getItem() instanceof GiantFryingPanItem) {
+            return 40;
+        }
         for (int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
-            if (player.getInventory().getNonEquipmentItems().get(i).getItem() instanceof GiantFryingPanItem) return i;
+            if (player.getInventory().getNonEquipmentItems().get(i).getItem() instanceof GiantFryingPanItem) {
+                return i;
+            }
         }
         return -1;
     }
 
     public static void tick(Player player, ItemStack pan, Level level) {
-        if (!(level instanceof ServerLevel serverLevel) || !(pan.getItem() instanceof GiantFryingPanItem)) return;
-        if (!pan.has(DataComponents.CUSTOM_DATA)) return;
+        if (!(level instanceof ServerLevel serverLevel) || !(pan.getItem() instanceof GiantFryingPanItem)) {
+            return;
+        }
+        if (!pan.has(DataComponents.CUSTOM_DATA)) {
+            return;
+        }
         GiantFryingPanStorage storage = new GiantFryingPanStorage(pan, player);
-        if (storage.isEmpty()) return;
+        if (storage.isEmpty()) {
+            return;
+        }
         long now = level.getGameTime();
         boolean changed = false;
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack input = storage.items.get(slot);
-            if (input.isEmpty() || now - storage.startTimes[slot] < cookTime()) continue;
+            if (input.isEmpty() || now - storage.startTimes[slot] < cookTime()) {
+                continue;
+            }
             Optional<RecipeHolder<CampfireCookingRecipe>> recipe = serverLevel.recipeAccess().getRecipeFor(
                     RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(input), serverLevel);
-            if (recipe.isEmpty()) continue;
+            if (recipe.isEmpty()) {
+                continue;
+            }
             ItemStack cooked = recipe.get().value().assemble(new SingleRecipeInput(input));
             input.shrink(1);
             storage.startTimes[slot] = now;
@@ -106,7 +126,9 @@ public final class GiantFryingPanStorage implements Container {
     }
 
     public static boolean isCampfireInput(Player player, ItemStack stack) {
-        if (stack.isEmpty() || stack.getItem() instanceof GiantFryingPanItem) return false;
+        if (stack.isEmpty() || stack.getItem() instanceof GiantFryingPanItem) {
+            return false;
+        }
         Level level = player.level();
         if (level instanceof ServerLevel serverLevel) {
             return serverLevel.recipeAccess().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(stack), serverLevel).isPresent();
@@ -115,7 +137,9 @@ public final class GiantFryingPanStorage implements Container {
     }
 
     public boolean insertOne(ItemStack food) {
-        if (!isCampfireInput(this.player, food)) return false;
+        if (!isCampfireInput(this.player, food)) {
+            return false;
+        }
         this.reloadIfChanged();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack existing = this.items.get(slot);
@@ -138,7 +162,9 @@ public final class GiantFryingPanStorage implements Container {
     public boolean hasSpace(ItemStack food) {
         this.reloadIfChanged();
         for (ItemStack stack : this.items) {
-            if (stack.isEmpty() || canMergeInto(stack, food)) return true;
+            if (stack.isEmpty() || canMergeInto(stack, food)) {
+                return true;
+            }
         }
         return false;
     }
@@ -154,7 +180,9 @@ public final class GiantFryingPanStorage implements Container {
 
     public float cookProgress(int slot) {
         this.reloadIfChanged();
-        if (this.items.get(slot).isEmpty()) return 0.0F;
+        if (this.items.get(slot).isEmpty()) {
+            return 0.0F;
+        }
         long elapsed = this.player.level().getGameTime() - this.startTimes[slot];
         return Math.max(0.0F, Math.min(1.0F, elapsed / (float) cookTime()));
     }
@@ -162,7 +190,9 @@ public final class GiantFryingPanStorage implements Container {
     private void reloadIfChanged() {
         ItemStack pan = this.pan();
         CustomData data = pan.get(DataComponents.CUSTOM_DATA);
-        if (pan == this.loadedPan && data == this.loadedFrom) return;
+        if (pan == this.loadedPan && data == this.loadedFrom) {
+            return;
+        }
         this.loadedPan = pan;
         this.loadedFrom = data;
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
@@ -170,12 +200,16 @@ public final class GiantFryingPanStorage implements Container {
             this.startTimes[slot] = 0L;
             this.startItems[slot] = null;
         }
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         ListTag list = data.copyTag().getListOrEmpty(SLOTS);
         for (int i = 0; i < list.size(); i++) {
             CompoundTag tag = list.getCompoundOrEmpty(i);
             int slot = tag.getIntOr(SLOT, 0);
-            if (slot < 0 || slot >= SLOT_COUNT || tag.getCompound(ITEM).isEmpty()) continue;
+            if (slot < 0 || slot >= SLOT_COUNT || tag.getCompound(ITEM).isEmpty()) {
+                continue;
+            }
             ItemStack stack = tag.read(ITEM, ItemStack.OPTIONAL_CODEC, this.player.registryAccess().createSerializationContext(NbtOps.INSTANCE)).orElse(ItemStack.EMPTY);
             this.items.set(slot, stack);
             this.startTimes[slot] = tag.getLongOr(START, 0L);
@@ -206,7 +240,9 @@ public final class GiantFryingPanStorage implements Container {
     public boolean isEmpty() {
         this.reloadIfChanged();
         for (ItemStack stack : this.items) {
-            if (!stack.isEmpty()) return false;
+            if (!stack.isEmpty()) {
+                return false;
+            }
         }
         return true;
     }
@@ -221,7 +257,9 @@ public final class GiantFryingPanStorage implements Container {
     public ItemStack removeItem(int slot, int amount) {
         this.reloadIfChanged();
         ItemStack stack = this.items.get(slot);
-        if (stack.isEmpty() || amount <= 0) return ItemStack.EMPTY;
+        if (stack.isEmpty() || amount <= 0) {
+            return ItemStack.EMPTY;
+        }
         ItemStack result = stack.split(amount);
         this.setChanged();
         return result;
@@ -251,12 +289,16 @@ public final class GiantFryingPanStorage implements Container {
     @Override
     public void setChanged() {
         ItemStack pan = this.pan();
-        if (!(pan.getItem() instanceof GiantFryingPanItem)) return;
+        if (!(pan.getItem() instanceof GiantFryingPanItem)) {
+            return;
+        }
         this.refreshStartTimes();
         ListTag list = new ListTag();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack stack = this.items.get(slot);
-            if (stack.isEmpty()) continue;
+            if (stack.isEmpty()) {
+                continue;
+            }
             CompoundTag tag = new CompoundTag();
             tag.putInt(SLOT, slot);
             tag.putLong(START, this.startTimes[slot]);

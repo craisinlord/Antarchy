@@ -4,9 +4,10 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -101,7 +102,7 @@ public final class ThrowbackZones {
         if (!level.hasChunk(chunk.x(), chunk.z())) {
             return false;
         }
-        net.minecraft.core.HolderLookup.RegistryLookup<Structure> registry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
+        HolderLookup.RegistryLookup<Structure> registry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
         for (StructureStart start : level.structureManager().startsForStructure(
                 chunk.x(), chunk.z(),
                 structure -> !registry.listElements().anyMatch(holder -> holder.value() == structure && holder.is(STRUCTURE_ZONES)))) {

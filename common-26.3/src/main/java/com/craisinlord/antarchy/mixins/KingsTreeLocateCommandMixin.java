@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGrid;
 import com.mojang.datafixers.util.Pair;
+import java.time.Duration;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.ResourceOrTagKeyArgument;
 import net.minecraft.core.BlockPos;
@@ -13,8 +14,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.time.Duration;
 
 @Mixin(LocateCommand.class)
 public abstract class KingsTreeLocateCommandMixin {

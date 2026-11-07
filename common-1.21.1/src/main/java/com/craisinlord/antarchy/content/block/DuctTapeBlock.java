@@ -1,15 +1,16 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -140,7 +141,7 @@ public class DuctTapeBlock extends Block {
             if (!player.getAbilities().instabuild) {
                 consumeTapeUse(level, pos, state);
             }
-            if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            if (player instanceof ServerPlayer serverPlayer) {
                 AntarchyAdvancements.award(serverPlayer, DUCT_TAPE_ADVANCEMENT_ID);
             }
             level.playSound(null, pos, AntarchySoundEvents.DUCT_TAPE_USE.get(), SoundSource.BLOCKS, 0.9F, 0.95F + level.random.nextFloat() * 0.1F);

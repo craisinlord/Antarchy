@@ -19,7 +19,7 @@ public final class CavarynRibcageFunction implements DensityFunction {
     );
     public static final KeyDispatchDataCodec<CavarynRibcageFunction> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
-    private static final double SCALE = 0.35;
+    private static final double SCALE = 0.35D;
 
     private final Part part;
     private final NoiseHolder noise;
@@ -53,14 +53,14 @@ public final class CavarynRibcageFunction implements DensityFunction {
     @Override
     public double compute(FunctionContext context) {
         if (this.grid == null) {
-            return this.part == Part.BONES ? -1.0 : 1.0;
+            return this.part == Part.BONES ? -1.0D : 1.0D;
         }
         if (this.part == Part.BONES) {
             double distance = this.grid.boneDistance(context.blockX(), context.blockY(), context.blockZ());
-            return distance == Double.MAX_VALUE ? -1.0 : Mth.clamp(-distance * SCALE, -1.0, 1.0);
+            return distance == Double.MAX_VALUE ? -1.0D : Mth.clamp(-distance * SCALE, -1.0D, 1.0D);
         }
         double distance = this.grid.trenchDistance(context.blockX(), context.blockY(), context.blockZ());
-        return distance == Double.MAX_VALUE ? 1.0 : Mth.clamp(distance * SCALE, -1.0, 1.0);
+        return distance == Double.MAX_VALUE ? 1.0D : Mth.clamp(distance * SCALE, -1.0D, 1.0D);
     }
 
     @Override
@@ -80,20 +80,20 @@ public final class CavarynRibcageFunction implements DensityFunction {
         CavarynRibcageGrid mappedGrid = null;
         if (mappedNoise.noise() != null) {
             mappedGrid = CavarynRibcageGrid.create(CavarynWormBoreFunction.saltFor(
-                    mappedNoise.getValue(1234.567, 89.123, -456.789),
-                    mappedNoise.getValue(-987.654, 12.345, 654.321)), mappedMask::accepts);
+                    mappedNoise.getValue(1234.567D, 89.123D, -456.789D),
+                    mappedNoise.getValue(-987.654D, 12.345D, 654.321D)), mappedMask::accepts);
         }
         return visitor.apply(new CavarynRibcageFunction(this.part, mappedNoise, mappedMask, mappedGrid));
     }
 
     @Override
     public double minValue() {
-        return -1.0;
+        return -1.0D;
     }
 
     @Override
     public double maxValue() {
-        return 1.0;
+        return 1.0D;
     }
 
     @Override

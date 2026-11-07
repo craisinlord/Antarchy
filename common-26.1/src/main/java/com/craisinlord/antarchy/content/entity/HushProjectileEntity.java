@@ -3,9 +3,13 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import java.util.Comparator;
 import java.util.UUID;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,13 +18,11 @@ import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableIt
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.UUIDUtil;
-import net.minecraft.util.ARGB;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 public class HushProjectileEntity extends ThrowableItemProjectile {
     private static final int DREAD_DURATION_TICKS = 300;
@@ -53,7 +55,7 @@ public class HushProjectileEntity extends ThrowableItemProjectile {
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (!this.isRemoved()) {
             this.discard();
             return true;
@@ -131,7 +133,7 @@ public class HushProjectileEntity extends ThrowableItemProjectile {
                                 && entity.is(AntarchyTags.Entities.HUSHWEED_TARGETS)
                                 && (!(entity instanceof Player player) || (!player.isCreative() && !player.isSpectator())))
                 .stream()
-                .min(java.util.Comparator.comparingDouble(this::distanceToSqr))
+                .min(Comparator.comparingDouble(this::distanceToSqr))
                 .orElse(null);
     }
 

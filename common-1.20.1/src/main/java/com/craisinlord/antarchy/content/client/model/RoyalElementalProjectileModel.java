@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.client.model;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.renderer.GlimmerEchoRendering;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 

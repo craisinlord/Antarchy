@@ -1,17 +1,25 @@
 package com.craisinlord.antarchy.fabric.network;
 
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.client.AntarchyGameClientState;
 import com.craisinlord.antarchy.content.client.BloodglassClientState;
 import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
+import com.craisinlord.antarchy.content.client.ElythiaEchoes;
+import com.craisinlord.antarchy.content.client.ElythiaEventClient;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
+import com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState;
+import com.craisinlord.antarchy.content.client.MoonSkyTracker;
+import com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState;
 import com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState;
-import com.craisinlord.antarchy.content.client.WormHookTetherClientState;
+import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
+import com.craisinlord.antarchy.content.client.ThrowbackClientState;
 import com.craisinlord.antarchy.content.client.TigerEyeCamouflageClientState;
+import com.craisinlord.antarchy.content.client.WormHookTetherClientState;
 import com.craisinlord.antarchy.content.network.*;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync;
 import com.craisinlord.antarchy.fabric.client.BloodCrystalKatanaTrailClientState;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.resources.Identifier;
 
 public final class AntarchyFabricClientNetworking {
     private AntarchyFabricClientNetworking() {
@@ -19,21 +27,21 @@ public final class AntarchyFabricClientNetworking {
 
     public static void register() {
         AntarchyNetwork.bindClient(ClientPlayNetworking::send);
-        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEchoes.handleTest(payload.immediate())));
-        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload)));
-        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThoraxisEventPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.ThoraxisEventClient.handle(payload)));
-        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.ThoraxisEventClient.handleUpdate(payload)));
-        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.ThrowbackClientState.update(payload.strength())));
+        ClientPlayNetworking.registerGlobalReceiver(ElythiaEchoTestPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> ElythiaEchoes.handleTest(payload.immediate())));
+        ClientPlayNetworking.registerGlobalReceiver(ElythiaEventPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> ElythiaEventClient.handle(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(ThoraxisEventPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> ThoraxisEventClient.handle(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(ThoraxisBubbleUpdatePayload.TYPE, (payload, context) ->
+                context.client().execute(() -> ThoraxisEventClient.handleUpdate(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(ThrowbackZonePayload.TYPE, (payload, context) ->
+                context.client().execute(() -> ThrowbackClientState.update(payload.strength())));
         ClientPlayNetworking.registerGlobalReceiver(AntarchyGameResultPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.AntarchyGameClientState.update(payload)));
-        com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.setClientReporter(com.craisinlord.antarchy.content.client.MoonSkyTracker::report);
+                context.client().execute(() -> AntarchyGameClientState.update(payload)));
+        PortalGunMoonAimSync.setClientReporter(MoonSkyTracker::report);
         ClientPlayNetworking.registerGlobalReceiver(PortalGunIndicatorPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.update(payload)));
+                context.client().execute(() -> PortalGunIndicatorClientState.update(payload)));
         ClientPlayNetworking.registerGlobalReceiver(BloodglassStatePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> BloodglassClientState.update(payload.shieldsActive(), payload.shieldsMax())));
         ClientPlayNetworking.registerGlobalReceiver(TigerEyeCamouflageStatePayload.TYPE, (payload, context) ->
@@ -49,7 +57,7 @@ public final class AntarchyFabricClientNetworking {
         ClientPlayNetworking.registerGlobalReceiver(HerculesBeetleImpactShakePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> HerculesBeetleImpactShakeClientState.trigger(payload.durationTicks())));
         ClientPlayNetworking.registerGlobalReceiver(KingJudgmentFlashPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState.trigger(payload.durationTicks())));
+                context.client().execute(() -> KingJudgmentFlashClientState.trigger(payload.durationTicks())));
         ClientPlayNetworking.registerGlobalReceiver(HordeIntensityPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> HordeClientState.update(payload.intensity())));
     }

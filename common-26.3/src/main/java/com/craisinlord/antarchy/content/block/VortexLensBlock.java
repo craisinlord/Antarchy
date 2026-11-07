@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.block.entity.VortexLensBlockEntity;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -81,7 +82,7 @@ public class VortexLensBlock extends BaseEntityBlock {
             return null;
         }
         return createTickerHelper(blockEntityType, this.blockEntityTypeSupplier.get(), (tickLevel, tickPos, tickState, blockEntity) -> {
-            if (tickLevel instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            if (tickLevel instanceof ServerLevel serverLevel) {
                 VortexLensBlockEntity.serverTick(serverLevel, tickPos, tickState, blockEntity);
             }
         });

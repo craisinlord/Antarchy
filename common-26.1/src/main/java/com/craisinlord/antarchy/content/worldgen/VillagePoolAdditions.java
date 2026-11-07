@@ -5,23 +5,24 @@ import com.craisinlord.integrated_api.mixins.structures.StructurePoolAccessor;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public final class VillagePoolAdditions {
     private static final Gson GSON = new Gson();
@@ -36,7 +37,7 @@ public final class VillagePoolAdditions {
 
         for (Map.Entry<Identifier, Resource> entry : server.getResourceManager()
                 .listResources(DIRECTORY, path -> path.getPath().endsWith(".json")).entrySet()) {
-            try (java.io.Reader reader = entry.getValue().openAsReader()) {
+            try (Reader reader = entry.getValue().openAsReader()) {
                 JsonObject definition = GSON.fromJson(reader, JsonObject.class);
                 addToPool(pools, processors, definition, entry.getKey());
             } catch (IOException | RuntimeException exception) {
@@ -95,7 +96,7 @@ public final class VillagePoolAdditions {
     }
 
     private static JsonElement primitive(String value) {
-        return new com.google.gson.JsonPrimitive(value);
+        return new JsonPrimitive(value);
     }
 
     private static String stringValue(JsonObject object, String key, String fallback) {

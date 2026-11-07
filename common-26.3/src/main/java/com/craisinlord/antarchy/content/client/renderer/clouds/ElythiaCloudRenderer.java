@@ -1,34 +1,32 @@
 package com.craisinlord.antarchy.content.client.renderer.clouds;
 
-import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.renderpearl.api.commands.RenderPass;
-import com.mojang.renderpearl.api.pipeline.BlendFunction;
-import com.mojang.renderpearl.api.pipeline.BlendFactor;
-import com.mojang.renderpearl.api.pipeline.ColorTargetState;
-import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
-import com.mojang.renderpearl.api.vertex.VertexFormat;
-import java.util.Optional;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier;
-import com.craisinlord.antarchy.content.client.renderer.AntarchySkyDraw;
-
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ElythiaWind;
+import com.craisinlord.antarchy.content.client.renderer.AntarchySkyDraw;
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
+import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.renderpearl.api.pipeline.BlendFactor;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.DepthStencilState;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -50,7 +48,7 @@ public final class ElythiaCloudRenderer {
                 .withCull(false)
                 .withPolygonMode(original.getPolygonMode())
                 .withDepthStencilState(Optional.ofNullable(original.getDepthStencilState()).map(state ->
-                        new com.mojang.renderpearl.api.pipeline.DepthStencilState(state.depthTest(), false, state.depthBiasScaleFactor(), state.depthBiasConstant())))
+                        new DepthStencilState(state.depthTest(), false, state.depthBiasScaleFactor(), state.depthBiasConstant())))
                 .withVertexShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_cloud"))
                 .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_cloud"))
                 .withPrimitiveTopology(PrimitiveTopology.QUADS)

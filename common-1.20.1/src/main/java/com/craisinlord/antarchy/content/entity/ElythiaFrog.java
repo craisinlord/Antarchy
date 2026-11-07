@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.FrogVariant;
@@ -11,11 +12,11 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 public final class ElythiaFrog {
     public static final ResourceKey<Level> ELYTHIA = ResourceKey.create(
-            net.minecraft.core.registries.Registries.DIMENSION,
+            Registries.DIMENSION,
             new ResourceLocation(Antarchy.MODID, "elythia")
     );
     public static final ResourceKey<FrogVariant> VARIANT = ResourceKey.create(
-            net.minecraft.core.registries.Registries.FROG_VARIANT,
+            Registries.FROG_VARIANT,
             new ResourceLocation(Antarchy.MODID, "elythia")
     );
     public static final ResourceLocation TEXTURE =

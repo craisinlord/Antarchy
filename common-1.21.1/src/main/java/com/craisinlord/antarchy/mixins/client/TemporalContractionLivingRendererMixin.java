@@ -1,9 +1,7 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.client.renderer.TemporalContractionAfterimageLayer;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;

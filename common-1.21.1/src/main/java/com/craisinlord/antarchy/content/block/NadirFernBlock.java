@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -24,7 +25,7 @@ public class NadirFernBlock extends DirectionalThoraxisFlowerBlock implements Bo
     }
 
     @Override
-    protected MapCodec<? extends net.minecraft.world.level.block.BushBlock> codec() {
+    protected MapCodec<? extends BushBlock> codec() {
         return CODEC;
     }
 

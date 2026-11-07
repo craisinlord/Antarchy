@@ -6,6 +6,14 @@ import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
@@ -22,9 +30,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -52,14 +62,6 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.util.GeckoLibUtil;
 
 public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
     private static final EntityDataAccessor<Integer> TEXTURE_VARIANT =
@@ -88,7 +90,7 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return net.minecraft.world.entity.Mob.createMobAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.waspHealth())
                 .add(Attributes.FLYING_SPEED, AntarchySettings.waspMovementSpeed())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.waspMovementSpeed())
@@ -209,7 +211,7 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         if (!(target instanceof LivingEntity livingTarget)) {
             return super.doHurtTarget(level, target);
         }
@@ -439,7 +441,7 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
 
     private class WaspGoToNestGoal extends Goal {
         private static final int TIMEOUT_TICKS = 600;
-        private static final double NEST_REACH_DISTANCE_SQ = 4.0;
+        private static final double NEST_REACH_DISTANCE_SQ = 4.0D;
         private static final double MAX_HIVE_DISTANCE_SQ = 2048;
         private int travelTicks;
 
@@ -465,7 +467,7 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
         public void start() {
             this.travelTicks = 0;
             BlockPos hive = WaspEntity.this.hivePos;
-            WaspEntity.this.navigation.moveTo(hive.getX() + 0.5, hive.getY() + 0.5, hive.getZ() + 0.5, WANDER_SPEED);
+            WaspEntity.this.navigation.moveTo(hive.getX() + 0.5D, hive.getY() + 0.5D, hive.getZ() + 0.5D, WANDER_SPEED);
         }
 
         @Override

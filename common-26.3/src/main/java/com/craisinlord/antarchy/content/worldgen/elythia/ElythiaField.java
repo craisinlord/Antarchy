@@ -1,6 +1,10 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.world.level.levelgen.densityfunction.DensityBuffer;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DensityVolume;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 
 @FunctionalInterface
 interface ElythiaField {

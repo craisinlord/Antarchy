@@ -1,11 +1,10 @@
 package com.craisinlord.antarchy.content.block.entity.undertrial;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class UndertrialOmen {
     public static final int TRIAL_OMEN_PER_BAD_OMEN_LEVEL = 18000;

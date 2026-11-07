@@ -29,13 +29,13 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
             new ResourceLocation(Antarchy.MODID, "loam")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double LINING_DEPTH = 1.4;
+    private static final double LINING_DEPTH = 1.4D;
     private static final float COARSE_CHANCE = 0.15F;
     private static final float PODZOL_CHANCE = 0.12F;
-    private static final double MOUND_MIN_RADIUS = 2.5;
-    private static final double MOUND_MAX_RADIUS = 4.5;
-    private static final double MOUND_MIN_HEIGHT = 3.0;
-    private static final double MOUND_MAX_HEIGHT = 5.0;
+    private static final double MOUND_MIN_RADIUS = 2.5D;
+    private static final double MOUND_MAX_RADIUS = 4.5D;
+    private static final double MOUND_MIN_HEIGHT = 3.0D;
+    private static final double MOUND_MAX_HEIGHT = 5.0D;
 
     public CavarynMolewormWarrenDressingFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -46,8 +46,8 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
         WorldGenLevel level = context.level();
         NormalNoise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(WARREN_NOISE);
         CavarynCavityGrid grid = CavarynCavityGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.getValue(1234.567, 89.123, -456.789),
-                noise.getValue(-987.654, 12.345, 654.321)
+                noise.getValue(1234.567D, 89.123D, -456.789D),
+                noise.getValue(-987.654D, 12.345D, 654.321D)
         ));
         if (grid == null) {
             return false;
@@ -79,7 +79,7 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
                 for (int y = minY; y <= maxY; y++) {
                     double distance = next;
                     next = grid.signedDistance(x, y + 1, z);
-                    if (distance <= 0.0 || distance > LINING_DEPTH) {
+                    if (distance <= 0.0D || distance > LINING_DEPTH) {
                         continue;
                     }
                     pos.set(x, y, z);
@@ -87,7 +87,7 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
                         continue;
                     }
                     above.set(x, y + 1, z);
-                    boolean floor = next <= 0.0 && level.getBlockState(above).isAir();
+                    boolean floor = next <= 0.0D && level.getBlockState(above).isAir();
                     level.setBlock(pos, lining(random, floor), 2);
                     placed = true;
                 }
@@ -106,7 +106,7 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
     }
 
     private static boolean placeMound(WorldGenLevel level, RandomSource random, CavarynCavityGrid grid, CavarynCavityGrid.Chamber chamber) {
-        int spread = Math.max(1, Mth.floor(chamber.radius() * 0.5));
+        int spread = Math.max(1, Mth.floor(chamber.radius() * 0.5D));
         int cx = chamber.x() + random.nextInt(spread * 2 + 1) - spread;
         int cz = chamber.z() + random.nextInt(spread * 2 + 1) - spread;
         int floorY = findFloor(level, cx, chamber.y(), Mth.floor(chamber.y() - chamber.depth()) - 4, cz);
@@ -120,8 +120,8 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
         boolean placed = false;
         for (int dx = -reach; dx <= reach; dx++) {
             for (int dz = -reach; dz <= reach; dz++) {
-                double falloff = 1.0 - (dx * dx + dz * dz) / (radius * radius);
-                if (falloff <= 0.0) {
+                double falloff = 1.0D - (dx * dx + dz * dz) / (radius * radius);
+                if (falloff <= 0.0D) {
                     continue;
                 }
                 int x = cx + dx;
@@ -130,10 +130,10 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
                 if (base == Integer.MIN_VALUE) {
                     continue;
                 }
-                int top = Mth.floor(height * falloff + random.nextDouble() * 0.6);
+                int top = Mth.floor(height * falloff + random.nextDouble() * 0.6D);
                 for (int k = 0; k < top; k++) {
                     pos.set(x, base + k, z);
-                    if (!level.getBlockState(pos).isAir() || grid.signedDistance(x, base + k, z) > -1.0) {
+                    if (!level.getBlockState(pos).isAir() || grid.signedDistance(x, base + k, z) > -1.0D) {
                         break;
                     }
                     level.setBlock(pos, random.nextFloat() < 0.6F ? Blocks.COARSE_DIRT.defaultBlockState() : Blocks.ROOTED_DIRT.defaultBlockState(), 2);

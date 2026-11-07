@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.MantisModel;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
+import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.geckolib.renderer.layer.GeoRenderLayer;
@@ -14,8 +15,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import com.geckolib.renderer.GeoEntityRenderer;
-import com.geckolib.renderer.base.GeoRenderState;
 
 public class MantisRenderer extends GeoEntityRenderer<MantisEntity, LivingEntityRenderState> {
     public MantisRenderer(EntityRendererProvider.Context context) {
@@ -45,7 +44,9 @@ public class MantisRenderer extends GeoEntityRenderer<MantisEntity, LivingEntity
 
         @Override
         public void submitRenderTask(RenderPassInfo<LivingEntityRenderState> renderPassInfo, SubmitNodeCollector renderTasks) {
-            if (!renderPassInfo.willRender() || !renderPassInfo.getOrDefaultGeckolibData(MantisModel.GLIMMER_ECHO, false)) return;
+            if (!renderPassInfo.willRender() || !renderPassInfo.getOrDefaultGeckolibData(MantisModel.GLIMMER_ECHO, false)) {
+                return;
+            }
             RenderType emissiveType = RenderTypes.eyes(GlimmerEchoRendering.emissiveTexture("mantis"));
             PoseStack poseStack = renderPassInfo.poseStack();
             renderTasks.order(1).submitCustomGeometry(poseStack, emissiveType, (pose, buffer) -> {

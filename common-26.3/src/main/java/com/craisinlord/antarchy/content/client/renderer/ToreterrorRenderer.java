@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.ToreterrorModel;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
+import com.geckolib.renderer.GeoEntityRenderer;
+import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.geckolib.renderer.layer.GeoRenderLayer;
@@ -14,8 +16,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import com.geckolib.renderer.GeoEntityRenderer;
-import com.geckolib.renderer.base.GeoRenderState;
 
 public class ToreterrorRenderer extends GeoEntityRenderer<ToreterrorEntity, LivingEntityRenderState> {
     public ToreterrorRenderer(EntityRendererProvider.Context context) {
@@ -49,7 +49,9 @@ public class ToreterrorRenderer extends GeoEntityRenderer<ToreterrorEntity, Livi
 
         @Override
         public void submitRenderTask(RenderPassInfo<LivingEntityRenderState> renderPassInfo, SubmitNodeCollector renderTasks) {
-            if (!renderPassInfo.willRender() || !renderPassInfo.getOrDefaultGeckolibData(ToreterrorModel.GLIMMER_ECHO, false)) return;
+            if (!renderPassInfo.willRender() || !renderPassInfo.getOrDefaultGeckolibData(ToreterrorModel.GLIMMER_ECHO, false)) {
+                return;
+            }
             RenderType emissiveType = RenderTypes.eyes(GlimmerEchoRendering.emissiveTexture("toreterror"));
             PoseStack poseStack = renderPassInfo.poseStack();
             renderTasks.order(1).submitCustomGeometry(poseStack, emissiveType, (pose, buffer) -> {

@@ -9,8 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -44,7 +44,7 @@ public final class CavarynBroodNestDressingFeature extends Feature<NoneFeatureCo
             Identifier.withDefaultNamespace("podzol")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double LINING_DEPTH = 1.5;
+    private static final double LINING_DEPTH = 1.5D;
     private static final int MIN_EGGS = 3;
     private static final int MAX_EGGS = 6;
 
@@ -64,8 +64,8 @@ public final class CavarynBroodNestDressingFeature extends Feature<NoneFeatureCo
         WorldGenLevel level = context.level();
         NormalNoise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(this.noiseKey);
         CavarynCavityGrid grid = CavarynCavityGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.getValue(1234.567, 89.123, -456.789),
-                noise.getValue(-987.654, 12.345, 654.321)
+                noise.getValue(1234.567D, 89.123D, -456.789D),
+                noise.getValue(-987.654D, 12.345D, 654.321D)
         ));
         Block broodstone = block(BROODSTONE_ID);
         Block egg = block(SPIT_BUG_EGG_ID);
@@ -96,7 +96,7 @@ public final class CavarynBroodNestDressingFeature extends Feature<NoneFeatureCo
                 int maxY = Math.min(maxBuild, range[1]);
                 for (int y = minY; y <= maxY; y++) {
                     double distance = grid.signedDistance(x, y, z);
-                    if (distance <= 0.0 || distance > LINING_DEPTH) {
+                    if (distance <= 0.0D || distance > LINING_DEPTH) {
                         continue;
                     }
                     pos.set(x, y, z);
@@ -120,7 +120,7 @@ public final class CavarynBroodNestDressingFeature extends Feature<NoneFeatureCo
 
     private boolean placeClutch(WorldGenLevel level, RandomSource random, CavarynCavityGrid.Chamber chamber, Block egg) {
         int eggs = MIN_EGGS + random.nextInt(MAX_EGGS - MIN_EGGS + 1);
-        int spread = Math.max(1, Mth.floor(chamber.radius() * 0.55));
+        int spread = Math.max(1, Mth.floor(chamber.radius() * 0.55D));
         int top = chamber.y();
         int bottom = Math.max(level.getMinY() + 1, Mth.floor(chamber.y() - chamber.depth()) - 3);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();

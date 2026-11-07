@@ -34,7 +34,7 @@ public final class ParalyzedStoneGeoLayer<T extends GeoAnimatable> extends GeoRe
         }
 
         poseStack.pushPose();
-        poseStack.scale(1.02f, 1.02f, 1.02f);
+        poseStack.scale(1.02F, 1.02F, 1.02F);
         RenderType stoneRenderType = RenderType.entityCutoutNoCull(STONE_TEXTURE);
         VertexConsumer stoneBuffer = bufferSource.getBuffer(stoneRenderType);
         this.getRenderer().reRender(

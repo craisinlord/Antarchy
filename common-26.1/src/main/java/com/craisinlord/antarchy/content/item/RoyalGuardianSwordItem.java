@@ -3,32 +3,34 @@ package com.craisinlord.antarchy.content.item;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.renderer.GeoItemRenderer;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.component.TooltipDisplay;
-import com.geckolib.renderer.GeoItemRenderer;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import com.geckolib.animatable.GeoItem;
-import com.geckolib.animatable.client.GeoRenderProvider;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.util.GeckoLibUtil;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.level.Level;
 
 public class RoyalGuardianSwordItem extends Item implements GeoItem {
     private static final Identifier MODEL_LOCATION = Identifier.fromNamespaceAndPath("antarchy", "royal_guardian_sword");
@@ -67,13 +69,17 @@ public class RoyalGuardianSwordItem extends Item implements GeoItem {
     }
 
     @Override
-    public InteractionResult use(net.minecraft.world.level.Level level, Player player, InteractionHand hand) {
-        if (!player.isShiftKeyDown()) return InteractionResult.PASS;
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        if (!player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
         return InteractionResult.PASS;
     }
 
-    public boolean tryCycleModeFromInput(net.minecraft.world.level.Level level, Player player, ItemStack stack) {
-        if (player.getMainHandItem() != stack) return false;
+    public boolean tryCycleModeFromInput(Level level, Player player, ItemStack stack) {
+        if (player.getMainHandItem() != stack) {
+            return false;
+        }
         Mode next = getMode(stack).next();
         setMode(stack, next);
         if (!level.isClientSide()) {
@@ -107,7 +113,7 @@ public class RoyalGuardianSwordItem extends Item implements GeoItem {
     }
 
     public static Mode getMode(ItemStack stack) {
-        net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return tag.contains(MODE_TAG) ? Mode.fromId(tag.getIntOr(MODE_TAG, 0)) : Mode.NONE;
     }
 

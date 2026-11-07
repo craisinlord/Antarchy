@@ -1,24 +1,26 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerCompanionSavedData;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
+import java.util.Locale;
+import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +28,7 @@ import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -121,9 +124,9 @@ public class GlimmerBottleItem extends Item {
         GlimmerParticles.tickBurst(glimmer);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
 
-        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             AntarchyAdvancements.award(serverPlayer, variant.tameAdvancementId());
-            AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, variant.name().toLowerCase(java.util.Locale.ROOT));
+            AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, variant.name().toLowerCase(Locale.ROOT));
         }
 
         ItemStack result = ItemUtils.createFilledResult(stack, player, previous.isEmpty() ? new ItemStack(Items.GLASS_BOTTLE) : previous);
@@ -136,9 +139,9 @@ public class GlimmerBottleItem extends Item {
         GlimmerVariant variant = getVariant(stack);
         if (variant != null) {
             tooltip.accept(Component.translatable("item.antarchy.glimmer_bottle.contains", variant.displayName()));
-            String key = variant.name().toLowerCase(java.util.Locale.ROOT);
-            tooltip.accept(Component.translatable("item.antarchy.glimmer_bottle.passive." + key).withStyle(net.minecraft.ChatFormatting.GRAY));
-            tooltip.accept(Component.translatable("item.antarchy.glimmer_bottle.ability." + key).withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
+            String key = variant.name().toLowerCase(Locale.ROOT);
+            tooltip.accept(Component.translatable("item.antarchy.glimmer_bottle.passive." + key).withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("item.antarchy.glimmer_bottle.ability." + key).withStyle(ChatFormatting.DARK_GRAY));
         }
     }
 }

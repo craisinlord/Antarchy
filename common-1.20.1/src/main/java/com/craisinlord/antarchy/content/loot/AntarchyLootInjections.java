@@ -1,12 +1,11 @@
 package com.craisinlord.antarchy.content.loot;
 
 import com.craisinlord.antarchy.Antarchy;
+import java.util.Set;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-
-import java.util.Set;
 
 public final class AntarchyLootInjections {
     private static final ResourceLocation ANTROID_PHONE = new ResourceLocation(Antarchy.MODID, "inject/antroid_phone");

@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -41,7 +42,7 @@ public final class DimensionalTearCommand {
         return player.position().add(forward.scale(4.0D)).add(0.0D, VERTICAL_OFFSET, 0.0D);
     }
 
-    private static int spawnSingle(CommandContext<CommandSourceStack> context) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+    private static int spawnSingle(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         ServerLevel level = context.getSource().getLevel();
         DimensionalTearEntity tear = DimensionalTearEntity.create(level, anchorPos(player), player.getYRot(), lifetime());
@@ -50,7 +51,7 @@ public final class DimensionalTearCommand {
         return 1;
     }
 
-    private static int spawnPair(CommandContext<CommandSourceStack> context, double gap) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+    private static int spawnPair(CommandContext<CommandSourceStack> context, double gap) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         ServerLevel level = context.getSource().getLevel();
 

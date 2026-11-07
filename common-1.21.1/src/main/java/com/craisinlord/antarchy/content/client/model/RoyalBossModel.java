@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.entity.royal.RoyalHead;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
@@ -47,7 +48,7 @@ public class RoyalBossModel extends GeoModel<RoyalBossEntity> {
         if (bone == null || !bone.isTrackingMatrices()) {
             return null;
         }
-        org.joml.Vector3d position = bone.getWorldPosition();
+        Vector3d position = bone.getWorldPosition();
         return new Vec3(position.x, position.y, position.z);
     }
 }

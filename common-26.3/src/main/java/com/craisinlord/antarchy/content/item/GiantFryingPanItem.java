@@ -2,45 +2,45 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.client.renderer.GiantFryingPanRenderer;
-import java.util.function.Consumer;
-import net.minecraft.ChatFormatting;
-import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.component.TooltipDisplay;
-import net.minecraft.server.level.ServerLevel;
-import com.geckolib.renderer.GeoItemRenderer;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.SlotAccess;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickAction;
-import net.minecraft.world.inventory.Slot;
 import com.craisinlord.antarchy.content.menu.GiantFryingPanMenu;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 import com.geckolib.animatable.GeoItem;
 import com.geckolib.animatable.client.GeoRenderProvider;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.renderer.GeoItemRenderer;
 import com.geckolib.util.GeckoLibUtil;
+import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 public class GiantFryingPanItem extends Item implements GeoItem {
     private static final Identifier MODEL_LOCATION = Identifier.fromNamespaceAndPath("antarchy", "giant_frying_pan");
@@ -60,7 +60,7 @@ public class GiantFryingPanItem extends Item implements GeoItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<net.minecraft.network.chat.Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, display, tooltipComponents, tooltipFlag);
         tooltipComponents.accept(Component.translatable("tooltip.antarchy.giant_frying_pan.insert").withStyle(ChatFormatting.GRAY));
         tooltipComponents.accept(Component.translatable("tooltip.antarchy.giant_frying_pan.gui").withStyle(ChatFormatting.GRAY));
@@ -116,7 +116,7 @@ public class GiantFryingPanItem extends Item implements GeoItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, ServerLevel level, net.minecraft.world.entity.Entity entity, @Nullable EquipmentSlot slot) {
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
         GiantFryingPanToolHelper.ensureEnchantments(stack, level.registryAccess());
         if (entity instanceof Player player) GiantFryingPanStorage.tick(player, stack, level);
@@ -146,20 +146,28 @@ public class GiantFryingPanItem extends Item implements GeoItem {
     }
 
     public static InteractionResult handleMainHandUse(Level level, Player player, InteractionHand hand) {
-        if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+        if (hand != InteractionHand.MAIN_HAND) {
+            return InteractionResult.PASS;
+        }
         ItemStack pan = player.getOffhandItem();
         ItemStack held = player.getMainHandItem();
-        if (!(pan.getItem() instanceof GiantFryingPanItem) || held.getItem() instanceof GiantFryingPanItem) return InteractionResult.PASS;
+        if (!(pan.getItem() instanceof GiantFryingPanItem) || held.getItem() instanceof GiantFryingPanItem) {
+            return InteractionResult.PASS;
+        }
         if (player.isShiftKeyDown()) {
             openMenu(level, player, InteractionHand.OFF_HAND);
             return InteractionResult.SUCCESS;
         }
-        if (!GiantFryingPanStorage.isCampfireInput(player, held)) return InteractionResult.PASS;
+        if (!GiantFryingPanStorage.isCampfireInput(player, held)) {
+            return InteractionResult.PASS;
+        }
         return insertFromHand(level, player, pan, held) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
     }
 
     public static void openHeldMenu(Player player) {
-        if (!player.isShiftKeyDown()) return;
+        if (!player.isShiftKeyDown()) {
+            return;
+        }
         if (player.getMainHandItem().getItem() instanceof GiantFryingPanItem) {
             openMenu(player.level(), player, InteractionHand.MAIN_HAND);
         } else if (player.getOffhandItem().getItem() instanceof GiantFryingPanItem) {
@@ -168,7 +176,9 @@ public class GiantFryingPanItem extends Item implements GeoItem {
     }
 
     private static void openMenu(Level level, Player player, InteractionHand hand) {
-        if (level.isClientSide() || player.containerMenu instanceof GiantFryingPanMenu) return;
+        if (level.isClientSide() || player.containerMenu instanceof GiantFryingPanMenu) {
+            return;
+        }
         int panSlot = hand == InteractionHand.MAIN_HAND ? player.getInventory().getSelectedSlot() : Inventory.SLOT_OFFHAND;
         player.openMenu(new SimpleMenuProvider(
                 (containerId, inventory, ignored) -> new GiantFryingPanMenu(containerId, inventory, panSlot),
@@ -190,9 +200,13 @@ public class GiantFryingPanItem extends Item implements GeoItem {
 
     @Override
     public boolean overrideStackedOnOther(ItemStack pan, Slot slot, ClickAction action, Player player) {
-        if (action != ClickAction.SECONDARY) return false;
+        if (action != ClickAction.SECONDARY) {
+            return false;
+        }
         ItemStack food = slot.getItem();
-        if (!GiantFryingPanStorage.isCampfireInput(player, food) || !slot.mayPickup(player)) return false;
+        if (!GiantFryingPanStorage.isCampfireInput(player, food) || !slot.mayPickup(player)) {
+            return false;
+        }
         GiantFryingPanStorage storage = new GiantFryingPanStorage(pan, player);
         boolean inserted = storage.hasSpace(food) && storage.insertOne(slot.safeTake(1, 1, player));
         if (inserted) player.playSound(SoundEvents.CAMPFIRE_CRACKLE, 0.8F, 1.0F);
@@ -201,8 +215,12 @@ public class GiantFryingPanItem extends Item implements GeoItem {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack pan, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access) {
-        if (action != ClickAction.SECONDARY || other.isEmpty() || !slot.allowModification(player)) return false;
-        if (!GiantFryingPanStorage.isCampfireInput(player, other)) return false;
+        if (action != ClickAction.SECONDARY || other.isEmpty() || !slot.allowModification(player)) {
+            return false;
+        }
+        if (!GiantFryingPanStorage.isCampfireInput(player, other)) {
+            return false;
+        }
         GiantFryingPanStorage storage = new GiantFryingPanStorage(pan, player);
         ItemStack single = other.copyWithCount(1);
         boolean inserted = storage.insertOne(single);

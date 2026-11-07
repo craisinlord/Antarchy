@@ -2,16 +2,21 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -35,14 +40,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -51,11 +57,11 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
@@ -70,11 +76,6 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 public class EmperorScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
@@ -171,7 +172,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity, Glimmer
     private static final ResourceKey<Level> THORAXIS_KEY =
             ResourceKey.create(Registries.DIMENSION,
                     ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis"));
-    private static final ResourceKey<net.minecraft.world.level.biome.Biome> DREAM_DUNES = ResourceKey.create(
+    private static final ResourceKey<Biome> DREAM_DUNES = ResourceKey.create(
             Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dream_dunes"));
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
@@ -188,7 +189,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity, Glimmer
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int animatedActionSerial;
     private final ServerBossEvent bossEvent =
-            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
+            new EntityLinkedServerBossEvent(this, this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
 
     private int attackAnimTicks;
     private int clawCooldownTicks;
@@ -242,8 +243,8 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity, Glimmer
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
-            MobSpawnType spawnReason, @Nullable net.minecraft.world.entity.SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+            MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData) {
         double health = AntarchySettings.emperorScorpionHealth();
         if (this.isGlimmerEcho()) {
             health *= AntarchySettings.glimmerEmperorScorpionHealthMultiplier();
@@ -681,7 +682,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity, Glimmer
 
     private boolean doStingAttack(LivingEntity target) {
         boolean hurt;
-        if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+        if (this.level() instanceof ServerLevel serverLevel) {
             hurt = target.hurt(
                     AntarchyDamageSources.emperorScorpionSting(serverLevel, this),
                     (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE)
@@ -1282,7 +1283,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity, Glimmer
     }
 
     @Override
-    public void setCustomName(@Nullable net.minecraft.network.chat.Component name) {
+    public void setCustomName(@Nullable Component name) {
         super.setCustomName(name);
         this.bossEvent.setName(this.getDisplayName());
     }

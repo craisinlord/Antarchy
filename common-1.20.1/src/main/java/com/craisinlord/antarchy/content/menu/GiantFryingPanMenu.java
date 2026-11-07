@@ -63,7 +63,9 @@ public final class GiantFryingPanMenu extends AbstractContainerMenu {
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (clickType == ClickType.SWAP && button == this.panSlot) return;
+        if (clickType == ClickType.SWAP && button == this.panSlot) {
+            return;
+        }
         super.clicked(slotId, button, clickType, player);
     }
 
@@ -74,13 +76,19 @@ public final class GiantFryingPanMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        if (index < 0 || index >= this.slots.size()) return ItemStack.EMPTY;
+        if (index < 0 || index >= this.slots.size()) {
+            return ItemStack.EMPTY;
+        }
         Slot slot = this.slots.get(index);
-        if (!slot.hasItem() || !slot.mayPickup(player)) return ItemStack.EMPTY;
+        if (!slot.hasItem() || !slot.mayPickup(player)) {
+            return ItemStack.EMPTY;
+        }
         ItemStack current = slot.getItem();
         ItemStack original = current.copy();
         if (index < GiantFryingPanStorage.SLOT_COUNT) {
-            if (!this.moveItemStackTo(current, GiantFryingPanStorage.SLOT_COUNT, this.slots.size(), true)) return ItemStack.EMPTY;
+            if (!this.moveItemStackTo(current, GiantFryingPanStorage.SLOT_COUNT, this.slots.size(), true)) {
+                return ItemStack.EMPTY;
+            }
         } else if (!GiantFryingPanStorage.isCampfireInput(player, current)
                 || !this.moveItemStackTo(current, 0, GiantFryingPanStorage.SLOT_COUNT, false)) {
             return ItemStack.EMPTY;

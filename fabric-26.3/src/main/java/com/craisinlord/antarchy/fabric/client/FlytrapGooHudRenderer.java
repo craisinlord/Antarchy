@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.fabric.client;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 
-import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
@@ -13,16 +12,18 @@ public final class FlytrapGooHudRenderer {
     private FlytrapGooHudRenderer() {
     }
 
-    private static float fadeProgress = 0f;
-    private static final float FADE_SPEED = 0.05f;
+    private static float fadeProgress = 0F;
+    private static final float FADE_SPEED = 0.05F;
     private static final int MAX_ALPHA = 0x55;
 
     public static void render(GuiGraphicsExtractor guiGraphics) {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
         if (player == null || player.isDeadOrDying()) {
-            fadeProgress = Math.max(0f, fadeProgress - FADE_SPEED);
-            if (fadeProgress <= 0f) return;
+            fadeProgress = Math.max(0F, fadeProgress - FADE_SPEED);
+            if (fadeProgress <= 0F) {
+                return;
+            }
         } else {
             Block goo = AntarchyFabricBlocks.FLYTRAP_GOO_BLOCK.get();
             BlockPos feet = player.blockPosition();
@@ -30,12 +31,14 @@ public final class FlytrapGooHudRenderer {
                          || player.level().getBlockState(feet.above()).is(goo);
 
             if (inGoo) {
-                fadeProgress = Math.min(1f, fadeProgress + FADE_SPEED);
+                fadeProgress = Math.min(1F, fadeProgress + FADE_SPEED);
             } else {
-                fadeProgress = Math.max(0f, fadeProgress - FADE_SPEED);
+                fadeProgress = Math.max(0F, fadeProgress - FADE_SPEED);
             }
 
-            if (fadeProgress <= 0f || minecraft.gui.screen() != null) return;
+            if (fadeProgress <= 0F || minecraft.gui.screen() != null) {
+                return;
+            }
         }
 
         int alpha = Mth.floor(MAX_ALPHA * fadeProgress);

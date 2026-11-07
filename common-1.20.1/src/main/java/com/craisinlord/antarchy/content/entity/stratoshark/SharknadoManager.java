@@ -1,10 +1,5 @@
 package com.craisinlord.antarchy.content.entity.stratoshark;
 
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,12 +9,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 public final class SharknadoManager {
     public static final double[] TIER_RADII          = { 2.5D,  5.0D,  8.0D  };
     public static final double[] TIER_HEIGHT_OFFSETS = { 8.0D,  5.0D,  1.5D  };
     public static final int[]    TIER_MAX_SLOTS      = {    2,     4,     6   };
-    
+
     public static final double[] TIER_ROTATION_SPEEDS= { 0.06D, 0.045D, 0.03D };
     private static final int    MIN_SHARKS_TO_FORM     = 3;
     private static final double FORM_SEARCH_RADIUS     = 20.0D;
@@ -28,15 +27,14 @@ public final class SharknadoManager {
     private static final int   ATTACK_COOLDOWN_MIN = 80;
     private static final int   ATTACK_COOLDOWN_MAX = 160;
     private static final float VOLLEY_CHANCE       = 0.15F;
-    
+
     private static final double DRIFT_SPEED     = 0.06D;
-    
+
     private static final double MAX_DRIFT_DIST  = 10.0D;
     private static final WeakHashMap<ServerLevel, SharknadoManager> INSTANCES = new WeakHashMap<>();
 
-    
     private final Map<UUID, SharknadoEntry> tornadoes = new HashMap<>();
-    
+
     private final Map<UUID, UUID> sharkToTornado = new HashMap<>();
     private long lastCleanupGameTime = Long.MIN_VALUE;
 
@@ -46,15 +44,20 @@ public final class SharknadoManager {
         return INSTANCES.computeIfAbsent(level, l -> new SharknadoManager());
     }
 
-    
     public boolean tryFormOrJoin(StratosharkEntity shark, ServerLevel level) {
-        if (tryJoinExisting(shark)) return true;
+        if (tryJoinExisting(shark)) {
+            return true;
+        }
 
         List<StratosharkEntity> soloNearby = getSoloSharksNear(shark, level);
-        if (soloNearby.size() + 1 < MIN_SHARKS_TO_FORM) return false;
+        if (soloNearby.size() + 1 < MIN_SHARKS_TO_FORM) {
+            return false;
+        }
         UUID myUuid = shark.getUUID();
         for (StratosharkEntity other : soloNearby) {
-            if (other.getUUID().compareTo(myUuid) < 0) return false;
+            if (other.getUUID().compareTo(myUuid) < 0) {
+                return false;
+            }
         }
 
         List<StratosharkEntity> all = new ArrayList<>();
@@ -71,7 +74,9 @@ public final class SharknadoManager {
         outer:
         for (int tier = 2; tier >= 0; tier--) {
             for (int slot = 0; slot < TIER_MAX_SLOTS[tier]; slot++) {
-                if (idx >= sharks.size()) break outer;
+                if (idx >= sharks.size()) {
+                    break outer;
+                }
                 StratosharkEntity s = sharks.get(idx++);
                 entry.add(s, tier, slot);
                 sharkToTornado.put(s.getUUID(), id);
@@ -93,10 +98,16 @@ public final class SharknadoManager {
 
         for (Map.Entry<UUID, SharknadoEntry> e : tornadoes.entrySet()) {
             SharknadoEntry entry = e.getValue();
-            if (entry.state == TornadoState.DISPERSING) continue;
-            if (!entry.hasOpenSlot()) continue;
+            if (entry.state == TornadoState.DISPERSING) {
+                continue;
+            }
+            if (!entry.hasOpenSlot()) {
+                continue;
+            }
             Vec3 c = entry.centroid;
-            if (c == null) continue;
+            if (c == null) {
+                continue;
+            }
             double dx = shark.getX() - c.x;
             double dz = shark.getZ() - c.z;
             double dSqr = dx * dx + dz * dz;
@@ -106,10 +117,14 @@ public final class SharknadoManager {
             }
         }
 
-        if (bestId == null) return false;
+        if (bestId == null) {
+            return false;
+        }
         SharknadoEntry entry = tornadoes.get(bestId);
         int[] openSlot = entry.getNextOpenSlot();
-        if (openSlot == null) return false;
+        if (openSlot == null) {
+            return false;
+        }
 
         entry.add(shark, openSlot[0], openSlot[1]);
         sharkToTornado.put(shark.getUUID(), bestId);
@@ -119,17 +134,22 @@ public final class SharknadoManager {
         return true;
     }
 
-    
     public void tickSharknado(UUID sharknadoId, ServerLevel level) {
         SharknadoEntry entry = tornadoes.get(sharknadoId);
-        if (entry == null) return;
+        if (entry == null) {
+            return;
+        }
         long now = level.getGameTime();
-        if (entry.lastTickedGameTime == now) return;
+        if (entry.lastTickedGameTime == now) {
+            return;
+        }
         entry.lastTickedGameTime = now;
         this.cleanup(level);
 
         entry.updateCentroid();
-        if (entry.centroid == null) return;
+        if (entry.centroid == null) {
+            return;
+        }
         entry.updateOrbitCenter();
         entry.advanceRotation();
         Player nearestPlayer = level.getNearestPlayer(
@@ -152,7 +172,9 @@ public final class SharknadoManager {
             return;
         }
 
-        if (entry.state != TornadoState.ACTIVE) return;
+        if (entry.state != TornadoState.ACTIVE) {
+            return;
+        }
 
         if (--entry.attackCooldown <= 0) {
             triggerAttack(entry, level);
@@ -163,10 +185,14 @@ public final class SharknadoManager {
 
     private void triggerAttack(SharknadoEntry entry, ServerLevel level) {
         Vec3 orbitCenter = entry.getOrbitCenter();
-        if (orbitCenter == null) return;
+        if (orbitCenter == null) {
+            return;
+        }
         Player target = level.getNearestPlayer(
                 orbitCenter.x, orbitCenter.y, orbitCenter.z, 48.0D, false);
-        if (target == null) return;
+        if (target == null) {
+            return;
+        }
 
         boolean volley = level.getRandom().nextFloat() < VOLLEY_CHANCE;
         if (volley) {
@@ -174,7 +200,9 @@ public final class SharknadoManager {
             for (SharkSlot s : entry.slots) {
                 if (s.tier == 2 && s.shark.isAlive() && s.shark.isOrbiting()) {
                     s.shark.launchFromSharknado(target);
-                    if (++launched >= 2) break;
+                    if (++launched >= 2) {
+                        break;
+                    }
                 }
             }
         } else {
@@ -198,10 +226,11 @@ public final class SharknadoManager {
         }
     }
 
-    
     public void disperseTornado(UUID sharknadoId) {
         SharknadoEntry entry = tornadoes.remove(sharknadoId);
-        if (entry == null) return;
+        if (entry == null) {
+            return;
+        }
         entry.state = TornadoState.DISPERSING;
         for (SharkSlot s : entry.slots) {
             sharkToTornado.remove(s.shark.getUUID());
@@ -209,22 +238,26 @@ public final class SharknadoManager {
         }
     }
 
-    
     public void unregisterShark(StratosharkEntity shark) {
         UUID tornadoId = sharkToTornado.remove(shark.getUUID());
-        if (tornadoId == null) return;
+        if (tornadoId == null) {
+            return;
+        }
         SharknadoEntry entry = tornadoes.get(tornadoId);
-        if (entry == null) return;
+        if (entry == null) {
+            return;
+        }
         entry.removeShark(shark);
         if (entry.getAliveCount() < MIN_SHARKS_TO_PERSIST) {
             disperseTornado(tornadoId);
         }
     }
 
-    
     public void cleanup(ServerLevel level) {
         long now = level.getGameTime();
-        if (this.lastCleanupGameTime == now || now % 200L != 0L) return;
+        if (this.lastCleanupGameTime == now || now % 200L != 0L) {
+            return;
+        }
         this.lastCleanupGameTime = now;
         Iterator<Map.Entry<UUID, SharknadoEntry>> iter = tornadoes.entrySet().iterator();
         while (iter.hasNext()) {
@@ -248,14 +281,15 @@ public final class SharknadoManager {
         }
     }
 
-    
     @Nullable
     public Vec3 getOrbitTarget(UUID sharknadoId, int tier, int slot) {
         SharknadoEntry entry = tornadoes.get(sharknadoId);
-        if (entry == null || entry.getOrbitCenter() == null) return null;
+        if (entry == null || entry.getOrbitCenter() == null) {
+            return null;
+        }
 
         Vec3 center = entry.getOrbitCenter().add(entry.driftOffset);
-        double baseAngle = (2.0 * Math.PI * slot) / TIER_MAX_SLOTS[tier];
+        double baseAngle = (2.0D * Math.PI * slot) / TIER_MAX_SLOTS[tier];
         double currentAngle = baseAngle + entry.rotationPhases[tier];
 
         double x = center.x + Math.cos(currentAngle) * TIER_RADII[tier];
@@ -274,13 +308,16 @@ public final class SharknadoManager {
         return sharkToTornado.containsKey(sharkUuid);
     }
 
-    
     private List<StratosharkEntity> getSoloSharksNear(StratosharkEntity seeker, ServerLevel level) {
         List<StratosharkEntity> result = new ArrayList<>();
         for (StratosharkEntity other : level.getEntitiesOfClass(
                 StratosharkEntity.class, seeker.getBoundingBox().inflate(FORM_SEARCH_RADIUS))) {
-            if (other == seeker) continue;
-            if (sharkToTornado.containsKey(other.getUUID())) continue;
+            if (other == seeker) {
+                continue;
+            }
+            if (sharkToTornado.containsKey(other.getUUID())) {
+                continue;
+            }
             double dx = other.getX() - seeker.getX();
             double dz = other.getZ() - seeker.getZ();
             if (dx * dx + dz * dz <= FORM_SEARCH_RADIUS_SQR) result.add(other);
@@ -301,7 +338,9 @@ public final class SharknadoManager {
         int attackCooldown;
         long lastTickedGameTime = -1L;
 
-        SharknadoEntry(UUID id) { this.id = id; }
+        SharknadoEntry(UUID id) {
+            this.id = id;
+        }
 
         void add(StratosharkEntity shark, int tier, int slot) {
             slots.add(new SharkSlot(shark, tier, slot));
@@ -368,7 +407,9 @@ public final class SharknadoManager {
             for (int tier = 2; tier >= 0; tier--) {
                 int used = 0;
                 for (SharkSlot s : slots) if (s.tier == tier) used++;
-                if (used < TIER_MAX_SLOTS[tier]) return true;
+                if (used < TIER_MAX_SLOTS[tier]) {
+                    return true;
+                }
             }
             return false;
         }
@@ -378,7 +419,9 @@ public final class SharknadoManager {
                 Set<Integer> usedSlots = new HashSet<>();
                 for (SharkSlot s : slots) if (s.tier == tier) usedSlots.add(s.slot);
                 for (int slot = 0; slot < TIER_MAX_SLOTS[tier]; slot++) {
-                    if (!usedSlots.contains(slot)) return new int[]{tier, slot};
+                    if (!usedSlots.contains(slot)) {
+                        return new int[]{tier, slot};
+                    }
                 }
             }
             return null;

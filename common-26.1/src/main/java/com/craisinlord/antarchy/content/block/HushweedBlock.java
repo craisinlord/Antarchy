@@ -6,14 +6,15 @@ import com.mojang.serialization.MapCodec;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -29,7 +30,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
 
 public class HushweedBlock extends BaseEntityBlock {
     private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 18.0D, 12.0D);
@@ -120,7 +120,7 @@ public class HushweedBlock extends BaseEntityBlock {
                 ? null
                 : createTickerHelper(blockEntityType, typeSupplier.get(),
                 (tickLevel, tickPos, tickState, blockEntity) -> {
-                    if (tickLevel instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                    if (tickLevel instanceof ServerLevel serverLevel) {
                         HushweedBlockEntity.serverTick(serverLevel, tickPos, tickState, blockEntity);
                     }
                 });

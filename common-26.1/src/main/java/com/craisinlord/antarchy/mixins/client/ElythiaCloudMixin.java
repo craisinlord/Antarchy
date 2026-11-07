@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
 import com.craisinlord.antarchy.content.client.renderer.clouds.ElythiaCloudRenderer;
+import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.CloudRenderer;
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CloudRenderer.class)
 public abstract class ElythiaCloudMixin {
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void antarchy$renderElythiaClouds(int color, net.minecraft.client.CloudStatus cloudStatus, float bottomY, int range,
+    private void antarchy$renderElythiaClouds(int color, CloudStatus cloudStatus, float bottomY, int range,
                                                Vec3 cameraPosition, long gameTime, float partialTicks, CallbackInfo ci) {
         Minecraft minecraft = Minecraft.getInstance();
         ClientLevel level = minecraft.level;

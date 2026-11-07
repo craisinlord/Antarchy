@@ -38,5 +38,3 @@ public final class BloodCrystalKatanaTrailClientState {
         ACTIVE.clear();
     }
 }
-
-

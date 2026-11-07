@@ -2,9 +2,11 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.Mth;
 import net.minecraft.util.Interval;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
 
 public record ElythiaRiverCoastFade(DensityFunction argument, DensityFunction continents) implements DensityFunction {
     public static final MapCodec<ElythiaRiverCoastFade> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -36,12 +38,14 @@ public record ElythiaRiverCoastFade(DensityFunction argument, DensityFunction co
     }
 
     @Override
-    public int domainAxes() { return ElythiaField.planarAxes(); }
+    public int domainAxes() {
+        return ElythiaField.planarAxes();
+    }
 
     @Override
-    public MapCodec<ElythiaRiverCoastFade> codec() { return CODEC; }
-
-
+    public MapCodec<ElythiaRiverCoastFade> codec() {
+        return CODEC;
+    }
 
     private static final class Runtime implements ElythiaField {
         private final ElythiaField argument;

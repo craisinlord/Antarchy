@@ -2,11 +2,11 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.MolevoreModel;
 import com.craisinlord.antarchy.content.entity.MolevoreEntity;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.BoneSnapshots;
 import com.geckolib.renderer.base.RenderPassInfo;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 public class MolevoreRenderer extends GeoEntityRenderer<MolevoreEntity, LivingEntityRenderState> {

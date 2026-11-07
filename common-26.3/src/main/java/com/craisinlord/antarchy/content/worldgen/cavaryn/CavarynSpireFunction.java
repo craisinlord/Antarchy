@@ -22,14 +22,14 @@ public record CavarynSpireFunction(Holder<NormalNoise> noise, CavarynSurfaceMask
             ).apply(instance, CavarynSpireFunction::new)
     );
 
-    private static final double SCALE = 0.35;
+    private static final double SCALE = 0.35D;
 
     @Override
     public DensitySampler compileSampler(CompileContext context) {
         Noise noiseSampler = context.createNoiseSampler(this.noise);
         CavarynSpireGrid grid = CavarynSpireGrid.create(CavarynWormBoreFunction.saltFor(
-                noiseSampler.get(1234.567, 89.123, -456.789),
-                noiseSampler.get(-987.654, 12.345, 654.321)), this.mask.compile(context));
+                noiseSampler.get(1234.567D, 89.123D, -456.789D),
+                noiseSampler.get(-987.654D, 12.345D, 654.321D)), this.mask.compile(context));
         return new Sampler(grid);
     }
 
@@ -65,7 +65,7 @@ public record CavarynSpireFunction(Holder<NormalNoise> noise, CavarynSurfaceMask
             if (distance == Double.MAX_VALUE) {
                 return -1.0F;
             }
-            return (float) Mth.clamp(-distance * SCALE, -1.0, 1.0);
+            return (float) Mth.clamp(-distance * SCALE, -1.0D, 1.0D);
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.item;
 
-import com.craisinlord.antarchy.content.network.ScorpionWhipTetherPayload;
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.network.ScorpionWhipTetherPayload;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +15,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.phys.Vec3;
 
 public final class ScorpionWhipTetherManager {

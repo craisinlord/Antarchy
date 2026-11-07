@@ -103,7 +103,9 @@ public final class Fossils {
     }
 
     public static int color(@Nullable Identifier entityId, int tintIndex) {
-        if (entityId == null || tintIndex < 0 || tintIndex > 1) return -1;
+        if (entityId == null || tintIndex < 0 || tintIndex > 1) {
+            return -1;
+        }
         SpawnEggItem egg = spawnEgg(entityId);
         return egg == null ? fallbackColor(entityId, tintIndex) : FossilEggColors.color(egg, tintIndex).orElseGet(() -> fallbackColor(entityId, tintIndex));
     }

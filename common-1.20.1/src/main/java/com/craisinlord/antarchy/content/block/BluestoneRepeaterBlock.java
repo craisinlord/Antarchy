@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -16,7 +17,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.util.RandomSource;
 import org.joml.Vector3f;
 
 public class BluestoneRepeaterBlock extends RepeaterBlock implements BluestoneSignalSource {
@@ -45,7 +45,7 @@ public class BluestoneRepeaterBlock extends RepeaterBlock implements BluestoneSi
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         if (!state.canSurvive(level, pos)) {
-            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+            return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
@@ -101,7 +101,7 @@ public class BluestoneRepeaterBlock extends RepeaterBlock implements BluestoneSi
     }
 
     @Override
-    public void animateTick(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, RandomSource random) {
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!state.getValue(POWERED)) {
             return;
         }

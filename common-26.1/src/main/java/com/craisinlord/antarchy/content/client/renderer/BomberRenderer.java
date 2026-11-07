@@ -46,7 +46,9 @@ public class BomberRenderer extends GeoEntityRenderer<BomberEntity, LivingEntity
 
         @Override
         public void submitRenderTask(RenderPassInfo<LivingEntityRenderState> renderPassInfo, SubmitNodeCollector renderTasks) {
-            if (!renderPassInfo.willRender() || !renderPassInfo.getOrDefaultGeckolibData(BomberModel.GLIMMER_ECHO, false)) return;
+            if (!renderPassInfo.willRender() || !renderPassInfo.getOrDefaultGeckolibData(BomberModel.GLIMMER_ECHO, false)) {
+                return;
+            }
             RenderType emissiveType = RenderTypes.eyes(GlimmerEchoRendering.emissiveTexture("bomber"));
             PoseStack poseStack = renderPassInfo.poseStack();
             renderTasks.order(1).submitCustomGeometry(poseStack, emissiveType, (pose, buffer) -> {

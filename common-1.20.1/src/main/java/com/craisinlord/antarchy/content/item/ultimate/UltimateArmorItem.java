@@ -2,14 +2,14 @@ package com.craisinlord.antarchy.content.item.ultimate;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import java.util.UUID;
-import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +24,7 @@ public class UltimateArmorItem extends ArmorItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         if (slot != this.armorType.getSlot()) {
             return super.getDefaultAttributeModifiers(slot);
         }

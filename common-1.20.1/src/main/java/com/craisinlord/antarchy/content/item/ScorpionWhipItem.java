@@ -1,18 +1,27 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.entity.EntityReach;
+import com.craisinlord.antarchy.compat.item.WeaponAttributes;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +29,6 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.core.particles.ParticleTypes;
 
 public final class ScorpionWhipItem extends SwordItem {
     private static final ResourceLocation ATTACK_RANGE_MODIFIER_ID = new ResourceLocation("antarchy", "scorpion_whip_attack_range");
@@ -32,13 +40,13 @@ public final class ScorpionWhipItem extends SwordItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
-        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot != EquipmentSlot.MAINHAND) {
             return super.getDefaultAttributeModifiers(slot);
         }
-        com.google.common.collect.ImmutableMultimap.Builder<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> builder =
-                com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (int) Math.round(AntarchySettings.scorpionWhipBaseDamage()), -2.6F);
-        com.craisinlord.antarchy.compat.entity.EntityReach.addModifier(builder, ATTACK_RANGE_MODIFIER_ID, AntarchySettings.scorpionWhipReachBonus());
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
+                WeaponAttributes.base(this.tier, (int) Math.round(AntarchySettings.scorpionWhipBaseDamage()), -2.6F);
+        EntityReach.addModifier(builder, ATTACK_RANGE_MODIFIER_ID, AntarchySettings.scorpionWhipReachBonus());
         return builder.build();
     }
 
@@ -65,7 +73,7 @@ public final class ScorpionWhipItem extends SwordItem {
             ScorpionWhipTetherManager.attach(serverPlayer, target);
             ServerLevel level = serverPlayer.serverLevel();
             level.sendParticles(ParticleTypes.CRIT, target.getX(), target.getY(0.5D), target.getZ(), 6, 0.2D, 0.2D, 0.2D, 0.0D);
-            level.playSound(null, target.blockPosition(), net.minecraft.sounds.SoundEvents.FISHING_BOBBER_THROW, SoundSource.PLAYERS, 0.8F, 0.65F);
+            level.playSound(null, target.blockPosition(), SoundEvents.FISHING_BOBBER_THROW, SoundSource.PLAYERS, 0.8F, 0.65F);
         }
         return true;
     }

@@ -2,12 +2,12 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.AntModel;
 import com.craisinlord.antarchy.content.entity.ant.BaseAntEntity;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 public class AntRenderer extends GeoEntityRenderer<BaseAntEntity, LivingEntityRenderState> {
     private static final DataTicket<Boolean> BABY = DataTicket.create("antarchy_ant_baby", Boolean.class);

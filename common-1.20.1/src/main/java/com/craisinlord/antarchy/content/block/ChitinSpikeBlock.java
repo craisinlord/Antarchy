@@ -5,10 +5,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -100,7 +100,7 @@ public class ChitinSpikeBlock extends PointedDripstoneBlock {
             while (isChitinSpikeWithDirection(level.getBlockState(cursor), Direction.DOWN)) {
                 BlockState fallingState = level.getBlockState(cursor);
                 if (isChitinSpikeWithDirection(fallingState, Direction.DOWN)) {
-                    net.minecraft.world.entity.item.FallingBlockEntity.fall(level, cursor, fallingState);
+                    FallingBlockEntity.fall(level, cursor, fallingState);
                 }
                 cursor.move(Direction.DOWN);
             }

@@ -60,7 +60,7 @@ public final class CavarynWormBoreFunction implements DensityFunction, CavarynCo
     @Override
     public double compute(FunctionContext context) {
         if (this.grid == null) {
-            return 1.0;
+            return 1.0D;
         }
         return CavarynColumn.density(this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), CavarynColumn.FLOOR));
     }
@@ -93,7 +93,7 @@ public final class CavarynWormBoreFunction implements DensityFunction, CavarynCo
         NoiseHolder mappedNoise = visitor.visitNoise(this.noise);
         CavarynWormBoreGrid mappedGrid = null;
         if (mappedNoise.noise() != null) {
-            long salt = saltFor(mappedNoise.getValue(1234.567, 89.123, -456.789), mappedNoise.getValue(-987.654, 12.345, 654.321));
+            long salt = saltFor(mappedNoise.getValue(1234.567D, 89.123D, -456.789D), mappedNoise.getValue(-987.654D, 12.345D, 654.321D));
             mappedGrid = CavarynWormBoreGrid.create(salt, (x, y, z) -> {
                 SinglePointContext point = new SinglePointContext(Mth.floor(x), Mth.floor(y), Mth.floor(z));
                 double humidity = mappedHumidity.compute(point);
@@ -109,12 +109,12 @@ public final class CavarynWormBoreFunction implements DensityFunction, CavarynCo
 
     @Override
     public double minValue() {
-        return -1.0;
+        return -1.0D;
     }
 
     @Override
     public double maxValue() {
-        return 1.0;
+        return 1.0D;
     }
 
     @Override

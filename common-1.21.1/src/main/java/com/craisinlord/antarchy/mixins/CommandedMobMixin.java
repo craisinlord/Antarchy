@@ -6,6 +6,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Mob;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Mob.class)
 public abstract class CommandedMobMixin implements CommandedEntityAccess {
@@ -46,8 +49,8 @@ public abstract class CommandedMobMixin implements CommandedEntityAccess {
         antarchy$royalInvested = invested;
     }
 
-    @org.spongepowered.asm.mixin.injection.Inject(method = "addAdditionalSaveData", at = @org.spongepowered.asm.mixin.injection.At("TAIL"))
-    private void antarchy$saveCommandedData(CompoundTag tag, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void antarchy$saveCommandedData(CompoundTag tag, CallbackInfo ci) {
         if (antarchy$commanderUuid != null) {
             tag.putUUID("AntarchyCommander", antarchy$commanderUuid);
             tag.putBoolean("AntarchyCommandedTargetOwned", antarchy$commandedTargetOwned);
@@ -55,8 +58,8 @@ public abstract class CommandedMobMixin implements CommandedEntityAccess {
         }
     }
 
-    @org.spongepowered.asm.mixin.injection.Inject(method = "readAdditionalSaveData", at = @org.spongepowered.asm.mixin.injection.At("TAIL"))
-    private void antarchy$loadCommandedData(CompoundTag tag, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void antarchy$loadCommandedData(CompoundTag tag, CallbackInfo ci) {
         if (tag.hasUUID("AntarchyCommander")) {
             antarchy$commanderUuid = tag.getUUID("AntarchyCommander");
             antarchy$commandedTargetOwned = tag.getBoolean("AntarchyCommandedTargetOwned");

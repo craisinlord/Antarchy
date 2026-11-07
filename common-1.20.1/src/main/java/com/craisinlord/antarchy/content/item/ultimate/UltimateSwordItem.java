@@ -1,7 +1,12 @@
 package com.craisinlord.antarchy.content.item.ultimate;
 
+import com.craisinlord.antarchy.compat.item.WeaponAttributes;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.google.common.collect.Multimap;
 import java.util.function.DoubleSupplier;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -20,11 +25,11 @@ public class UltimateSwordItem extends SwordItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
-        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot != EquipmentSlot.MAINHAND) {
             return super.getDefaultAttributeModifiers(slot);
         }
-        return com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (float) Math.round(this.attackDamage.getAsDouble()), (float) AntarchySettings.ultimateSwordAttackSpeed()).build();
+        return WeaponAttributes.base(this.tier, (float) Math.round(this.attackDamage.getAsDouble()), (float) AntarchySettings.ultimateSwordAttackSpeed()).build();
     }
 
     @Override

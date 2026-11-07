@@ -1,57 +1,74 @@
 package com.craisinlord.antarchy.fabric.registry;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity;
+import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
 import com.craisinlord.antarchy.content.entity.BedBugEntity;
+import com.craisinlord.antarchy.content.entity.BomberEntity;
 import com.craisinlord.antarchy.content.entity.ButterflyEntity;
 import com.craisinlord.antarchy.content.entity.CaterpillarEntity;
-import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
-import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
-import com.craisinlord.antarchy.content.entity.ReverieEntity;
-import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
-import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
-import com.craisinlord.antarchy.content.entity.SpringbugEntity;
-import com.craisinlord.antarchy.content.entity.StinkBugEntity;
-import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
-import com.craisinlord.antarchy.content.entity.MantisEntity;
-import com.craisinlord.antarchy.content.entity.RollyPollyEntity;
-import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
+import com.craisinlord.antarchy.content.entity.CheepEntity;
+import com.craisinlord.antarchy.content.entity.CrawlingBlightEntity;
+import com.craisinlord.antarchy.content.entity.DorrieEntity;
+import com.craisinlord.antarchy.content.entity.ElkaEntity;
 import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
-import com.craisinlord.antarchy.content.entity.ScorpionEntity;
-import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
-import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
-import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
-import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
-import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
+import com.craisinlord.antarchy.content.entity.FlytrapEntity;
+import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
+import com.craisinlord.antarchy.content.entity.HoverboardEntity;
+import com.craisinlord.antarchy.content.entity.JerryEntity;
+import com.craisinlord.antarchy.content.entity.ManticoreEntity;
+import com.craisinlord.antarchy.content.entity.MantisEntity;
+import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.MolevoreEntity;
 import com.craisinlord.antarchy.content.entity.MolewormEntity;
-import com.craisinlord.antarchy.content.entity.BomberEntity;
-import com.craisinlord.antarchy.content.entity.FlytrapEntity;
+import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
+import com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity;
+import com.craisinlord.antarchy.content.entity.ReverieEntity;
+import com.craisinlord.antarchy.content.entity.RollyPollyEntity;
+import com.craisinlord.antarchy.content.entity.ScorpionEntity;
+import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
+import com.craisinlord.antarchy.content.entity.SpitBugEntity;
+import com.craisinlord.antarchy.content.entity.SpringbugEntity;
+import com.craisinlord.antarchy.content.entity.StinkBugEntity;
+import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaspEntity;
 import com.craisinlord.antarchy.content.entity.WormEntity;
+import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
+import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
+import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
+import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
+import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
+import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
+import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
+import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
+import com.craisinlord.antarchy.content.entity.royal.KingEntity;
+import com.craisinlord.antarchy.content.entity.royal.PrinceEntity;
+import com.craisinlord.antarchy.content.entity.royal.PrincessEntity;
+import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
+import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
 
 public final class AntarchyFabricEntityAttributes {
 
-
     private static AttributeSupplier.Builder buildAntAttributes(double health, double speed, double attackDamage) {
-        return net.minecraft.world.entity.Mob.createMobAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, health)
                 .add(Attributes.MOVEMENT_SPEED, speed)
                 .add(Attributes.ATTACK_DAMAGE, attackDamage);
     }
 
-
-
     public static void register() {
         FabricDefaultAttributeRegistry.register(
-                net.minecraft.world.entity.EntityType.PLAYER,
-                net.minecraft.world.entity.player.Player.createAttributes()
+                EntityType.PLAYER,
+                Player.createAttributes()
                         .add(AntarchyFabricMisc.attributeHolder(AntarchyFabricMisc.DOUBLE_DAMAGE_CHANCE))
                         .add(AntarchyFabricMisc.attributeHolder(AntarchyFabricMisc.BLOODGLASS_MAX_HEARTS))
                         .build()
@@ -81,32 +98,32 @@ public final class AntarchyFabricEntityAttributes {
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.WASP.get(), WaspEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.BOMBER.get(), BomberEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.SPRINGBUG.get(), SpringbugEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.SPIT_BUG.get(), com.craisinlord.antarchy.content.entity.SpitBugEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.SPIT_BUG.get(), SpitBugEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.MANTIS.get(), MantisEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.ALPHA_MANTIS.get(), AlphaMantisEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.ROLLY_POLLY.get(), RollyPollyEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.FLYTRAP.get(), FlytrapEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.LUCID.get(), LucidEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.VORTEX.get(), com.craisinlord.antarchy.content.entity.vortex.VortexEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.VORTEX.get(), VortexEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.SCORPION.get(), ScorpionEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.BASILISK.get(), BasiliskEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.TORETERROR.get(), ToreterrorEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.CRAWLING_BLIGHT.get(), com.craisinlord.antarchy.content.entity.CrawlingBlightEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.SKULKING_FRIGHT.get(), com.craisinlord.antarchy.content.entity.SkulkingFrightEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.MANTICORE.get(), com.craisinlord.antarchy.content.entity.ManticoreEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.JERRY.get(), com.craisinlord.antarchy.content.entity.JerryEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.CHEEP.get(), com.craisinlord.antarchy.content.entity.CheepEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.DORRIE.get(), com.craisinlord.antarchy.content.entity.DorrieEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.HERCULES_BEETLE.get(), com.craisinlord.antarchy.content.entity.HerculesBeetleEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.PRINCE.get(), com.craisinlord.antarchy.content.entity.royal.PrinceEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.PRINCESS.get(), com.craisinlord.antarchy.content.entity.royal.PrincessEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.KING.get(), com.craisinlord.antarchy.content.entity.royal.KingEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.QUEEN.get(), com.craisinlord.antarchy.content.entity.royal.QueenEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.OURANWOOD_DEER.get(), com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.GLIMMER.get(), com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.ELKA.get(), com.craisinlord.antarchy.content.entity.ElkaEntity.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.HOVERBOARD.get(), com.craisinlord.antarchy.content.entity.HoverboardEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.CRAWLING_BLIGHT.get(), CrawlingBlightEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.SKULKING_FRIGHT.get(), SkulkingFrightEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.MANTICORE.get(), ManticoreEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.JERRY.get(), JerryEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.CHEEP.get(), CheepEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.DORRIE.get(), DorrieEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.HERCULES_BEETLE.get(), HerculesBeetleEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.PRINCE.get(), PrinceEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.PRINCESS.get(), PrincessEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.KING.get(), KingEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.QUEEN.get(), QueenEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.OURANWOOD_DEER.get(), OuranwoodDeerEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.GLIMMER.get(), GlimmerEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.ELKA.get(), ElkaEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.HOVERBOARD.get(), HoverboardEntity.createAttributes().build());
 
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.RED_ANT.get(), buildAntAttributes(
                 AntarchySettings.redAntHealth(),

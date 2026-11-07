@@ -1,24 +1,24 @@
 package com.craisinlord.antarchy.content.entity.lucid;
 
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.function.Supplier;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -112,14 +112,14 @@ public class LucidBoltEntity extends ThrowableProjectile implements GeoEntity {
     }
 
     private void realignToMotion() {
-        net.minecraft.world.phys.Vec3 motion = this.getDeltaMovement();
+        Vec3 motion = this.getDeltaMovement();
         if (motion.lengthSqr() < 1.0E-6D) {
             return;
         }
 
         double horizontal = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
-        this.setYRot((float) (net.minecraft.util.Mth.atan2(motion.z, motion.x) * (180.0D / Math.PI)) - 90.0F);
-        this.setXRot((float) (-(net.minecraft.util.Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI))));
+        this.setYRot((float) (Mth.atan2(motion.z, motion.x) * (180.0D / Math.PI)) - 90.0F);
+        this.setXRot((float) (-(Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI))));
     }
 
     @Override

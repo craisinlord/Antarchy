@@ -1,17 +1,22 @@
 package com.craisinlord.antarchy.content.entity.kraken;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import java.util.List;
+import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -25,9 +30,6 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.List;
-import java.util.UUID;
 
 public class TentacleEntity extends Mob implements GeoEntity {
     private static final RawAnimation GRASP_ANIM = RawAnimation.begin().thenLoop("animation");
@@ -61,7 +63,7 @@ public class TentacleEntity extends Mob implements GeoEntity {
     }
 
     @Override
-    public void push(net.minecraft.world.entity.Entity entity) {
+    public void push(Entity entity) {
     }
 
     @Override
@@ -77,7 +79,7 @@ public class TentacleEntity extends Mob implements GeoEntity {
     }
 
     public static void spawnAt(ServerLevel level, Vec3 pos, LivingEntity owner) {
-        TentacleEntity tentacle = new TentacleEntity(com.craisinlord.antarchy.content.AntarchyObjects.TENTACLE.get(), level);
+        TentacleEntity tentacle = new TentacleEntity(AntarchyObjects.TENTACLE.get(), level);
         tentacle.moveTo(pos.x, pos.y, pos.z, 0.0F, 0.0F);
         if (owner != null) {
             tentacle.ownerId = owner.getUUID();
@@ -92,7 +94,7 @@ public class TentacleEntity extends Mob implements GeoEntity {
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        return new net.minecraft.world.entity.ai.navigation.GroundPathNavigation(this, level);
+        return new GroundPathNavigation(this, level);
     }
 
     @Override

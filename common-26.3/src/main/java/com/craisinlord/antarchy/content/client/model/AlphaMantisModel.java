@@ -2,10 +2,10 @@ package com.craisinlord.antarchy.content.client.model;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
+import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
 import net.minecraft.resources.Identifier;
-import com.geckolib.constant.dataticket.DataTicket;
 
 public class AlphaMantisModel extends GeoModel<AlphaMantisEntity> {
     public static final DataTicket<Boolean> GLIMMER_ECHO = DataTicket.create("antarchy_alpha_mantis_glimmer_echo", Boolean.class);

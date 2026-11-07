@@ -5,11 +5,21 @@ import com.craisinlord.antarchy.content.weather.ElythiaEvent;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.renderpearl.api.pipeline.BlendFactor;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.DepthStencilState;
 import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.ShaderType;
+import java.util.Optional;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public final class ElythiaNightSkyRenderer {
     private static final float RADIUS = 99.0F;
@@ -106,7 +116,7 @@ public final class ElythiaNightSkyRenderer {
         }
         float constellationBrightness = Math.min(1.0F, starBrightness * 2.0F);
         AntarchySkyDraw.draw("Antarchy Elythia constellations", CONSTELLATION_PIPELINE, constellationStars, modelViewMatrix,
-                new org.joml.Vector4f(constellationBrightness, constellationBrightness, constellationBrightness, constellationBrightness), null);
+                new Vector4f(constellationBrightness, constellationBrightness, constellationBrightness, constellationBrightness), null);
         BufferBuilder buffer = AntarchySkyDraw.begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
         renderAurora(buffer, timeOfDay, time, night, partialTick);
         renderMeteors(buffer, time, night, partialTick);
@@ -284,24 +294,24 @@ public final class ElythiaNightSkyRenderer {
         return upload(buffer.buildOrThrow());
     }
 
-    private static final com.mojang.renderpearl.api.pipeline.RenderPipeline CONSTELLATION_PIPELINE = pipeline(false);
-    private static final com.mojang.renderpearl.api.pipeline.RenderPipeline ADDITIVE_PIPELINE = pipeline(true);
+    private static final RenderPipeline CONSTELLATION_PIPELINE = pipeline(false);
+    private static final RenderPipeline ADDITIVE_PIPELINE = pipeline(true);
 
-    private static com.mojang.renderpearl.api.pipeline.RenderPipeline pipeline(boolean additive) {
-        var original = net.minecraft.client.renderer.RenderPipelines.DEBUG_QUADS;
+    private static RenderPipeline pipeline(boolean additive) {
+        var original = RenderPipelines.DEBUG_QUADS;
         var blend = additive
-                ? new com.mojang.renderpearl.api.pipeline.BlendFunction(com.mojang.renderpearl.api.pipeline.BlendFactor.SRC_ALPHA, com.mojang.renderpearl.api.pipeline.BlendFactor.ONE,
-                        com.mojang.renderpearl.api.pipeline.BlendFactor.SRC_ALPHA, com.mojang.renderpearl.api.pipeline.BlendFactor.ONE)
-                : new com.mojang.renderpearl.api.pipeline.BlendFunction(com.mojang.renderpearl.api.pipeline.BlendFactor.SRC_ALPHA, com.mojang.renderpearl.api.pipeline.BlendFactor.ONE_MINUS_SRC_ALPHA,
-                        com.mojang.renderpearl.api.pipeline.BlendFactor.ONE, com.mojang.renderpearl.api.pipeline.BlendFactor.ZERO);
-        var builder = com.mojang.renderpearl.api.pipeline.RenderPipeline.builder()
-                .withLocation(net.minecraft.resources.Identifier.fromNamespaceAndPath("antarchy", additive ? "pipeline/elythia_night_additive" : "pipeline/elythia_constellations"))
+                ? new BlendFunction(BlendFactor.SRC_ALPHA, BlendFactor.ONE,
+                        BlendFactor.SRC_ALPHA, BlendFactor.ONE)
+                : new BlendFunction(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA,
+                        BlendFactor.ONE, BlendFactor.ZERO);
+        var builder = RenderPipeline.builder()
+                .withLocation(Identifier.fromNamespaceAndPath("antarchy", additive ? "pipeline/elythia_night_additive" : "pipeline/elythia_constellations"))
                 .withCull(false)
                 .withPolygonMode(original.getPolygonMode())
-                .withDepthStencilState(java.util.Optional.ofNullable(original.getDepthStencilState()).map(state ->
-                        new com.mojang.renderpearl.api.pipeline.DepthStencilState(state.depthTest(), false, state.depthBiasScaleFactor(), state.depthBiasConstant())));
-        builder.withVertexShader(original.getShaders().get(com.mojang.renderpearl.api.pipeline.ShaderType.VERTEX))
-                .withFragmentShader(original.getShaders().get(com.mojang.renderpearl.api.pipeline.ShaderType.FRAGMENT))
+                .withDepthStencilState(Optional.ofNullable(original.getDepthStencilState()).map(state ->
+                        new DepthStencilState(state.depthTest(), false, state.depthBiasScaleFactor(), state.depthBiasConstant())));
+        builder.withVertexShader(original.getShaders().get(ShaderType.VERTEX))
+                .withFragmentShader(original.getShaders().get(ShaderType.FRAGMENT))
                 .withPrimitiveTopology(original.getPrimitiveTopology()).withPushConstantSize(original.pushConstantSize());
         for (int index = 0; index < original.getVertexFormatBindings().size(); index++) {
             var format = original.getVertexFormatBinding(index);
@@ -311,7 +321,7 @@ public final class ElythiaNightSkyRenderer {
         }
         for (int index = 0; index < original.getColorTargetStates().size(); index++) {
             var state = original.getColorTargetStates().get(index);
-            builder.withColorTargetState(index, new com.mojang.renderpearl.api.pipeline.ColorTargetState(java.util.Optional.of(blend), state.format(), state.writeMask()));
+            builder.withColorTargetState(index, new ColorTargetState(Optional.of(blend), state.format(), state.writeMask()));
         }
         for (var layout : original.getBindGroupLayouts()) {
             builder.withBindGroupLayout(layout);

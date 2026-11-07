@@ -1,31 +1,31 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
-import net.minecraft.server.level.ServerLevel;
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.content.AntarchyGameRules;
-import com.craisinlord.antarchy.config.AntarchySettings;
+import com.geckolib.animatable.GeoEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
 
 public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     private static final int WOOD_BITE_ANIMATION_TICKS = 8;
@@ -175,13 +175,19 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
         BlockPos.MutableBlockPos candidate = new BlockPos.MutableBlockPos();
         for (int dx = -LIGHT_FLEE_SEARCH_RADIUS; dx <= LIGHT_FLEE_SEARCH_RADIUS; dx++) {
             for (int dz = -LIGHT_FLEE_SEARCH_RADIUS; dz <= LIGHT_FLEE_SEARCH_RADIUS; dz++) {
-                if (dx * dx + dz * dz > LIGHT_FLEE_SEARCH_RADIUS * LIGHT_FLEE_SEARCH_RADIUS) continue;
+                if (dx * dx + dz * dz > LIGHT_FLEE_SEARCH_RADIUS * LIGHT_FLEE_SEARCH_RADIUS) {
+                    continue;
+                }
                 for (int dy = -2; dy <= 2; dy++) {
                     candidate.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
-                    if (!this.isWalkableStandPos(candidate)) continue;
+                    if (!this.isWalkableStandPos(candidate)) {
+                        continue;
+                    }
                     int light = this.level().getBrightness(LightLayer.BLOCK, candidate);
                     double distance = candidate.distSqr(origin);
-                    if (light > bestLight || (light == bestLight && distance <= bestDistance)) continue;
+                    if (light > bestLight || (light == bestLight && distance <= bestDistance)) {
+                        continue;
+                    }
                     bestPos = candidate.immutable();
                     bestLight = light;
                     bestDistance = distance;

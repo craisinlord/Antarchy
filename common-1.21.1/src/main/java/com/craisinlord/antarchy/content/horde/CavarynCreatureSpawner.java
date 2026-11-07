@@ -2,8 +2,11 @@ package com.craisinlord.antarchy.content.horde;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -18,12 +21,10 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class CavarynCreatureSpawner {
     private static final ResourceKey<Level> CAVARYN = ResourceKey.create(
-            net.minecraft.core.registries.Registries.DIMENSION,
+            Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cavaryn")
     );
 

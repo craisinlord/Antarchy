@@ -3,10 +3,11 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.mixins.LivingEntityJumpingAccessor;
+import com.craisinlord.anthology.effect.InvertedMobEffect;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.mixins.LivingEntityJumpingAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,13 +21,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -70,7 +71,7 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public boolean canBeAffected(MobEffectInstance effectInstance) {
-        return effectInstance.getEffect().value() instanceof com.craisinlord.anthology.effect.InvertedMobEffect;
+        return effectInstance.getEffect().value() instanceof InvertedMobEffect;
     }
 
     public static AttributeSupplier.Builder createAttributes() {

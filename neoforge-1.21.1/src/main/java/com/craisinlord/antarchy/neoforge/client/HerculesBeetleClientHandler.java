@@ -1,9 +1,14 @@
 package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.AntTransitClientState;
+import com.craisinlord.antarchy.content.client.ElythiaEchoes;
+import com.craisinlord.antarchy.content.client.ElythiaEventClient;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState;
+import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
+import com.craisinlord.antarchy.content.client.ThrowbackClientState;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.network.HerculesBeetleFlightTogglePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
@@ -32,11 +37,11 @@ public final class HerculesBeetleClientHandler {
         HerculesBeetleImpactShakeClientState.tick();
         KingJudgmentFlashClientState.tick();
         HordeClientState.tick();
-        com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
-        com.craisinlord.antarchy.content.client.ElythiaEventClient.tick();
-        com.craisinlord.antarchy.content.client.ThoraxisEventClient.tick();
-        com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
-        com.craisinlord.antarchy.content.client.AntTransitClientState.tick();
+        ThrowbackClientState.tick();
+        ElythiaEventClient.tick();
+        ThoraxisEventClient.tick();
+        ElythiaEchoes.tick();
+        AntTransitClientState.tick();
 
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;

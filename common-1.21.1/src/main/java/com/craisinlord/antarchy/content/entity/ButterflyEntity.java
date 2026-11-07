@@ -3,8 +3,8 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
@@ -29,9 +29,9 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -492,7 +492,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity, 
     }
 
     @Override
-    protected void jumpInLiquid(net.minecraft.tags.TagKey<Fluid> fluidTag) {
+    protected void jumpInLiquid(TagKey<Fluid> fluidTag) {
         this.setDeltaMovement(this.getDeltaMovement().add(GravityRotationUtil.vecPlayerToWorld(0.0D, 0.01D, 0.0D, GravityApi.getGravityDirection(this))));
     }
 

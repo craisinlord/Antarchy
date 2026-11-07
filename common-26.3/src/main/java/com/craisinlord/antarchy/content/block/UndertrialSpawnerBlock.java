@@ -1,15 +1,16 @@
 package com.craisinlord.antarchy.content.block;
 
-import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -24,8 +25,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-
-import java.util.function.Supplier;
+import net.minecraft.world.phys.BlockHitResult;
 
 public final class UndertrialSpawnerBlock extends BaseEntityBlock {
     public static final EnumProperty<TrialSpawnerState> STATE = BlockStateProperties.TRIAL_SPAWNER_STATE;
@@ -62,7 +62,7 @@ public final class UndertrialSpawnerBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
-                                               Player player, net.minecraft.world.InteractionHand hand,
+                                               Player player, InteractionHand hand,
                                                BlockHitResult hitResult) {
         if (!(stack.getItem() instanceof SpawnEggItem)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -82,7 +82,7 @@ public final class UndertrialSpawnerBlock extends BaseEntityBlock {
             return createTickerHelper(blockEntityType, this.blockEntityType.get(), UndertrialSpawnerBlockEntity::clientTick);
         }
         return createTickerHelper(blockEntityType, this.blockEntityType.get(), (tickLevel, tickPos, tickState, blockEntity) -> {
-            if (tickLevel instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            if (tickLevel instanceof ServerLevel serverLevel) {
                 UndertrialSpawnerBlockEntity.serverTick(serverLevel, tickPos, tickState, blockEntity);
             }
         });

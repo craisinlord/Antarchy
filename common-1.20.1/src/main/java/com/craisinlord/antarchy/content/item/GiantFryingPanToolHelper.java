@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.item.ultimate.UltimateToolHelper;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,6 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -66,7 +69,7 @@ public final class GiantFryingPanToolHelper {
         if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, stack) >= FIRE_ASPECT_LEVEL) {
             return;
         }
-        java.util.Map<net.minecraft.world.item.enchantment.Enchantment, Integer> enchantments = new java.util.LinkedHashMap<>(EnchantmentHelper.getEnchantments(stack));
+        Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(EnchantmentHelper.getEnchantments(stack));
         enchantments.put(Enchantments.FIRE_ASPECT, FIRE_ASPECT_LEVEL);
         EnchantmentHelper.setEnchantments(enchantments, stack);
     }

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.minecart.AntimetalMinecartAccess;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -20,8 +21,6 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.AABB;
-
-import java.util.List;
 
 public class AntimetalDetectorRailBlock extends AbstractAntimetalRailBlock {
     public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;

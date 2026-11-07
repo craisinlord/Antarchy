@@ -3,8 +3,8 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
 

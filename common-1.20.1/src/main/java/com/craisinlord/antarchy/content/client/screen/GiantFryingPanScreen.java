@@ -34,7 +34,9 @@ public final class GiantFryingPanScreen extends AbstractContainerScreen<GiantFry
         GiantFryingPanStorage storage = this.menu.storage();
         for (int slot = 0; slot < GiantFryingPanStorage.SLOT_COUNT; slot++) {
             float progress = storage.cookProgress(slot);
-            if (progress <= 0.0F) continue;
+            if (progress <= 0.0F) {
+                continue;
+            }
             int x = this.leftPos + 8 + slot * 18;
             int y = this.topPos + GiantFryingPanMenu.PAN_ROW_Y + 16;
             graphics.fill(x, y, x + Math.round(16 * progress), y + 1, PROGRESS_COLOR);

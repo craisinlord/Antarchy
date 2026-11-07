@@ -10,14 +10,14 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
 public class BileLiquidBlock extends LiquidBlock {
@@ -69,7 +69,7 @@ public class BileLiquidBlock extends LiquidBlock {
 
         if (entity instanceof LivingEntity livingEntity) {
             if (!level.isClientSide) {
-                if (livingEntity.getMobType() == net.minecraft.world.entity.MobType.ARTHROPOD) {
+                if (livingEntity.getMobType() == MobType.ARTHROPOD) {
                     return;
                 }
                 livingEntity.addEffect(new MobEffectInstance(AntarchyObjects.STINKY_EFFECT.get(), EFFECT_DURATION_TICKS, 0, false, true, true));

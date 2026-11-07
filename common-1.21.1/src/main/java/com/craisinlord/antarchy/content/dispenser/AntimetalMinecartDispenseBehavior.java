@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MinecartItem;
 import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
@@ -25,7 +26,7 @@ public final class AntimetalMinecartDispenseBehavior extends DefaultDispenseItem
             return this.fallback.dispense(source, stack);
         }
 
-        Direction direction = source.state().getValue(net.minecraft.world.level.block.DispenserBlock.FACING);
+        Direction direction = source.state().getValue(DispenserBlock.FACING);
         BlockPos frontPos = source.pos().relative(direction);
         BlockState frontState = source.level().getBlockState(frontPos);
 
@@ -105,12 +106,24 @@ public final class AntimetalMinecartDispenseBehavior extends DefaultDispenseItem
     }
 
     private static AbstractMinecart.Type minecartType(Item item) {
-        if (item == Items.MINECART) return AbstractMinecart.Type.RIDEABLE;
-        if (item == Items.CHEST_MINECART) return AbstractMinecart.Type.CHEST;
-        if (item == Items.FURNACE_MINECART) return AbstractMinecart.Type.FURNACE;
-        if (item == Items.TNT_MINECART) return AbstractMinecart.Type.TNT;
-        if (item == Items.HOPPER_MINECART) return AbstractMinecart.Type.HOPPER;
-        if (item == Items.COMMAND_BLOCK_MINECART) return AbstractMinecart.Type.COMMAND_BLOCK;
+        if (item == Items.MINECART) {
+            return AbstractMinecart.Type.RIDEABLE;
+        }
+        if (item == Items.CHEST_MINECART) {
+            return AbstractMinecart.Type.CHEST;
+        }
+        if (item == Items.FURNACE_MINECART) {
+            return AbstractMinecart.Type.FURNACE;
+        }
+        if (item == Items.TNT_MINECART) {
+            return AbstractMinecart.Type.TNT;
+        }
+        if (item == Items.HOPPER_MINECART) {
+            return AbstractMinecart.Type.HOPPER;
+        }
+        if (item == Items.COMMAND_BLOCK_MINECART) {
+            return AbstractMinecart.Type.COMMAND_BLOCK;
+        }
         return null;
     }
 }

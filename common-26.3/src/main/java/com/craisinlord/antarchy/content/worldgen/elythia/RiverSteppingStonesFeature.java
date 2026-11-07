@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
+import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -9,16 +9,18 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class RiverSteppingStonesFeature implements Feature {
     public static final MapCodec<RiverSteppingStonesFeature> CODEC = MapCodec.unit(RiverSteppingStonesFeature::new);
 
     @Override
-    public MapCodec<RiverSteppingStonesFeature> codec() { return CODEC; }
+    public MapCodec<RiverSteppingStonesFeature> codec() {
+        return CODEC;
+    }
     private static final int MAX_DEPTH = 10;
     private static final double BOAT_LANE_HALF_WIDTH = 2.0D;
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -107,7 +109,7 @@ public class RiverSteppingStonesFeature implements Feature {
     }
 
     private static BlockState bodyState(RandomSource random) {
-        return random.nextFloat() < 0.35F ? com.craisinlord.antarchy.content.block.ElythiaPalette.block("rockite").defaultBlockState() : com.craisinlord.antarchy.content.block.ElythiaPalette.block("tidestone").defaultBlockState();
+        return random.nextFloat() < 0.35F ? ElythiaPalette.block("rockite").defaultBlockState() : ElythiaPalette.block("tidestone").defaultBlockState();
     }
 
     private static BlockState topState(RandomSource random) {
@@ -115,7 +117,7 @@ public class RiverSteppingStonesFeature implements Feature {
         if (roll < 0.25F) {
             return Blocks.MOSS_BLOCK.defaultBlockState();
         }
-        return roll < 0.85F ?com.craisinlord.antarchy.content.block.ElythiaPalette.block("tidestone").defaultBlockState() : com.craisinlord.antarchy.content.block.ElythiaPalette.block("rockite").defaultBlockState();
+        return roll < 0.85F ?ElythiaPalette.block("tidestone").defaultBlockState() : ElythiaPalette.block("rockite").defaultBlockState();
     }
 
     private static boolean canReplace(BlockState state) {

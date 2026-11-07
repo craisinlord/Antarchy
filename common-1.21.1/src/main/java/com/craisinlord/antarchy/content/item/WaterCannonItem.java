@@ -2,7 +2,11 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -24,11 +28,7 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class WaterCannonItem extends ProjectileWeaponItem implements GeoItem {
 
@@ -60,9 +60,13 @@ public class WaterCannonItem extends ProjectileWeaponItem implements GeoItem {
 
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseTicks) {
-        if (!(livingEntity instanceof Player player)) return;
+        if (!(livingEntity instanceof Player player)) {
+            return;
+        }
         int usedTicks = getUseDuration(stack, livingEntity) - remainingUseTicks;
-        if (usedTicks % FIRE_INTERVAL_TICKS != 0) return;
+        if (usedTicks % FIRE_INTERVAL_TICKS != 0) {
+            return;
+        }
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 AntarchySoundEvents.WATER_CANNON_FIRE.get(), SoundSource.PLAYERS,
@@ -124,7 +128,7 @@ public class WaterCannonItem extends ProjectileWeaponItem implements GeoItem {
             private AnimatedHeldItemRenderer<WaterCannonItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+            public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }

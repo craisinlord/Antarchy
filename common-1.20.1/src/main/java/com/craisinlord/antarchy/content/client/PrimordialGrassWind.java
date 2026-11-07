@@ -58,9 +58,15 @@ public final class PrimordialGrassWind {
     }
 
     public static double envelope(double age) {
-        if (age < 0.0D || age >= 136.0D) return 0.0D;
-        if (age < 25.0D) return smooth(age / 25.0D);
-        if (age < 54.0D) return 1.0D;
+        if (age < 0.0D || age >= 136.0D) {
+            return 0.0D;
+        }
+        if (age < 25.0D) {
+            return smooth(age / 25.0D);
+        }
+        if (age < 54.0D) {
+            return 1.0D;
+        }
         return 1.0D - smooth((age - 54.0D) / 82.0D);
     }
 

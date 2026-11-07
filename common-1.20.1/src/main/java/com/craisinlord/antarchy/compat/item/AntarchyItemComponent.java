@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.compat.item;
 
 import java.util.function.Function;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
 
 public final class AntarchyItemComponent<T> {
@@ -55,7 +56,7 @@ public final class AntarchyItemComponent<T> {
         return new AntarchyItemComponent<>(key, tag -> tag.getInt(key), value -> value);
     }
 
-    public static AntarchyItemComponent<net.minecraft.util.Unit> marker(String key) {
-        return new AntarchyItemComponent<>(key, tag -> net.minecraft.util.Unit.INSTANCE, value -> true);
+    public static AntarchyItemComponent<Unit> marker(String key) {
+        return new AntarchyItemComponent<>(key, tag -> Unit.INSTANCE, value -> true);
     }
 }

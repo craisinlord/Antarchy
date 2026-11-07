@@ -11,6 +11,8 @@ public final class BloodglassClientState {
         shieldsMax = max;
     }
 
-    public static int getShieldsActive() { return shieldsActive; }
+    public static int getShieldsActive() {
+        return shieldsActive;
+    }
     public static int getShieldsMax()    { return shieldsMax; }
 }

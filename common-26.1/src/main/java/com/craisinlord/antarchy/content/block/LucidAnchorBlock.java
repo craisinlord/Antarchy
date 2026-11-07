@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -52,7 +53,7 @@ public class LucidAnchorBlock extends BaseEntityBlock {
         return level.isClientSide()
                 ? null
                 : createTickerHelper(blockEntityType, AntarchyObjects.LUCID_ANCHOR_BLOCK_ENTITY.get(), (tickLevel, tickPos, tickState, blockEntity) -> {
-                    if (tickLevel instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                    if (tickLevel instanceof ServerLevel serverLevel) {
                         LucidAnchorBlockEntity.serverTick(serverLevel, tickPos, tickState, blockEntity);
                     }
                 });

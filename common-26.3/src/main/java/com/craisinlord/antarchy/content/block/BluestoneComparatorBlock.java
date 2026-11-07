@@ -5,15 +5,17 @@ import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +30,6 @@ import net.minecraft.world.level.block.state.properties.ComparatorMode;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.ticks.TickPriority;
 
 public class BluestoneComparatorBlock extends ComparatorBlock implements BluestoneSignalSource {
@@ -63,7 +64,7 @@ public class BluestoneComparatorBlock extends ComparatorBlock implements Bluesto
     @Override
     public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (direction == Direction.UP && !state.canSurvive(level, pos)) {
-            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+            return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, level, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
@@ -146,7 +147,7 @@ public class BluestoneComparatorBlock extends ComparatorBlock implements Bluesto
     }
 
     @Override
-    protected void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, RandomSource random) {
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         this.refreshBluestoneOutputState(level, pos, state);
     }
 
@@ -195,7 +196,7 @@ public class BluestoneComparatorBlock extends ComparatorBlock implements Bluesto
     }
 
     @Override
-    public void animateTick(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, RandomSource random) {
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!state.getValue(POWERED)) {
             return;
         }

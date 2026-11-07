@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.neoforge.network;
 
+import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.content.network.BrutalflyElytraAnimationPayload;
 import com.craisinlord.antarchy.content.network.BrutalflyElytraFlapPayload;
-import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -32,7 +32,7 @@ public final class BrutalflyElytraNetworking {
         );
     }
 
-    private static void handleFlap(com.craisinlord.antarchy.content.network.BrutalflyElytraFlapPayload payload, IPayloadContext context) {
+    private static void handleFlap(BrutalflyElytraFlapPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer serverPlayer)) {
                 return;

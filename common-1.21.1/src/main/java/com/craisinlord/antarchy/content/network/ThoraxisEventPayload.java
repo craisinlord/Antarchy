@@ -5,8 +5,8 @@ import com.craisinlord.antarchy.content.weather.ThoraxisBubble;
 import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record ThoraxisEventPayload(int event, int phase, long phaseStart, long phaseEnd, long seed,

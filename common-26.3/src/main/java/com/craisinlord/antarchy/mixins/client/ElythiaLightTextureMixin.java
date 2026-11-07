@@ -6,9 +6,13 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.renderpearl.api.buffers.GpuBuffer;
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import com.mojang.renderpearl.api.commands.RenderPass;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.renderpearl.api.pipeline.BindGroupLayout;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.ShaderType;
+import com.mojang.renderpearl.api.pipeline.UniformType;
+import java.nio.ByteOrder;
+import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MappableRingBuffer;
@@ -52,7 +56,7 @@ public abstract class ElythiaLightTextureMixin {
                     GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_MAP_WRITE, 16);
         }
         try (var mapped = antarchy$dreamInfo.currentBuffer().map(false, true)) {
-            mapped.data().order(java.nio.ByteOrder.nativeOrder()).putFloat(0, strength);
+            mapped.data().order(ByteOrder.nativeOrder()).putFloat(0, strength);
         }
         antarchy$dreamFrame = true;
     }
@@ -69,12 +73,12 @@ public abstract class ElythiaLightTextureMixin {
                     .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_lightmap"))
                     .withCull(original.isCull())
                     .withPolygonMode(original.getPolygonMode())
-                    .withDepthStencilState(java.util.Optional.ofNullable(original.getDepthStencilState()));
-            builder.withVertexShader(original.getShaders().get(com.mojang.renderpearl.api.pipeline.ShaderType.VERTEX))
+                    .withDepthStencilState(Optional.ofNullable(original.getDepthStencilState()));
+            builder.withVertexShader(original.getShaders().get(ShaderType.VERTEX))
                     .withPrimitiveTopology(original.getPrimitiveTopology())
                     .withPushConstantSize(original.pushConstantSize())
-                    .withBindGroupLayout(com.mojang.renderpearl.api.pipeline.BindGroupLayout.builder()
-                            .withUniform("AntarchyDreamInfo", com.mojang.renderpearl.api.pipeline.UniformType.UNIFORM_BUFFER).build());
+                    .withBindGroupLayout(BindGroupLayout.builder()
+                            .withUniform("AntarchyDreamInfo", UniformType.UNIFORM_BUFFER).build());
             for (int index = 0; index < original.getVertexFormatBindings().size(); index++) {
                 var format = original.getVertexFormatBinding(index);
                 if (format != null) {

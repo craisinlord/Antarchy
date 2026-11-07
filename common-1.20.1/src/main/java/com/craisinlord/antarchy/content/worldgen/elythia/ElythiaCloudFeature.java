@@ -54,8 +54,12 @@ public final class ElythiaCloudFeature extends Feature<NoneFeatureConfiguration>
 
     private static CloudSize pickSize(RandomSource random) {
         float roll = random.nextFloat();
-        if (roll < 0.40F) return CloudSize.WISPY;
-        if (roll < 0.75F) return CloudSize.SMALL;
+        if (roll < 0.40F) {
+            return CloudSize.WISPY;
+        }
+        if (roll < 0.75F) {
+            return CloudSize.SMALL;
+        }
         return CloudSize.LARGE;
     }
 

@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.effect.JudgmentMarkAccess;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
@@ -18,9 +20,9 @@ public final class RoyalIndicatorGeoLayer<T extends GeoAnimatable> extends GeoRe
     }
 
     @Override
-    public void render(com.mojang.blaze3d.vertex.PoseStack poseStack, T animatable, BakedGeoModel bakedModel,
+    public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel,
             @Nullable RenderType renderType, MultiBufferSource bufferSource,
-            @Nullable com.mojang.blaze3d.vertex.VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+            @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
         if (!(animatable instanceof Entity entity) || !(entity instanceof LivingEntity living)) {
             return;
         }

@@ -1,6 +1,9 @@
 package com.craisinlord.antarchy.content.entity.glimmer;
 
+import com.geckolib.animation.RawAnimation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -25,7 +28,7 @@ public interface GlimmerVariantBehavior {
     }
 
     static boolean hurtAsOwner(Player owner, LivingEntity target, float amount) {
-        if (!(owner.level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+        if (!(owner.level() instanceof ServerLevel serverLevel)) {
             return false;
         }
         return target.hurtServer(serverLevel, owner.damageSources().playerAttack(owner), amount);
@@ -72,17 +75,17 @@ public interface GlimmerVariantBehavior {
     }
 
     @Nullable
-    default com.geckolib.animation.RawAnimation abilityAnimation() {
+    default RawAnimation abilityAnimation() {
         return null;
     }
 
     @Nullable
-    default com.geckolib.animation.RawAnimation movingAnimation(GlimmerEntity entity) {
+    default RawAnimation movingAnimation(GlimmerEntity entity) {
         return null;
     }
 
     @Nullable
-    default com.geckolib.animation.RawAnimation idleAnimation(GlimmerEntity entity) {
+    default RawAnimation idleAnimation(GlimmerEntity entity) {
         return null;
     }
 
@@ -90,7 +93,7 @@ public interface GlimmerVariantBehavior {
         return 1.15D;
     }
 
-    default void sendAbilityMessage(Player owner, net.minecraft.network.chat.Component message) {
+    default void sendAbilityMessage(Player owner, Component message) {
         owner.sendOverlayMessage(message);
     }
 

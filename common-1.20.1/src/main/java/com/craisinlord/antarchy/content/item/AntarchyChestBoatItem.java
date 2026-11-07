@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.entity.AntarchyChestBoatEntity;
+import java.util.function.Supplier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -10,10 +11,10 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class AntarchyChestBoatItem extends OuranwoodBoatItem {
-    private final java.util.function.Supplier<? extends EntityType<AntarchyChestBoatEntity>> entityType;
+    private final Supplier<? extends EntityType<AntarchyChestBoatEntity>> entityType;
     private final String dropItemPath;
 
-    public AntarchyChestBoatItem(java.util.function.Supplier<? extends EntityType<AntarchyChestBoatEntity>> entityType, String dropItemPath, Properties properties) {
+    public AntarchyChestBoatItem(Supplier<? extends EntityType<AntarchyChestBoatEntity>> entityType, String dropItemPath, Properties properties) {
         super(properties);
         this.entityType = entityType;
         this.dropItemPath = dropItemPath;

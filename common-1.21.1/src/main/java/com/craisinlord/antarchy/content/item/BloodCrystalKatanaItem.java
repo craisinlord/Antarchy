@@ -1,7 +1,10 @@
 package com.craisinlord.antarchy.content.item;
 
-import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.client.BloodCrystalKatanaTrailClientState;
 import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,9 +29,6 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.phys.Vec3;
-import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.client.BloodCrystalKatanaTrailClientState;
 
 public class BloodCrystalKatanaItem extends SwordItem {
     private static final ResourceLocation ATTACK_RANGE_MODIFIER_ID =

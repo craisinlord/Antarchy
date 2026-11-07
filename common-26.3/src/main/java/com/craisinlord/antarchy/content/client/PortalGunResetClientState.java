@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.network.PortalGunResetPayload;
+import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 
@@ -19,11 +20,11 @@ public final class PortalGunResetClientState {
         boolean attack = canInput && minecraft.options.keyAttack.isDown();
         boolean use = canInput && minecraft.options.keyUse.isDown();
         if (active && !resetDown) {
-            sender.accept(new PortalGunResetPayload(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.ARM));
+            sender.accept(new PortalGunResetPayload(PortalGunResetManager.ARM));
             selectedSide = false;
         }
         if (active && attack && !attackDown) {
-            sender.accept(new PortalGunResetPayload(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.RESET_BLUE));
+            sender.accept(new PortalGunResetPayload(PortalGunResetManager.RESET_BLUE));
             selectedSide = true;
         }
         if (active && use && !useDown) {
@@ -31,8 +32,8 @@ public final class PortalGunResetClientState {
         }
         if (!active && resetDown) {
             int action = !canInput || selectedSide
-                    ? com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.RELEASE
-                    : com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.RESET_ALL;
+                    ? PortalGunResetManager.RELEASE
+                    : PortalGunResetManager.RESET_ALL;
             sender.accept(new PortalGunResetPayload(action));
             selectedSide = false;
         }

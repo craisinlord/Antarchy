@@ -4,10 +4,10 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.AppleCowEntity;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.EnchantedGoldenAppleCow;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.GoldenAppleCow;
-import net.minecraft.resources.Identifier;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class AppleCowModel extends GeoModel<AppleCowEntity> {
     public static final DataTicket<Boolean> BABY = DataTicket.create("antarchy_apple_cow_baby", Boolean.class);

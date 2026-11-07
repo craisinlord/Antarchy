@@ -1,22 +1,24 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
+import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
+import java.util.UUID;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +29,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -39,7 +41,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.tags.TagKey;
 
 public class CritterCageItem extends Item {
     public static final String ENTITY_DATA_TAG = "EntityData";
@@ -250,7 +251,7 @@ public class CritterCageItem extends Item {
             return false;
         }
 
-        entity.setUUID(java.util.UUID.randomUUID());
+        entity.setUUID(UUID.randomUUID());
         entity.snapTo(position.x, position.y, position.z, player != null ? player.getYRot() : 0.0F, 0.0F);
         if (!level.noCollision(entity)) {
             return false;
@@ -322,7 +323,7 @@ public class CritterCageItem extends Item {
     private void launchProjectile(Level level, Player player, InteractionHand hand, ItemStack stack) {
         var projectileType = AntarchyObjects.CRITTER_CAGE_PROJECTILE.get();
         var projectile = projectileType.create(level, EntitySpawnReason.TRIGGERED);
-        if (!(projectile instanceof com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity critterCageProjectile)) {
+        if (!(projectile instanceof CritterCageProjectileEntity critterCageProjectile)) {
             return;
         }
 

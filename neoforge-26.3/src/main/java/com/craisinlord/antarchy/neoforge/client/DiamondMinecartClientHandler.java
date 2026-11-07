@@ -23,9 +23,15 @@ public final class DiamondMinecartClientHandler {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
 
-        if (!AntarchySettings.diamondMinecartEnabled()) return;
-        if (mc.player == null || mc.level == null) return;
-        if (!(mc.player.getVehicle() instanceof DiamondMinecartEntity)) return;
+        if (!AntarchySettings.diamondMinecartEnabled()) {
+            return;
+        }
+        if (mc.player == null || mc.level == null) {
+            return;
+        }
+        if (!(mc.player.getVehicle() instanceof DiamondMinecartEntity)) {
+            return;
+        }
         if (mc.gui.screen() != null) {
             if (lastFlags != 0) {
                 ClientPacketDistributor.sendToServer(new DiamondMinecartInputPayload((byte) 0));

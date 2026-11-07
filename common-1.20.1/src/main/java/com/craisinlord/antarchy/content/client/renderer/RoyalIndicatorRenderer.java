@@ -1,16 +1,18 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class RoyalIndicatorRenderer {
     private static final ResourceLocation COMMANDED_CROWN_TEXTURE = new ResourceLocation(
-            com.craisinlord.antarchy.Antarchy.MODID, "textures/vfx/commanded_vfx_side.png");
+            Antarchy.MODID, "textures/vfx/commanded_vfx_side.png");
 
     private RoyalIndicatorRenderer() {
     }
@@ -61,10 +63,10 @@ public final class RoyalIndicatorRenderer {
         float top = 0.40F;
 
         poseStack.pushPose();
-        poseStack.mulPose(com.mojang.math.Axis.YP.rotation(rotation));
+        poseStack.mulPose(Axis.YP.rotation(rotation));
         for (int side = 0; side < 4; side++) {
             poseStack.pushPose();
-            poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(side * 90.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(side * 90.0F));
             PoseStack.Pose pose = poseStack.last();
             quad(crown, pose, -halfWidth, bottom, halfWidth, top, halfWidth, packedLight);
             poseStack.popPose();

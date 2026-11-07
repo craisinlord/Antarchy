@@ -1,6 +1,9 @@
 package com.craisinlord.antarchy.content.block.entity.undertrial;
 
 import com.craisinlord.antarchy.content.block.UndertrialSpawnerBlock;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
@@ -25,10 +28,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public final class UndertrialSpawner {
     public static final String NORMAL_CONFIG_TAG_NAME = "normal_config";

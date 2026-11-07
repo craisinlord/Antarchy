@@ -62,7 +62,9 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
 
     private boolean placeSpike(WorldGenLevel level, RandomSource random, BlockPos origin, int seaLevel) {
         int floorY = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, origin.getX(), origin.getZ());
-        if (floorY >= seaLevel) return false;
+        if (floorY >= seaLevel) {
+            return false;
+        }
 
         CoralSet[] coralSets = coralSets();
         CoralSet coral = coralSets[random.nextInt(coralSets.length)];
@@ -73,7 +75,7 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
         double curveAngle = random.nextDouble() * Math.PI * 2;
         double curveDX = Math.cos(curveAngle);
         double curveDZ = Math.sin(curveAngle);
-        double maxCurve = 4.0 + random.nextDouble() * 5.0;
+        double maxCurve = 4.0D + random.nextDouble() * 5.0D;
 
         boolean placed = false;
 
@@ -85,8 +87,8 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
             double centerX = origin.getX() + curveDX * curveOffset;
             double centerZ = origin.getZ() + curveDZ * curveOffset;
 
-            double taperT = Math.max(0.0, (progress - 0.25) / 0.75);
-            int radius = (int) Math.max(0, baseRadius * (1.0 - taperT * taperT * 1.3));
+            double taperT = Math.max(0.0D, (progress - 0.25D) / 0.75D);
+            int radius = (int) Math.max(0, baseRadius * (1.0D - taperT * taperT * 1.3D));
 
             for (int dx = -(radius + 1); dx <= radius + 1; dx++) {
                 for (int dz = -(radius + 1); dz <= radius + 1; dz++) {
@@ -94,10 +96,14 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
                             (origin.getX() + dx - centerX) * (origin.getX() + dx - centerX)
                           + (origin.getZ() + dz - centerZ) * (origin.getZ() + dz - centerZ));
 
-                    if (dist > radius + 0.5) continue;
+                    if (dist > radius + 0.5D) {
+                        continue;
+                    }
 
                     BlockPos pos = new BlockPos(origin.getX() + dx, blockY, origin.getZ() + dz);
-                    if (!canReplace(level.getBlockState(pos))) continue;
+                    if (!canReplace(level.getBlockState(pos))) {
+                        continue;
+                    }
 
                     boolean inWater = touchesWater(level, pos);
                     level.setBlock(pos, inWater
@@ -106,11 +112,11 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
                             2);
                     placed = true;
 
-                    if (dist >= radius - 0.6 && radius > 0) {
+                    if (dist >= radius - 0.6D && radius > 0) {
                         BlockPos above = pos.above();
                         if (canReplace(level.getBlockState(above))) {
                             boolean aboveInWater = level.getBlockState(above).is(Blocks.WATER);
-                            if (random.nextFloat() < 0.35f && aboveInWater) {
+                            if (random.nextFloat() < 0.35F && aboveInWater) {
                                 level.setBlock(above,
                                         coral.coral().defaultBlockState()
                                                 .setValue(BlockStateProperties.WATERLOGGED, true),
@@ -119,12 +125,16 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
                         }
                     }
 
-                    if (dist >= radius - 0.5) {
+                    if (dist >= radius - 0.5D) {
                         for (Direction dir : Direction.Plane.HORIZONTAL) {
-                            if (random.nextFloat() >= 0.4f) continue;
+                            if (random.nextFloat() >= 0.4F) {
+                                continue;
+                            }
                             BlockPos fanPos = pos.relative(dir);
                             BlockState existing = level.getBlockState(fanPos);
-                            if (!existing.isAir() && !existing.is(Blocks.WATER)) continue;
+                            if (!existing.isAir() && !existing.is(Blocks.WATER)) {
+                                continue;
+                            }
                             boolean fanInWater = existing.is(Blocks.WATER);
                             if (fanInWater) {
                                 level.setBlock(fanPos,
@@ -152,15 +162,19 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
             int fy = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, fx, fz);
             BlockPos decorPos = new BlockPos(fx, fy, fz);
 
-            if (!canReplace(level.getBlockState(decorPos))) continue;
+            if (!canReplace(level.getBlockState(decorPos))) {
+                continue;
+            }
             BlockState below = level.getBlockState(decorPos.below());
-            if (below.isAir() || !below.isFaceSturdy(level, decorPos.below(), Direction.UP)) continue;
+            if (below.isAir() || !below.isFaceSturdy(level, decorPos.below(), Direction.UP)) {
+                continue;
+            }
 
             boolean decorInWater = level.getBlockState(decorPos).is(Blocks.WATER);
             float roll = random.nextFloat();
             CoralSet randomCoral = coralSets[random.nextInt(coralSets.length)];
 
-            if (roll < 0.35f) {
+            if (roll < 0.35F) {
                 if (decorInWater) {
                     BlockState coralState = randomCoral.coral().defaultBlockState()
                             .setValue(BlockStateProperties.WATERLOGGED, true);
@@ -174,7 +188,7 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
                         level.setBlock(decorPos, coralState, 2);
                     }
                 }
-            } else if (roll < 0.65f) {
+            } else if (roll < 0.65F) {
                 if (decorInWater) {
                     BlockState fanState = randomCoral.floorFan().defaultBlockState()
                             .setValue(BlockStateProperties.WATERLOGGED, true);
@@ -201,9 +215,13 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private static boolean touchesWater(WorldGenLevel level, BlockPos pos) {
-        if (level.getBlockState(pos).is(Blocks.WATER)) return true;
+        if (level.getBlockState(pos).is(Blocks.WATER)) {
+            return true;
+        }
         for (Direction dir : Direction.values()) {
-            if (level.getBlockState(pos.relative(dir)).is(Blocks.WATER)) return true;
+            if (level.getBlockState(pos.relative(dir)).is(Blocks.WATER)) {
+                return true;
+            }
         }
         return false;
     }

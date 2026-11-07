@@ -3,9 +3,11 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import java.util.Optional;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -13,11 +15,15 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -36,13 +42,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.SpawnGroupData;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -83,7 +83,9 @@ public class WormEntity extends Monster implements GeoEntity {
 
         public static GrowthStage byId(int id) {
             for (GrowthStage stage : STAGES) {
-                if (stage.id == id) return stage;
+                if (stage.id == id) {
+                    return stage;
+                }
             }
             return LARGE;
         }
@@ -157,7 +159,9 @@ public class WormEntity extends Monster implements GeoEntity {
     }
 
     public void setGrowthStage(GrowthStage stage) {
-        if (this.entityData.get(GROWTH_STAGE) == stage.id) return;
+        if (this.entityData.get(GROWTH_STAGE) == stage.id) {
+            return;
+        }
         this.entityData.set(GROWTH_STAGE, stage.id);
         this.refreshDimensions();
         this.applyStageAttributes();
@@ -270,7 +274,9 @@ public class WormEntity extends Monster implements GeoEntity {
 
     private void tickGrowth() {
         GrowthStage stage = this.getGrowthStage();
-        if (stage == GrowthStage.LARGE) return;
+        if (stage == GrowthStage.LARGE) {
+            return;
+        }
         this.growthAge++;
         if (stage == GrowthStage.SMALL && this.growthAge >= SMALL_GROWTH_TICKS) {
             this.growthAge = 0;
@@ -282,7 +288,9 @@ public class WormEntity extends Monster implements GeoEntity {
     }
 
     private void tickMucusTrail() {
-        if (this.getGrowthStage() == GrowthStage.SMALL) return;
+        if (this.getGrowthStage() == GrowthStage.SMALL) {
+            return;
+        }
         if (this.mucusTrailCooldown > 0) {
             this.mucusTrailCooldown--;
         }

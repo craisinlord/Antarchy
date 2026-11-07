@@ -2,17 +2,16 @@ package com.craisinlord.antarchy.content.block.entity.undervault;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public class UnderVaultServerData {
     public static final String TAG_NAME = "server_data";

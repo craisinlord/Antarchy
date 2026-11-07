@@ -6,13 +6,15 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -62,8 +64,8 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
@@ -195,7 +197,7 @@ public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.manticoreHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
@@ -405,14 +407,14 @@ public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     public static void discardSummonedBy(ServerLevel level, UUID queenId) {
-        List<ManticoreEntity> summoned = new java.util.ArrayList<>();
+        List<ManticoreEntity> summoned = new ArrayList<>();
         for (Entity entity : level.getAllEntities()) {
             if (entity instanceof ManticoreEntity manticore && manticore.isAlive() && manticore.isSummonedBy(queenId)) {
                 summoned.add(manticore);
             }
         }
         for (ManticoreEntity manticore : summoned) {
-            level.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL,
+            level.sendParticles(ParticleTypes.REVERSE_PORTAL,
                     manticore.getX(), manticore.getY() + manticore.getBbHeight() * 0.5D, manticore.getZ(),
                     24, 0.5D, 0.5D, 0.5D, 0.1D);
             manticore.discard();
@@ -422,7 +424,7 @@ public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final int QUEEN_SUMMON_PEEL_TICKS = 100;
     private static final String SUMMONER_POS_KEY = "QueenSummonerPos";
     @Nullable
-    private net.minecraft.core.BlockPos lastSummonerPos;
+    private BlockPos lastSummonerPos;
 
     private void takeoff() {
         this.takeoffCooldown = TAKEOFF_COOLDOWN_TICKS;
@@ -592,7 +594,7 @@ public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
         super.readAdditionalSaveData(tag);
         this.summonerId = tag.hasUUID(SUMMONER_KEY) ? tag.getUUID(SUMMONER_KEY) : null;
         this.playerSummonerId = tag.hasUUID(PLAYER_SUMMONER_KEY) ? tag.getUUID(PLAYER_SUMMONER_KEY) : null;
-        this.lastSummonerPos = tag.contains(SUMMONER_POS_KEY) ? net.minecraft.core.BlockPos.of(tag.getLong(SUMMONER_POS_KEY)) : null;
+        this.lastSummonerPos = tag.contains(SUMMONER_POS_KEY) ? BlockPos.of(tag.getLong(SUMMONER_POS_KEY)) : null;
         this.lostSummonerTicks = 0;
         this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
         this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;

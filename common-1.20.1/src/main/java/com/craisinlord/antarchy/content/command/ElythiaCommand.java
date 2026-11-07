@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.command;
 
-import com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload;
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload;
 import com.craisinlord.antarchy.content.weather.ElythiaEvent;
 import com.craisinlord.antarchy.content.weather.ElythiaEvents;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGenProfiler;
@@ -17,13 +17,13 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;

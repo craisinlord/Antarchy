@@ -1,16 +1,17 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -33,7 +34,7 @@ public class BluestoneDustItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getClickedFace() != net.minecraft.core.Direction.DOWN) {
+        if (context.getClickedFace() != Direction.DOWN) {
             return InteractionResult.FAIL;
         }
 

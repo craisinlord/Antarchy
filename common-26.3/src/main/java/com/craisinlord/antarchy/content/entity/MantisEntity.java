@@ -1,31 +1,45 @@
 package com.craisinlord.antarchy.content.entity;
 
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -35,27 +49,17 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
-
-import java.util.EnumSet;
-import java.util.UUID;
 
 public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
@@ -93,10 +97,10 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final double ATTACK_VERTICAL_TOLERANCE = 3.0D;
     private static final float WINDUP_TURN_RATE = 18.0F;
 
-    private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> ANIMATION_STATE =
-            net.minecraft.network.syncher.SynchedEntityData.defineId(MantisEntity.class, net.minecraft.network.syncher.EntityDataSerializers.INT);
-    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> GLIMMER_ECHO =
-            net.minecraft.network.syncher.SynchedEntityData.defineId(MantisEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ANIMATION_STATE =
+            SynchedEntityData.defineId(MantisEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(MantisEntity.class, EntityDataSerializers.BOOLEAN);
     private static final int BASE_XP_REWARD = 12;
     private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
 
@@ -142,7 +146,7 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData spawnData) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, this.configuredMaxHealth());
         this.syncConfiguredAttributes(false);
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
@@ -200,7 +204,7 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
         builder.define(GLIMMER_ECHO, false);
@@ -341,9 +345,9 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static UUID readUuid(ValueInput input, String key) {
         return input.getString(key).flatMap(value -> {
             try {
-                return java.util.Optional.of(UUID.fromString(value));
+                return Optional.of(UUID.fromString(value));
             } catch (IllegalArgumentException exception) {
-                return java.util.Optional.<UUID>empty();
+                return Optional.<UUID>empty();
             }
         }).orElse(null);
     }
@@ -418,7 +422,7 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         if (target instanceof LivingEntity livingTarget && this.canBeginCommittedAttack(livingTarget)) {
             this.beginCommittedAttack(livingTarget);
             return true;
@@ -707,7 +711,6 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
         this.yHeadRot = this.getYRot();
     }
 
-
     private boolean isFlyingNow() {
         return this.flyBurstTicks > 0;
     }
@@ -761,7 +764,7 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
 
         float currentHealth = this.getHealth();
         float syncedHealth = previousValue > 0.0D
-                ? (float) net.minecraft.util.Mth.clamp((currentHealth / (float) previousValue) * desiredValue, 0.0D, desiredValue)
+                ? (float) Mth.clamp((currentHealth / (float) previousValue) * desiredValue, 0.0D, desiredValue)
                 : (float) desiredValue;
         this.setHealth(syncedHealth);
     }
@@ -831,8 +834,5 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
             }
         }
     }
-
-
-
 
 }

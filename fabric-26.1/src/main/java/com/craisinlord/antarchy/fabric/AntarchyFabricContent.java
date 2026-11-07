@@ -1,38 +1,39 @@
 package com.craisinlord.antarchy.fabric;
 
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricRegistries;
-import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.fabric.registry.DeferredHolder;
-import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
+import com.craisinlord.antarchy.content.block.*;
+import com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior;
+import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
+import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricRegistries;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
+import com.craisinlord.antarchy.fabric.registry.DeferredHolder;
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.fabricmc.loader.api.FabricLoader;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricCreativeModeTabs;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntityAttributes;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSpawnPlacements;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.material.FlowingFluid;
 
 public final class AntarchyFabricContent {
 
@@ -44,8 +45,8 @@ public final class AntarchyFabricContent {
         return FabricLoader.getInstance().isModLoaded(modId);
     }
 
-    public static net.minecraft.world.level.material.FlowingFluid lookupFlowingFluid(String path) {
-        return (net.minecraft.world.level.material.FlowingFluid) BuiltInRegistries.FLUID.getValue(Identifier.fromNamespaceAndPath(Antarchy.MODID, path));
+    public static FlowingFluid lookupFlowingFluid(String path) {
+        return (FlowingFluid) BuiltInRegistries.FLUID.getValue(Identifier.fromNamespaceAndPath(Antarchy.MODID, path));
     }
 
     public static Item lookupItem(String path) {
@@ -57,7 +58,7 @@ public final class AntarchyFabricContent {
     }
 
     public static void register() {
-        com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyFabricEntities.UPWARD_FALLING_BLOCK;
+        UpwardFallingBlockEntity.TYPE = AntarchyFabricEntities.UPWARD_FALLING_BLOCK;
         registerBrewingRecipes();
         AntarchyFabricRegistries.registerAll();
         bindCommonContent();
@@ -66,37 +67,37 @@ public final class AntarchyFabricContent {
 
     private static void registerBrewingRecipes() {
         FabricPotionBrewingBuilder.BUILD.register(builder -> {
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.FADED_MEMORY.get()), potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.FADED_MEMORY.get()), potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_REMEMBRANCE));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.LUCID_EYE.get()), potionHolder(AntarchyFabricMisc.INVERSION));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.LUCID_EYE.get()), potionHolder(AntarchyFabricMisc.INVERSION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.INVERSION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_INVERSION));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.STINK_BUG_ITEM.get()), potionHolder(AntarchyFabricMisc.STINKY_POTION));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.STINK_BUG_ITEM.get()), potionHolder(AntarchyFabricMisc.STINKY_POTION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.STINKY_POTION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_STINKY));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.BASILISK_FANG.get()), potionHolder(AntarchyFabricMisc.PARALYSIS));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.BASILISK_FANG.get()), potionHolder(AntarchyFabricMisc.PARALYSIS));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.PARALYSIS), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_PARALYSIS));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.MOLEWORM_ITEM.get()), potionHolder(AntarchyFabricMisc.HASTE));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.MOLEWORM_ITEM.get()), potionHolder(AntarchyFabricMisc.HASTE));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.HASTE), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.STRONG_HASTE));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.URANIUM_NUGGET.get()), potionHolder(AntarchyFabricMisc.SHRINKING));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.URANIUM_NUGGET.get()), potionHolder(AntarchyFabricMisc.SHRINKING));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.SHRINKING), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.STRONG_SHRINKING));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.STRONG_SHRINKING), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.EXTREME_SHRINKING));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.TITANIUM_NUGGET.get()), potionHolder(AntarchyFabricMisc.GROWING));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.TITANIUM_NUGGET.get()), potionHolder(AntarchyFabricMisc.GROWING));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.GROWING), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.STRONG_GROWING));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.STRONG_GROWING), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.EXTREME_GROWING));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.KING_SCALE.get()), potionHolder(AntarchyFabricMisc.COMMAND));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.KING_SCALE.get()), potionHolder(AntarchyFabricMisc.COMMAND));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.COMMAND), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_COMMAND));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.QUEEN_SCALE.get()), potionHolder(AntarchyFabricMisc.TIME_DILATION));
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.QUEEN_SCALE.get()), potionHolder(AntarchyFabricMisc.TIME_DILATION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_DILATION), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.LONG_TIME_DILATION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_DILATION), Ingredient.of(Items.FERMENTED_SPIDER_EYE), potionHolder(AntarchyFabricMisc.TIME_CONTRACTION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_CONTRACTION), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.LONG_TIME_CONTRACTION));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.STRATOSHARK_FIN.get()), net.minecraft.world.item.alchemy.Potions.SLOW_FALLING);
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.SPRINGBUG_LEG.get()), Potions.LEAPING);
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.STRATOSHARK_FIN.get()), Potions.SLOW_FALLING);
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.SPRINGBUG_LEG.get()), Potions.LEAPING);
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), Potions.NIGHT_VISION);
         });
     }
 
     private static void bindCommonContent() {
-        DispenserBlock.registerBehavior(AntarchyFabricItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
-        DispenserBlock.registerBehavior(AntarchyFabricItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.VORTEX_CHARGE.get(), new VortexChargeDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.EYE_OF_THE_STORM.get(), new EyeOfTheStormDispenseBehavior());
 
         PermanentPortalType.bindBlocks(
                 () -> AntarchyFabricBlocks.MOSSY_OURANWOOD_WOOD.get(),
@@ -351,6 +352,5 @@ public final class AntarchyFabricContent {
         VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyFabricEntities.WIND_VORTEX.get();
 
     }
-
 
 }

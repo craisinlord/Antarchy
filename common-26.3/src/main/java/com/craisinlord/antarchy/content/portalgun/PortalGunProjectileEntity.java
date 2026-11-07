@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.portalgun;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityTransition;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import com.mojang.serialization.Codec;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +17,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -26,33 +28,35 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.block.StainedGlassBlock;
 import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.block.TintedGlassBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     private static final TagKey<Block> GLASS_BLOCKS = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("c", "glass_blocks"));
@@ -248,7 +252,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         HitResult hit = this.level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, fluidMode, this));
         if (hit instanceof BlockHitResult blockHit) {
             BlockPos hitBlockPos = blockHit.getBlockPos();
-            net.minecraft.world.level.block.state.BlockState hitBlockState = this.level().getBlockState(hitBlockPos);
+            BlockState hitBlockState = this.level().getBlockState(hitBlockPos);
             boolean passThroughGlass = this.shouldPassThroughGlass(blockHit);
             if (!hitBlockState.isAir()) {
                 hitBlockState.entityInside(this.level(), hitBlockPos, this, InsideBlockEffectApplier.NOOP, true);
@@ -266,8 +270,8 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         }
         if (motion.lengthSqr() > 1.0E-6D) {
             double horizontal = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
-            this.setYRot((float) (net.minecraft.util.Mth.atan2(motion.z, motion.x) * (180.0D / Math.PI)) - 90.0F);
-            this.setXRot((float) (-(net.minecraft.util.Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI))));
+            this.setYRot((float) (Mth.atan2(motion.z, motion.x) * (180.0D / Math.PI)) - 90.0F);
+            this.setXRot((float) (-(Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI))));
         }
         this.setPos(this.position().add(motion));
         this.applyEffectsFromBlocks(this.position(), this.position());
@@ -278,7 +282,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
             for (int i = 0; i < 4; i++) {
                 float backtrack = 0.25F;
                 this.level().addParticle(
-                        net.minecraft.core.particles.ParticleTypes.BUBBLE,
+                        ParticleTypes.BUBBLE,
                         this.getX() - motion.x * backtrack,
                         this.getY() - motion.y * backtrack,
                         this.getZ() - motion.z * backtrack,
@@ -289,7 +293,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
             }
         }
         if (this.level().isClientSide() && this.tickCount > 1) {
-            net.minecraft.core.particles.DustParticleOptions dust = this.trailDust(TRAIL_DUST_SCALE);
+            DustParticleOptions dust = this.trailDust(TRAIL_DUST_SCALE);
             Vec3 point = this.position();
             for (int i = 0; i < TRAIL_PARTICLES_PER_TICK; i++) {
                 Vec3 trailPoint = point.subtract(motion.scale((double) i / TRAIL_PARTICLES_PER_TICK));
@@ -496,9 +500,9 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         level.sendParticles(this.trailDust(IMPACT_DUST_SCALE), impactPos.x, impactPos.y, impactPos.z, IMPACT_PARTICLES, 0.12D, 0.12D, 0.12D, 0.02D);
     }
 
-    private net.minecraft.core.particles.DustParticleOptions trailDust(float scale) {
+    private DustParticleOptions trailDust(float scale) {
         int color = this.getVariant().color(this.getPortalSide());
-        return new net.minecraft.core.particles.DustParticleOptions(color & 0xFFFFFF, scale);
+        return new DustParticleOptions(color & 0xFFFFFF, scale);
     }
 
     private void syncSpawnPosition(Vec3 pos) {
@@ -531,9 +535,9 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         tag.putInt("ShooterId", this.entityData.get(SHOOTER_ID));
         tag.putInt("Distance", this.entityData.get(DISTANCE));
         Vec3 spawnPosition = this.getSyncedSpawnPosition();
-        tag.putInt("SpawnX", net.minecraft.util.Mth.floor(spawnPosition.x));
-        tag.putInt("SpawnY", net.minecraft.util.Mth.floor(spawnPosition.y));
-        tag.putInt("SpawnZ", net.minecraft.util.Mth.floor(spawnPosition.z));
+        tag.putInt("SpawnX", Mth.floor(spawnPosition.x));
+        tag.putInt("SpawnY", Mth.floor(spawnPosition.y));
+        tag.putInt("SpawnZ", Mth.floor(spawnPosition.z));
         tag.putDouble("SpawnPosX", spawnPosition.x);
         tag.putDouble("SpawnPosY", spawnPosition.y);
         tag.putDouble("SpawnPosZ", spawnPosition.z);
@@ -569,13 +573,13 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         this.entityData.set(PROJECTILE_SPEED, tag.getFloatOr("ProjectileSpeed", 4.99F));
         this.entityData.set(PASS_THROUGH_GLASS, tag.getBooleanOr("PassThroughGlass", AntarchySettings.portalGunCanFireThroughGlass()));
         this.entityData.set(PASS_THROUGH_LIQUID, tag.getBooleanOr("PassThroughLiquid", AntarchySettings.portalGunCanFireThroughLiquid()));
-        this.portalWidth = net.minecraft.util.Mth.clamp(tag.getIntOr("PortalWidth", 0), 1, 16);
-        this.portalHeight = net.minecraft.util.Mth.clamp(tag.getIntOr("PortalHeight", 0), 2, 16);
+        this.portalWidth = Mth.clamp(tag.getIntOr("PortalWidth", 0), 1, 16);
+        this.portalHeight = Mth.clamp(tag.getIntOr("PortalHeight", 0), 2, 16);
         this.spawnSynced = true;
         tag.read("GunId", UUIDUtil.CODEC).ifPresent(id -> this.gunId = id);
         ItemStack itemStack = this.getItem();
         if (this.gunId != null && !itemStack.isEmpty()) {
-            net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, itemStack, customData -> customData.store(PortalGunItem.GUN_ID_TAG, UUIDUtil.CODEC, this.gunId));
+            CustomData.update(DataComponents.CUSTOM_DATA, itemStack, customData -> customData.store(PortalGunItem.GUN_ID_TAG, UUIDUtil.CODEC, this.gunId));
         }
     }
 }

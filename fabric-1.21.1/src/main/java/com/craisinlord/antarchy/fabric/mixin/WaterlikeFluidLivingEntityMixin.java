@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.fabric.mixin;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.fabric.util.CustomFluidPhysicsChecks;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.fabric.util.CustomFluidPhysicsChecks;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -11,8 +12,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -187,8 +187,8 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
 
     @Override
     @Nullable
-    public software.bernie.geckolib.core.animation.RawAnimation abilityAnimation() {
-        return software.bernie.geckolib.core.animation.RawAnimation.begin().thenPlay("cry");
+    public RawAnimation abilityAnimation() {
+        return RawAnimation.begin().thenPlay("cry");
     }
 
     private void shatterWard(GlimmerEntity entity, Player owner) {

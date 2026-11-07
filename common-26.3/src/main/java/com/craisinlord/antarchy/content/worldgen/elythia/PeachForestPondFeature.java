@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import com.craisinlord.antarchy.content.worldgen.WorldgenWriteZone;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -23,16 +24,21 @@ public class PeachForestPondFeature implements Feature {
 
     private final PeachForestPondConfiguration config;
 
-    public PeachForestPondFeature(PeachForestPondConfiguration config) { this.config = config; }
+    public PeachForestPondFeature(PeachForestPondConfiguration config) {
+        this.config = config;
+    }
 
-    public PeachForestPondConfiguration config() { return this.config; }
+    public PeachForestPondConfiguration config() {
+        return this.config;
+    }
 
     @Override
-    public MapCodec<PeachForestPondFeature> codec() { return CODEC; }
+    public MapCodec<PeachForestPondFeature> codec() {
+        return CODEC;
+    }
     private static final int NOISE_SAMPLES = 12;
     private static final Identifier CAMELLIA_ID = Identifier.fromNamespaceAndPath("antarchy", "camellia");
     private static final Identifier SPIDER_LILY_ID = Identifier.fromNamespaceAndPath("antarchy", "spider_lily");
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -69,19 +75,19 @@ public class PeachForestPondFeature implements Feature {
                         level.setBlock(waterPos, Blocks.WATER.defaultBlockState(), 2);
                         LumenWorldgenHelper.scheduleFluidTick(level, waterPos);
                     }
-                    level.setBlock(new BlockPos(topPos.getX(), floorY, topPos.getZ()), com.craisinlord.antarchy.content.block.ElythiaPalette.block("arkrose").defaultBlockState(), 2);
+                    level.setBlock(new BlockPos(topPos.getX(), floorY, topPos.getZ()), ElythiaPalette.block("arkrose").defaultBlockState(), 2);
                     ElythiaGeologyFeature.placePondBed(level, new BlockPos(topPos.getX(), floorY, topPos.getZ()));
                     clearFloatingVegetation(level, topPos, center.getY());
                     placed = true;
                 } else if (distance <= 1.2D) {
                     int floorY = center.getY() - depth;
                     for (int y = rimTopY; y >= floorY; y--) {
-                        level.setBlock(new BlockPos(topPos.getX(), y, topPos.getZ()), com.craisinlord.antarchy.content.block.ElythiaPalette.block("arkrose").defaultBlockState(), 2);
+                        level.setBlock(new BlockPos(topPos.getX(), y, topPos.getZ()), ElythiaPalette.block("arkrose").defaultBlockState(), 2);
                     }
                     clearFloatingVegetation(level, topPos, rimTopY);
                     placed = true;
                 } else if (distance <= 1.45D && isSoil(level.getBlockState(topPos))) {
-                    level.setBlock(topPos, com.craisinlord.antarchy.content.block.ElythiaPalette.block("arkrose").defaultBlockState(), 2);
+                    level.setBlock(topPos, ElythiaPalette.block("arkrose").defaultBlockState(), 2);
                     clearFloatingVegetation(level, topPos, center.getY());
                 }
             }

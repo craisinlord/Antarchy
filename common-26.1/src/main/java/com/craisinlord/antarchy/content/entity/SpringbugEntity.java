@@ -1,14 +1,22 @@
 package com.craisinlord.antarchy.content.entity;
 
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import com.mojang.serialization.Codec;
+import java.util.EnumSet;
+import java.util.function.IntFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -25,10 +33,10 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -46,21 +54,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
-
-import java.util.EnumSet;
-import java.util.function.IntFunction;
 
 public class SpringbugEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Boolean> CAMOUFLAGED =
@@ -275,7 +273,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         boolean hurt = super.hurtServer(level, source, amount);
         if (!hurt) {
             return false;
@@ -301,7 +299,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.server.level.ServerLevel level, Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         return target instanceof LivingEntity livingTarget && this.level() instanceof ServerLevel serverLevel
                 ? livingTarget.hurtServer(serverLevel, AntarchyDamageSources.springbugJump(serverLevel, this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))
                 : super.doHurtTarget(level, target);
@@ -770,7 +768,9 @@ public class SpringbugEntity extends Monster implements GeoEntity {
         @Override
         public void tick() {
             LivingEntity target = SpringbugEntity.this.getTarget();
-            if (target == null) return;
+            if (target == null) {
+                return;
+            }
 
             SpringbugEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
@@ -783,7 +783,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
                 if (--this.swingTicks == 0) {
                     if (SpringbugEntity.this.distanceToSqr(target) <= HIT_RANGE_SQR
                             && SpringbugEntity.this.hasLineOfSight(target)) {
-                        if (SpringbugEntity.this.level() instanceof net.minecraft.server.level.ServerLevel attackLevel) {
+                        if (SpringbugEntity.this.level() instanceof ServerLevel attackLevel) {
                             SpringbugEntity.this.doHurtTarget(attackLevel, target);
                         }
                     }

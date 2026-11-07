@@ -3,25 +3,24 @@ package com.craisinlord.antarchy.content.entity.trades;
 import com.craisinlord.antos.content.AntOSObjects;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.Identifier;
-import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.trading.ItemCost;
-import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.item.trading.MerchantOffers;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.MerchantOffers;
 
 public final class ComputerScientistTradeManager extends SimpleJsonResourceReloadListener<JsonElement> {
     private static final String DIRECTORY = "computer_scientist_trades";
@@ -65,7 +64,9 @@ public final class ComputerScientistTradeManager extends SimpleJsonResourceReloa
     protected void apply(Map<Identifier, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
         List<TradeEntry> parsed = new ArrayList<>();
         for (JsonElement file : object.values()) {
-            if (!file.isJsonObject()) continue;
+            if (!file.isJsonObject()) {
+                continue;
+            }
             JsonObject root = file.getAsJsonObject();
             if (root.has("trades") && root.get("trades").isJsonArray()) {
                 for (JsonElement element : root.getAsJsonArray("trades")) {
@@ -93,11 +94,13 @@ public final class ComputerScientistTradeManager extends SimpleJsonResourceReloa
     private record TradeEntry(int level, int index, StackRange buy, StackRange secondBuy,
                                StackRange sell, String sellDisk, int maxUses, int villagerXp,
                                float priceMultiplier, float chance) {
-        private MerchantOffer createOffer(net.minecraft.util.RandomSource random) {
-            if (random.nextFloat() > chance) return null;
+        private MerchantOffer createOffer(RandomSource random) {
+            if (random.nextFloat() > chance) {
+                return null;
+            }
             ItemCost buyCost = buy.toCost(random);
-            java.util.Optional<ItemCost> secondCost = secondBuy == null
-                    ? java.util.Optional.empty() : java.util.Optional.of(secondBuy.toCost(random));
+            Optional<ItemCost> secondCost = secondBuy == null
+                    ? Optional.empty() : Optional.of(secondBuy.toCost(random));
             ItemStack result = sellDisk == null ? sell.toStack(random) : diskStack(sellDisk, random, sell.toStack(random).getCount());
             return new MerchantOffer(buyCost, secondCost, result, maxUses, villagerXp, priceMultiplier);
         }
@@ -108,15 +111,15 @@ public final class ComputerScientistTradeManager extends SimpleJsonResourceReloa
             return BuiltInRegistries.ITEM.getValue(item);
         }
 
-        private int count(net.minecraft.util.RandomSource random) {
+        private int count(RandomSource random) {
             return min == max ? min : min + random.nextInt(max - min + 1);
         }
 
-        private ItemCost toCost(net.minecraft.util.RandomSource random) {
+        private ItemCost toCost(RandomSource random) {
             return new ItemCost(itemValue(), count(random));
         }
 
-        private ItemStack toStack(net.minecraft.util.RandomSource random) {
+        private ItemStack toStack(RandomSource random) {
             return new ItemStack(itemValue(), count(random));
         }
     }
@@ -127,7 +130,7 @@ public final class ComputerScientistTradeManager extends SimpleJsonResourceReloa
         return new StackRange(Identifier.parse(json.get("item").getAsString()), min, max);
     }
 
-    private static ItemStack diskStack(String diskType, net.minecraft.util.RandomSource random, int count) {
+    private static ItemStack diskStack(String diskType, RandomSource random, int count) {
         Identifier diskId = diskType.equals("random_general")
                 ? GENERAL_DISKS.get(random.nextInt(GENERAL_DISKS.size()))
                 : Identifier.parse(diskType);

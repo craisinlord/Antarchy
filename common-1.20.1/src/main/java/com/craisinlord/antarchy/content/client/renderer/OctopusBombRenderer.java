@@ -7,8 +7,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.core.object.Color;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class OctopusBombRenderer extends GeoEntityRenderer<OctopusBombEntity> {
     private static final ResourceLocation GLIMMER_TEXTURE = GlimmerEchoRendering.texture("octopus_bomb");

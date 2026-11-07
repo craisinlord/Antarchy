@@ -4,26 +4,33 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.FossilBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.QueenTrailSpawnMarkerBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
-import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
-import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.UnderVaultBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.VortexLensBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
+import com.craisinlord.antarchy.content.fluid.AntiwaterLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
-import com.craisinlord.antarchy.forge.content.block.WildCornBlock;
+import com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeGrowers;
 import com.craisinlord.antarchy.forge.AntarchyWoodTypes;
+import com.craisinlord.antarchy.forge.content.block.WildCornBlock;
+import java.util.List;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
@@ -36,12 +43,14 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.FlowingFluid;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 
 public final class AntarchyForgeBlocks {
@@ -49,10 +58,10 @@ public final class AntarchyForgeBlocks {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Antarchy.MODID);
     public static final RegistryObject<UndertrialSpawnerBlock> UNDERTRIAL_SPAWNER = BLOCKS.register("undertrial_spawner",
             () -> new UndertrialSpawnerBlock(AntarchyForgeBlocks::undertrialSpawnerBlockEntityType,
-                    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(net.minecraft.world.level.block.state.properties.NoteBlockInstrument.BASEDRUM).strength(50.0F).noOcclusion().isViewBlocking((state, level, pos) -> false)));
+                    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(50.0F).noOcclusion().isViewBlocking((state, level, pos) -> false)));
     public static final RegistryObject<UnderVaultBlock> UNDERVAULT = BLOCKS.register("undervault",
             () -> new UnderVaultBlock(AntarchyForgeBlocks::underVaultBlockEntityType,
-                    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(net.minecraft.world.level.block.state.properties.NoteBlockInstrument.BASEDRUM).strength(50.0F).noOcclusion().isViewBlocking((state, level, pos) -> false)));
+                    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(50.0F).noOcclusion().isViewBlocking((state, level, pos) -> false)));
     public static final RegistryObject<QueenTrailSpawnMarkerBlock> QUEEN_TRAIL_SPAWN_MARKER = BLOCKS.register("queen_trail_spawn_marker",
             () -> new QueenTrailSpawnMarkerBlock(AntarchyForgeBlocks::queenTrailSpawnMarkerBlockEntityType,
                     BlockBehaviour.Properties.copy(Blocks.BEDROCK).noLootTable()));
@@ -100,16 +109,16 @@ public final class AntarchyForgeBlocks {
             () -> new MilkweedBlock(BlockBehaviour.Properties.copy(Blocks.PEONY)));
     public static final RegistryObject<GlimmeringReedBlock> GLIMMERING_REED = BLOCKS.register("glimmering_reed",
             () -> new GlimmeringReedBlock(BlockBehaviour.Properties.copy(Blocks.SUNFLOWER).lightLevel(state -> 8)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.CamelliaBlock> CAMELLIA = BLOCKS.register("camellia",
-            () -> new com.craisinlord.antarchy.content.block.CamelliaBlock(BlockBehaviour.Properties.copy(Blocks.PEONY)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.SpiderLilyBlock> SPIDER_LILY = BLOCKS.register("spider_lily",
-            () -> new com.craisinlord.antarchy.content.block.SpiderLilyBlock(BlockBehaviour.Properties.copy(Blocks.POPPY)));
+    public static final RegistryObject<CamelliaBlock> CAMELLIA = BLOCKS.register("camellia",
+            () -> new CamelliaBlock(BlockBehaviour.Properties.copy(Blocks.PEONY)));
+    public static final RegistryObject<SpiderLilyBlock> SPIDER_LILY = BLOCKS.register("spider_lily",
+            () -> new SpiderLilyBlock(BlockBehaviour.Properties.copy(Blocks.POPPY)));
     public static final RegistryObject<FlowerPotBlock> POTTED_SPIDER_LILY = BLOCKS.register("potted_spider_lily",
             () -> new FlowerPotBlock(SPIDER_LILY.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION)));
     public static final RegistryObject<GiantLilyPadBlock> GIANT_LILY_PAD = BLOCKS.register("giant_lily_pad",
             () -> new GiantLilyPadBlock(BlockBehaviour.Properties.copy(Blocks.LILY_PAD)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.LotusBlock> LOTUS = BLOCKS.register("lotus",
-            () -> new com.craisinlord.antarchy.content.block.LotusBlock(BlockBehaviour.Properties.copy(Blocks.SPORE_BLOSSOM)));
+    public static final RegistryObject<LotusBlock> LOTUS = BLOCKS.register("lotus",
+            () -> new LotusBlock(BlockBehaviour.Properties.copy(Blocks.SPORE_BLOSSOM)));
     public static final RegistryObject<FlowerPotBlock> POTTED_LOTUS = BLOCKS.register("potted_lotus",
             () -> new FlowerPotBlock(LOTUS.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION)));
     public static final RegistryObject<SeashellBlock> SEASHELL = BLOCKS.register("seashell",
@@ -117,7 +126,7 @@ public final class AntarchyForgeBlocks {
     public static final RegistryObject<LucidAnchorBlock> LUCID_ANCHOR = BLOCKS.register("lucid_anchor",
             () -> new LucidAnchorBlock(BlockBehaviour.Properties.copy(Blocks.BEACON).strength(3.0F)));
     public static final RegistryObject<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
-            () -> new CritterCageBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion()));
+            () -> new CritterCageBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
     public static final RegistryObject<PortalGunPortalMasterBlock> PORTAL_GUN_PORTAL_MASTER = BLOCKS.register("portal_gun_portal_master",
             () -> new PortalGunPortalMasterBlock(AntarchyForgeBlocks::portalGunPortalMasterBlockEntityType, portalProperties()));
     public static final RegistryObject<PortalGunPortalBaseBlock> PORTAL_GUN_PORTAL_BASE = BLOCKS.register("portal_gun_portal_base",
@@ -125,11 +134,11 @@ public final class AntarchyForgeBlocks {
     public static final RegistryObject<DimensionalTearMarkerBlock> DIMENSIONAL_TEAR_MARKER = BLOCKS.register("dimensional_tear_marker",
             () -> new DimensionalTearMarkerBlock(AntarchyForgeBlocks::dimensionalTearMarkerBlockEntityType,
                     BlockBehaviour.Properties.of().noCollission().noOcclusion().noLootTable().instabreak()
-                            .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.RemembranceTorchBlock> REMEMBRANCE_TORCH = BLOCKS.register("remembrance_torch",
-            () -> new com.craisinlord.antarchy.content.block.RemembranceTorchBlock(BlockBehaviour.Properties.copy(Blocks.TORCH)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock> REMEMBRANCE_WALL_TORCH = BLOCKS.register("remembrance_wall_torch",
-            () -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(BlockBehaviour.Properties.copy(Blocks.WALL_TORCH)));
+                            .pushReaction(PushReaction.DESTROY)));
+    public static final RegistryObject<RemembranceTorchBlock> REMEMBRANCE_TORCH = BLOCKS.register("remembrance_torch",
+            () -> new RemembranceTorchBlock(BlockBehaviour.Properties.copy(Blocks.TORCH)));
+    public static final RegistryObject<RemembranceWallTorchBlock> REMEMBRANCE_WALL_TORCH = BLOCKS.register("remembrance_wall_torch",
+            () -> new RemembranceWallTorchBlock(BlockBehaviour.Properties.copy(Blocks.WALL_TORCH)));
     public static final RegistryObject<StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
             () -> new StandingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_SIGN), AntarchyWoodTypes.OURANWOOD));
     public static final RegistryObject<WallSignBlock> OURANWOOD_WALL_SIGN = BLOCKS.register("ouranwood_wall_sign",
@@ -168,8 +177,8 @@ public final class AntarchyForgeBlocks {
             () -> new PeachLeavesBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES).randomTicks()));
     public static final RegistryObject<HangingPeachBlock> PEACH_HANGING_PEACH = BLOCKS.register("hanging_peach",
             () -> new HangingPeachBlock(BlockBehaviour.Properties.of().noOcclusion().instabreak()));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.PeachSaplingBlock> PEACH_SAPLING = BLOCKS.register("peach_sapling",
-            () -> new com.craisinlord.antarchy.content.block.PeachSaplingBlock(BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
+    public static final RegistryObject<PeachSaplingBlock> PEACH_SAPLING = BLOCKS.register("peach_sapling",
+            () -> new PeachSaplingBlock(BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
     public static final RegistryObject<FlowerPotBlock> POTTED_PEACH_SAPLING = BLOCKS.register("potted_peach_sapling",
             () -> new FlowerPotBlock(PEACH_SAPLING.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION)));
     public static final RegistryObject<StandingSignBlock> PEACH_SIGN = BLOCKS.register("peach_sign",
@@ -206,8 +215,8 @@ public final class AntarchyForgeBlocks {
             () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.copy(Blocks.JUNGLE_PRESSURE_PLATE), BlockSetType.JUNGLE));
     public static final RegistryObject<ButtonBlock> NADIR_BUTTON = BLOCKS.register("nadir_button",
             () -> new ButtonBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_BUTTON), BlockSetType.JUNGLE, 30, true));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.NadirVeilBlock> NADIR_VEIL = BLOCKS.register("nadir_veil",
-            () -> new com.craisinlord.antarchy.content.block.NadirVeilBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES).sound(SoundType.SLIME_BLOCK).noOcclusion()));
+    public static final RegistryObject<NadirVeilBlock> NADIR_VEIL = BLOCKS.register("nadir_veil",
+            () -> new NadirVeilBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES).sound(SoundType.SLIME_BLOCK).noOcclusion()));
     public static final RegistryObject<NadirSaplingBlock> NADIR_SAPLING = BLOCKS.register("nadir_sapling",
             () -> new NadirSaplingBlock(BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
     public static final RegistryObject<FlowerPotBlock> POTTED_NADIR_SAPLING = BLOCKS.register("potted_nadir_sapling",
@@ -382,8 +391,8 @@ public final class AntarchyForgeBlocks {
             () -> new SlabBlock(nyxiteProperties()));
     public static final RegistryObject<WallBlock> POLISHED_NYXITE_WALL = BLOCKS.register("polished_nyxite_wall",
             () -> new WallBlock(nyxiteProperties()));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.PolishedNyxitePressurePlateBlock> POLISHED_NYXITE_PRESSURE_PLATE = BLOCKS.register("polished_nyxite_pressure_plate",
-            () -> new com.craisinlord.antarchy.content.block.PolishedNyxitePressurePlateBlock(BlockSetType.STONE, BlockBehaviour.Properties.copy(Blocks.STONE_PRESSURE_PLATE)));
+    public static final RegistryObject<PolishedNyxitePressurePlateBlock> POLISHED_NYXITE_PRESSURE_PLATE = BLOCKS.register("polished_nyxite_pressure_plate",
+            () -> new PolishedNyxitePressurePlateBlock(BlockSetType.STONE, BlockBehaviour.Properties.copy(Blocks.STONE_PRESSURE_PLATE)));
     public static final RegistryObject<ButtonBlock> POLISHED_NYXITE_BUTTON = BLOCKS.register("polished_nyxite_button",
             () -> new ButtonBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BUTTON), BlockSetType.STONE, 20, false));
     public static final RegistryObject<StairBlock> NYXITE_BRICK_STAIRS = BLOCKS.register("nyxite_brick_stairs",
@@ -438,10 +447,10 @@ public final class AntarchyForgeBlocks {
             () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
     public static final RegistryObject<RotatedPillarBlock> SHELLSTONE_PILLAR = BLOCKS.register("shellstone_pillar",
             () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.FlytrapGooBlock> FLYTRAP_GOO_BLOCK = BLOCKS.register("flytrap_goo_block",
-            () -> new com.craisinlord.antarchy.content.block.FlytrapGooBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
-            () -> new com.craisinlord.antarchy.content.block.CloudBlock(
+    public static final RegistryObject<FlytrapGooBlock> FLYTRAP_GOO_BLOCK = BLOCKS.register("flytrap_goo_block",
+            () -> new FlytrapGooBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
+    public static final RegistryObject<CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
+            () -> new CloudBlock(
                     AntarchyForgeItems::cloudBucketItem,
                     BlockBehaviour.Properties.copy(Blocks.POWDER_SNOW).noLootTable().noOcclusion().emissiveRendering((state, level, pos) -> true)
             ));
@@ -554,8 +563,8 @@ public final class AntarchyForgeBlocks {
             () -> createOre(Blocks.IRON_ORE, 0, 0, MapColor.RAW_IRON));
     public static final RegistryObject<Block> MYRMITE_GOLD_ORE = BLOCKS.register("myrmite_gold_ore",
             () -> createOre(Blocks.GOLD_ORE, 0, 0, MapColor.GOLD));
-    public static final RegistryObject<net.minecraft.world.level.block.RedStoneOreBlock> MYRMITE_REDSTONE_ORE = BLOCKS.register("myrmite_redstone_ore",
-            () -> new net.minecraft.world.level.block.RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<RedStoneOreBlock> MYRMITE_REDSTONE_ORE = BLOCKS.register("myrmite_redstone_ore",
+            () -> new RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_ORE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> MYRMITE_LAPIS_ORE = BLOCKS.register("myrmite_lapis_ore",
             () -> createOre(Blocks.LAPIS_ORE, 2, 5, MapColor.LAPIS));
     public static final RegistryObject<Block> MYRMITE_DIAMOND_ORE = BLOCKS.register("myrmite_diamond_ore",
@@ -568,18 +577,18 @@ public final class AntarchyForgeBlocks {
             () -> createOre(Blocks.DEEPSLATE_IRON_ORE, 0, 0, MapColor.RAW_IRON));
     public static final RegistryObject<Block> BROODSTONE_GOLD_ORE = BLOCKS.register("broodstone_gold_ore",
             () -> createOre(Blocks.DEEPSLATE_GOLD_ORE, 0, 0, MapColor.GOLD));
-    public static final RegistryObject<net.minecraft.world.level.block.RedStoneOreBlock> BROODSTONE_REDSTONE_ORE = BLOCKS.register("broodstone_redstone_ore",
-            () -> new net.minecraft.world.level.block.RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE_REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<RedStoneOreBlock> BROODSTONE_REDSTONE_ORE = BLOCKS.register("broodstone_redstone_ore",
+            () -> new RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE_REDSTONE_ORE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> BROODSTONE_LAPIS_ORE = BLOCKS.register("broodstone_lapis_ore",
             () -> createOre(Blocks.DEEPSLATE_LAPIS_ORE, 2, 5, MapColor.LAPIS));
     public static final RegistryObject<Block> BROODSTONE_DIAMOND_ORE = BLOCKS.register("broodstone_diamond_ore",
             () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
     public static final RegistryObject<Block> BROODSTONE_EMERALD_ORE = BLOCKS.register("broodstone_emerald_ore",
             () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 3, 7, MapColor.EMERALD));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.FossilBlock> MYRMITE_FOSSIL = BLOCKS.register("myrmite_fossil",
-            () -> new com.craisinlord.antarchy.content.block.FossilBlock(nyxiteProperties()));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.FossilBlock> BROODSTONE_FOSSIL = BLOCKS.register("broodstone_fossil",
-            () -> new com.craisinlord.antarchy.content.block.FossilBlock(broodstoneProperties()));
+    public static final RegistryObject<FossilBlock> MYRMITE_FOSSIL = BLOCKS.register("myrmite_fossil",
+            () -> new FossilBlock(nyxiteProperties()));
+    public static final RegistryObject<FossilBlock> BROODSTONE_FOSSIL = BLOCKS.register("broodstone_fossil",
+            () -> new FossilBlock(broodstoneProperties()));
     public static final RegistryObject<RotatedPillarBlock> CHITIN_BLOCK = BLOCKS.register("chitin_block",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK).requiresCorrectToolForDrops()));
     public static final RegistryObject<UmbralMossBlock> UMBRAL_MOSS_BLOCK = BLOCKS.register("umbral_moss_block",
@@ -604,8 +613,8 @@ public final class AntarchyForgeBlocks {
             () -> new DreamTorchBlock(BlockBehaviour.Properties.copy(Blocks.SOUL_TORCH)));
     public static final RegistryObject<DreamWallTorchBlock> DREAM_WALL_TORCH = BLOCKS.register("dream_wall_torch",
             () -> new DreamWallTorchBlock(BlockBehaviour.Properties.copy(Blocks.SOUL_WALL_TORCH)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
-            () -> new com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock(BlockBehaviour.Properties.copy(Blocks.SOUL_TORCH)));
+    public static final RegistryObject<DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
+            () -> new DreamCeilingTorchBlock(BlockBehaviour.Properties.copy(Blocks.SOUL_TORCH)));
     public static final RegistryObject<LanternBlock> DREAM_LANTERN = BLOCKS.register("dream_lantern",
             () -> new LanternBlock(BlockBehaviour.Properties.copy(Blocks.SOUL_LANTERN)));
     public static final RegistryObject<DreamCampfireBlock> DREAM_CAMPFIRE = BLOCKS.register("dream_campfire",
@@ -624,10 +633,10 @@ public final class AntarchyForgeBlocks {
                     .replaceable()));
     public static final RegistryObject<CrawlingBlightEggBlock> CRAWLING_BLIGHT_EGG = BLOCKS.register("crawling_blight_egg",
             () -> new CrawlingBlightEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.PrinceEggBlock> PRINCE_EGG = BLOCKS.register("prince_egg",
-            () -> new com.craisinlord.antarchy.content.block.PrinceEggBlock(BlockBehaviour.Properties.copy(Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.PrincessEggBlock> PRINCESS_EGG = BLOCKS.register("princess_egg",
-            () -> new com.craisinlord.antarchy.content.block.PrincessEggBlock(BlockBehaviour.Properties.copy(Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
+    public static final RegistryObject<PrinceEggBlock> PRINCE_EGG = BLOCKS.register("prince_egg",
+            () -> new PrinceEggBlock(BlockBehaviour.Properties.copy(Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
+    public static final RegistryObject<PrincessEggBlock> PRINCESS_EGG = BLOCKS.register("princess_egg",
+            () -> new PrincessEggBlock(BlockBehaviour.Properties.copy(Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
     public static final RegistryObject<SpringbugEggBlock> SPRINGBUG_EGG = BLOCKS.register("springbug_egg",
             () -> new SpringbugEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
     public static final RegistryObject<SpitBugEggBlock> SPIT_BUG_EGG = BLOCKS.register("spit_bug_egg",
@@ -646,7 +655,7 @@ public final class AntarchyForgeBlocks {
     public static final RegistryObject<Block> ROCKITE_GOLD_ORE = BLOCKS.register("rockite_gold_ore",
             () -> createOre(Blocks.GOLD_ORE, 0, 0, MapColor.COLOR_GRAY));
     public static final RegistryObject<Block> ROCKITE_REDSTONE_ORE = BLOCKS.register("rockite_redstone_ore",
-            () -> new net.minecraft.world.level.block.RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_ORE).mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops()));
+            () -> new RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_ORE).mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> ROCKITE_LAPIS_ORE = BLOCKS.register("rockite_lapis_ore",
             () -> createOre(Blocks.LAPIS_ORE, 2, 5, MapColor.COLOR_GRAY));
     public static final RegistryObject<Block> ROCKITE_DIAMOND_ORE = BLOCKS.register("rockite_diamond_ore",
@@ -789,10 +798,10 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
     }
     public static final RegistryObject<WaspNestBlock> WASP_NEST = BLOCKS.register("wasp_nest",
             () -> new WaspNestBlock(AntarchyForgeItems::waspNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.BEE_NEST)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock> OURANWOOD_SQUIRREL_NEST = BLOCKS.register("ouranwood_squirrel_nest",
-            () -> new com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock(BlockBehaviour.Properties.copy(Blocks.COARSE_DIRT).noLootTable()));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.BrutalflyCocoonSpawnerBlock> BRUTALFLY_COCOON_SPAWNER = BLOCKS.register("brutalfly_cocoon_spawner",
-            () -> new com.craisinlord.antarchy.content.block.BrutalflyCocoonSpawnerBlock(BlockBehaviour.Properties.of().noCollission().instabreak().noLootTable()));
+    public static final RegistryObject<OuranwoodSquirrelNestBlock> OURANWOOD_SQUIRREL_NEST = BLOCKS.register("ouranwood_squirrel_nest",
+            () -> new OuranwoodSquirrelNestBlock(BlockBehaviour.Properties.copy(Blocks.COARSE_DIRT).noLootTable()));
+    public static final RegistryObject<BrutalflyCocoonSpawnerBlock> BRUTALFLY_COCOON_SPAWNER = BLOCKS.register("brutalfly_cocoon_spawner",
+            () -> new BrutalflyCocoonSpawnerBlock(BlockBehaviour.Properties.of().noCollission().instabreak().noLootTable()));
     public static final RegistryObject<HushweedBlock> HUSHWEED = BLOCKS.register("hushweed",
             () -> new HushweedBlock(BlockBehaviour.Properties.copy(Blocks.AZALEA).noCollission().noOcclusion()));
     public static final RegistryObject<HangingCreeprootsBlock> HANGING_CREEPROOTS = BLOCKS.register("hanging_creeproots",
@@ -804,7 +813,7 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
     public static final RegistryObject<LiquidBlock> ICHOR_BLOCK = BLOCKS.register("ichor",
             () -> new LiquidBlock((FlowingFluid) AntarchyForgeMisc.ICHOR.get(), BlockBehaviour.Properties.copy(Blocks.WATER).noLootTable()));
     public static final RegistryObject<LiquidBlock> ANTIWATER_BLOCK = BLOCKS.register("antiwater",
-            () -> new com.craisinlord.antarchy.content.fluid.AntiwaterLiquidBlock((FlowingFluid) AntarchyForgeMisc.ANTIWATER.get(),
+            () -> new AntiwaterLiquidBlock((FlowingFluid) AntarchyForgeMisc.ANTIWATER.get(),
                     BlockBehaviour.Properties.copy(Blocks.WATER).noLootTable()));
     public static final RegistryObject<LiquidBlock> LUMEN_BLOCK = BLOCKS.register("lumen",
             () -> new LumenLiquidBlock((FlowingFluid) AntarchyForgeMisc.LUMEN.get(),
@@ -827,9 +836,9 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
     public static final RegistryObject<AntNestBlock> TERMITE_NEST = BLOCKS.register("termite_nest",
             () -> new AntNestBlock(AntarchyForgeEntities.TERMITE, AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.DIRT).noLootTable()));
 
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.AntTrapBlock> ANT_TRAP = BLOCKS.register("ant_trap",
-            () -> new com.craisinlord.antarchy.content.block.AntTrapBlock(
-                    () -> java.util.List.of(AntarchyForgeEntities.RED_ANT.get(), AntarchyForgeEntities.BROWN_ANT.get(), AntarchyForgeEntities.RAINBOW_ANT.get(), AntarchyForgeEntities.TERMITE.get()),
+    public static final RegistryObject<AntTrapBlock> ANT_TRAP = BLOCKS.register("ant_trap",
+            () -> new AntTrapBlock(
+                    () -> List.of(AntarchyForgeEntities.RED_ANT.get(), AntarchyForgeEntities.BROWN_ANT.get(), AntarchyForgeEntities.RAINBOW_ANT.get(), AntarchyForgeEntities.TERMITE.get()),
                     AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.OAK_PRESSURE_PLATE).noOcclusion()));
     public static final RegistryObject<Block> URANIUM_ORE = BLOCKS.register("uranium_ore",
             () -> createOre(Blocks.EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
@@ -910,26 +919,26 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new StairBlock(POLISHED_ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.POLISHED_BASALT).sound(antimetalSoundType())));
     public static final RegistryObject<SlabBlock> POLISHED_ANTIMETAL_SLAB = BLOCKS.register("polished_antimetal_slab",
             () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.POLISHED_BASALT).sound(antimetalSoundType())));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock> ANTIMETAL_SCAFFOLDING = BLOCKS.register("antimetal_scaffolding",
-            () -> new com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock(BlockBehaviour.Properties.copy(Blocks.SCAFFOLDING).sound(antimetalScaffoldingSoundType())));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalRailBlock> ANTIMETAL_RAIL = BLOCKS.register("antimetal_rail",
-            () -> new com.craisinlord.antarchy.content.block.AntimetalRailBlock(BlockBehaviour.Properties.copy(Blocks.RAIL)));
+    public static final RegistryObject<AntimetalScaffoldingBlock> ANTIMETAL_SCAFFOLDING = BLOCKS.register("antimetal_scaffolding",
+            () -> new AntimetalScaffoldingBlock(BlockBehaviour.Properties.copy(Blocks.SCAFFOLDING).sound(antimetalScaffoldingSoundType())));
+    public static final RegistryObject<AntimetalRailBlock> ANTIMETAL_RAIL = BLOCKS.register("antimetal_rail",
+            () -> new AntimetalRailBlock(BlockBehaviour.Properties.copy(Blocks.RAIL)));
     public static final RegistryObject<UpperBlock> UPPER = BLOCKS.register("upper",
             () -> new UpperBlock(AntarchyForgeBlocks::upperBlockEntityType, BlockBehaviour.Properties.copy(Blocks.HOPPER)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalPoweredRailBlock> ANTIMETAL_POWERED_RAIL = BLOCKS.register("antimetal_powered_rail",
-            () -> new com.craisinlord.antarchy.content.block.AntimetalPoweredRailBlock(BlockBehaviour.Properties.copy(Blocks.POWERED_RAIL)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalDetectorRailBlock> ANTIMETAL_DETECTOR_RAIL = BLOCKS.register("antimetal_detector_rail",
-            () -> new com.craisinlord.antarchy.content.block.AntimetalDetectorRailBlock(BlockBehaviour.Properties.copy(Blocks.DETECTOR_RAIL)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalActivatorRailBlock> ANTIMETAL_ACTIVATOR_RAIL = BLOCKS.register("antimetal_activator_rail",
-            () -> new com.craisinlord.antarchy.content.block.AntimetalActivatorRailBlock(BlockBehaviour.Properties.copy(Blocks.ACTIVATOR_RAIL)));
+    public static final RegistryObject<AntimetalPoweredRailBlock> ANTIMETAL_POWERED_RAIL = BLOCKS.register("antimetal_powered_rail",
+            () -> new AntimetalPoweredRailBlock(BlockBehaviour.Properties.copy(Blocks.POWERED_RAIL)));
+    public static final RegistryObject<AntimetalDetectorRailBlock> ANTIMETAL_DETECTOR_RAIL = BLOCKS.register("antimetal_detector_rail",
+            () -> new AntimetalDetectorRailBlock(BlockBehaviour.Properties.copy(Blocks.DETECTOR_RAIL)));
+    public static final RegistryObject<AntimetalActivatorRailBlock> ANTIMETAL_ACTIVATOR_RAIL = BLOCKS.register("antimetal_activator_rail",
+            () -> new AntimetalActivatorRailBlock(BlockBehaviour.Properties.copy(Blocks.ACTIVATOR_RAIL)));
     public static final RegistryObject<CorneaStalkBlock> CORNEA_STALK = BLOCKS.register("cornea_stalk",
             () -> new CorneaStalkBlock(BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks()));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.GlowcapMushroomBlock> GLOWCAP_MUSHROOM = BLOCKS.register("glowcap_mushroom",
-            () -> new com.craisinlord.antarchy.content.block.GlowcapMushroomBlock(BlockBehaviour.Properties.copy(Blocks.RED_MUSHROOM).lightLevel(state -> 12).randomTicks()));
+    public static final RegistryObject<GlowcapMushroomBlock> GLOWCAP_MUSHROOM = BLOCKS.register("glowcap_mushroom",
+            () -> new GlowcapMushroomBlock(BlockBehaviour.Properties.copy(Blocks.RED_MUSHROOM).lightLevel(state -> 12).randomTicks()));
     public static final RegistryObject<FlowerPotBlock> POTTED_GLOWCAP_MUSHROOM = BLOCKS.register("potted_glowcap_mushroom",
             () -> new FlowerPotBlock(GLOWCAP_MUSHROOM.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).lightLevel(state -> 12)));
-    public static final RegistryObject<net.minecraft.world.level.block.HugeMushroomBlock> GLOWCAP_MUSHROOM_BLOCK = BLOCKS.register("glowcap_mushroom_block",
-            () -> new net.minecraft.world.level.block.HugeMushroomBlock(BlockBehaviour.Properties.copy(Blocks.RED_MUSHROOM_BLOCK).lightLevel(state -> 13)));
+    public static final RegistryObject<HugeMushroomBlock> GLOWCAP_MUSHROOM_BLOCK = BLOCKS.register("glowcap_mushroom_block",
+            () -> new HugeMushroomBlock(BlockBehaviour.Properties.copy(Blocks.RED_MUSHROOM_BLOCK).lightLevel(state -> 13)));
     public static final RegistryObject<CornCropBlock> CORN_CROP = BLOCKS.register("corn_crop",
             () -> new CornCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).randomTicks().noCollission().noOcclusion()));
     public static final RegistryObject<WildCornBlock> WILD_CORN = BLOCKS.register("wild_corn",
@@ -967,10 +976,10 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
     public static final RegistryObject<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD).sound(primordialLoamSoundType())));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.PrimordialGrassBlock> PRIMORDIAL_GRASS = BLOCKS.register("primordial_grass",
-            () -> new com.craisinlord.antarchy.content.block.PrimordialGrassBlock(BlockBehaviour.Properties.copy(Blocks.GRASS)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.PrimordialMossBlock> PRIMORDIAL_MOSS_BLOCK = BLOCKS.register("primordial_moss_block", () -> new com.craisinlord.antarchy.content.block.PrimordialMossBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK)));
-    public static final RegistryObject<net.minecraft.world.level.block.CarpetBlock> PRIMORDIAL_MOSS_CARPET = BLOCKS.register("primordial_moss_carpet", () -> new net.minecraft.world.level.block.CarpetBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_CARPET)));
+    public static final RegistryObject<PrimordialGrassBlock> PRIMORDIAL_GRASS = BLOCKS.register("primordial_grass",
+            () -> new PrimordialGrassBlock(BlockBehaviour.Properties.copy(Blocks.GRASS)));
+    public static final RegistryObject<PrimordialMossBlock> PRIMORDIAL_MOSS_BLOCK = BLOCKS.register("primordial_moss_block", () -> new PrimordialMossBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK)));
+    public static final RegistryObject<CarpetBlock> PRIMORDIAL_MOSS_CARPET = BLOCKS.register("primordial_moss_carpet", () -> new CarpetBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_CARPET)));
     public static final RegistryObject<FlowerPotBlock> POTTED_PRIMORDIAL_GRASS = BLOCKS.register("potted_primordial_grass",
             () -> new FlowerPotBlock(PRIMORDIAL_GRASS.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION)));
     public static final RegistryObject<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
@@ -1061,24 +1070,24 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new DirectionalThoraxisFlowerBlock(BlockBehaviour.Properties.copy(Blocks.WARPED_ROOTS)));
     public static final RegistryObject<Block> DEAD_STAR_CORAL_BLOCK = BLOCKS.register("dead_star_coral_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_BLOCK)));
-    public static final RegistryObject<net.minecraft.world.level.block.BaseCoralPlantBlock> DEAD_STAR_CORAL = BLOCKS.register("dead_star_coral",
-            () -> new net.minecraft.world.level.block.BaseCoralPlantBlock(BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL)));
-    public static final RegistryObject<net.minecraft.world.level.block.BaseCoralFanBlock> DEAD_STAR_CORAL_FAN = BLOCKS.register("dead_star_coral_fan",
-            () -> new net.minecraft.world.level.block.BaseCoralFanBlock(BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_FAN)));
-    public static final RegistryObject<net.minecraft.world.level.block.BaseCoralWallFanBlock> DEAD_STAR_CORAL_WALL_FAN = BLOCKS.register("dead_star_coral_wall_fan",
-            () -> new net.minecraft.world.level.block.BaseCoralWallFanBlock(BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_WALL_FAN)));
+    public static final RegistryObject<BaseCoralPlantBlock> DEAD_STAR_CORAL = BLOCKS.register("dead_star_coral",
+            () -> new BaseCoralPlantBlock(BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL)));
+    public static final RegistryObject<BaseCoralFanBlock> DEAD_STAR_CORAL_FAN = BLOCKS.register("dead_star_coral_fan",
+            () -> new BaseCoralFanBlock(BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_FAN)));
+    public static final RegistryObject<BaseCoralWallFanBlock> DEAD_STAR_CORAL_WALL_FAN = BLOCKS.register("dead_star_coral_wall_fan",
+            () -> new BaseCoralWallFanBlock(BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_WALL_FAN)));
     public static final RegistryObject<Block> STAR_CORAL_BLOCK = BLOCKS.register("star_coral_block",
-            () -> new com.craisinlord.antarchy.content.block.StarCoralBlock(DEAD_STAR_CORAL_BLOCK.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_BLOCK).lightLevel(state -> 8)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.StarCoralPlantBlock> STAR_CORAL = BLOCKS.register("star_coral",
-            () -> new com.craisinlord.antarchy.content.block.StarCoralPlantBlock(DEAD_STAR_CORAL.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL).lightLevel(state -> 8)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.StarCoralFanBlock> STAR_CORAL_FAN = BLOCKS.register("star_coral_fan",
-            () -> new com.craisinlord.antarchy.content.block.StarCoralFanBlock(DEAD_STAR_CORAL_FAN.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_FAN).lightLevel(state -> 8)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
-            () -> new com.craisinlord.antarchy.content.block.StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_WALL_FAN).lightLevel(state -> 8)));
+            () -> new StarCoralBlock(DEAD_STAR_CORAL_BLOCK.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_BLOCK).lightLevel(state -> 8)));
+    public static final RegistryObject<StarCoralPlantBlock> STAR_CORAL = BLOCKS.register("star_coral",
+            () -> new StarCoralPlantBlock(DEAD_STAR_CORAL.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL).lightLevel(state -> 8)));
+    public static final RegistryObject<StarCoralFanBlock> STAR_CORAL_FAN = BLOCKS.register("star_coral_fan",
+            () -> new StarCoralFanBlock(DEAD_STAR_CORAL_FAN.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_FAN).lightLevel(state -> 8)));
+    public static final RegistryObject<StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
+            () -> new StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_WALL_FAN).lightLevel(state -> 8)));
 
-    public static final RegistryObject<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("royal_egg",
+    public static final RegistryObject<BlockEntityType<RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("royal_egg",
             () -> BlockEntityType.Builder.of(
-                    com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity::new,
+                    RoyalEggBlockEntity::new,
                     PRINCE_EGG.get(),
                     PRINCESS_EGG.get()
             ).build(null));
@@ -1126,9 +1135,9 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
                     CritterCageBlockEntity::new,
                     CRITTER_CAGE_BLOCK.get()
             ).build(null));
-    public static final RegistryObject<BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity>> BLUESTONE_COMPARATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bluestone_comparator",
+    public static final RegistryObject<BlockEntityType<BluestoneComparatorBlockEntity>> BLUESTONE_COMPARATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bluestone_comparator",
             () -> BlockEntityType.Builder.of(
-                    (pos, state) -> new com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity(pos, state, AntarchyForgeBlocks::bluestoneComparatorBlockEntityType),
+                    (pos, state) -> new BluestoneComparatorBlockEntity(pos, state, AntarchyForgeBlocks::bluestoneComparatorBlockEntityType),
                     BLUESTONE_COMPARATOR.get()
             ).build(null));
     public static final RegistryObject<BlockEntityType<UpperBlockEntity>> UPPER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("upper",
@@ -1156,9 +1165,9 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
                     (pos, state) -> new DimensionalTearMarkerBlockEntity(pos, state, AntarchyForgeBlocks::dimensionalTearMarkerBlockEntityType),
                     DIMENSIONAL_TEAR_MARKER.get()
             ).build(null));
-    public static final RegistryObject<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity>> REMEMBRANCE_TORCH_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("remembrance_torch",
+    public static final RegistryObject<BlockEntityType<RemembranceTorchBlockEntity>> REMEMBRANCE_TORCH_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("remembrance_torch",
             () -> BlockEntityType.Builder.of(
-                    com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity::new,
+                    RemembranceTorchBlockEntity::new,
                     REMEMBRANCE_TORCH.get(),
                     REMEMBRANCE_WALL_TORCH.get()
             ).build(null));
@@ -1167,9 +1176,9 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
                     (pos, state) -> new QueenTrailSpawnMarkerBlockEntity(pos, state, AntarchyForgeBlocks::queenTrailSpawnMarkerBlockEntityType),
                     QUEEN_TRAIL_SPAWN_MARKER.get()
             ).build(null));
-    public static final RegistryObject<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fossil",
+    public static final RegistryObject<BlockEntityType<FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fossil",
             () -> BlockEntityType.Builder.of(
-                    com.craisinlord.antarchy.content.block.entity.FossilBlockEntity::new,
+                    FossilBlockEntity::new,
                     MYRMITE_FOSSIL.get(),
                     BROODSTONE_FOSSIL.get()
             ).build(null));
@@ -1267,7 +1276,7 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
         return BLOOD_CRYSTAL_CRYSTAL.get();
     }
 
-    private static BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
+    private static BlockEntityType<BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
         return BLUESTONE_COMPARATOR_BLOCK_ENTITY.get();
     }
 
@@ -1322,8 +1331,8 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
             return state.rotate(mirror.getRotation(state.getValue(FACING)));
         }
     }
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.CranberryLeavesBlock> CRANBERRY_LEAVES = BLOCKS.register("cranberry_leaves", () -> new com.craisinlord.antarchy.content.block.CranberryLeavesBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES)));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.JelliedCranberryBlock> JELLIED_CRANBERRY_BLOCK = BLOCKS.register("jellied_cranberry_block", () -> new com.craisinlord.antarchy.content.block.JelliedCranberryBlock(BlockBehaviour.Properties.copy(Blocks.HONEY_BLOCK).mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
+    public static final RegistryObject<CranberryLeavesBlock> CRANBERRY_LEAVES = BLOCKS.register("cranberry_leaves", () -> new CranberryLeavesBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LEAVES)));
+    public static final RegistryObject<JelliedCranberryBlock> JELLIED_CRANBERRY_BLOCK = BLOCKS.register("jellied_cranberry_block", () -> new JelliedCranberryBlock(BlockBehaviour.Properties.copy(Blocks.HONEY_BLOCK).mapColor(MapColor.COLOR_RED).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
     public static final RegistryObject<RotatedPillarBlock> CRANBERRY_LOG = BLOCKS.register("cranberry_log",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LOG)));
     public static final RegistryObject<RotatedPillarBlock> CRANBERRY_WOOD = BLOCKS.register("cranberry_wood",
@@ -1350,5 +1359,5 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.copy(Blocks.JUNGLE_PRESSURE_PLATE), BlockSetType.JUNGLE));
     public static final RegistryObject<ButtonBlock> CRANBERRY_BUTTON = BLOCKS.register("cranberry_button",
             () -> new ButtonBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_BUTTON), BlockSetType.JUNGLE, 30, true));
-    public static final RegistryObject<net.minecraft.world.level.block.SaplingBlock> CRANBERRY_SAPLING = BLOCKS.register("cranberry_sapling", () -> new net.minecraft.world.level.block.SaplingBlock(com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeGrowers.CRANBERRY, BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
+    public static final RegistryObject<SaplingBlock> CRANBERRY_SAPLING = BLOCKS.register("cranberry_sapling", () -> new SaplingBlock(CranberryTreeGrowers.CRANBERRY, BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
 }

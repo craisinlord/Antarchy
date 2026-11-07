@@ -30,15 +30,23 @@ public abstract class AntimetalInversionMixin {
     @Inject(method = "tick", at = @At("TAIL"))
     private void antarchy$tickOverheadInversion(CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (entity.level().isClientSide()) return;
-        if (entity instanceof Player player && player.isSpectator()) return;
+        if (entity.level().isClientSide()) {
+            return;
+        }
+        if (entity instanceof Player player && player.isSpectator()) {
+            return;
+        }
         MobEffectInstance existing = entity.getActiveEffectsMap().isEmpty() ? null : entity.getEffect(AntarchyObjects.INVERTED_EFFECT.get());
         if (existing != null) {
-            if (existing.getDuration() > ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) return;
+            if (existing.getDuration() > ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) {
+                return;
+            }
         } else if (!antarchy$isScanPhase(entity)) {
             return;
         }
-        if (!antarchy$isDirectlyBelowAntimetal(entity)) return;
+        if (!antarchy$isDirectlyBelowAntimetal(entity)) {
+            return;
+        }
 
         entity.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
         antarchy$spawnInversionParticles(entity);
@@ -76,13 +84,19 @@ public abstract class AntimetalInversionMixin {
     @Inject(method = "onEffectRemoved", at = @At("HEAD"))
     private void antarchy$onInvertedRemoved(MobEffectInstance effectInstance, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (entity.level().isClientSide()) return;
-        if (!effectInstance.is(AntarchyObjects.INVERTED_EFFECT.get())) return;
+        if (entity.level().isClientSide()) {
+            return;
+        }
+        if (!effectInstance.is(AntarchyObjects.INVERTED_EFFECT.get())) {
+            return;
+        }
         GravityApi.setGravityDirection(entity, GravityDirection.DOWN, new GravityTransition(12));
     }
 
     private static void antarchy$spawnInversionParticles(LivingEntity entity) {
-        if (!(entity.level() instanceof ServerLevel serverLevel)) return;
+        if (!(entity.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
         double x = entity.getX();
         double y = entity.getBoundingBox().maxY + 0.1D;
         double z = entity.getZ();

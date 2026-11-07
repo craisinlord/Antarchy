@@ -1,11 +1,9 @@
 package com.craisinlord.antarchy.content.network;
 
 import com.craisinlord.antarchy.content.computer.AntarchyGameSavedData;
+import com.craisinlord.antos.content.block.entity.ComputerBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 
 public final class AntarchyGameNetworkHandler {
     private AntarchyGameNetworkHandler() { }
@@ -16,7 +14,7 @@ public final class AntarchyGameNetworkHandler {
                 || player.distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) > 64.0D) return;
 
         var blockEntity = player.level().getBlockEntity(pos);
-        if (!(blockEntity instanceof com.craisinlord.antos.content.block.entity.ComputerBlockEntity computer)
+        if (!(blockEntity instanceof ComputerBlockEntity computer)
                 || !computer.canUseFileSystem(player)) {
             send(player, payload, false, "", "unauthorized");
             return;

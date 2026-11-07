@@ -2,20 +2,21 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.util.RandomSource;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.synth.Noise;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public final class CavarynGlowcapGrottoDressingFeature implements Feature {
@@ -36,7 +37,7 @@ public final class CavarynGlowcapGrottoDressingFeature implements Feature {
             Identifier.withDefaultNamespace("podzol")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double FLOOR_DEPTH = 1.6;
+    private static final double FLOOR_DEPTH = 1.6D;
     private static final float MYCELIUM_CHANCE = 0.4F;
 
     public static final MapCodec<CavarynGlowcapGrottoDressingFeature> CODEC = MapCodec.unit(CavarynGlowcapGrottoDressingFeature::new);
@@ -48,10 +49,10 @@ public final class CavarynGlowcapGrottoDressingFeature implements Feature {
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        net.minecraft.world.level.levelgen.synth.Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(GROTTO_NOISE);
+        Noise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(GROTTO_NOISE);
         CavarynCavityGrid grid = CavarynCavityGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.get(1234.567, 89.123, -456.789),
-                noise.get(-987.654, 12.345, 654.321)
+                noise.get(1234.567D, 89.123D, -456.789D),
+                noise.get(-987.654D, 12.345D, 654.321D)
         ));
         Block amberMoss = block(AMBER_MOSS_ID);
         if (grid == null || amberMoss == null) {
@@ -83,7 +84,7 @@ public final class CavarynGlowcapGrottoDressingFeature implements Feature {
                 for (int y = minY; y <= maxY; y++) {
                     double distance = next;
                     next = grid.signedDistance(x, y + 1, z);
-                    if (distance <= 0.0 || distance > FLOOR_DEPTH || next > 0.0) {
+                    if (distance <= 0.0D || distance > FLOOR_DEPTH || next > 0.0D) {
                         continue;
                     }
                     pos.set(x, y, z);

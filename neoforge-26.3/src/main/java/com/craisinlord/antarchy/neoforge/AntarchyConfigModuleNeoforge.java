@@ -3,10 +3,10 @@ package com.craisinlord.antarchy.neoforge;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.config.ConfigResetGuard;
 import java.nio.file.Path;
-import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.loading.FMLPaths;
 
 public final class AntarchyConfigModuleNeoforge {
     private AntarchyConfigModuleNeoforge() {}
@@ -630,7 +630,6 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setShrinkingPotionDelta(AntarchyToolsConfig.shrinkingPotionDelta());
         AntarchySettings.setGrowthPotionDelta(AntarchyToolsConfig.growthPotionDelta());
 
-
         AntarchySettings.setGravityGunEnabled(AntarchyToolsConfig.gravityGunEnabled());
         AntarchySettings.setGravityGunBlocksEnabled(AntarchyToolsConfig.gravityGunBlocksEnabled());
         AntarchySettings.setGravityGunEntitiesEnabled(AntarchyToolsConfig.gravityGunEntitiesEnabled());
@@ -655,7 +654,6 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setEyeOfTheStormSurgeDamage(AntarchyToolsConfig.eyeOfTheStormSurgeDamage());
         AntarchySettings.setCritterCageMaxCapturableWidth(AntarchyToolsConfig.critterCageMaxCapturableWidth());
         AntarchySettings.setCritterCageMaxCapturableHeight(AntarchyToolsConfig.critterCageMaxCapturableHeight());
-
 
         AntarchySettings.setDuctTapeRepairPercentPerUse(AntarchyToolsConfig.ductTapeRepairPercentPerUse());
         AntarchySettings.setPotentNyxiteInvertedDurationSeconds(AntarchyToolsConfig.potentNyxiteInvertedDurationSeconds());
@@ -703,7 +701,6 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setPortalGunMoonPullsBlocks(AntarchyMiscConfig.portalGunMoonPullsBlocks());
         AntarchySettings.setPortalGunMoonPortalSeconds(AntarchyMiscConfig.portalGunMoonPortalSeconds());
         AntarchySettings.setPortalGunMoonBlockCap(AntarchyMiscConfig.portalGunMoonBlockCap());
-
 
         AntarchySettings.setElythiaFireflyParticlesEnabled(AntarchyMiscConfig.elythiaFireflyParticlesEnabled());
         AntarchySettings.setElythiaFogEnabled(AntarchyMiscConfig.elythiaFogEnabled());
