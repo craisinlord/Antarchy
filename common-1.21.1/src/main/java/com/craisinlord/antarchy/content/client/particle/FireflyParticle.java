@@ -12,6 +12,9 @@ import net.minecraft.util.Mth;
 
 public final class FireflyParticle extends TextureSheetParticle {
     private static final int FADE_TICKS = 8;
+    private static final double TETHER = 0.004D;
+
+    private final double homeY;
 
     private FireflyParticle(ClientLevel level, double x, double y, double z, SpriteSet sprites) {
         super(level, x, y, z, 0.0D, 0.0D, 0.0D);
@@ -20,7 +23,8 @@ public final class FireflyParticle extends TextureSheetParticle {
         this.quadSize = 0.10F + this.random.nextFloat() * 0.04F;
         this.setColor(0.92F, 0.98F, 0.45F);
         this.setAlpha(0.0F);
-        this.yd = 0.004D + this.random.nextDouble() * 0.003D;
+        this.homeY = y;
+        this.yd = (this.random.nextDouble() - 0.5D) * 0.004D;
         this.xd = (this.random.nextDouble() - 0.5D) * 0.008D;
         this.zd = (this.random.nextDouble() - 0.5D) * 0.008D;
         this.hasPhysics = false;
@@ -40,6 +44,7 @@ public final class FireflyParticle extends TextureSheetParticle {
         float bobOffset = Mth.sin(this.age * 0.18F) * 0.006F;
         this.xd += bobOffset;
         this.zd -= bobOffset;
+        this.yd += (this.homeY - this.y) * TETHER + Mth.cos(this.age * 0.11F) * 0.0008F;
 
         this.xd *= 0.94D;
         this.yd *= 0.98D;

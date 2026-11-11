@@ -25,6 +25,7 @@ public final class AntarchyFabricRegistries {
         AntarchyFabricMisc.BIOME_SOURCES.register();
         AntarchyFabricMisc.DENSITY_FUNCTION_TYPES.register();
         AntarchyFabricMisc.MATERIAL_RULES.register();
+        AntarchyFabricMisc.STRUCTURE_PLACEMENTS.register();
         AntarchyFabricMisc.ENTITY_SUB_PREDICATES.register();
         AntarchyFabricMisc.MOB_EFFECTS.register();
         AntarchyFabricMisc.POTIONS.register();

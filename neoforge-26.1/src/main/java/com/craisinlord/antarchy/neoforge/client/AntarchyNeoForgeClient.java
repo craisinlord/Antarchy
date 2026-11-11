@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyAnthologyHooks;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
 import com.craisinlord.antarchy.content.block.Fossils;
+import com.craisinlord.antarchy.content.block.RockiteTint;
 import com.craisinlord.antarchy.content.block.entity.FossilBlockEntity;
 import com.craisinlord.antarchy.content.client.AntTransitClientState;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
@@ -374,6 +375,17 @@ public final class AntarchyNeoForgeClient {
                 List.of(BlockTintSources.grass()),
                 AntarchyNeoforgeBlocks.POTTED_SPIDER_LILY.get()
         );
+        event.register(List.of(new BlockTintSource() {
+            @Override
+            public int color(BlockState state) {
+                return RockiteTint.DEFAULT_COLOR;
+            }
+
+            @Override
+            public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                return RockiteTint.color(pos.getY());
+            }
+        }), RockiteTint.blocks());
     }
 
     @SubscribeEvent

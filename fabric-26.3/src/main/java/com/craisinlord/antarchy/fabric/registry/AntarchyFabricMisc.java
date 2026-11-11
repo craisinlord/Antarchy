@@ -66,7 +66,11 @@ import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBasinFill;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeDispatchRule;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaButteFunction;
+import com.craisinlord.antarchy.content.worldgen.elythia.SkyIsleBiomeFunction;
+import com.craisinlord.antarchy.content.worldgen.elythia.SkyIslePlacement;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaCloudFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.SkyIsleFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.SkyIsleTerrainFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaColumnCache;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaFloraFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature;
@@ -196,6 +200,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.material.rule.MaterialRule;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.minecraft.world.level.material.Fluid;
 
 public final class AntarchyFabricMisc {
@@ -249,6 +254,7 @@ public final class AntarchyFabricMisc {
     public static final DeferredRegister<MapCodec<? extends BiomeSource>> BIOME_SOURCES = DeferredRegister.create(Registries.BIOME_SOURCE, Antarchy.MODID);
 
     public static final DeferredRegister<MapCodec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Antarchy.MODID);
+    public static final DeferredRegister<MapCodec<? extends StructurePlacement>> STRUCTURE_PLACEMENTS = DeferredRegister.create(Registries.STRUCTURE_PLACEMENT, Antarchy.MODID);
     public static final DeferredRegister<MapCodec<? extends MaterialRule>> MATERIAL_RULES = DeferredRegister.create(Registries.MATERIAL_RULE_TYPE, Antarchy.MODID);
 
     public static final DeferredRegister<Codec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Antarchy.MODID);
@@ -860,6 +866,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaCloudFeature>> ELYTHIA_CLOUDS = FEATURES.register("elythia_clouds",
             () -> ElythiaCloudFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<SkyIsleTerrainFeature>> SKY_ISLE_TERRAIN = FEATURES.register("sky_isle_terrain",
+            () -> SkyIsleTerrainFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<SkyIsleFeature>> SKY_ISLE = FEATURES.register("sky_isle",
+            () -> SkyIsleFeature.CODEC);
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<BedBugNestFeature>> BED_BUG_NEST = FEATURES.register("bed_bug_nest",
             () -> BedBugNestFeature.CODEC);
@@ -1083,6 +1093,10 @@ public final class AntarchyFabricMisc {
             () -> ElythiaShelfLip.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaButteFunction>> ELYTHIA_BUTTE = DENSITY_FUNCTION_TYPES.register("elythia_butte",
             () -> ElythiaButteFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<SkyIsleBiomeFunction>> ELYTHIA_SKY_ISLE = DENSITY_FUNCTION_TYPES.register("elythia_sky_isle",
+            () -> SkyIsleBiomeFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends StructurePlacement>, MapCodec<SkyIslePlacement>> SKY_ISLE_CROWN = STRUCTURE_PLACEMENTS.register("sky_isle_crown",
+            () -> SkyIslePlacement.CODEC);
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ThrowbackNerdPoleFeature>> THROWBACK_NERD_POLE = FEATURES.register("throwback_nerd_pole", () -> ThrowbackNerdPoleFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<GlimmeringFallFeature>> GLIMMERING_FALL = FEATURES.register("glimmering_fall", () -> GlimmeringFallFeature.CODEC);

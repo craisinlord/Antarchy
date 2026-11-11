@@ -35,12 +35,12 @@
   ],
   "depends": {
     "antos": ">=${antos_version}",
-    "anthology": ">=1.0.5",
+    "anthology": ">=1.0.7",
     "fabricloader": ">=${fabric_loader_version}",
     "minecraft": "~${minecraft_version}",
     "java": ">=25",
     "fabric-api": "*",
-    "integrated_api": "*",
+    "integrated_api": ">=1.9.2",
     "geckolib": "*",
     "sizeable_foliage": "*"
   },

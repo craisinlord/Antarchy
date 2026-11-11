@@ -12,6 +12,8 @@ layout(std140) uniform GrassFrame {
     vec4 TramplePos[32];
     vec4 TrampleMotion[32];
     vec4 GrassState;
+    vec4 VariantUv[3];
+    vec4 VariantHeight;
 };
 
 uniform sampler2D Sampler2;
@@ -49,11 +51,14 @@ float gustEnvelope(float age) {
 void main() {
     float h = Shape.x;
     float f = Shape.y;
-    float exposure = Meta.x;
+    float metaByte = floor(Meta.x * 255.0 + 0.5);
+    float exposure = metaByte > 127.5 ? 1.0 : 0.0;
+    int variant = clamp(int(mod(metaByte, 128.0)), 0, 2);
+    float height = VariantHeight[variant];
     float tuftHash = Meta.y;
     float mirror = Flippable > 0.5 && mod(floor(tuftHash * 255.0 + 0.5), 2.0) > 0.5 ? -1.0 : 1.0;
     vec3 root = Root + ModelOffset;
-    vec3 rel = root + vec3(Offset.x * mirror, h * 1.125, Offset.y);
+    vec3 rel = root + vec3(Offset.x * mirror, h * height, Offset.y);
     vec2 windDir = GrassWind.xy;
     float calm = sin(GrassWind.w + root.x * 0.07 + root.z * 0.09) * 0.04;
     float gustTime = GrassWind.z - dot(root.xz, windDir) / 0.31;
@@ -89,10 +94,10 @@ void main() {
     float flutter = sin(GrassWind.w * 3.0 + tuftHash * 6.2831855) * 0.1 * bend;
     vec3 pos = rel;
     pos.xz += windOffset * (1.0 - 0.6 * lean) + push * 0.5 * variation * bend + vec2(-push.y, push.x) * flutter;
-    pos.y -= h * h * 1.125 * 0.14 * lean * lean;
+    pos.y -= h * h * height * 0.14 * lean * lean;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
     sphericalVertexDistance = fog_spherical_distance(pos);
     cylindricalVertexDistance = fog_cylindrical_distance(pos);
     vertexColor = sample_lightmap(Sampler2, ivec2(UV2));
-    texCoord0 = UV0;
+    texCoord0 = VariantUv[variant].xy + UV0 * VariantUv[variant].zw;
 }

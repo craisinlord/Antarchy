@@ -117,6 +117,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
@@ -163,6 +164,7 @@ public final class AntarchyForgeMisc {
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, Antarchy.MODID);
     private static final DeferredRegister<Codec<? extends BiomeSource>> BIOME_SOURCES = DeferredRegister.create(Registries.BIOME_SOURCE, Antarchy.MODID);
     private static final DeferredRegister<Codec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Antarchy.MODID);
+    private static final DeferredRegister<StructurePlacementType<?>> STRUCTURE_PLACEMENTS = DeferredRegister.create(Registries.STRUCTURE_PLACEMENT, Antarchy.MODID);
     private static final DeferredRegister<Codec<? extends SurfaceRules.RuleSource>> MATERIAL_RULES = DeferredRegister.create(Registries.MATERIAL_RULE, Antarchy.MODID);
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, Antarchy.MODID);
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, Antarchy.MODID);
@@ -424,7 +426,7 @@ public final class AntarchyForgeMisc {
     public static final RegistryObject<GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH = FEATURES.register("giant_lily_pad_patch",
             () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH_PEACH_FOREST = FEATURES.register("giant_lily_pad_patch_peach_forest",
-            () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC, 0.12F));
+            () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC, 0.5F));
     public static final RegistryObject<LumenStreamFeature> LUMEN_STREAM = FEATURES.register("lumen_streams",
             () -> new LumenStreamFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<LumenSpireFeature> LUMEN_SPIRE = FEATURES.register("lumen_spires",
@@ -547,6 +549,7 @@ public final class AntarchyForgeMisc {
         FEATURES.register(modEventBus);
         BIOME_SOURCES.register(modEventBus);
         DENSITY_FUNCTION_TYPES.register(modEventBus);
+        STRUCTURE_PLACEMENTS.register(modEventBus);
         MATERIAL_RULES.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
         MENU_TYPES.register(modEventBus);
@@ -665,6 +668,14 @@ public final class AntarchyForgeMisc {
             () -> ElythiaShelfLip.CODEC.codec());
     public static final RegistryObject<Codec<? extends DensityFunction>> ELYTHIA_BUTTE = DENSITY_FUNCTION_TYPES.register("elythia_butte",
             () -> ElythiaButteFunction.CODEC.codec());
+    public static final RegistryObject<SkyIsleTerrainFeature> SKY_ISLE_TERRAIN = FEATURES.register("sky_isle_terrain",
+            () -> new SkyIsleTerrainFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<SkyIsleFeature> SKY_ISLE = FEATURES.register("sky_isle",
+            () -> new SkyIsleFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<Codec<? extends DensityFunction>> ELYTHIA_SKY_ISLE = DENSITY_FUNCTION_TYPES.register("elythia_sky_isle",
+            () -> SkyIsleBiomeFunction.CODEC.codec());
+    public static final RegistryObject<StructurePlacementType<SkyIslePlacement>> SKY_ISLE_CROWN = STRUCTURE_PLACEMENTS.register("sky_isle_crown",
+            () -> () -> SkyIslePlacement.CODEC);
     public static final RegistryObject<GlimmeringFallFeature> GLIMMERING_FALL = FEATURES.register("glimmering_fall",
             () -> new GlimmeringFallFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<TruffaloSpireFeature> TRUFFALO_SPIRE = FEATURES.register("truffalo_spire",

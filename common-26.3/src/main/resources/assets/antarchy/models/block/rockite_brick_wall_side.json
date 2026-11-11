@@ -1,7 +1,6 @@
 {
-  "parent": "minecraft:block/template_wall_side",
+  "parent": "antarchy:block/tinted/wall_side",
   "textures": {
     "wall": "antarchy:block/rockite_bricks"
   }
 }
-

@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 public class OuranwoodCocoonTreeFeature extends OuranwoodTreeFeature {
 
@@ -14,12 +13,8 @@ public class OuranwoodCocoonTreeFeature extends OuranwoodTreeFeature {
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<OuranwoodTreeConfiguration> context) {
-        if (!super.place(context)) {
-            return false;
-        }
-        placeGuaranteedCocoon(context.level(), context.origin(), context.config(), context.random());
-        return true;
+    protected void afterTreePlaced(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random) {
+        placeGuaranteedCocoon(level, origin, config, random);
     }
 
     private void placeGuaranteedCocoon(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random) {

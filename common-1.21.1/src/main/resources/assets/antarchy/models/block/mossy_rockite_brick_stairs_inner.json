@@ -1,9 +1,9 @@
 {
-  "parent": "minecraft:block/inner_stairs",
+  "parent": "antarchy:block/tinted/inner_stairs_overlay",
   "textures": {
     "bottom": "antarchy:block/mossy_rockite_bricks",
     "side": "antarchy:block/mossy_rockite_bricks",
-    "top": "antarchy:block/mossy_rockite_bricks"
+    "top": "antarchy:block/mossy_rockite_bricks",
+    "overlay": "antarchy:block/mossy_rockite_bricks_overlay"
   }
 }
-

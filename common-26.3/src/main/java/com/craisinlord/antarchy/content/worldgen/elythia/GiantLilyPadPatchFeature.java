@@ -20,7 +20,7 @@ public final class GiantLilyPadPatchFeature implements Feature {
 
     private GiantLilyPadPatchFeature(boolean peachForest) {
         this.peachForest = peachForest;
-        this.lotusChance = peachForest ? PEACH_FOREST_LOTUS_CHANCE : 1.0F;
+        this.lotusChance = peachForest ? PEACH_FOREST_LOTUS_CHANCE : 0.5F;
     }
 
     public MapCodec<GiantLilyPadPatchFeature> codec() {
@@ -29,7 +29,7 @@ public final class GiantLilyPadPatchFeature implements Feature {
 
     private final boolean peachForest;
 
-    private static final float PEACH_FOREST_LOTUS_CHANCE = 0.12F;
+    private static final float PEACH_FOREST_LOTUS_CHANCE = 0.5F;
     private final float lotusChance;
 
     @Override

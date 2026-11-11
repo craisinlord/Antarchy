@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyAnthologyHooks;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
 import com.craisinlord.antarchy.content.block.Fossils;
+import com.craisinlord.antarchy.content.block.RockiteTint;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.GlimmeringHudRenderer;
 import com.craisinlord.antarchy.content.client.GoopedHudRenderer;
@@ -239,6 +240,7 @@ public final class AntarchyNeoForgeClient {
                 renderer.addLayer(new TigerEyeCamouflagePlayerLayer(renderer));
                 renderer.addLayer(new GoopedLivingLayer(renderer));
                 renderer.addLayer(new GlimmeringLivingLayer(renderer));
+                renderer.addLayer(new LumenSoakedLivingLayer(renderer));
                 renderer.addLayer(new RoyalIndicatorLivingLayer<>(renderer));
                 renderer.addLayer(new BrutalflyElytraLayer(renderer));
                 renderer.addLayer(new ManticoreWingsLayer(renderer));
@@ -279,12 +281,14 @@ public final class AntarchyNeoForgeClient {
         ((LivingEntityRenderer) livingRenderer).addLayer(new ParalyzedStoneLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new GoopedLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new GlimmeringLivingLayer<>(livingRenderer));
+        ((LivingEntityRenderer) livingRenderer).addLayer(new LumenSoakedLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new RoyalIndicatorLivingLayer<>(livingRenderer));
     }
 
     private static <T extends LivingEntity & GeoAnimatable> GeoEntityRenderer<T> withParalyzedGeoLayer(GeoEntityRenderer<T> renderer) {
         renderer.addRenderLayer(new ParalyzedStoneGeoLayer<>(renderer));
         renderer.addRenderLayer(new GoopedGeoLayer<>(renderer));
+        renderer.addRenderLayer(new LumenSoakedGeoLayer<>(renderer));
         renderer.addRenderLayer(new RoyalIndicatorGeoLayer<>(renderer));
         renderer.addRenderLayer(new TemporalContractionGeoLayer<>(renderer));
         return renderer;
@@ -302,6 +306,10 @@ public final class AntarchyNeoForgeClient {
         event.register(
                 (state, level, pos, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(state.getValue(BluestoneWireBlock.POWER)) : -1,
                 AntarchyNeoforgeBlocks.BLUESTONE_WIRE.get()
+        );
+        event.register(
+                (state, level, pos, tintIndex) -> RockiteTint.color(pos, tintIndex),
+                RockiteTint.blocks()
         );
         event.register(
                 (state, level, pos, tintIndex) -> level != null && pos != null
@@ -341,6 +349,10 @@ public final class AntarchyNeoForgeClient {
         event.register(
                 (stack, tintIndex) -> tintIndex == 0 ? GrassColor.getDefaultColor() : -1,
                 AntarchyNeoforgeItems.SPIDER_LILY_ITEM.get()
+        );
+        event.register(
+                (stack, tintIndex) -> RockiteTint.itemColor(tintIndex),
+                RockiteTint.blocks()
         );
         event.register(
                 (stack, tintIndex) -> {
@@ -395,6 +407,7 @@ public final class AntarchyNeoForgeClient {
         event.registerSpriteSet(AntarchyNeoforgeMisc.UNDERTRIAL_SPAWNER_DETECTION.get(), UndertrialParticle.DetectionProvider::new);
         event.registerSpriteSet(AntarchyNeoforgeMisc.UNDERTRIAL_OMEN.get(), UndertrialParticle.OmenProvider::new);
         event.registerSpriteSet(AntarchyNeoforgeMisc.UNDERVAULT_CONNECTION.get(), UndertrialParticle.OmenProvider::new);
+        event.registerSpriteSet(AntarchyNeoforgeMisc.LUMEN_DRIP.get(), LumenDripParticle.Provider::new);
     }
 
     @SubscribeEvent

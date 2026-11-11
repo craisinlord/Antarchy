@@ -3325,7 +3325,7 @@ public final class AntarchySettings {
     private static boolean elythiaGrassWindEnabled = true;
     private static boolean elythiaWindSoundsEnabled = true;
     private static boolean elythiaWindLinesEnabled = true;
-    private static int primordialGrassDrawDistance = 96;
+    private static int primordialGrassDrawDistance = 40;
     private static boolean primordialGrassDynamic = true;
     private static int primordialGrassQuality = 1;
     private static boolean fossilsEnabled = true;
@@ -3359,7 +3359,7 @@ public final class AntarchySettings {
     public static boolean elythiaWindLinesEnabled() { return elythiaWindLinesEnabled; }
     public static void setElythiaWindLinesEnabled(boolean value) { elythiaWindLinesEnabled = value; }
     public static int primordialGrassDrawDistance() { return primordialGrassDrawDistance; }
-    public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(32, Math.min(512, value)); }
+    public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(16, Math.min(128, value)); }
     public static boolean primordialGrassDynamic() { return primordialGrassDynamic; }
     public static void setPrimordialGrassDynamic(boolean value) { primordialGrassDynamic = value; }
     public static int primordialGrassQuality() { return primordialGrassQuality; }

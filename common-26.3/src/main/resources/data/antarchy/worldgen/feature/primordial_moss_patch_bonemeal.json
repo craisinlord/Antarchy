@@ -3,7 +3,7 @@
   "vertical_range": 5,
   "vegetation_feature": {
     "placement": [],
-    "feature": "antarchy:primordial_moss_vegetation"
+    "feature": "antarchy:primordial_moss_bonemeal_vegetation"
   },
   "ground_state": {
     "id": "antarchy:primordial_moss_block"

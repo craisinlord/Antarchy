@@ -269,39 +269,39 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<Item> OURANWOOD_CHEST_BOAT = ITEMS.register("ouranwood_chest_boat",
             () -> new AntarchyChestBoatItem(AntarchyForgeEntities.OURANWOOD_CHEST_BOAT_ENTITY, "ouranwood_chest_boat", new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD = ITEMS.register("hoverboard",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, null, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, null, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_WHITE = ITEMS.register("hoverboard_white",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.WHITE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.WHITE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_ORANGE = ITEMS.register("hoverboard_orange",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.ORANGE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.ORANGE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_MAGENTA = ITEMS.register("hoverboard_magenta",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.MAGENTA, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.MAGENTA, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_LIGHT_BLUE = ITEMS.register("hoverboard_light_blue",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIGHT_BLUE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIGHT_BLUE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_YELLOW = ITEMS.register("hoverboard_yellow",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.YELLOW, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.YELLOW, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_LIME = ITEMS.register("hoverboard_lime",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIME, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIME, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_PINK = ITEMS.register("hoverboard_pink",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.PINK, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.PINK, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_GRAY = ITEMS.register("hoverboard_gray",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.GRAY, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.GRAY, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_LIGHT_GRAY = ITEMS.register("hoverboard_light_gray",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIGHT_GRAY, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIGHT_GRAY, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_CYAN = ITEMS.register("hoverboard_cyan",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.CYAN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.CYAN, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_PURPLE = ITEMS.register("hoverboard_purple",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.PURPLE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.PURPLE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_BLUE = ITEMS.register("hoverboard_blue",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BLUE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BLUE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_BROWN = ITEMS.register("hoverboard_brown",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BROWN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BROWN, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_GREEN = ITEMS.register("hoverboard_green",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.GREEN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.GREEN, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_RED = ITEMS.register("hoverboard_red",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.RED, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.RED, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> HOVERBOARD_BLACK = ITEMS.register("hoverboard_black",
-            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BLACK, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BLACK, new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<SignItem> PEACH_SIGN_ITEM = ITEMS.register("peach_sign",
             () -> new SignItem(new Item.Properties().stacksTo(16), AntarchyForgeBlocks.PEACH_SIGN.get(), AntarchyForgeBlocks.PEACH_WALL_SIGN.get()));
     public static final RegistryObject<HangingSignItem> PEACH_HANGING_SIGN_ITEM = ITEMS.register("peach_hanging_sign",

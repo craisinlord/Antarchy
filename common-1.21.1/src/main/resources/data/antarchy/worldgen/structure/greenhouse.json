@@ -7,14 +7,7 @@
   "valid_biome_radius_check": 1,
   "biomes": "#antarchy:has_structure/greenhouse_biomes",
   "step": "surface_structures",
-  "enhanced_terrain_adaptation": {
-    "type": "integrated_api:custom",
-    "carves": true,
-    "beards": true,
-    "kernel_size": 32,
-    "kernel_distance": 48,
-    "direction": "down"
-  },
+  "terrain_adaptation": "beard_thin",
   "project_start_to_heightmap": "WORLD_SURFACE_WG",
   "start_height": {
     "type": "minecraft:constant",

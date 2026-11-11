@@ -156,6 +156,8 @@
     "client.PrimordialGrassLevelMixin",
     "client.PrimordialGrassDebugMixin",
     "client.PrimordialGrassVideoSettingsMixin",
+    "client.PrimordialGrassMeshingMixin",
+    "client.PrimordialGrassSodiumMeshingMixin",
     "client.SectionUploadBudgetMixin",
     "client.ElythiaFogMixin",
     "client.ElythiaWaterFogMixin",

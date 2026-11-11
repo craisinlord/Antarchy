@@ -1,0 +1,13 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:sky_isle_magical_castle",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "antarchy:sky_isle_crown",
+    "salt": 1640092311,
+    "theme": "royal_grove"
+  }
+}

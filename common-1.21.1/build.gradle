@@ -17,7 +17,7 @@ tasks.named('jar').configure {
 }
 
 dependencies {
-    compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
+    compileOnly(files(rootProject.file("integrated_api_jars/integrated_api-neoforge-1.21.1-${intapi_version_1_21_1}.jar")))
     compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))

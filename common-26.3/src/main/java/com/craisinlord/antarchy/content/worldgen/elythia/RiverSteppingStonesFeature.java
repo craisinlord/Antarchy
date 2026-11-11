@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -109,7 +108,7 @@ public class RiverSteppingStonesFeature implements Feature {
     }
 
     private static BlockState bodyState(RandomSource random) {
-        return random.nextFloat() < 0.35F ? ElythiaPalette.block("rockite").defaultBlockState() : ElythiaPalette.block("tidestone").defaultBlockState();
+        return random.nextFloat() < 0.65F ? Blocks.TUFF.defaultBlockState() : Blocks.MOSSY_COBBLESTONE.defaultBlockState();
     }
 
     private static BlockState topState(RandomSource random) {
@@ -117,7 +116,7 @@ public class RiverSteppingStonesFeature implements Feature {
         if (roll < 0.25F) {
             return Blocks.MOSS_BLOCK.defaultBlockState();
         }
-        return roll < 0.85F ?ElythiaPalette.block("tidestone").defaultBlockState() : ElythiaPalette.block("rockite").defaultBlockState();
+        return roll < 0.65F ? Blocks.MOSSY_COBBLESTONE.defaultBlockState() : Blocks.TUFF.defaultBlockState();
     }
 
     private static boolean canReplace(BlockState state) {

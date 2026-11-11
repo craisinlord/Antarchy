@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import com.craisinlord.antarchy.content.block.OuranwoodLeavesBlock;
 import com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock;
 import com.craisinlord.antarchy.content.block.WaspNestBlock;
@@ -50,6 +51,17 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     private static final ThreadLocal<TreePlacement> ACTIVE_PLACEMENT = new ThreadLocal<>();
     private static final Direction[] LEAF_DIRECTIONS = Direction.values();
     private static final short NO_LEAF_DISTANCE = -1;
+    protected static final int MAX_FOOTING_DROP = 8;
+    protected static final int FOOTING_SHIFT = 4;
+    protected static final int SHOULDER_MAX_FILL = 4;
+    protected static final int BASE_SUPPORT_DEPTH = MAX_FOOTING_DROP + 2;
+    protected static final int ROOT_MIN_COUNT = 5;
+    protected static final int ROOT_EXTRA_COUNT = 2;
+    protected static final int ROOT_MAX_LENGTH = 12;
+    protected static final int ROOT_STEP_DROP = 2;
+    protected static final int ROOT_MAX_DROP = 14;
+    protected static final int ROOT_SCAN_DEPTH = 16;
+    protected static final int NO_GROUND = Integer.MIN_VALUE;
 
     private static final class TreePlacement {
         private final LongLinkedOpenHashSet logPositions = new LongLinkedOpenHashSet();
@@ -162,6 +174,14 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
         int canopyDepth = Math.min(config.canopyDepth().sample(random), height / 2);
         int buttressHeight = config.buttressHeight().sample(random);
 
+        if (!config.juvenile()) {
+            BlockPos footing = this.findFooting(level, origin, trunkRadius);
+            if (footing == null) {
+                return false;
+            }
+            origin = footing;
+        }
+
         if (origin.getY() + height + canopyDepth + 4 >= level.getMaxBuildHeight()) {
             return false;
         }
@@ -176,6 +196,7 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
         this.placeBaseTrunkVines(level, origin, config, random, trunkRadius, height);
         if (!config.juvenile()) {
             this.adaptAndRefreshTerrain(level, origin, random, trunkRadius);
+            this.placeCliffRoots(level, origin, config, random, trunkRadius);
         }
         BlockPos canopyCenter = this.resolveCanopyCenter(origin, height, canopyDepth);
         BlockPos crownCenter = canopyCenter.above(canopyDepth / 3);
@@ -198,10 +219,208 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
         this.placeVinesAndGlowBerries(level, canopyCenter, config, random, canopyRadius, canopyDepth, height);
         this.placeFlyingSquirrelNest(level, origin, config, random, trunkRadius, height);
         this.placeCaterpillarChrysalis(level, origin, config, random, canopyCenter, canopyRadius, canopyDepth);
+        this.afterTreePlaced(level, origin, config, random);
             return true;
         } finally {
             ACTIVE_PLACEMENT.remove();
         }
+    }
+
+    protected void afterTreePlaced(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random) {
+    }
+
+    @Nullable
+    protected BlockPos findFooting(WorldGenLevel level, BlockPos origin, int trunkRadius) {
+        if (this.footingDrop(level, origin, trunkRadius) < SHOULDER_MAX_FILL) {
+            return origin;
+        }
+
+        int chunkX = SectionPos.blockToSectionCoord(origin.getX());
+        int chunkZ = SectionPos.blockToSectionCoord(origin.getZ());
+        BlockPos best = null;
+        int bestScore = Integer.MAX_VALUE;
+        for (int dx = -FOOTING_SHIFT; dx <= FOOTING_SHIFT; dx += 2) {
+            for (int dz = -FOOTING_SHIFT; dz <= FOOTING_SHIFT; dz += 2) {
+                int x = origin.getX() + dx;
+                int z = origin.getZ() + dz;
+                if (SectionPos.blockToSectionCoord(x) != chunkX || SectionPos.blockToSectionCoord(z) != chunkZ) {
+                    continue;
+                }
+
+                BlockPos candidate = dx == 0 && dz == 0
+                        ? origin
+                        : new BlockPos(x, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z), z);
+                if (!isFootingGround(level, candidate.below())) {
+                    continue;
+                }
+
+                int drop = this.footingDrop(level, candidate, trunkRadius);
+                if (drop > MAX_FOOTING_DROP) {
+                    continue;
+                }
+
+                int score = drop * 4 + Math.abs(dx) + Math.abs(dz);
+                if (score < bestScore) {
+                    bestScore = score;
+                    best = candidate;
+                }
+            }
+        }
+        return best;
+    }
+
+    protected int footingDrop(WorldGenLevel level, BlockPos origin, int trunkRadius) {
+        int baseY = origin.getY() - 1;
+        int lowest = baseY;
+        int reach = trunkRadius + 2;
+        int reachSq = reach * reach;
+        for (int x = -reach; x <= reach; x++) {
+            for (int z = -reach; z <= reach; z++) {
+                if (x * x + z * z > reachSq) {
+                    continue;
+                }
+                int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, origin.getX() + x, origin.getZ() + z) - 1;
+                lowest = Math.min(lowest, top);
+            }
+        }
+        return baseY - lowest;
+    }
+
+    protected static boolean isFootingGround(WorldGenLevel level, BlockPos pos) {
+        BlockState state = readState(level, pos);
+        return canGrowOn(level, pos) && !(state.getBlock() instanceof LeavesBlock) && !state.is(BlockTags.LOGS);
+    }
+
+    protected void placeCliffRoots(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random, int trunkRadius) {
+        int count = ROOT_MIN_COUNT + random.nextInt(ROOT_EXTRA_COUNT + 1);
+        float offset = random.nextFloat() * Mth.TWO_PI;
+        for (int i = 0; i < count; i++) {
+            float angle = offset + i * Mth.TWO_PI / count + (random.nextFloat() - 0.5F) * 0.6F;
+            this.placeCliffRoot(level, origin, config, random, trunkRadius, angle);
+        }
+    }
+
+    protected void placeCliffRoot(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random, int trunkRadius, float angle) {
+        double dirX = Mth.cos(angle);
+        double dirZ = Mth.sin(angle);
+        Direction.Axis horizontalAxis = Math.abs(dirX) >= Math.abs(dirZ) ? Direction.Axis.X : Direction.Axis.Z;
+        int probeX = origin.getX() + Mth.floor(dirX * (trunkRadius + 4) + 0.5D);
+        int probeZ = origin.getZ() + Mth.floor(dirZ * (trunkRadius + 4) + 0.5D);
+        int probeGround = this.rootGroundY(level, probeX, origin.getY() + 1, probeZ);
+        if (probeGround != NO_GROUND && probeGround >= origin.getY() - 2) {
+            return;
+        }
+
+        int y = origin.getY();
+        boolean descended = false;
+        for (int step = 1; step <= ROOT_MAX_LENGTH; step++) {
+            int x = origin.getX() + Mth.floor(dirX * (trunkRadius + step) + 0.5D);
+            int z = origin.getZ() + Mth.floor(dirZ * (trunkRadius + step) + 0.5D);
+            int ground = this.rootGroundY(level, x, y + 1, z);
+            if (ground != NO_GROUND && ground >= y) {
+                return;
+            }
+
+            int previousY = y;
+            if (ground == NO_GROUND || ground < y - 1) {
+                int gap = ground == NO_GROUND ? ROOT_STEP_DROP : y - 1 - ground;
+                y -= Math.min(ROOT_STEP_DROP, gap);
+                descended = true;
+            }
+
+            for (int fillY = y; fillY <= previousY; fillY++) {
+                Direction.Axis axis = fillY == y && previousY == y ? horizontalAxis : Direction.Axis.Y;
+                this.placeRootBlock(level, new BlockPos(x, fillY, z), config, random, axis);
+            }
+            if (step <= 2 && trunkRadius >= 3) {
+                this.placeRootBlock(level, new BlockPos(x, previousY + 1, z), config, random, Direction.Axis.Y);
+            }
+
+            boolean grounded = ground != NO_GROUND && ground >= y - 1;
+            if (grounded && descended) {
+                this.placeRootLanding(level, new BlockPos(x, ground, z), random);
+                return;
+            }
+            if (!grounded && random.nextFloat() < 0.35F) {
+                this.placeHangingRoots(level, new BlockPos(x, y - 1, z));
+            }
+            if (origin.getY() - y > ROOT_MAX_DROP) {
+                return;
+            }
+        }
+    }
+
+    protected int rootGroundY(WorldGenLevel level, int x, int startY, int z) {
+        int minY = Math.max(level.getMinBuildHeight(), startY - ROOT_SCAN_DEPTH);
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int y = startY; y >= minY; y--) {
+            cursor.set(x, y, z);
+            BlockState state = readState(level, cursor);
+            if (isReplaceableState(state) || !state.getFluidState().isEmpty() || state.is(BlockTags.LOGS)) {
+                continue;
+            }
+            return y;
+        }
+        return NO_GROUND;
+    }
+
+    protected void placeRootBlock(WorldGenLevel level, BlockPos pos, OuranwoodTreeConfiguration config, RandomSource random, Direction.Axis axis) {
+        if (!canReplaceTerrain(level, pos)) {
+            return;
+        }
+        BlockState state = config.trunkProvider().getState(random, pos);
+        if (state.hasProperty(RotatedPillarBlock.AXIS)) {
+            state = state.setValue(RotatedPillarBlock.AXIS, axis);
+            if (random.nextFloat() < 0.6F) {
+                state = this.getMossyTrunkState(state);
+            }
+        }
+        setBlock(level, pos, state);
+    }
+
+    protected void placeHangingRoots(WorldGenLevel level, BlockPos pos) {
+        if (readState(level, pos).isAir() && readState(level, pos.above()).is(BlockTags.LOGS)) {
+            setBlock(level, pos, Blocks.HANGING_ROOTS.defaultBlockState());
+        }
+    }
+
+    protected void placeRootLanding(WorldGenLevel level, BlockPos ground, RandomSource random) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if ((dx != 0 || dz != 0) && random.nextFloat() < 0.35F) {
+                    continue;
+                }
+                int y = this.rootGroundY(level, ground.getX() + dx, ground.getY() + 1, ground.getZ() + dz);
+                if (y == NO_GROUND || Math.abs(y - ground.getY()) > 1) {
+                    continue;
+                }
+                BlockPos pos = new BlockPos(ground.getX() + dx, y, ground.getZ() + dz);
+                BlockState state = readState(level, pos);
+                BlockState above = readState(level, pos.above());
+                if ((isTreeSurfaceSoil(state) || isShoulderRock(state)) && isReplaceableState(above) && above.getFluidState().isEmpty()) {
+                    setBlock(level, pos, Blocks.MOSS_BLOCK.defaultBlockState());
+                }
+            }
+        }
+    }
+
+    protected BlockState shoulderRockState(WorldGenLevel level, int x, int groundY, int z) {
+        int minY = Math.max(level.getMinBuildHeight(), groundY - 6);
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int y = groundY; y >= minY; y--) {
+            BlockState state = readState(level, cursor.set(x, y, z));
+            if (isShoulderRock(state)) {
+                return state.getBlock().defaultBlockState();
+            }
+        }
+        return ElythiaPalette.ROCKITE.get().defaultBlockState();
+    }
+
+    protected static boolean isShoulderRock(BlockState state) {
+        return state.is(BlockTags.BASE_STONE_OVERWORLD)
+                || state.is(ElythiaPalette.ROCKITE.get())
+                || state.is(Blocks.DRIPSTONE_BLOCK)
+                || state.is(Blocks.CALCITE);
     }
 
     protected BlockPos resolveCanopyCenter(BlockPos origin, int height, int canopyDepth) {
@@ -914,6 +1133,7 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
         int radius = trunkRadius + 4;
         int radiusSq = radius * radius;
         int trunkRadiusSq = trunkRadius * trunkRadius;
+        int innerRadiusSq = (trunkRadius + 1) * (trunkRadius + 1);
         int baseY = origin.getY() - 1;
         int minY = Math.max(level.getMinBuildHeight(), origin.getY() - 6);
         int maxY = Math.min(level.getMaxBuildHeight() - 1, origin.getY() + 4);
@@ -928,13 +1148,19 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
                 int worldX = origin.getX() + x;
                 int worldZ = origin.getZ() + z;
 
-                int currentTopY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, worldX, worldZ) - 1;
-                int falloff = (int) Math.floor(Math.sqrt(distanceSq) / 2.1D);
+                int groundY = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, worldX, worldZ) - 1;
+                int falloff = (int) Math.max(0.0D, Math.floor(Math.sqrt(distanceSq) - trunkRadius));
                 int desiredTopY = baseY - falloff + (distanceSq <= trunkRadiusSq ? 0 : random.nextInt(2));
-                for (int y = currentTopY + 1; y <= desiredTopY; y++) {
-                    BlockPos targetPos = new BlockPos(worldX, y, worldZ);
-                    if (canReplaceTerrain(level, targetPos)) {
-                        setBlock(level, targetPos, soilState(random));
+                int fillDepth = desiredTopY - groundY;
+                boolean inner = distanceSq <= innerRadiusSq;
+                if (fillDepth > 0 && (inner || fillDepth <= SHOULDER_MAX_FILL)) {
+                    BlockState rock = this.shoulderRockState(level, worldX, groundY, worldZ);
+                    int soilDepth = 1 + random.nextInt(2);
+                    for (int y = groundY + 1; y <= desiredTopY; y++) {
+                        BlockPos targetPos = new BlockPos(worldX, y, worldZ);
+                        if (canReplaceTerrain(level, targetPos)) {
+                            setBlock(level, targetPos, desiredTopY - y < soilDepth ? soilState(random) : rock);
+                        }
                     }
                 }
 
@@ -971,25 +1197,27 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
 
     protected void stabilizeBase(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random, int radius) {
         int radiusSq = radius * radius;
+        int coreRadius = Math.max(1, radius - 2);
+        int minY = Math.max(level.getMinBuildHeight(), origin.getY() - BASE_SUPPORT_DEPTH);
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
-                if (x * x + z * z > radiusSq) {
+                int distanceSq = x * x + z * z;
+                if (distanceSq > radiusSq) {
                     continue;
                 }
 
-                BlockPos topPos = origin.offset(x, 0, z);
-                for (int y = topPos.getY() - 1; y > level.getMinBuildHeight(); y--) {
-                    BlockPos belowPos = new BlockPos(topPos.getX(), y, topPos.getZ());
-                    BlockState belowState = readState(level, belowPos);
-                    if (belowState.isFaceSturdy(level, belowPos, Direction.UP) && !canReplaceTerrain(level, belowPos)) {
+                for (int y = origin.getY() - 1; y > minY; y--) {
+                    int depth = origin.getY() - y;
+                    float allowedRadius = Math.max(coreRadius, radius - depth * 0.5F);
+                    if (distanceSq > allowedRadius * allowedRadius) {
                         break;
                     }
 
-                    if (canReplaceTerrain(level, belowPos)) {
-                        setBlock(level, belowPos, this.selectTrunkState(config, random, belowPos, belowPos.getY() - origin.getY(), 32));
-                    } else {
+                    BlockPos belowPos = new BlockPos(origin.getX() + x, y, origin.getZ() + z);
+                    if (!canReplaceTerrain(level, belowPos)) {
                         break;
                     }
+                    this.placeRootBlock(level, belowPos, config, random, Direction.Axis.Y);
                 }
             }
         }

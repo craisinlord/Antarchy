@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.fabric.client;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
 import com.craisinlord.antarchy.content.block.Fossils;
+import com.craisinlord.antarchy.content.block.RockiteTint;
 import com.craisinlord.antarchy.content.client.AntTransitClientState;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.ElythiaEchoes;
@@ -242,6 +243,10 @@ public final class AntarchyFabricClientBootstrap {
                 AntarchyFabricBlocks.BLUESTONE_WIRE.get()
         );
         ColorProviderRegistry.BLOCK.register(
+                (state, level, pos, tintIndex) -> RockiteTint.color(pos, tintIndex),
+                RockiteTint.blocks()
+        );
+        ColorProviderRegistry.BLOCK.register(
                 (state, level, pos, tintIndex) -> level != null && pos != null
                         ? BiomeColors.getAverageFoliageColor(level, pos)
                         : FoliageColor.getDefaultColor(),
@@ -264,6 +269,10 @@ public final class AntarchyFabricClientBootstrap {
         ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> tintIndex == 0 ? GrassColor.getDefaultColor() : -1,
                 AntarchyFabricItems.SPIDER_LILY_ITEM.get()
+        );
+        ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> RockiteTint.itemColor(tintIndex),
+                RockiteTint.blocks()
         );
         ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> {
@@ -377,9 +386,11 @@ public final class AntarchyFabricClientBootstrap {
         registry.register(AntarchyFabricMisc.UNDERTRIAL_SPAWNER_DETECTION.get(), UndertrialParticle.DetectionProvider::new);
         registry.register(AntarchyFabricMisc.UNDERTRIAL_OMEN.get(), UndertrialParticle.OmenProvider::new);
         registry.register(AntarchyFabricMisc.UNDERVAULT_CONNECTION.get(), UndertrialParticle.OmenProvider::new);
+        registry.register(AntarchyFabricMisc.LUMEN_DRIP.get(), LumenDripParticle.Provider::new);
     }
 
     private static void registerRenderLayers() {
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), RockiteTint.overlaidBlocks());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.PRIMORDIAL_GRASS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.POTTED_PRIMORDIAL_GRASS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_RAIL.get(), RenderType.cutout());
@@ -574,6 +585,7 @@ public final class AntarchyFabricClientBootstrap {
                     registrationHelper.register(new TigerEyeCamouflagePlayerLayer(playerRenderer));
                     registrationHelper.register(new GoopedLivingLayer(playerRenderer));
                     registrationHelper.register(new GlimmeringLivingLayer(playerRenderer));
+                    registrationHelper.register(new LumenSoakedLivingLayer(playerRenderer));
                     registrationHelper.register(new RoyalIndicatorLivingLayer<>(playerRenderer));
                     registrationHelper.register(new BrutalflyElytraLayer(playerRenderer));
                     registrationHelper.register(new ManticoreWingsLayer(playerRenderer));
@@ -590,12 +602,14 @@ public final class AntarchyFabricClientBootstrap {
                         (GeoEntityRenderer) (Object) renderer;
                 geoRenderer.addRenderLayer(new ParalyzedStoneGeoLayer(geoRenderer));
                 geoRenderer.addRenderLayer(new GoopedGeoLayer(geoRenderer));
+                geoRenderer.addRenderLayer(new LumenSoakedGeoLayer(geoRenderer));
                 geoRenderer.addRenderLayer(new RoyalIndicatorGeoLayer<>(geoRenderer));
                 return;
             }
             registrationHelper.register(new ParalyzedStoneLivingLayer(renderer));
             registrationHelper.register(new GoopedLivingLayer(renderer));
             registrationHelper.register(new GlimmeringLivingLayer(renderer));
+            registrationHelper.register(new LumenSoakedLivingLayer(renderer));
             registrationHelper.register(new RoyalIndicatorLivingLayer<>(renderer));
         });
     }

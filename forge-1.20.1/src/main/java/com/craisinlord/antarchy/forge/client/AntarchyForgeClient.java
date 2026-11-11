@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyAnthologyHooks;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
 import com.craisinlord.antarchy.content.block.Fossils;
+import com.craisinlord.antarchy.content.block.RockiteTint;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.GlimmeringHudRenderer;
 import com.craisinlord.antarchy.content.client.GoopedHudRenderer;
@@ -288,6 +289,10 @@ public final class AntarchyForgeClient {
                 AntarchyForgeBlocks.BLUESTONE_WIRE.get()
         );
         event.register(
+                (state, level, pos, tintIndex) -> RockiteTint.color(pos, tintIndex),
+                RockiteTint.blocks()
+        );
+        event.register(
                 (state, level, pos, tintIndex) -> level != null && pos != null
                         ? BiomeColors.getAverageFoliageColor(level, pos)
                         : FoliageColor.getDefaultColor(),
@@ -325,6 +330,10 @@ public final class AntarchyForgeClient {
         event.register(
                 (stack, tintIndex) -> tintIndex == 0 ? GrassColor.getDefaultColor() : -1,
                 AntarchyForgeItems.SPIDER_LILY_ITEM.get()
+        );
+        event.register(
+                (stack, tintIndex) -> RockiteTint.itemColor(tintIndex),
+                RockiteTint.blocks()
         );
         event.register(
                 (stack, tintIndex) -> {

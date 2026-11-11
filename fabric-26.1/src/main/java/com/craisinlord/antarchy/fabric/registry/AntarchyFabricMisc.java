@@ -68,7 +68,11 @@ import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBasinFill;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeDispatchRule;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaButteFunction;
+import com.craisinlord.antarchy.content.worldgen.elythia.SkyIsleBiomeFunction;
+import com.craisinlord.antarchy.content.worldgen.elythia.SkyIslePlacement;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaCloudFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.SkyIsleFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.SkyIsleTerrainFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaColumnCache;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaFloraFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature;
@@ -217,6 +221,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 import net.minecraft.world.level.material.Fluid;
 
 public final class AntarchyFabricMisc {
@@ -270,6 +275,7 @@ public final class AntarchyFabricMisc {
     public static final DeferredRegister<MapCodec<? extends BiomeSource>> BIOME_SOURCES = DeferredRegister.create(Registries.BIOME_SOURCE, Antarchy.MODID);
 
     public static final DeferredRegister<MapCodec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Antarchy.MODID);
+    public static final DeferredRegister<StructurePlacementType<?>> STRUCTURE_PLACEMENTS = DeferredRegister.create(Registries.STRUCTURE_PLACEMENT, Antarchy.MODID);
     public static final DeferredRegister<MapCodec<? extends SurfaceRules.RuleSource>> MATERIAL_RULES = DeferredRegister.create(Registries.MATERIAL_RULE, Antarchy.MODID);
 
     public static final DeferredRegister<MapCodec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Antarchy.MODID);
@@ -798,7 +804,7 @@ public final class AntarchyFabricMisc {
             () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC));
 
     public static final DeferredHolder<Feature<?>, GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH_PEACH_FOREST = FEATURES.register("giant_lily_pad_patch_peach_forest",
-            () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC, 0.12F));
+            () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC, 0.5F));
 
     public static final DeferredHolder<Feature<?>, LumenStreamFeature> LUMEN_STREAM = FEATURES.register("lumen_streams",
             () -> new LumenStreamFeature(NoneFeatureConfiguration.CODEC));
@@ -887,6 +893,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, ElythiaCloudFeature> ELYTHIA_CLOUDS = FEATURES.register("elythia_clouds",
             () -> new ElythiaCloudFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, SkyIsleTerrainFeature> SKY_ISLE_TERRAIN = FEATURES.register("sky_isle_terrain",
+            () -> new SkyIsleTerrainFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, SkyIsleFeature> SKY_ISLE = FEATURES.register("sky_isle",
+            () -> new SkyIsleFeature(NoneFeatureConfiguration.CODEC));
 
     public static final DeferredHolder<Feature<?>, BedBugNestFeature> BED_BUG_NEST = FEATURES.register("bed_bug_nest",
             () -> new BedBugNestFeature(NoneFeatureConfiguration.CODEC));
@@ -1107,6 +1117,10 @@ public final class AntarchyFabricMisc {
             () -> ElythiaShelfLip.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaButteFunction>> ELYTHIA_BUTTE = DENSITY_FUNCTION_TYPES.register("elythia_butte",
             () -> ElythiaButteFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<SkyIsleBiomeFunction>> ELYTHIA_SKY_ISLE = DENSITY_FUNCTION_TYPES.register("elythia_sky_isle",
+            () -> SkyIsleBiomeFunction.CODEC);
+    public static final DeferredHolder<StructurePlacementType<?>, StructurePlacementType<SkyIslePlacement>> SKY_ISLE_CROWN = STRUCTURE_PLACEMENTS.register("sky_isle_crown",
+            () -> () -> SkyIslePlacement.CODEC);
     public static final DeferredHolder<Feature<?>, GlimmeringFallFeature> GLIMMERING_FALL = FEATURES.register("glimmering_fall",
             () -> new GlimmeringFallFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, TruffaloSpireFeature> TRUFFALO_SPIRE = FEATURES.register("truffalo_spire",

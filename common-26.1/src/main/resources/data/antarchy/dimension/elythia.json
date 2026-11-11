@@ -875,6 +875,66 @@
             ],
             "offset": 0
           }
+        },
+        {
+          "biome": "antarchy:sky_isles",
+          "parameters": {
+            "temperature": [
+              -1,
+              1
+            ],
+            "humidity": [
+              -1,
+              1
+            ],
+            "continentalness": [
+              1.8,
+              2.0
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "antarchy:sky_isles_royal_grove",
+          "parameters": {
+            "temperature": [
+              -1,
+              1
+            ],
+            "humidity": [
+              -1,
+              1
+            ],
+            "continentalness": [
+              1.55,
+              1.75
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0
+          }
         }
       ]
     }

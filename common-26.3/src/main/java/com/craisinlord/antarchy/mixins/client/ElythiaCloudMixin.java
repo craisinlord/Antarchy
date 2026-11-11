@@ -22,7 +22,7 @@ public abstract class ElythiaCloudMixin {
         if (level == null || !ElythiaSkyRenderer.shouldRender(level)) {
             return;
         }
-        ElythiaCloudRenderer.render(minecraft, level, cloudStatus, cameraPosition, gameTime, partialTicks, color, range);
+        ElythiaCloudRenderer.queue(cloudStatus, cameraPosition, gameTime, partialTicks, color, range);
         ci.cancel();
     }
 

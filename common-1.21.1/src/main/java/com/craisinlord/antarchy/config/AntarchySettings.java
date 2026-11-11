@@ -584,7 +584,7 @@ public final class AntarchySettings {
     private static boolean elythiaGrassWindEnabled = true;
     private static boolean elythiaWindSoundsEnabled = true;
     private static boolean elythiaWindLinesEnabled = true;
-    private static int primordialGrassDrawDistance = 96;
+    private static int primordialGrassDrawDistance = 40;
     private static boolean primordialGrassDynamic = true;
     private static int primordialGrassQuality = 1;
     private static Runnable primordialGrassSaver = () -> {};
@@ -697,6 +697,7 @@ public final class AntarchySettings {
     private static int kingBeamWindupTicks = 20;
     private static int kingBeamTravelTicks = 12;
     private static int kingBeamCooldownTicks = 90;
+    private static int kingBeamVolleyGapTicks = 140;
     private static double kingBeamTracking = 0.1D;
     private static double kingBeamTerrainRadius = 5.0D;
     private static int kingBeamTerrainCap = 192;
@@ -3151,7 +3152,7 @@ public final class AntarchySettings {
     public static boolean elythiaWindLinesEnabled() { return elythiaWindLinesEnabled; }
     public static void setElythiaWindLinesEnabled(boolean value) { elythiaWindLinesEnabled = value; }
     public static int primordialGrassDrawDistance() { return primordialGrassDrawDistance; }
-    public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(32, Math.min(512, value)); }
+    public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(16, Math.min(128, value)); }
     public static boolean primordialGrassDynamic() { return primordialGrassDynamic; }
     public static void setPrimordialGrassDynamic(boolean value) { primordialGrassDynamic = value; }
     public static int primordialGrassQuality() { return primordialGrassQuality; }
@@ -3389,6 +3390,8 @@ public final class AntarchySettings {
     public static void setKingBeamTravelTicks(int v) { kingBeamTravelTicks = v; }
     public static int kingBeamCooldownTicks() { return kingBeamCooldownTicks; }
     public static void setKingBeamCooldownTicks(int v) { kingBeamCooldownTicks = v; }
+    public static int kingBeamVolleyGapTicks() { return kingBeamVolleyGapTicks; }
+    public static void setKingBeamVolleyGapTicks(int v) { kingBeamVolleyGapTicks = v; }
     public static double kingBeamTracking() { return kingBeamTracking; }
     public static void setKingBeamTracking(double v) { kingBeamTracking = v; }
     public static double kingBeamTerrainRadius() { return kingBeamTerrainRadius; }

@@ -260,39 +260,39 @@ public final class AntarchyFabricItems {
             () -> new AntarchyChestBoatItem(AntarchyFabricEntities.OURANWOOD_CHEST_BOAT_ENTITY.get(), "ouranwood_chest_boat", new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<Item> HOVERBOARD = ITEMS.register("hoverboard",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), null, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), null, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_WHITE = ITEMS.register("hoverboard_white",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.WHITE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.WHITE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_ORANGE = ITEMS.register("hoverboard_orange",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.ORANGE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.ORANGE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_MAGENTA = ITEMS.register("hoverboard_magenta",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.MAGENTA, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.MAGENTA, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_LIGHT_BLUE = ITEMS.register("hoverboard_light_blue",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIGHT_BLUE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIGHT_BLUE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_YELLOW = ITEMS.register("hoverboard_yellow",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.YELLOW, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.YELLOW, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_LIME = ITEMS.register("hoverboard_lime",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIME, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIME, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_PINK = ITEMS.register("hoverboard_pink",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.PINK, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.PINK, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_GRAY = ITEMS.register("hoverboard_gray",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.GRAY, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.GRAY, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_LIGHT_GRAY = ITEMS.register("hoverboard_light_gray",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIGHT_GRAY, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIGHT_GRAY, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_CYAN = ITEMS.register("hoverboard_cyan",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.CYAN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.CYAN, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_PURPLE = ITEMS.register("hoverboard_purple",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.PURPLE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.PURPLE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_BLUE = ITEMS.register("hoverboard_blue",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BLUE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BLUE, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_BROWN = ITEMS.register("hoverboard_brown",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BROWN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BROWN, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_GREEN = ITEMS.register("hoverboard_green",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.GREEN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.GREEN, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_RED = ITEMS.register("hoverboard_red",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.RED, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.RED, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> HOVERBOARD_BLACK = ITEMS.register("hoverboard_black",
-            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BLACK, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BLACK, new Item.Properties().stacksTo(1).fireResistant()));
 
     public static final DeferredItem<SignItem> PEACH_SIGN_ITEM = ITEMS.register("peach_sign",
             () -> new SignItem(new Item.Properties().stacksTo(16), AntarchyFabricBlocks.PEACH_SIGN.get(), AntarchyFabricBlocks.PEACH_WALL_SIGN.get()));

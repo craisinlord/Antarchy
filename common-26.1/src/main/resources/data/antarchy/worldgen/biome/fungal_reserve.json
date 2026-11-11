@@ -112,7 +112,7 @@
     "misc": []
   },
   "attributes": {
-    "minecraft:visual/fog_color": "#a58dff",
+    "minecraft:visual/fog_color": "#60528a",
     "minecraft:visual/sky_color": "#7b5cff",
     "minecraft:visual/water_fog_color": "#263042",
     "minecraft:audio/ambient_sounds": {

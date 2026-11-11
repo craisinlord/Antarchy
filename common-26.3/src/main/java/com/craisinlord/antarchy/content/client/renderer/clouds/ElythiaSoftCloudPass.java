@@ -64,6 +64,7 @@ final class ElythiaSoftCloudPass {
             .withVertexShader("core/screenquad")
             .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_soft_cloud_composite"))
             .withBindGroupLayout(BindGroupLayouts.IN_SAMPLER)
+            .withBindGroupLayout(BindGroupLayouts.SAMPLER0)
             .withBindGroupLayout(BindGroupLayout.builder().withUniform("ElythiaSoftComposite", UniformType.UNIFORM_BUFFER).build())
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .withDepthStencilState(Optional.empty())
@@ -184,6 +185,7 @@ final class ElythiaSoftCloudPass {
             pass.setPipeline(RenderSystem.getCompiledPipeline(COMPOSITE_PIPELINE));
             RenderSystem.bindDefaultUniforms(pass);
             pass.setUniform("InSampler", coverage.getColorTextureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
+            pass.setUniform("Sampler0", main.getDepthTextureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
             pass.setUniform("ElythiaSoftComposite", compositeBuffer.slice());
             pass.draw(3, 1, 0, 0);
         }

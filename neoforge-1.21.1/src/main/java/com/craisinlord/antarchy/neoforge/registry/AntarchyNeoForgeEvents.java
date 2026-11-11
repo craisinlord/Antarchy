@@ -92,6 +92,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLPaths;
@@ -135,6 +136,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleNaturalRabbitReplacement);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBlockToolModification);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onMobEffectApplicable);
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, AntarchyNeoForgeEvents::keepEnvironmentInversion);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onInvertedEffectRemoved);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onInvertedEffectExpired);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleUltimateBowDamage);
@@ -1341,7 +1343,24 @@ public final class AntarchyNeoForgeEvents {
         }
     }
 
+    /**
+     * The Underside, overhead antimetal, inverted rails and Royal Assailant armor all keep re-adding an invisible
+     * inverted effect. If milk, a totem, a hero healing factor or any other cure strips it, the source puts it straight
+     * back and the player's gravity and camera flip every tick. Those environment instances are never particle-visible
+     * (potions, Lucid Bolts and tears are), so cure-based removal of an invisible inverted effect is refused. Antarchy's
+     * own removals go through removeEffect, which has no cure, and still work.
+     */
+    static void keepEnvironmentInversion(MobEffectEvent.Remove event) {
+        MobEffectInstance instance = event.getEffectInstance();
+        if (event.getCure() != null && instance != null && !instance.isVisible() && instance.is(AnthologyEffects.inverted())) {
+            event.setCanceled(true);
+        }
+    }
+
     static void onInvertedEffectRemoved(MobEffectEvent.Remove event) {
+        if (event.isCanceled()) {
+            return;
+        }
         if (!event.getEffect().is(AnthologyEffects.inverted())) {
             return;
         }

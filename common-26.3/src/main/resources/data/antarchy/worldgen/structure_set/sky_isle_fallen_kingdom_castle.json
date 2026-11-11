@@ -1,0 +1,13 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:sky_isle_fallen_kingdom_castle",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "antarchy:sky_isle_crown",
+    "salt": 738215094,
+    "theme": "fallen_reach"
+  }
+}

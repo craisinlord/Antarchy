@@ -16,12 +16,6 @@
             }
           },
           "weight": 25
-        },
-        {
-          "data": {
-            "Name": "antarchy:truffalo_sapling"
-          },
-          "weight": 1
         }
       ]
     }

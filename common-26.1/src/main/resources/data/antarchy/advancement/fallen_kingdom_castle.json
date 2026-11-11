@@ -9,7 +9,10 @@
             "entity": "this",
             "predicate": {
               "location": {
-                "structures": "antarchy:fallen_kingdom_castle"
+                "structures": [
+                  "antarchy:fallen_kingdom_castle",
+                  "antarchy:sky_isle_fallen_kingdom_castle"
+                ]
               }
             }
           }

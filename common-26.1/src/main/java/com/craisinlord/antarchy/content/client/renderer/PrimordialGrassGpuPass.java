@@ -37,7 +37,10 @@ final class PrimordialGrassGpuPass {
 
     private static final int MAX_TRAMPLES = 32;
     private static final int GUST_ENTRIES = 8;
-    private static final int FRAME_BYTES = (1 + GUST_ENTRIES + MAX_TRAMPLES + MAX_TRAMPLES + 1) * 16;
+    private static final int VARIANTS = 3;
+    private static final int FRAME_BYTES = (1 + GUST_ENTRIES + MAX_TRAMPLES + MAX_TRAMPLES + 1 + VARIANTS + 1) * 16;
+    private static final float[] VARIANT_UV = new float[VARIANTS * 4];
+    private static final float[] VARIANT_HEIGHT = new float[VARIANTS];
     private static final int MESH_STRIDE = 28;
     private static final float HALF_WIDTH = 0.45F;
     private static final double TIMER_SMOOTHING = 0.1D;
@@ -98,12 +101,24 @@ final class PrimordialGrassGpuPass {
         failed = true;
     }
 
-    static void uploadMesh(TextureAtlasSprite sprite) {
+    static void setVariants(TextureAtlasSprite[] sprites) {
+        for (int i = 0; i < VARIANTS; i++) {
+            TextureAtlasSprite sprite = sprites[Math.min(i, sprites.length - 1)];
+            VARIANT_UV[i * 4] = sprite.getU0();
+            VARIANT_UV[i * 4 + 1] = sprite.getV0();
+            VARIANT_UV[i * 4 + 2] = sprite.getU1() - sprite.getU0();
+            VARIANT_UV[i * 4 + 3] = sprite.getV1() - sprite.getV0();
+            VARIANT_HEIGHT[i] = sprite.contents().height() / 16.0F;
+        }
+        if (meshBuffer == null) uploadMesh();
+    }
+
+    private static void uploadMesh() {
         int vertices = PrimordialGrassLod.shapeVertices();
         ByteBuffer data = BufferUtils.createByteBuffer(vertices * MESH_STRIDE);
         for (int bands : PrimordialGrassLod.shapeBands()) {
             for (int faces = 1; faces <= PrimordialGrassLod.MAX_FACES; faces++) {
-                writeShape(data, sprite, bands, faces);
+                writeShape(data, bands, faces);
             }
         }
         data.flip();
@@ -117,23 +132,23 @@ final class PrimordialGrassGpuPass {
         }
     }
 
-    private static void writeShape(ByteBuffer data, TextureAtlasSprite sprite, int bands, int faces) {
+    private static void writeShape(ByteBuffer data, int bands, int faces) {
         float flippable = faces == 1 ? 1.0F : 0.0F;
         for (int face = 0; face < faces; face++) {
             float x = face == 0 ? HALF_WIDTH : -HALF_WIDTH;
-            if (face > 0) writeMeshVertex(data, sprite, -x, -HALF_WIDTH, 0.0F, 0.0F, flippable);
+            if (face > 0) writeMeshVertex(data, -x, -HALF_WIDTH, 0.0F, 0.0F, flippable);
             for (int level = 0; level <= bands; level++) {
                 float h = level / (float) bands;
-                writeMeshVertex(data, sprite, -x, -HALF_WIDTH, h, 0.0F, flippable);
-                writeMeshVertex(data, sprite, x, HALF_WIDTH, h, 1.0F, flippable);
+                writeMeshVertex(data, -x, -HALF_WIDTH, h, 0.0F, flippable);
+                writeMeshVertex(data, x, HALF_WIDTH, h, 1.0F, flippable);
             }
-            if (face < faces - 1) writeMeshVertex(data, sprite, x, HALF_WIDTH, 1.0F, 1.0F, flippable);
+            if (face < faces - 1) writeMeshVertex(data, x, HALF_WIDTH, 1.0F, 1.0F, flippable);
         }
     }
 
-    private static void writeMeshVertex(ByteBuffer data, TextureAtlasSprite sprite, float x, float z, float h, float u, float flippable) {
+    private static void writeMeshVertex(ByteBuffer data, float x, float z, float h, float u, float flippable) {
         data.putFloat(x).putFloat(z).putFloat(h);
-        data.putFloat(u == 0.0F ? sprite.getU0() : sprite.getU1()).putFloat(sprite.getV(1.0F - h));
+        data.putFloat(u).putFloat(1.0F - h);
         data.putFloat((float) PrimordialGrassWind.flexibility(h));
         data.put((byte) (flippable > 0.5F ? 255 : 0)).put((byte) 0).put((byte) 0).put((byte) 0);
     }
@@ -173,6 +188,8 @@ final class PrimordialGrassGpuPass {
             else data.putFloat(0.0F).putFloat(0.0F).putFloat(0.0F).putFloat(0.0F);
         }
         data.putFloat(windEnabled ? 1.0F : 0.0F).putFloat(count).putFloat(0.0F).putFloat(0.0F);
+        for (float value : VARIANT_UV) data.putFloat(value);
+        data.putFloat(VARIANT_HEIGHT[0]).putFloat(VARIANT_HEIGHT[1]).putFloat(VARIANT_HEIGHT[2]).putFloat(0.0F);
         data.flip();
         if (frameBuffer == null) {
             frameBuffer = RenderSystem.getDevice().createBuffer(() -> "Antarchy primordial grass frame", GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_COPY_DST, FRAME_BYTES);

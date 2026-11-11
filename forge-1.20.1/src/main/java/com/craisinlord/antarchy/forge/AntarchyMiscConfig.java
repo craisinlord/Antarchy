@@ -107,7 +107,7 @@ public final class AntarchyMiscConfig {
                 .comment("Whether Elythia uses its denser atmospheric fog. Client-side visual only.")
                 .define("fogEnabled", true);
         ELYTHIA_GRASS_WIND_ENABLED = b.define("grassWindEnabled", true);
-        PRIMORDIAL_GRASS_DRAW_DISTANCE = b.defineInRange("grassDrawDistance", 96, 32, 512);
+        PRIMORDIAL_GRASS_DRAW_DISTANCE = b.defineInRange("grassDrawDistance", 40, 16, 128);
         PRIMORDIAL_GRASS_DYNAMIC = b
                 .comment("Animated grass drawn by its own renderer. Off draws it as an ordinary static block. Also in Video Settings.")
                 .define("grassDynamic", true);

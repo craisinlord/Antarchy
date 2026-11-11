@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.client.FungalReserveAtmosphere;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -42,12 +43,14 @@ public abstract class ElythiaLightTextureMixin {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
-        if (!AntarchySettings.elythiaDreamShadowsEnabled() || minecraft.level == null
-                || !minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA)) {
+        if (minecraft.level == null || !minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA)) {
             return;
         }
-        float strength = (float) Mth.clamp(AntarchySettings.elythiaDreamShadowsStrength(), 0.0D, 1.0D);
-        if (strength <= 0.0F) {
+        float strength = AntarchySettings.elythiaDreamShadowsEnabled()
+                ? (float) Mth.clamp(AntarchySettings.elythiaDreamShadowsStrength(), 0.0D, 1.0D)
+                : 0.0F;
+        float fungalDim = FungalReserveAtmosphere.lightDim();
+        if (strength <= 0.0F && fungalDim <= 0.0F) {
             return;
         }
         if (antarchy$dreamInfo == null) {
@@ -55,7 +58,7 @@ public abstract class ElythiaLightTextureMixin {
                     GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_MAP_WRITE, 16);
         }
         try (var mapped = RenderSystem.getDevice().createCommandEncoder().mapBuffer(antarchy$dreamInfo.currentBuffer(), false, true)) {
-            mapped.data().order(ByteOrder.nativeOrder()).putFloat(0, strength);
+            mapped.data().order(ByteOrder.nativeOrder()).putFloat(0, strength).putFloat(4, fungalDim);
         }
         antarchy$dreamFrame = true;
     }

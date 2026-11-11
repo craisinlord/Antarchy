@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "antarchy:item/polished_rockite"
+    "model": "antarchy:item/polished_rockite",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -10788493
+      }
+    ]
   }
 }

@@ -100,6 +100,8 @@
     "client.PrimordialGrassLevelMixin",
     "client.PrimordialGrassDebugMixin",
     "client.PrimordialGrassVideoSettingsMixin",
+    "client.PrimordialGrassMeshingMixin",
+    "client.PrimordialGrassSodiumMeshingMixin",
     "client.PrimordialGrassRenderMixin",
     "client.PrimordialGrassVisibilityMixin",
     "client.AntTransitCameraMixin",
@@ -128,6 +130,7 @@
     "client.CavarynDuskSkyMixin",
     "client.ElythiaSkyMixin",
     "client.ElythiaCloudMixin",
+    "client.ElythiaCloudOrderMixin",
     "client.LevelRendererStateAccessor",
     "client.ElytraModelAccessor",
     "client.FrogRendererElythiaMixin",
@@ -156,7 +159,6 @@
     "client.ElythiaFogMixin",
     "client.ElythiaWaterFogMixin",
     "client.ElythiaRainMixin",
-    "client.ElythiaRainSplashMixin",
     "client.ElythiaLightTextureMixin"
   ],
   "injectors": {

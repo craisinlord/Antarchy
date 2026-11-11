@@ -101,6 +101,8 @@
     "client.PrimordialGrassLevelMixin",
     "client.PrimordialGrassDebugMixin",
     "client.PrimordialGrassVideoSettingsMixin",
+    "client.PrimordialGrassMeshingMixin",
+    "client.PrimordialGrassSodiumMeshingMixin",
     "client.PrimordialGrassRenderMixin",
     "client.AntTransitCameraMixin",
     "client.AntTransitGuiMixin",

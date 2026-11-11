@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.fabric.client;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
 import com.craisinlord.antarchy.content.block.Fossils;
+import com.craisinlord.antarchy.content.block.RockiteTint;
 import com.craisinlord.antarchy.content.block.entity.FossilBlockEntity;
 import com.craisinlord.antarchy.content.client.AntTransitClientState;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
@@ -295,6 +296,17 @@ public final class AntarchyFabricClientBootstrap {
         BlockColorRegistry.register(List.of(BlockTintSources.constant(0xFF4A0000)), AntarchyFabricBlocks.ANTIWATER_BLOCK.get());
         BlockColorRegistry.register(List.of(BlockTintSources.grass()), AntarchyFabricBlocks.SPIDER_LILY.get());
         BlockColorRegistry.register(List.of(BlockTintSources.grass()), AntarchyFabricBlocks.POTTED_SPIDER_LILY.get());
+        BlockColorRegistry.register(List.of(new BlockTintSource() {
+            @Override
+            public int color(BlockState state) {
+                return RockiteTint.DEFAULT_COLOR;
+            }
+
+            @Override
+            public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                return RockiteTint.color(pos.getY());
+            }
+        }), RockiteTint.blocks());
         ItemTintSources.ID_MAPPER.put(Identifier.fromNamespaceAndPath(Antarchy.MODID, "critter_cage"), CritterCageTintSource.MAP_CODEC);
         ItemTintSources.ID_MAPPER.put(Identifier.fromNamespaceAndPath(Antarchy.MODID, "fossil"), FossilTintSource.MAP_CODEC);
     }

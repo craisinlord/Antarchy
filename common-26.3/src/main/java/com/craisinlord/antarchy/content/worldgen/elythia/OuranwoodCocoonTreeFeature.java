@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 
 public class OuranwoodCocoonTreeFeature extends OuranwoodTreeFeature {
     public static final MapCodec<OuranwoodCocoonTreeFeature> CODEC = OuranwoodTreeConfiguration.CODEC.xmap(
@@ -22,12 +21,8 @@ public class OuranwoodCocoonTreeFeature extends OuranwoodTreeFeature {
     }
 
     @Override
-    public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        if (!super.place(level, chunkGenerator, random, origin)) {
-            return false;
-        }
-        placeGuaranteedCocoon(level, origin, this.config(), random);
-        return true;
+    protected void afterTreePlaced(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random) {
+        placeGuaranteedCocoon(level, origin, config, random);
     }
 
     private void placeGuaranteedCocoon(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random) {

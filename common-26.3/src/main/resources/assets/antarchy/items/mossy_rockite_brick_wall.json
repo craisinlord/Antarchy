@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "antarchy:item/mossy_rockite_brick_wall"
+    "model": "antarchy:item/mossy_rockite_brick_wall",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -10788493
+      }
+    ]
   }
 }

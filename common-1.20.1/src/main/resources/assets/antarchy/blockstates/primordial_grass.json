@@ -1,7 +1,16 @@
 {
   "variants": {
-    "": {
-      "model": "antarchy:block/primordial_grass"
-    }
+    "": [
+      {
+        "model": "antarchy:block/primordial_grass",
+        "weight": 2
+      },
+      {
+        "model": "antarchy:block/primordial_grass_short"
+      },
+      {
+        "model": "antarchy:block/primordial_grass_tall"
+      }
+    ]
   }
 }

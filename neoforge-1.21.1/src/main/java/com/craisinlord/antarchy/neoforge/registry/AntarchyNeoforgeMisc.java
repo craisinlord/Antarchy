@@ -10,6 +10,7 @@ import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
 import com.craisinlord.antarchy.content.effect.DreadMobEffect;
 import com.craisinlord.antarchy.content.effect.GlimmeringMobEffect;
 import com.craisinlord.antarchy.content.effect.GoopedMobEffect;
+import com.craisinlord.antarchy.content.effect.LumenSoakedMobEffect;
 import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.RemembranceMobEffect;
@@ -78,6 +79,7 @@ import com.mojang.serialization.MapCodec;
 import io.netty.buffer.ByteBuf;
 import java.util.Set;
 import java.util.function.Function;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentType;
@@ -155,6 +157,7 @@ public final class AntarchyNeoforgeMisc {
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends BiomeSource>> BIOME_SOURCES = DeferredRegister.create(Registries.BIOME_SOURCE, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Antarchy.MODID);
+    private static final DeferredRegister<StructurePlacementType<?>> STRUCTURE_PLACEMENTS = DeferredRegister.create(Registries.STRUCTURE_PLACEMENT, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends SurfaceRules.RuleSource>> MATERIAL_RULES = DeferredRegister.create(Registries.MATERIAL_RULE, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, Antarchy.MODID);
@@ -243,6 +246,7 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MobEffect, BloodglassWardEffect> BLOODGLASS_WARD = MOB_EFFECTS.register("bloodglass_ward", BloodglassWardEffect::new);
 
     public static final DeferredHolder<MobEffect, GlimmeringMobEffect> GLIMMERING = MOB_EFFECTS.register("glimmering", GlimmeringMobEffect::new);
+    public static final DeferredHolder<MobEffect, LumenSoakedMobEffect> LUMEN_SOAKED = MOB_EFFECTS.register("lumen_soaked", LumenSoakedMobEffect::new);
     public static final DeferredHolder<MobEffect, RemembranceMobEffect> REMEMBRANCE = MOB_EFFECTS.register("remembrance", RemembranceMobEffect::new);
     public static final DeferredHolder<MobEffect, RoyalVitalityPenaltyEffect> ROYAL_VITALITY_PENALTY = MOB_EFFECTS.register("royal_vitality_penalty", RoyalVitalityPenaltyEffect::new);
     public static final DeferredHolder<MobEffect, ShrinkMobEffect> SHRINKING_EFFECT = MOB_EFFECTS.register("shrinking", ShrinkMobEffect::new);
@@ -358,6 +362,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDERVAULT_CONNECTION = PARTICLE_TYPES.register("undervault_connection",
             () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LUMEN_DRIP = PARTICLE_TYPES.register("lumen_drip",
+            () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
             () -> particleType(InvertedGeyserBaseParticleOptions::codec, InvertedGeyserBaseParticleOptions::streamCodec));
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserParticleOptions>> INVERTED_GEYSER_PLUME = PARTICLE_TYPES.register("inverted_geyser_plume",
@@ -462,7 +468,7 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<Feature<?>, GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH = FEATURES.register("giant_lily_pad_patch",
             () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH_PEACH_FOREST = FEATURES.register("giant_lily_pad_patch_peach_forest",
-            () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC, 0.12F));
+            () -> new GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC, 0.5F));
     public static final DeferredHolder<Feature<?>, LumenStreamFeature> LUMEN_STREAM = FEATURES.register("lumen_streams",
             () -> new LumenStreamFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LumenSpireFeature> LUMEN_SPIRE = FEATURES.register("lumen_spires",
@@ -561,6 +567,10 @@ public final class AntarchyNeoforgeMisc {
             () -> new ThoraxisBloodCrystalFeature(ThoraxisBloodCrystalConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaCloudFeature> ELYTHIA_CLOUDS = FEATURES.register("elythia_clouds",
             () -> new ElythiaCloudFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, SkyIsleTerrainFeature> SKY_ISLE_TERRAIN = FEATURES.register("sky_isle_terrain",
+            () -> new SkyIsleTerrainFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, SkyIsleFeature> SKY_ISLE = FEATURES.register("sky_isle",
+            () -> new SkyIsleFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, BedBugNestFeature> BED_BUG_NEST = FEATURES.register("bed_bug_nest",
             () -> new BedBugNestFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, BedBugSurfaceClusterFeature> BED_BUG_SURFACE_CLUSTER = FEATURES.register("bed_bug_surface_cluster",
@@ -615,6 +625,10 @@ public final class AntarchyNeoforgeMisc {
             () -> ElythiaShelfLip.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaButteFunction>> ELYTHIA_BUTTE = DENSITY_FUNCTION_TYPES.register("elythia_butte",
             () -> ElythiaButteFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<SkyIsleBiomeFunction>> ELYTHIA_SKY_ISLE = DENSITY_FUNCTION_TYPES.register("elythia_sky_isle",
+            () -> SkyIsleBiomeFunction.CODEC);
+    public static final DeferredHolder<StructurePlacementType<?>, StructurePlacementType<SkyIslePlacement>> SKY_ISLE_CROWN = STRUCTURE_PLACEMENTS.register("sky_isle_crown",
+            () -> () -> SkyIslePlacement.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ThoraxisTerrainFunction>> THORAXIS_TERRAIN = DENSITY_FUNCTION_TYPES.register("thoraxis_terrain",
             () -> ThoraxisTerrainFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynWormBoreFunction>> CAVARYN_WORM_BORE = DENSITY_FUNCTION_TYPES.register("cavaryn_worm_bore",
@@ -642,6 +656,7 @@ public final class AntarchyNeoforgeMisc {
         FEATURES.register(modEventBus);
         BIOME_SOURCES.register(modEventBus);
         DENSITY_FUNCTION_TYPES.register(modEventBus);
+        STRUCTURE_PLACEMENTS.register(modEventBus);
         MATERIAL_RULES.register(modEventBus);
         ENTITY_SUB_PREDICATES.register(modEventBus);
         ATTRIBUTES.register(modEventBus);

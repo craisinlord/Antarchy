@@ -13,13 +13,19 @@ public final class ElythiaFog {
             return renderDistance - Mth.clamp(renderDistance / 10.0F, 4.0F, 64.0F);
         }
         float night = night(level, partialTick);
-        return Math.min(Mth.lerp(night, 32.0F, 0.0F), end(level, renderDistance, partialTick) * 0.5F);
+        float baseEnd = baseEnd(level, renderDistance, partialTick);
+        float baseStart = Math.min(Mth.lerp(night, 32.0F, 0.0F), baseEnd * 0.5F);
+        return FungalReserveAtmosphere.fogStart(baseStart, baseEnd, partialTick);
     }
 
     public static float end(ClientLevel level, float renderDistance, float partialTick) {
         if (!AntarchySettings.elythiaFogEnabled()) {
             return renderDistance;
         }
+        return FungalReserveAtmosphere.fogEnd(baseEnd(level, renderDistance, partialTick), partialTick);
+    }
+
+    private static float baseEnd(ClientLevel level, float renderDistance, float partialTick) {
         return renderDistance * Mth.lerp(night(level, partialTick), 0.9F, 0.6F);
     }
 

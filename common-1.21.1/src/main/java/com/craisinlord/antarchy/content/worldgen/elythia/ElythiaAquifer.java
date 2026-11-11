@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Aquifer;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseChunk;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
 public final class ElythiaAquifer implements Aquifer {
@@ -31,6 +33,10 @@ public final class ElythiaAquifer implements Aquifer {
     private static final int NO_LIP = Integer.MIN_VALUE + 1;
     private static final int[] NEIGHBOR_X = {1, -1, 0, 0};
     private static final int[] NEIGHBOR_Z = {0, 0, 1, -1};
+    private static final int RAMP_REACH = 7;
+    private static final int RAMP_SOURCE = 8;
+    private static final int GRID = 16 + RAMP_REACH * 2;
+    private static final int GRID_CELLS = GRID * GRID;
 
     private final Aquifer delegate;
     private final NoiseChunk noiseChunk;
@@ -46,16 +52,42 @@ public final class ElythiaAquifer implements Aquifer {
     private final int[] seams = new int[COLUMNS];
     private final int[] floors = new int[COLUMNS];
     private final int[] surfaces = new int[COLUMNS];
+    private final int[] seals = new int[COLUMNS];
+    private int[] gridLevels;
+    private int[] gridFloors;
+    private boolean[] gridLumens;
+    private byte[] gridRamps;
+    private long gridKey = Long.MAX_VALUE;
+    private int gridOriginX;
+    private int gridOriginZ;
+    private static volatile BlockState[] cachedWaterRamps;
+    private static volatile BlockState[] cachedLumenRamps;
     private final BlockState waterState = Blocks.WATER.defaultBlockState();
     private final BlockState lumenState = AntarchyObjects.LUMEN_BLOCK.get().defaultBlockState();
     private final BlockState seamState = Blocks.CALCITE.defaultBlockState();
+    private final BlockState[] waterRamps;
+    private final BlockState[] lumenRamps;
+    private final boolean singleColumn;
     private boolean shouldScheduleFluidUpdate;
 
-    public ElythiaAquifer(Aquifer delegate, NoiseChunk noiseChunk, ElythiaHydrology hydrology) {
+    public ElythiaAquifer(Aquifer delegate, NoiseChunk noiseChunk, ElythiaHydrology hydrology, boolean singleColumn) {
         this.delegate = delegate;
         this.noiseChunk = noiseChunk;
         this.hydrology = hydrology;
+        this.singleColumn = singleColumn;
         Arrays.fill(this.columnKeys, Long.MAX_VALUE);
+        BlockState[] water = cachedWaterRamps;
+        if (water == null) {
+            water = ramps((FlowingFluid) Fluids.FLOWING_WATER);
+            cachedWaterRamps = water;
+        }
+        BlockState[] lumen = cachedLumenRamps;
+        if (lumen == null) {
+            lumen = ramps((FlowingFluid) AntarchyObjects.FLOWING_LUMEN.get());
+            cachedLumenRamps = lumen;
+        }
+        this.waterRamps = water;
+        this.lumenRamps = lumen;
     }
 
     @Nullable
@@ -79,7 +111,7 @@ public final class ElythiaAquifer implements Aquifer {
                 } else {
                     int lip = this.lip(column, context);
                     if (lip != NO_LIP && lip - floor <= LIP_HEIGHT) {
-                        if (y >= floor && y < lip) {
+                        if (y >= floor && y < this.seal(column, context)) {
                             this.shouldScheduleFluidUpdate = false;
                             return null;
                         }
@@ -133,6 +165,12 @@ public final class ElythiaAquifer implements Aquifer {
         }
         if (y >= level) {
             this.shouldScheduleFluidUpdate = false;
+            if (y == level && this.wet(column, context)) {
+                int ramp = this.ramp(context.blockX(), context.blockZ());
+                if (ramp > 0) {
+                    return this.lumen(column, context) > LUMEN_THRESHOLD ? this.lumenRamps[ramp] : this.waterRamps[ramp];
+                }
+            }
             return y < this.hydrology.seaLevel() && reserve <= RIM_RESERVE ? this.waterState : AIR;
         }
         boolean lumenRiver = this.lumen(column, context) > LUMEN_THRESHOLD;
@@ -169,6 +207,7 @@ public final class ElythiaAquifer implements Aquifer {
             this.seams[column] = UNSET;
             this.floors[column] = UNSET;
             this.surfaces[column] = UNSET;
+            this.seals[column] = UNSET;
         }
     }
 
@@ -248,27 +287,176 @@ public final class ElythiaAquifer implements Aquifer {
         int value = this.spills[column];
         if (value == UNSET) {
             value = level;
+            if (this.singleColumn) {
+                this.spills[column] = value;
+                return value;
+            }
             int x = context.blockX();
             int z = context.blockZ();
+            this.grid(x, z);
             for (int i = 0; i < NEIGHBOR_X.length; i++) {
                 int neighborX = x + NEIGHBOR_X[i];
                 int neighborZ = z + NEIGHBOR_Z[i];
-                DensityFunction.SinglePointContext point = new DensityFunction.SinglePointContext(neighborX, 0, neighborZ);
-                if (neighborX >> 4 == x >> 4 && neighborZ >> 4 == z >> 4) {
+                int index = this.gridIndex(neighborX, neighborZ);
+                int neighborLevel = this.gridLevels[index];
+                int neighbor;
+                if (neighborLevel != UNSET) {
+                    neighbor = neighborLevel == level - 1 && this.gridRamps[index] > 0 ? level : neighborLevel;
+                } else if (neighborX >> 4 == x >> 4 && neighborZ >> 4 == z >> 4) {
+                    DensityFunction.SinglePointContext point = new DensityFunction.SinglePointContext(neighborX, 0, neighborZ);
                     int neighborColumn = (neighborX & 15) << 4 | (neighborZ & 15);
                     this.load(neighborColumn, ChunkPos.asLong(neighborX, neighborZ), point);
-                    int neighbor = this.wet(neighborColumn, point) ? this.level(neighborColumn, point) : this.floor(neighborColumn, point);
-                    value = Math.min(value, neighbor);
-                    continue;
+                    neighbor = this.floor(neighborColumn, point);
+                } else {
+                    neighbor = Mth.ceil(this.hydrology.floor().compute(new DensityFunction.SinglePointContext(neighborX, 0, neighborZ)));
                 }
-                int neighbor = this.wet(point)
-                        ? level(this.hydrology.riverLevel().compute(point))
-                        : Mth.ceil(this.hydrology.floor().compute(point));
                 value = Math.min(value, neighbor);
             }
             this.spills[column] = value;
         }
         return value;
+    }
+
+    private int seal(int column, DensityFunction.FunctionContext context) {
+        int value = this.seals[column];
+        if (value == UNSET) {
+            value = this.lip(column, context);
+            int x = context.blockX();
+            int z = context.blockZ();
+            this.grid(x, z);
+            for (int i = 0; i < NEIGHBOR_X.length; i++) {
+                int index = this.gridIndex(x + NEIGHBOR_X[i], z + NEIGHBOR_Z[i]);
+                if (this.gridLevels[index] != UNSET && this.gridRamps[index] > 0) {
+                    value = Math.max(value, this.gridLevels[index] + 1);
+                }
+            }
+            this.seals[column] = value;
+        }
+        return value;
+    }
+
+    private int ramp(int x, int z) {
+        if (this.singleColumn) {
+            return 0;
+        }
+        this.grid(x, z);
+        return this.gridRamps[this.gridIndex(x, z)];
+    }
+
+    private int gridIndex(int x, int z) {
+        return (x - this.gridOriginX) * GRID + (z - this.gridOriginZ);
+    }
+
+    private void grid(int x, int z) {
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+        long key = ChunkPos.asLong(chunkX, chunkZ);
+        if (this.gridKey == key) {
+            return;
+        }
+        this.gridKey = key;
+        if (this.gridLevels == null) {
+            this.gridLevels = new int[GRID_CELLS];
+            this.gridFloors = new int[GRID_CELLS];
+            this.gridLumens = new boolean[GRID_CELLS];
+            this.gridRamps = new byte[GRID_CELLS];
+        }
+        this.gridOriginX = (chunkX << 4) - RAMP_REACH;
+        this.gridOriginZ = (chunkZ << 4) - RAMP_REACH;
+        for (int gridX = 0; gridX < GRID; gridX++) {
+            for (int gridZ = 0; gridZ < GRID; gridZ++) {
+                this.sampleGrid(gridX * GRID + gridZ, this.gridOriginX + gridX, this.gridOriginZ + gridZ, chunkX, chunkZ);
+            }
+        }
+        Arrays.fill(this.gridRamps, (byte) 0);
+        for (int gridX = 0; gridX < GRID; gridX++) {
+            for (int gridZ = 0; gridZ < GRID; gridZ++) {
+                int index = gridX * GRID + gridZ;
+                int level = this.gridLevels[index];
+                if (level == UNSET) {
+                    continue;
+                }
+                for (int i = 0; i < NEIGHBOR_X.length; i++) {
+                    int neighborX = gridX + NEIGHBOR_X[i];
+                    int neighborZ = gridZ + NEIGHBOR_Z[i];
+                    if (neighborX < 0 || neighborZ < 0 || neighborX >= GRID || neighborZ >= GRID) {
+                        continue;
+                    }
+                    int neighbor = neighborX * GRID + neighborZ;
+                    int neighborLevel = this.gridLevels[neighbor];
+                    if (neighborLevel != UNSET
+                            && neighborLevel > level
+                            && neighborLevel - level <= RIVER_DEPTH_BAND
+                            && this.gridFloors[neighbor] <= level
+                            && this.gridLumens[neighbor] == this.gridLumens[index]) {
+                        this.gridRamps[index] = (byte) (RAMP_SOURCE - 1);
+                        break;
+                    }
+                }
+            }
+        }
+        for (int amount = RAMP_SOURCE - 1; amount > 1; amount--) {
+            for (int gridX = 0; gridX < GRID; gridX++) {
+                for (int gridZ = 0; gridZ < GRID; gridZ++) {
+                    int index = gridX * GRID + gridZ;
+                    if (this.gridRamps[index] != amount) {
+                        continue;
+                    }
+                    for (int i = 0; i < NEIGHBOR_X.length; i++) {
+                        int neighborX = gridX + NEIGHBOR_X[i];
+                        int neighborZ = gridZ + NEIGHBOR_Z[i];
+                        if (neighborX < 0 || neighborZ < 0 || neighborX >= GRID || neighborZ >= GRID) {
+                            continue;
+                        }
+                        int neighbor = neighborX * GRID + neighborZ;
+                        if (this.gridRamps[neighbor] == 0
+                                && this.gridLevels[neighbor] == this.gridLevels[index]
+                                && this.gridLumens[neighbor] == this.gridLumens[index]) {
+                            this.gridRamps[neighbor] = (byte) (amount - 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void sampleGrid(int index, int x, int z, int chunkX, int chunkZ) {
+        DensityFunction.SinglePointContext point = new DensityFunction.SinglePointContext(x, 0, z);
+        this.gridLevels[index] = UNSET;
+        if (x >> 4 == chunkX && z >> 4 == chunkZ) {
+            int column = (x & 15) << 4 | (z & 15);
+            this.load(column, ChunkPos.asLong(x, z), point);
+            if (this.wet(column, point)) {
+                this.gridLevels[index] = this.level(column, point);
+                this.gridFloors[index] = this.floor(column, point);
+                this.gridLumens[index] = this.lumen(column, point) > LUMEN_THRESHOLD;
+            }
+            return;
+        }
+        if (this.hydrology.reserve().compute(point) >= RIVER_RESERVE_LIMIT
+                || this.hydrology.valley().compute(point) <= VALLEY_THRESHOLD
+                || this.hydrology.riverChannel().compute(point) <= CHANNEL_THRESHOLD) {
+            return;
+        }
+        int level = level(this.hydrology.riverLevel().compute(point));
+        if (level <= this.hydrology.seaLevel()) {
+            return;
+        }
+        int floor = Mth.ceil(this.hydrology.floor().compute(point));
+        if (floor >= level) {
+            return;
+        }
+        this.gridLevels[index] = level;
+        this.gridFloors[index] = floor;
+        this.gridLumens[index] = this.hydrology.lumen().compute(point) > LUMEN_THRESHOLD;
+    }
+
+    private static BlockState[] ramps(FlowingFluid fluid) {
+        BlockState[] states = new BlockState[RAMP_SOURCE];
+        for (int amount = 1; amount < RAMP_SOURCE; amount++) {
+            states[amount] = fluid.getFlowing(amount, false).createLegacyBlock();
+        }
+        return states;
     }
 
     private int lip(int column, DensityFunction.FunctionContext context) {
