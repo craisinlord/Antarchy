@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.client;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import com.craisinlord.anthology.portal.PortalEntity;
+import com.craisinlord.anthology.portal.PortalRegistry;
 import java.lang.ref.WeakReference;
 import java.util.EnumSet;
 import java.util.Set;
@@ -75,7 +77,7 @@ public final class PortalGunCrosshairRenderer {
         long gameTime = level.getGameTime();
         if (cachedLevel.get() != level || cachedGameTime != gameTime || !gunId.equals(cachedGunId)) {
             Set<PortalGunPortalEntity.PortalSide> portals = EnumSet.noneOf(PortalGunPortalEntity.PortalSide.class);
-            for (com.craisinlord.anthology.portal.PortalEntity entry : com.craisinlord.anthology.portal.PortalRegistry.all(level)) {
+            for (PortalEntity entry : PortalRegistry.all(level)) {
                 if (entry instanceof PortalGunPortalEntity portal && portal.isAlive() && gunId.equals(portal.getGunId())) {
                     portals.add(portal.getPortalSide());
                 }

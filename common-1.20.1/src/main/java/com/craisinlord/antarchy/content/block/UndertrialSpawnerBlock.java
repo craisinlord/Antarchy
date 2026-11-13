@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.block;
 import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.undertrial.UndertrialSpawnerEffects;
 import com.craisinlord.antarchy.content.block.entity.undertrial.UndertrialSpawnerState;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -25,8 +26,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
-
-import java.util.function.Supplier;
 
 public final class UndertrialSpawnerBlock extends BaseEntityBlock {
     public static final EnumProperty<UndertrialSpawnerState> STATE = EnumProperty.create("trial_spawner_state", UndertrialSpawnerState.class);

@@ -9,24 +9,18 @@ final class PrimordialGrassLod {
     private static final double ANY = Double.POSITIVE_INFINITY;
     private static final Tier[][] QUALITIES = {
             {
-                    new Tier(12.0D, 3, 1.0F, 2),
-                    new Tier(32.0D, 1, 0.75F, 2),
-                    new Tier(64.0D, 1, 0.4F, 2),
-                    new Tier(ANY, 1, 0.15F, 1)
+                    new Tier(12.0D, 3, 2),
+                    new Tier(32.0D, 1, 2),
+                    new Tier(ANY, 1, 1)
             },
             {
-                    new Tier(16.0D, 6, 1.0F, 2),
-                    new Tier(32.0D, 3, 1.0F, 2),
-                    new Tier(64.0D, 1, 0.75F, 2),
-                    new Tier(96.0D, 1, 0.5F, 2),
-                    new Tier(128.0D, 1, 0.35F, 1),
-                    new Tier(ANY, 1, 0.2F, 1)
+                    new Tier(16.0D, 6, 2),
+                    new Tier(32.0D, 3, 2),
+                    new Tier(ANY, 1, 2)
             },
             {
-                    new Tier(32.0D, 8, 1.0F, 2),
-                    new Tier(64.0D, 3, 1.0F, 2),
-                    new Tier(128.0D, 1, 0.667F, 2),
-                    new Tier(ANY, 1, 0.667F, 1)
+                    new Tier(32.0D, 8, 2),
+                    new Tier(ANY, 3, 2)
             }
     };
     private static final int[][] SHAPE_FIRST = new int[MAX_BANDS + 1][MAX_FACES + 1];
@@ -46,7 +40,7 @@ final class PrimordialGrassLod {
     private PrimordialGrassLod() {
     }
 
-    record Tier(double maxDistance, int bands, float keep, int faces) {
+    record Tier(double maxDistance, int bands, int faces) {
         int first() {
             return SHAPE_FIRST[bands][faces];
         }
@@ -63,7 +57,9 @@ final class PrimordialGrassLod {
     static int tierFor(Tier[] tiers, int current, double distance) {
         for (int i = 0; i < tiers.length - 1; i++) {
             double limit = tiers[i].maxDistance + (i == current ? HYSTERESIS : 0.0D);
-            if (distance < limit) return i;
+            if (distance < limit) {
+                return i;
+            }
         }
         return tiers.length - 1;
     }
@@ -78,17 +74,5 @@ final class PrimordialGrassLod {
 
     static int shapeVertices() {
         return SHAPE_VERTICES;
-    }
-
-    static int visibleCount(int[] packed, int count, float keep) {
-        int limit = Math.round(keep * 256.0F) << HASH_SHIFT;
-        int low = 0;
-        int high = count;
-        while (low < high) {
-            int middle = low + high >>> 1;
-            if (packed[middle] < limit) low = middle + 1;
-            else high = middle;
-        }
-        return low;
     }
 }

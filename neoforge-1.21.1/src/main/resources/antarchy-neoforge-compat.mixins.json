@@ -1,0 +1,27 @@
+{
+  "required": false,
+  "package": "com.craisinlord.antarchy.neoforge.mixins",
+  "refmap": "antarchy.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "infinity.InfinityBiomeCheckMixin",
+    "infinity.InfinityVillageSpacingMixin",
+    "compat.AlexsCavesCabinMapTradeThreadMixin",
+    "compat.SablePhysicsColliderBlockGetterMixin",
+    "compat.TimeVortexSettingsCheckAsyncMixin",
+    "infinity.AmendmentRareOresMixin",
+    "infinity.ConfigGenInvocationMixin",
+    "infinity.ConfigGeneratorMixin",
+    "infinity.PortalCreatorMixin",
+    "infinity.PortalCreatorInvoker",
+    "infinity.WarpLogicMixin"
+  ],
+  "client": [
+    "infinity.ShaderPayloadRepeatSkipMixin",
+    "compat.AppleSkinOverlayMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "minVersion": "0.8"
+}

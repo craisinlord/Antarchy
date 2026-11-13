@@ -13,7 +13,9 @@ public final class AntarchyGameClientState {
 
     public static void update(AntarchyGameResultPayload result) {
         String[] envelope = result.data().split("\u0000", 3);
-        if (envelope.length < 3) return;
+        if (envelope.length < 3) {
+            return;
+        }
         if (envelope[0].equals(Integer.toString(AntarchyGamePayload.BASILISK_STATE))
                 || envelope[0].equals(Integer.toString(AntarchyGamePayload.ANTMAN_STATE))) {
             GAME_STATES.put(key(result.pos(), envelope[0]),
@@ -21,7 +23,13 @@ public final class AntarchyGameClientState {
         }
     }
 
-    public static String getGameState(BlockPos pos, int action) { return GAME_STATES.get(key(pos, Integer.toString(action))); }
-    public static void clearGameState(BlockPos pos, int action) { GAME_STATES.remove(key(pos, Integer.toString(action))); }
-    private static String key(BlockPos pos, String action) { return pos.asLong() + "|" + action; }
+    public static String getGameState(BlockPos pos, int action) {
+        return GAME_STATES.get(key(pos, Integer.toString(action)));
+    }
+    public static void clearGameState(BlockPos pos, int action) {
+        GAME_STATES.remove(key(pos, Integer.toString(action)));
+    }
+    private static String key(BlockPos pos, String action) {
+        return pos.asLong() + "|" + action;
+    }
 }

@@ -1,31 +1,36 @@
 package com.craisinlord.antarchy.content.portal;
 
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.ant.AntTeleportHelper;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.vehicle.DismountHelper;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -36,8 +41,8 @@ public final class PermanentPortalTeleporter {
     private static final int EXISTING_PORTAL_SEARCH_RADIUS = 128;
     private static final int ELYTHIA_MIN_ARRIVAL_Y = ElythiaArrival.MIN_ARRIVAL_Y;
     private static final ResourceKey<Level> ELYTHIA = ResourceKey.create(
-            net.minecraft.core.registries.Registries.DIMENSION,
-            new net.minecraft.resources.ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "elythia")
+            Registries.DIMENSION,
+            new ResourceLocation(Antarchy.MODID, "elythia")
     );
 
     private PermanentPortalTeleporter() {
@@ -85,7 +90,7 @@ public final class PermanentPortalTeleporter {
         Vec3 arrival = findArrivalPosition(sourceLevel, entity, destination, portalPos, type);
         if (arrival == null) {
             if (entity instanceof ServerPlayer player) {
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.teleport_arrival_failed"), true);
+                player.displayClientMessage(Component.translatable("message.antarchy.teleport_arrival_failed"), true);
             }
             return Transition.doNothing(sourceLevel);
         }
@@ -407,7 +412,7 @@ public final class PermanentPortalTeleporter {
                 return false;
             }
 
-            return !destination.getBlockState(standPos.below()).is(net.minecraft.world.level.block.Blocks.BEDROCK);
+            return !destination.getBlockState(standPos.below()).is(Blocks.BEDROCK);
         }
         return true;
     }

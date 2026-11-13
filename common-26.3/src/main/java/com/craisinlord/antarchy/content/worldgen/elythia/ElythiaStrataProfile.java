@@ -24,6 +24,7 @@ public record ElythiaStrataProfile(
     public static final ElythiaStrataProfile SHELFBACK_HIGHLANDS = new ElythiaStrataProfile(11, 1, 3, 0, 5.0D, 72.0D, 0.0D, 260.0D, 0.0D, 0, 0, 7, 11, 0.6D);
     public static final ElythiaStrataProfile ZEBRA_SCARPS = new ElythiaStrataProfile(10, 5, 7, 0, 3.0D, 96.0D, 45.0D, 260.0D, -2.0D, 0, 0, 0, 0, NO_VEINS);
     public static final ElythiaStrataProfile GLIMMERING_FALLS = new ElythiaStrataProfile(14, 1, 2, 0, 6.0D, 64.0D, 0.0D, 260.0D, 0.0D, 0, 0, 0, 0, NO_VEINS);
+    public static final ElythiaStrataProfile SKY_ISLES = new ElythiaStrataProfile(12, 1, 4, 2, 10.0D, 70.0D, 30.0D, 180.0D, -2.0D, 0, 0, 2, 4, 0.3D);
     public static final ElythiaStrataProfile FORMATION = new ElythiaStrataProfile(9, 3, 3, 0, 3.0D, 96.0D, 45.0D, 260.0D, -2.0D, 0, 0, 0, 0, NO_VEINS);
 
     private static final Map<String, ElythiaStrataProfile> BY_BIOME = Map.of(

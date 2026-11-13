@@ -7,8 +7,8 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.Vec3;
 
 public final class HypnoticGasCloudParticle extends NoRenderParticle {
     private final boolean flipped;

@@ -6,8 +6,8 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
 import com.mojang.math.Axis;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -24,9 +24,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
-import org.jetbrains.annotations.Nullable;
 
 public final class ElythiaSkyRenderer {
     public static final ResourceKey<Level> ELYTHIA = ResourceKey.create(
@@ -289,10 +289,18 @@ public final class ElythiaSkyRenderer {
 
     private static float[] pickStarColor(Random random) {
         float roll = random.nextFloat();
-        if (roll < 0.72F) return new float[]{1.0F, 0.97F, 1.0F};
-        if (roll < 0.82F) return new float[]{0.82F, 0.62F, 1.0F};
-        if (roll < 0.89F) return new float[]{1.0F, 0.74F, 0.45F};
-        if (roll < 0.96F) return new float[]{0.72F, 1.0F, 0.7F};
+        if (roll < 0.72F) {
+            return new float[]{1.0F, 0.97F, 1.0F};
+        }
+        if (roll < 0.82F) {
+            return new float[]{0.82F, 0.62F, 1.0F};
+        }
+        if (roll < 0.89F) {
+            return new float[]{1.0F, 0.74F, 0.45F};
+        }
+        if (roll < 0.96F) {
+            return new float[]{0.72F, 1.0F, 0.7F};
+        }
         return new float[]{1.0F, 0.56F, 0.62F};
     }
 

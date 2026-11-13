@@ -7,9 +7,9 @@ import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedAttackPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedChargePayload;
-import net.minecraft.server.level.ServerPlayer;
-import com.craisinlord.antarchy.forge.network.AntarchyPayloadContext;
 import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
+import com.craisinlord.antarchy.forge.network.AntarchyPayloadContext;
+import net.minecraft.server.level.ServerPlayer;
 
 public final class HerculesBeetleNetworking {
     private HerculesBeetleNetworking() {

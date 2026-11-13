@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -9,6 +8,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -16,7 +16,9 @@ public final class CranberryGroveFeature implements Feature {
     public static final MapCodec<CranberryGroveFeature> CODEC = MapCodec.unit(CranberryGroveFeature::new);
 
     @Override
-    public MapCodec<CranberryGroveFeature> codec() { return CODEC; }
+    public MapCodec<CranberryGroveFeature> codec() {
+        return CODEC;
+    }
     private static final TagKey<Biome> BIOMES = TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath("antarchy", "cranberry_grove_biomes"));
     private static final int[][] TREE_OFFSETS = {{-10, -7}, {10, -7}, {0, 12}};
 

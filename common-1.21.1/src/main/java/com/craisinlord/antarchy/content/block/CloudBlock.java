@@ -5,20 +5,22 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
@@ -41,7 +43,7 @@ public final class CloudBlock extends Block implements BucketPickup {
         if (context instanceof EntityCollisionContext ecc) {
             Entity entity = ecc.getEntity();
             if (entity instanceof KingEntity
-                    || entity instanceof net.minecraft.world.entity.LivingEntity le && le.isShiftKeyDown()) {
+                    || entity instanceof LivingEntity le && le.isShiftKeyDown()) {
                 return EMPTY;
             }
         }
@@ -84,7 +86,7 @@ public final class CloudBlock extends Block implements BucketPickup {
     }
 
     public ItemStack pickupBlock(@Nullable Player player, LevelAccessor level, BlockPos pos, BlockState state) {
-        level.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 11);
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
         return new ItemStack(bucketItem.get());
     }
 

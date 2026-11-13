@@ -5,12 +5,10 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class AntarchyToolsConfig {
     public static final ModConfigSpec SPEC;
 
-
     private static final ModConfigSpec.DoubleValue BASILISK_DAGGER_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BASILISK_DAGGER_ATTACK_SPEED;
     private static final ModConfigSpec.IntValue    BASILISK_DAGGER_POISON_DURATION_TICKS;
     private static final ModConfigSpec.IntValue    BASILISK_DAGGER_POISON_AMPLIFIER;
-
 
     private static final ModConfigSpec.DoubleValue  ULTIMATE_SWORD_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_SWORD_ATTACK_SPEED;
@@ -28,23 +26,19 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue     ULTIMATE_TOOLS_VEIN_MINING_MAX_BLOCKS;
     private static final ModConfigSpec.IntValue     ULTIMATE_TOOLS_TREE_FELLING_MAX_LOGS;
 
-
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_PLAYER_HEAL;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_DRAW_SPEED_MULTIPLIER;
     private static final ModConfigSpec.BooleanValue ULTIMATE_BOW_COMES_ENCHANTED_WITH_FLAME;
     private static final ModConfigSpec.IntValue     ULTIMATE_BOW_ENCHANTABILITY;
 
-
     private static final ModConfigSpec.DoubleValue ULTIMATE_CROSSBOW_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue ULTIMATE_CROSSBOW_CHARGE_SPEED_MULTIPLIER;
     private static final ModConfigSpec.IntValue    ULTIMATE_CROSSBOW_ENCHANTABILITY;
 
-
     private static final ModConfigSpec.DoubleValue ULTIMATE_MACE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue ULTIMATE_MACE_ATTACK_SPEED;
     private static final ModConfigSpec.IntValue    ULTIMATE_MACE_ENCHANTABILITY;
-
 
     private static final ModConfigSpec.BooleanValue ULTIMATE_ARMOR_COMES_ENCHANTED;
     private static final ModConfigSpec.IntValue     ULTIMATE_ARMOR_ENCHANTABILITY;
@@ -104,10 +98,8 @@ public final class AntarchyToolsConfig {
             ROYAL_GUARDIAN_BOUNDARY_STRENGTH_AMPLIFIER, ROYAL_GUARDIAN_BOUNDARY_ARREST_TICKS,
             ROYAL_GUARDIAN_BOUNDARY_DROP_TICKS, ROYAL_GUARDIAN_BOUNDARY_PROJECTILE_CAP;
 
-
     private static final ModConfigSpec.DoubleValue BATTLE_AXE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BATTLE_AXE_ATTACK_SPEED;
-
 
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_REACH_BONUS;
@@ -146,7 +138,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_INVULN_TICKS;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_DASH_COOLDOWN_TICKS;
 
-
     private static final ModConfigSpec.IntValue    NIGHTMARE_HELMET_ARMOR_VALUE;
     private static final ModConfigSpec.IntValue    NIGHTMARE_CHESTPLATE_ARMOR_VALUE;
     private static final ModConfigSpec.IntValue    NIGHTMARE_LEGGINGS_ARMOR_VALUE;
@@ -165,10 +156,8 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue NIGHTMARE_SWORD_ATTACK_SPEED;
     private static final ModConfigSpec.DoubleValue NIGHTMARE_SWORD_SCALING_FACTOR;
 
-
     private static final ModConfigSpec.IntValue    FALLEN_KING_CROWN_ARMOR_VALUE;
     private static final ModConfigSpec.DoubleValue FALLEN_KING_CROWN_ARMOR_TOUGHNESS;
-
 
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_APPLE_SHIELD_COUNT;
@@ -185,7 +174,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_LEGGINGS_DURABILITY;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_BOOTS_DURABILITY;
 
-
     private static final ModConfigSpec.DoubleValue SQUIDZOOKA_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue SQUIDZOOKA_LAUNCH_VELOCITY;
     private static final ModConfigSpec.DoubleValue RPO_LAUNCHER_COOLDOWN_SECONDS;
@@ -199,7 +187,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue ANVIL_CANNON_RECOIL_STRENGTH;
     private static final ModConfigSpec.BooleanValue ANVIL_CANNON_DEGRADE_ON_IMPACT;
 
-
     private static final ModConfigSpec.BooleanValue SIZE_CHANGING_RAYS_ENABLED;
     private static final ModConfigSpec.DoubleValue  SIZE_RAY_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue  SIZE_RAY_MIN_SCALE;
@@ -207,7 +194,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue  SIZE_RAY_DELTA_PER_HIT;
     private static final ModConfigSpec.DoubleValue  SHRINKING_POTION_DELTA;
     private static final ModConfigSpec.DoubleValue  GROWTH_POTION_DELTA;
-
 
     private static final ModConfigSpec.BooleanValue GRAVITY_GUN_ENABLED;
     private static final ModConfigSpec.BooleanValue GRAVITY_GUN_BLOCKS_ENABLED;
@@ -246,10 +232,8 @@ public final class AntarchyToolsConfig {
 
     private static final ModConfigSpec.DoubleValue MOGGLES_VISION_RADIUS;
 
-
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
-
 
         b.push("basiliskDagger");
         BASILISK_DAGGER_ATTACK_DAMAGE         = b.comment("Attack damage.")                        .defineInRange("attackDamage",         6.0D, 0.0D, 1024.0D);
@@ -257,7 +241,6 @@ public final class AntarchyToolsConfig {
         BASILISK_DAGGER_POISON_DURATION_TICKS = b.comment("Poison duration applied on hit.")       .defineInRange("poisonDurationTicks",   200, 0, 20000);
         BASILISK_DAGGER_POISON_AMPLIFIER      = b.comment("Poison level applied on hit (0 = I).")  .defineInRange("poisonAmplifier",         2, 0, 10);
         b.pop();
-
 
         b.push("ultimateTools");
         ULTIMATE_SWORD_ATTACK_DAMAGE   = b.comment("Attack damage of the Ultimate Sword.")                                          .defineInRange("swordAttackDamage",    30.0D,          0.0D, 1024.0D);
@@ -281,7 +264,6 @@ public final class AntarchyToolsConfig {
         ULTIMATE_TOOLS_TREE_FELLING_MAX_LOGS = b.comment("Most extra logs broken at once by Vein Mining on logs or by the Battle Axe.")          .defineInRange("treeFellingMaxLogs", 128, 1, 1024);
         b.pop();
 
-
         b.push("ultimateBow");
         ULTIMATE_BOW_ATTACK_DAMAGE              = b.comment("Damage dealt to non-player targets.")                                        .defineInRange("attackDamage",            18.0D, 0.0D, 1024.0D);
         ULTIMATE_BOW_PLAYER_HEAL                = b.comment("Health restored to players hit by arrows from this bow.")                    .defineInRange("playerHeal",               8.0D, 0.0D, 1024.0D);
@@ -289,7 +271,6 @@ public final class AntarchyToolsConfig {
         ULTIMATE_BOW_COMES_ENCHANTED_WITH_FLAME = b.comment("If true, Ultimate Bows are automatically given and keep the Flame enchant.") .define("comesEnchantedWithFlame", true);
         ULTIMATE_BOW_ENCHANTABILITY             = b.comment("Enchantability of the Ultimate Bow.")                                        .defineInRange("enchantability",             20, 0, 100);
         b.pop();
-
 
         b.push("ultimateCrossbow");
         ULTIMATE_CROSSBOW_ATTACK_DAMAGE           = b.comment("Damage dealt by projectiles fired from the Ultimate Crossbow.").defineInRange("attackDamage",           8.0D, 0.0D, 1024.0D);
@@ -302,13 +283,11 @@ public final class AntarchyToolsConfig {
         ULTIMATE_CROSSBOW_ENCHANTABILITY          = b.comment("Enchantability of the Ultimate Crossbow.").defineInRange("enchantability", 20, 0, 100);
         b.pop();
 
-
         b.push("ultimateMace");
         ULTIMATE_MACE_DAMAGE_MULTIPLIER = b.comment("Multiplier on both base damage and smash bonus. 1.5 = 50% stronger than a normal mace.").defineInRange("damageMultiplier", 1.5D, 0.1D, 16.0D);
         ULTIMATE_MACE_ATTACK_SPEED      = b.comment("Attack speed of the Ultimate Mace.")                                         .defineInRange("attackSpeed",       -3.4D, -10.0D, 10.0D);
         ULTIMATE_MACE_ENCHANTABILITY    = b.comment("Enchantability of the Ultimate Mace.")                                       .defineInRange("enchantability",       20, 0, 100);
         b.pop();
-
 
         b.push("ultimateArmor");
         ULTIMATE_ARMOR_COMES_ENCHANTED       = b.comment("If true, newly crafted Ultimate Armor has Protection, Fire Protection, Projectile Protection, and Blast Protection.").define("comesEnchanted", true);
@@ -386,12 +365,10 @@ public final class AntarchyToolsConfig {
         ROYAL_GUARDIAN_BOUNDARY_PROJECTILE_CAP = b.defineInRange("guardianBoundaryProjectileCap", 64, 0, 4096);
         b.pop();
 
-
         b.push("battleAxe");
         BATTLE_AXE_ATTACK_DAMAGE = b.comment("Attack damage of the Battle Axe.").defineInRange("attackDamage", 46.0D, 0.0D, 4096.0D);
         BATTLE_AXE_ATTACK_SPEED  = b.comment("Attack speed of the Battle Axe.") .defineInRange("attackSpeed",  -3.1D, -10.0D, 10.0D);
         b.pop();
-
 
         b.push("bigBertha");
         BIG_BERTHA_ATTACK_DAMAGE                     = b.comment("Attack damage of Big Bertha.")                                            .defineInRange("attackDamage",                   55.0D, 0.0D, 4096.0D);
@@ -444,7 +421,6 @@ public final class AntarchyToolsConfig {
         BLOOD_CRYSTAL_KATANA_DASH_COOLDOWN_TICKS = b.comment("Minimum ticks between katana dashes.").defineInRange("dashCooldownTicks", 4, 0, 200);
         b.pop();
 
-
         b.push("nightmareArmor");
         NIGHTMARE_HELMET_ARMOR_VALUE              = b.comment("Armor points of the Nightmare Helmet. (Netherite default: 3)")               .defineInRange("helmetArmor",           3, 0, 100);
         NIGHTMARE_CHESTPLATE_ARMOR_VALUE          = b.comment("Armor points of the Nightmare Chestplate. (Netherite default: 8)")           .defineInRange("chestplateArmor",       8, 0, 100);
@@ -483,7 +459,6 @@ public final class AntarchyToolsConfig {
         FALLEN_KING_CROWN_ARMOR_TOUGHNESS = b.comment("Armor toughness of the Fallen King's Crown. Default: 0.0 (gold helmet).").defineInRange("armorToughness", 0.0D, 0.0D, 100.0D);
         b.pop();
 
-
         b.push("bloodCrystalArmor");
         BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS = b.comment("Ticks (20/s) for each armor Bloodglass Shield to recharge after shattering. Default: 600 (30s).").defineInRange("armorShieldRechargeTicks", 600, 1, 72000);
         BLOOD_CRYSTAL_APPLE_SHIELD_COUNT          = b.comment("Number of Bloodglass Shields granted by a Blood Crystal Apple (Bloodglass Ward level). Default: 2.").defineInRange("appleShieldCount", 2, 1, 8);
@@ -494,13 +469,12 @@ public final class AntarchyToolsConfig {
         BLOOD_CRYSTAL_CHESTPLATE_DEFENSE  = b.comment("Armor defense value for Blood Crystal Chestplate. Default: 6 (iron).").defineInRange("chestplateDefense", 6, 0, 30);
         BLOOD_CRYSTAL_LEGGINGS_DEFENSE    = b.comment("Armor defense value for Blood Crystal Leggings. Default: 5 (iron).").defineInRange("leggingsDefense", 5, 0, 30);
         BLOOD_CRYSTAL_BOOTS_DEFENSE       = b.comment("Armor defense value for Blood Crystal Boots. Default: 2 (iron).").defineInRange("bootsDefense", 2, 0, 30);
-        BLOOD_CRYSTAL_ARMOR_TOUGHNESS     = b.comment("Armor toughness for all Blood Crystal armor pieces. Default: 0.0 (iron).").defineInRange("armorToughness", 0.0, 0.0, 20.0);
+        BLOOD_CRYSTAL_ARMOR_TOUGHNESS     = b.comment("Armor toughness for all Blood Crystal armor pieces. Default: 0.0 (iron).").defineInRange("armorToughness", 0.0D, 0.0D, 20.0D);
         BLOOD_CRYSTAL_HELMET_DURABILITY   = b.comment("Max durability of Blood Crystal Helmet. Default: 92.").defineInRange("helmetDurability", 92, 1, 2000);
         BLOOD_CRYSTAL_CHESTPLATE_DURABILITY = b.comment("Max durability of Blood Crystal Chestplate. Default: 134.").defineInRange("chestplateDurability", 134, 1, 2000);
         BLOOD_CRYSTAL_LEGGINGS_DURABILITY = b.comment("Max durability of Blood Crystal Leggings. Default: 126.").defineInRange("leggingsDurability", 126, 1, 2000);
         BLOOD_CRYSTAL_BOOTS_DURABILITY    = b.comment("Max durability of Blood Crystal Boots. Default: 109.").defineInRange("bootsDurability", 109, 1, 2000);
         b.pop();
-
 
         b.push("squidzooka");
         SQUIDZOOKA_COOLDOWN_SECONDS  = b.comment("Cooldown in seconds after firing. Set to 0 to disable.").defineInRange("cooldownSeconds", 1.0D, 0.0D, 3600.0D);
@@ -523,7 +497,6 @@ public final class AntarchyToolsConfig {
         ANVIL_CANNON_DEGRADE_ON_IMPACT = b.comment("Whether a fired anvil lands one damage stage worse (anvil, chipped, damaged, destroyed).").define("degradeOnImpact", true);
         b.pop();
 
-
         b.push("sizeRays");
         SIZE_CHANGING_RAYS_ENABLED = b
                 .comment(
@@ -538,7 +511,6 @@ public final class AntarchyToolsConfig {
         SHRINKING_POTION_DELTA     = b.comment("Scale delta per level of Shrinking Potion. Level II applies double this value.")               .defineInRange("shrinkingPotionDelta", 0.3D, 0.001D, 64.0D);
         GROWTH_POTION_DELTA        = b.comment("Scale delta per level of Growth Potion. Level II applies double this value.")                  .defineInRange("growthPotionDelta",    0.5D, 0.001D, 64.0D);
         b.pop();
-
 
         b.push("gravityGun");
         GRAVITY_GUN_ENABLED            = b.comment("Master toggle for the Gravity Gun.")                                          .define("enabled",             true);
@@ -568,13 +540,10 @@ public final class AntarchyToolsConfig {
         EYE_OF_THE_STORM_SURGE_DAMAGE = b.defineInRange("surgeDamage", 5.0F, 0.0F, 1024.0F);
         b.pop();
 
-
         b.push("critterCage");
         CRITTER_CAGE_MAX_CAPTURABLE_WIDTH = b.comment("Maximum capturable entity width/depth based on the live hitbox, in blocks.").defineInRange("maxCapturableWidth", 1.65D, 0.1D, 64.0D);
         CRITTER_CAGE_MAX_CAPTURABLE_HEIGHT = b.comment("Maximum capturable entity height based on the live hitbox, in blocks.").defineInRange("maxCapturableHeight", 1.65D, 0.1D, 64.0D);
         b.pop();
-
-
 
         b.push("ductTape");
         DUCT_TAPE_REPAIR_PERCENT_PER_USE = b
@@ -683,7 +652,9 @@ public final class AntarchyToolsConfig {
     static int     krakensGraspTentacleDurationTicks()       { return KRAKENS_GRASP_TENTACLE_DURATION_TICKS.get(); }
     static double  krakensGraspTentacleRadius()               { return KRAKENS_GRASP_TENTACLE_RADIUS.get(); }
     static int     krakensGraspTentacleSlownessAmplifier()   { return KRAKENS_GRASP_TENTACLE_SLOWNESS_AMPLIFIER.get(); }
-    static int     krakensGraspTentacleSlownessRefreshTicks() { return KRAKENS_GRASP_TENTACLE_SLOWNESS_REFRESH_TICKS.get(); }
+    static int     krakensGraspTentacleSlownessRefreshTicks() {
+        return KRAKENS_GRASP_TENTACLE_SLOWNESS_REFRESH_TICKS.get();
+    }
     static double  scorpionWhipBaseDamage()                  { return SCORPION_WHIP_BASE_DAMAGE.get(); }
     static double  scorpionWhipReachBonus()                  { return SCORPION_WHIP_REACH_BONUS.get(); }
     static int     scorpionWhipPoisonDurationTicks()         { return SCORPION_WHIP_POISON_DURATION_TICKS.get(); }
@@ -720,10 +691,14 @@ public final class AntarchyToolsConfig {
     static int     fallenKingCrownArmorValue()               { return FALLEN_KING_CROWN_ARMOR_VALUE.get(); }
     static double  fallenKingCrownArmorToughness()           { return FALLEN_KING_CROWN_ARMOR_TOUGHNESS.get(); }
 
-    static int     bloodCrystalArmorShieldRechargeTicks() { return BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS.get(); }
+    static int     bloodCrystalArmorShieldRechargeTicks() {
+        return BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS.get();
+    }
     static int     bloodCrystalAppleShieldCount()         { return BLOOD_CRYSTAL_APPLE_SHIELD_COUNT.get(); }
     static int     bloodCrystalAppleDurationTicks()       { return BLOOD_CRYSTAL_APPLE_DURATION_TICKS.get(); }
-    static int     bloodCrystalAppleShieldRechargeTicks() { return BLOOD_CRYSTAL_APPLE_SHIELD_RECHARGE_TICKS.get(); }
+    static int     bloodCrystalAppleShieldRechargeTicks() {
+        return BLOOD_CRYSTAL_APPLE_SHIELD_RECHARGE_TICKS.get();
+    }
     static int     bloodCrystalHardMaxShields()           { return BLOOD_CRYSTAL_HARD_MAX_SHIELDS.get(); }
     static int     bloodCrystalHelmetDefense()            { return BLOOD_CRYSTAL_HELMET_DEFENSE.get(); }
     static int     bloodCrystalChestplateDefense()        { return BLOOD_CRYSTAL_CHESTPLATE_DEFENSE.get(); }
@@ -756,7 +731,6 @@ public final class AntarchyToolsConfig {
     static double  shrinkingPotionDelta()                    { return SHRINKING_POTION_DELTA.get(); }
     static double  growthPotionDelta()                       { return GROWTH_POTION_DELTA.get(); }
 
-
     static boolean gravityGunEnabled()                       { return GRAVITY_GUN_ENABLED.get(); }
     static boolean gravityGunBlocksEnabled()                 { return GRAVITY_GUN_BLOCKS_ENABLED.get(); }
     static boolean gravityGunEntitiesEnabled()               { return GRAVITY_GUN_ENTITIES_ENABLED.get(); }
@@ -769,7 +743,6 @@ public final class AntarchyToolsConfig {
     static double  critterCageMaxCapturableWidth()           { return CRITTER_CAGE_MAX_CAPTURABLE_WIDTH.get(); }
     static double  critterCageMaxCapturableHeight()          { return CRITTER_CAGE_MAX_CAPTURABLE_HEIGHT.get(); }
 
-
     static double  ductTapeRepairPercentPerUse()             { return DUCT_TAPE_REPAIR_PERCENT_PER_USE.get(); }
     static double  potentNyxiteInvertedDurationSeconds()     { return POTENT_NYXITE_INVERTED_DURATION_SECONDS.get(); }
     static int     corneaEarNightVisionSeconds()             { return CORNEA_EAR_NIGHT_VISION_SECONDS.get(); }
@@ -780,80 +753,225 @@ public final class AntarchyToolsConfig {
     static int     americanRegenerationAmplifier()            { return AMERICAN_REGENERATION_AMPLIFIER.get(); }
     static double  mogglesVisionRadius()                     { return MOGGLES_VISION_RADIUS.get(); }
 
-    static boolean eyeOfTheStormEnabled() { return EYE_OF_THE_STORM_ENABLED.get(); }
-    static int eyeOfTheStormUpdraftCooldownTicks() { return EYE_OF_THE_STORM_UPDRAFT_COOLDOWN_TICKS.get(); }
-    static double eyeOfTheStormUpdraftLaunchStrength() { return EYE_OF_THE_STORM_UPDRAFT_LAUNCH_STRENGTH.get(); }
-    static double eyeOfTheStormUpdraftHeight() { return EYE_OF_THE_STORM_UPDRAFT_HEIGHT.get(); }
-    static double eyeOfTheStormUpdraftRadius() { return EYE_OF_THE_STORM_UPDRAFT_RADIUS.get(); }
-    static int eyeOfTheStormUpdraftDurationTicks() { return EYE_OF_THE_STORM_UPDRAFT_DURATION_TICKS.get(); }
-    static int eyeOfTheStormSurgeCooldownTicks() { return EYE_OF_THE_STORM_SURGE_COOLDOWN_TICKS.get(); }
-    static double eyeOfTheStormSurgeRange() { return EYE_OF_THE_STORM_SURGE_RANGE.get(); }
-    static int eyeOfTheStormSurgeDurationTicks() { return EYE_OF_THE_STORM_SURGE_DURATION_TICKS.get(); }
-    static double eyeOfTheStormSurgeRadius() { return EYE_OF_THE_STORM_SURGE_RADIUS.get(); }
-    static double eyeOfTheStormSurgeHeight() { return EYE_OF_THE_STORM_SURGE_HEIGHT.get(); }
-    static double eyeOfTheStormSurgePullStrength() { return EYE_OF_THE_STORM_SURGE_PULL_STRENGTH.get(); }
-    static double eyeOfTheStormSurgeReturnStrength() { return EYE_OF_THE_STORM_SURGE_RETURN_STRENGTH.get(); }
-    static float eyeOfTheStormSurgeDamage() { return EYE_OF_THE_STORM_SURGE_DAMAGE.get().floatValue(); }
+    static boolean eyeOfTheStormEnabled() {
+        return EYE_OF_THE_STORM_ENABLED.get();
+    }
+    static int eyeOfTheStormUpdraftCooldownTicks() {
+        return EYE_OF_THE_STORM_UPDRAFT_COOLDOWN_TICKS.get();
+    }
+    static double eyeOfTheStormUpdraftLaunchStrength() {
+        return EYE_OF_THE_STORM_UPDRAFT_LAUNCH_STRENGTH.get();
+    }
+    static double eyeOfTheStormUpdraftHeight() {
+        return EYE_OF_THE_STORM_UPDRAFT_HEIGHT.get();
+    }
+    static double eyeOfTheStormUpdraftRadius() {
+        return EYE_OF_THE_STORM_UPDRAFT_RADIUS.get();
+    }
+    static int eyeOfTheStormUpdraftDurationTicks() {
+        return EYE_OF_THE_STORM_UPDRAFT_DURATION_TICKS.get();
+    }
+    static int eyeOfTheStormSurgeCooldownTicks() {
+        return EYE_OF_THE_STORM_SURGE_COOLDOWN_TICKS.get();
+    }
+    static double eyeOfTheStormSurgeRange() {
+        return EYE_OF_THE_STORM_SURGE_RANGE.get();
+    }
+    static int eyeOfTheStormSurgeDurationTicks() {
+        return EYE_OF_THE_STORM_SURGE_DURATION_TICKS.get();
+    }
+    static double eyeOfTheStormSurgeRadius() {
+        return EYE_OF_THE_STORM_SURGE_RADIUS.get();
+    }
+    static double eyeOfTheStormSurgeHeight() {
+        return EYE_OF_THE_STORM_SURGE_HEIGHT.get();
+    }
+    static double eyeOfTheStormSurgePullStrength() {
+        return EYE_OF_THE_STORM_SURGE_PULL_STRENGTH.get();
+    }
+    static double eyeOfTheStormSurgeReturnStrength() {
+        return EYE_OF_THE_STORM_SURGE_RETURN_STRENGTH.get();
+    }
+    static float eyeOfTheStormSurgeDamage() {
+        return EYE_OF_THE_STORM_SURGE_DAMAGE.get().floatValue();
+    }
 
-    static boolean royalArmorComesEnchanted() { return ROYAL_ARMOR_COMES_ENCHANTED.get(); }
-    static int royalArmorProtectionLevel() { return ROYAL_ARMOR_PROTECTION_LEVEL.get(); }
-    static int royalArmorEnchantability() { return ROYAL_ARMOR_ENCHANTABILITY.get(); }
-    static int royalArmorDurabilityMultiplier() { return ROYAL_ARMOR_DURABILITY_MULTIPLIER.get(); }
-    static int royalGuardianHelmetArmorValue() { return ROYAL_GUARDIAN_HELMET_ARMOR_VALUE.get(); }
-    static int royalGuardianChestplateArmorValue() { return ROYAL_GUARDIAN_CHESTPLATE_ARMOR_VALUE.get(); }
-    static int royalGuardianLeggingsArmorValue() { return ROYAL_GUARDIAN_LEGGINGS_ARMOR_VALUE.get(); }
-    static int royalGuardianBootsArmorValue() { return ROYAL_GUARDIAN_BOOTS_ARMOR_VALUE.get(); }
-    static double royalGuardianArmorToughness() { return ROYAL_GUARDIAN_ARMOR_TOUGHNESS.get(); }
-    static double royalGuardianArmorKnockbackResistance() { return ROYAL_GUARDIAN_ARMOR_KNOCKBACK_RESISTANCE.get(); }
-    static double royalGuardianHelmetJudgmentBonus() { return ROYAL_GUARDIAN_HELMET_JUDGMENT_BONUS.get(); }
-    static double royalGuardianChestplateJudgmentBonus() { return ROYAL_GUARDIAN_CHESTPLATE_JUDGMENT_BONUS.get(); }
-    static double royalGuardianLeggingsJudgmentBonus() { return ROYAL_GUARDIAN_LEGGINGS_JUDGMENT_BONUS.get(); }
-    static double royalGuardianBootsJudgmentBonus() { return ROYAL_GUARDIAN_BOOTS_JUDGMENT_BONUS.get(); }
-    static int royalGuardianJudgmentDurationTicks() { return ROYAL_GUARDIAN_JUDGMENT_DURATION_TICKS.get(); }
-    static int royalAssailantHelmetArmorValue() { return ROYAL_ASSAILANT_HELMET_ARMOR_VALUE.get(); }
-    static int royalAssailantChestplateArmorValue() { return ROYAL_ASSAILANT_CHESTPLATE_ARMOR_VALUE.get(); }
-    static int royalAssailantLeggingsArmorValue() { return ROYAL_ASSAILANT_LEGGINGS_ARMOR_VALUE.get(); }
-    static int royalAssailantBootsArmorValue() { return ROYAL_ASSAILANT_BOOTS_ARMOR_VALUE.get(); }
-    static double royalAssailantArmorToughness() { return ROYAL_ASSAILANT_ARMOR_TOUGHNESS.get(); }
-    static double royalAssailantArmorKnockbackResistance() { return ROYAL_ASSAILANT_ARMOR_KNOCKBACK_RESISTANCE.get(); }
-    static double royalAssailantHelmetDoubleDamageChance() { return ROYAL_ASSAILANT_HELMET_DOUBLE_DAMAGE_CHANCE.get(); }
-    static double royalAssailantChestplateDoubleDamageChance() { return ROYAL_ASSAILANT_CHESTPLATE_DOUBLE_DAMAGE_CHANCE.get(); }
-    static double royalAssailantLeggingsDoubleDamageChance() { return ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE.get(); }
-    static double royalAssailantBootsDoubleDamageChance() { return ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE.get(); }
-    static double royalGuardianSwordAttackDamage() { return ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE.get(); }
-    static double giantFryingPanAttackDamage() { return GIANT_FRYING_PAN_ATTACK_DAMAGE.get(); }
-    static int giantFryingPanCookTimeTicks() { return GIANT_FRYING_PAN_COOK_TIME_TICKS.get(); }
-    static double royalGuardianSwordAttackSpeed() { return ROYAL_GUARDIAN_SWORD_ATTACK_SPEED.get(); }
-    static int royalGuardianSwordElementalCooldownTicks() { return ROYAL_GUARDIAN_SWORD_ELEMENTAL_COOLDOWN_TICKS.get(); }
-    static double royalGuardianSwordFirePrimaryDamage() { return ROYAL_GUARDIAN_SWORD_FIRE_PRIMARY_DAMAGE.get(); }
-    static double royalGuardianSwordFireSplashDamage() { return ROYAL_GUARDIAN_SWORD_FIRE_SPLASH_DAMAGE.get(); }
-    static double royalGuardianSwordFrostSpikeDamage() { return ROYAL_GUARDIAN_SWORD_FROST_SPIKE_DAMAGE.get(); }
-    static double royalGuardianSwordStormPrimaryDamage() { return ROYAL_GUARDIAN_SWORD_STORM_PRIMARY_DAMAGE.get(); }
-    static double royalGuardianSwordStormJumpDamage() { return ROYAL_GUARDIAN_SWORD_STORM_JUMP_DAMAGE.get(); }
-    static int royalGuardianSwordStormMaxJumps() { return ROYAL_GUARDIAN_SWORD_STORM_MAX_JUMPS.get(); }
-    static double royalGuardianSwordStormJumpRange() { return ROYAL_GUARDIAN_SWORD_STORM_JUMP_RANGE.get(); }
-    static double royalAssailantBattleAxeAttackDamage() { return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_DAMAGE.get(); }
-    static double royalAssailantBattleAxeAttackSpeed() { return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_SPEED.get(); }
-    static double royalWeaponAttackReachBonus() { return ROYAL_WEAPON_ATTACK_REACH_BONUS.get(); }
-    static double royalWeaponAttackKnockbackBonus() { return ROYAL_WEAPON_ATTACK_KNOCKBACK_BONUS.get(); }
-    static int royalWeaponDurability() { return ROYAL_WEAPON_DURABILITY.get(); }
-    static int royalWeaponEnchantability() { return ROYAL_WEAPON_ENCHANTABILITY.get(); }
-    static int royalGuardianShieldDurability() { return ROYAL_GUARDIAN_SHIELD_DURABILITY.get(); }
-    static double royalGuardianMusterRange() { return ROYAL_GUARDIAN_MUSTER_RANGE.get(); }
-    static int royalGuardianMusterDurationTicks() { return ROYAL_GUARDIAN_MUSTER_DURATION_TICKS.get(); }
-    static int royalGuardianMusterCooldownTicks() { return ROYAL_GUARDIAN_MUSTER_COOLDOWN_TICKS.get(); }
-    static int royalGuardianMusterMobCap() { return ROYAL_GUARDIAN_MUSTER_MOB_CAP.get(); }
-    static double royalGuardianMusterDamageReduction() { return ROYAL_GUARDIAN_MUSTER_DAMAGE_REDUCTION.get(); }
-    static double royalGuardianMusterAttackBonus() { return ROYAL_GUARDIAN_MUSTER_ATTACK_BONUS.get(); }
-    static double royalGuardianMusterSpeedBonus() { return ROYAL_GUARDIAN_MUSTER_SPEED_BONUS.get(); }
-    static double royalGuardianMusterPassiveDamageFloor() { return ROYAL_GUARDIAN_MUSTER_PASSIVE_DAMAGE_FLOOR.get(); }
-    static double royalGuardianBoundaryRadius() { return ROYAL_GUARDIAN_BOUNDARY_RADIUS.get(); }
-    static int royalGuardianBoundaryDurationTicks() { return ROYAL_GUARDIAN_BOUNDARY_DURATION_TICKS.get(); }
-    static int royalGuardianBoundaryCooldownTicks() { return ROYAL_GUARDIAN_BOUNDARY_COOLDOWN_TICKS.get(); }
-    static int royalGuardianBoundaryStrengthAmplifier() { return ROYAL_GUARDIAN_BOUNDARY_STRENGTH_AMPLIFIER.get(); }
-    static int royalGuardianBoundaryArrestTicks() { return ROYAL_GUARDIAN_BOUNDARY_ARREST_TICKS.get(); }
-    static int royalGuardianBoundaryDropTicks() { return ROYAL_GUARDIAN_BOUNDARY_DROP_TICKS.get(); }
-    static int royalGuardianBoundaryProjectileCap() { return ROYAL_GUARDIAN_BOUNDARY_PROJECTILE_CAP.get(); }
-
+    static boolean royalArmorComesEnchanted() {
+        return ROYAL_ARMOR_COMES_ENCHANTED.get();
+    }
+    static int royalArmorProtectionLevel() {
+        return ROYAL_ARMOR_PROTECTION_LEVEL.get();
+    }
+    static int royalArmorEnchantability() {
+        return ROYAL_ARMOR_ENCHANTABILITY.get();
+    }
+    static int royalArmorDurabilityMultiplier() {
+        return ROYAL_ARMOR_DURABILITY_MULTIPLIER.get();
+    }
+    static int royalGuardianHelmetArmorValue() {
+        return ROYAL_GUARDIAN_HELMET_ARMOR_VALUE.get();
+    }
+    static int royalGuardianChestplateArmorValue() {
+        return ROYAL_GUARDIAN_CHESTPLATE_ARMOR_VALUE.get();
+    }
+    static int royalGuardianLeggingsArmorValue() {
+        return ROYAL_GUARDIAN_LEGGINGS_ARMOR_VALUE.get();
+    }
+    static int royalGuardianBootsArmorValue() {
+        return ROYAL_GUARDIAN_BOOTS_ARMOR_VALUE.get();
+    }
+    static double royalGuardianArmorToughness() {
+        return ROYAL_GUARDIAN_ARMOR_TOUGHNESS.get();
+    }
+    static double royalGuardianArmorKnockbackResistance() {
+        return ROYAL_GUARDIAN_ARMOR_KNOCKBACK_RESISTANCE.get();
+    }
+    static double royalGuardianHelmetJudgmentBonus() {
+        return ROYAL_GUARDIAN_HELMET_JUDGMENT_BONUS.get();
+    }
+    static double royalGuardianChestplateJudgmentBonus() {
+        return ROYAL_GUARDIAN_CHESTPLATE_JUDGMENT_BONUS.get();
+    }
+    static double royalGuardianLeggingsJudgmentBonus() {
+        return ROYAL_GUARDIAN_LEGGINGS_JUDGMENT_BONUS.get();
+    }
+    static double royalGuardianBootsJudgmentBonus() {
+        return ROYAL_GUARDIAN_BOOTS_JUDGMENT_BONUS.get();
+    }
+    static int royalGuardianJudgmentDurationTicks() {
+        return ROYAL_GUARDIAN_JUDGMENT_DURATION_TICKS.get();
+    }
+    static int royalAssailantHelmetArmorValue() {
+        return ROYAL_ASSAILANT_HELMET_ARMOR_VALUE.get();
+    }
+    static int royalAssailantChestplateArmorValue() {
+        return ROYAL_ASSAILANT_CHESTPLATE_ARMOR_VALUE.get();
+    }
+    static int royalAssailantLeggingsArmorValue() {
+        return ROYAL_ASSAILANT_LEGGINGS_ARMOR_VALUE.get();
+    }
+    static int royalAssailantBootsArmorValue() {
+        return ROYAL_ASSAILANT_BOOTS_ARMOR_VALUE.get();
+    }
+    static double royalAssailantArmorToughness() {
+        return ROYAL_ASSAILANT_ARMOR_TOUGHNESS.get();
+    }
+    static double royalAssailantArmorKnockbackResistance() {
+        return ROYAL_ASSAILANT_ARMOR_KNOCKBACK_RESISTANCE.get();
+    }
+    static double royalAssailantHelmetDoubleDamageChance() {
+        return ROYAL_ASSAILANT_HELMET_DOUBLE_DAMAGE_CHANCE.get();
+    }
+    static double royalAssailantChestplateDoubleDamageChance() {
+        return ROYAL_ASSAILANT_CHESTPLATE_DOUBLE_DAMAGE_CHANCE.get();
+    }
+    static double royalAssailantLeggingsDoubleDamageChance() {
+        return ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE.get();
+    }
+    static double royalAssailantBootsDoubleDamageChance() {
+        return ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE.get();
+    }
+    static double royalGuardianSwordAttackDamage() {
+        return ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE.get();
+    }
+    static double giantFryingPanAttackDamage() {
+        return GIANT_FRYING_PAN_ATTACK_DAMAGE.get();
+    }
+    static int giantFryingPanCookTimeTicks() {
+        return GIANT_FRYING_PAN_COOK_TIME_TICKS.get();
+    }
+    static double royalGuardianSwordAttackSpeed() {
+        return ROYAL_GUARDIAN_SWORD_ATTACK_SPEED.get();
+    }
+    static int royalGuardianSwordElementalCooldownTicks() {
+        return ROYAL_GUARDIAN_SWORD_ELEMENTAL_COOLDOWN_TICKS.get();
+    }
+    static double royalGuardianSwordFirePrimaryDamage() {
+        return ROYAL_GUARDIAN_SWORD_FIRE_PRIMARY_DAMAGE.get();
+    }
+    static double royalGuardianSwordFireSplashDamage() {
+        return ROYAL_GUARDIAN_SWORD_FIRE_SPLASH_DAMAGE.get();
+    }
+    static double royalGuardianSwordFrostSpikeDamage() {
+        return ROYAL_GUARDIAN_SWORD_FROST_SPIKE_DAMAGE.get();
+    }
+    static double royalGuardianSwordStormPrimaryDamage() {
+        return ROYAL_GUARDIAN_SWORD_STORM_PRIMARY_DAMAGE.get();
+    }
+    static double royalGuardianSwordStormJumpDamage() {
+        return ROYAL_GUARDIAN_SWORD_STORM_JUMP_DAMAGE.get();
+    }
+    static int royalGuardianSwordStormMaxJumps() {
+        return ROYAL_GUARDIAN_SWORD_STORM_MAX_JUMPS.get();
+    }
+    static double royalGuardianSwordStormJumpRange() {
+        return ROYAL_GUARDIAN_SWORD_STORM_JUMP_RANGE.get();
+    }
+    static double royalAssailantBattleAxeAttackDamage() {
+        return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_DAMAGE.get();
+    }
+    static double royalAssailantBattleAxeAttackSpeed() {
+        return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_SPEED.get();
+    }
+    static double royalWeaponAttackReachBonus() {
+        return ROYAL_WEAPON_ATTACK_REACH_BONUS.get();
+    }
+    static double royalWeaponAttackKnockbackBonus() {
+        return ROYAL_WEAPON_ATTACK_KNOCKBACK_BONUS.get();
+    }
+    static int royalWeaponDurability() {
+        return ROYAL_WEAPON_DURABILITY.get();
+    }
+    static int royalWeaponEnchantability() {
+        return ROYAL_WEAPON_ENCHANTABILITY.get();
+    }
+    static int royalGuardianShieldDurability() {
+        return ROYAL_GUARDIAN_SHIELD_DURABILITY.get();
+    }
+    static double royalGuardianMusterRange() {
+        return ROYAL_GUARDIAN_MUSTER_RANGE.get();
+    }
+    static int royalGuardianMusterDurationTicks() {
+        return ROYAL_GUARDIAN_MUSTER_DURATION_TICKS.get();
+    }
+    static int royalGuardianMusterCooldownTicks() {
+        return ROYAL_GUARDIAN_MUSTER_COOLDOWN_TICKS.get();
+    }
+    static int royalGuardianMusterMobCap() {
+        return ROYAL_GUARDIAN_MUSTER_MOB_CAP.get();
+    }
+    static double royalGuardianMusterDamageReduction() {
+        return ROYAL_GUARDIAN_MUSTER_DAMAGE_REDUCTION.get();
+    }
+    static double royalGuardianMusterAttackBonus() {
+        return ROYAL_GUARDIAN_MUSTER_ATTACK_BONUS.get();
+    }
+    static double royalGuardianMusterSpeedBonus() {
+        return ROYAL_GUARDIAN_MUSTER_SPEED_BONUS.get();
+    }
+    static double royalGuardianMusterPassiveDamageFloor() {
+        return ROYAL_GUARDIAN_MUSTER_PASSIVE_DAMAGE_FLOOR.get();
+    }
+    static double royalGuardianBoundaryRadius() {
+        return ROYAL_GUARDIAN_BOUNDARY_RADIUS.get();
+    }
+    static int royalGuardianBoundaryDurationTicks() {
+        return ROYAL_GUARDIAN_BOUNDARY_DURATION_TICKS.get();
+    }
+    static int royalGuardianBoundaryCooldownTicks() {
+        return ROYAL_GUARDIAN_BOUNDARY_COOLDOWN_TICKS.get();
+    }
+    static int royalGuardianBoundaryStrengthAmplifier() {
+        return ROYAL_GUARDIAN_BOUNDARY_STRENGTH_AMPLIFIER.get();
+    }
+    static int royalGuardianBoundaryArrestTicks() {
+        return ROYAL_GUARDIAN_BOUNDARY_ARREST_TICKS.get();
+    }
+    static int royalGuardianBoundaryDropTicks() {
+        return ROYAL_GUARDIAN_BOUNDARY_DROP_TICKS.get();
+    }
+    static int royalGuardianBoundaryProjectileCap() {
+        return ROYAL_GUARDIAN_BOUNDARY_PROJECTILE_CAP.get();
+    }
 
 }

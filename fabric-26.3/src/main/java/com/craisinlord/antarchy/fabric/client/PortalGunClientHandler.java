@@ -1,8 +1,10 @@
 package com.craisinlord.antarchy.fabric.client;
 
-import com.craisinlord.antarchy.content.item.PortalGunItem;
+import com.craisinlord.antarchy.content.client.PortalGunResetClientState;
 import com.craisinlord.antarchy.content.client.PortalGunZoomClientState;
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
+import com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
@@ -19,14 +21,14 @@ public final class PortalGunClientHandler {
 
     private static void tickMouse(Minecraft mc) {
         if (mc.player == null) {
-            com.craisinlord.antarchy.content.client.PortalGunResetClientState.clear();
+            PortalGunResetClientState.clear();
         }
         boolean hasPortalGun = mc.player != null && (mc.player.getMainHandItem().getItem() instanceof PortalGunItem || mc.player.getOffhandItem().getItem() instanceof PortalGunItem);
         boolean gameplayInput = mc.gui.screen() == null;
         boolean held = hasPortalGun && gameplayInput;
         boolean zoomPressed = AntarchyKeyBindings.consumePortalGunZoomPressed();
         PortalGunZoomClientState.tick(mc, held, zoomPressed && gameplayInput);
-        boolean resetActive = com.craisinlord.antarchy.content.client.PortalGunResetClientState.tick(
+        boolean resetActive = PortalGunResetClientState.tick(
                 mc,
                 held,
                 AntarchyKeyBindings.isPortalGunResetDown(),
@@ -46,7 +48,7 @@ public final class PortalGunClientHandler {
 
         boolean attackDown = mc.options.keyAttack.isDown();
         if (attackDown && !lastAttackDown && !resetActive) {
-            com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.reportFromClient();
+            PortalGunMoonAimSync.reportFromClient();
             ClientPlayNetworking.send(new PortalGunPrimaryPayload(offhand));
         }
         lastAttackDown = attackDown;

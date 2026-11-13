@@ -1,12 +1,12 @@
 package com.craisinlord.antarchy.content.entity;
 
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.server.level.ServerLevel;
 import java.util.Comparator;
 import java.util.List;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 
 public class NearestFirstTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
     public NearestFirstTargetGoal(Mob mob, Class<T> targetType, int randomInterval, boolean mustSee, boolean mustReach,

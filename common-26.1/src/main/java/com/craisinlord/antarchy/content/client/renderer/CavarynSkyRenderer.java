@@ -19,9 +19,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
-import org.jetbrains.annotations.Nullable;
 
 public final class CavarynSkyRenderer {
     public static final ResourceKey<Level> CAVARYN = ResourceKey.create(
@@ -139,8 +139,12 @@ public final class CavarynSkyRenderer {
 
     private static float[] pickStarColor(Random random) {
         float roll = random.nextFloat();
-        if (roll < 0.70F) return new float[]{1.00F, 0.55F, 0.14F};
-        if (roll < 0.90F) return new float[]{1.00F, 0.70F, 0.24F};
+        if (roll < 0.70F) {
+            return new float[]{1.00F, 0.55F, 0.14F};
+        }
+        if (roll < 0.90F) {
+            return new float[]{1.00F, 0.70F, 0.24F};
+        }
         return new float[]{1.00F, 0.84F, 0.40F};
     }
 

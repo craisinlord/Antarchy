@@ -6,13 +6,13 @@ import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
 import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.InputQuirks;
-import org.lwjgl.glfw.GLFW;
 import net.minecraft.util.Mth;
+import org.lwjgl.glfw.GLFW;
 
 public final class GravityGunClientHandler {
     private static final double SCROLL_STEP_DISTANCE = 0.75D;

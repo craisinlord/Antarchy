@@ -2,10 +2,10 @@ package com.craisinlord.antarchy.content.client.model;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.ElkaEntity;
-import net.minecraft.resources.Identifier;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class ElkaModel extends GeoModel<ElkaEntity> {
     public static final DataTicket<Boolean> BABY = DataTicket.create("antarchy_elka_baby", Boolean.class);

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -86,7 +87,7 @@ public record ThoraxisRibColumnsFeature(
                     BlockPos target = center.offset(x, y, z);
                     BlockState state = level.getBlockState(target);
                     if (state.isAir() || state.canBeReplaced() || !state.getFluidState().isEmpty()) {
-                        level.setBlock(target, com.craisinlord.antarchy.content.AntarchyObjects.NYXITE.get().defaultBlockState(), 2);
+                        level.setBlock(target, AntarchyObjects.NYXITE.get().defaultBlockState(), 2);
                     }
                 }
             }

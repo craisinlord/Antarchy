@@ -2,9 +2,11 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.util.Interval;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
 
 public record ElythiaRiverProject(DensityFunction argument, DensityFunction guide) implements DensityFunction {
     public static final MapCodec<ElythiaRiverProject> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -43,18 +45,24 @@ public record ElythiaRiverProject(DensityFunction argument, DensityFunction guid
     }
 
     @Override
-    public int domainAxes() { return ElythiaField.planarAxes(this.argument); }
+    public int domainAxes() {
+        return ElythiaField.planarAxes(this.argument);
+    }
 
     @Override
-    public MapCodec<ElythiaRiverProject> codec() { return CODEC; }
+    public MapCodec<ElythiaRiverProject> codec() {
+        return CODEC;
+    }
 
     @Override
-    public boolean equals(Object other) { return this == other; }
+    public boolean equals(Object other) {
+        return this == other;
+    }
 
     @Override
-    public int hashCode() { return System.identityHashCode(this); }
-
-
+    public int hashCode() {
+        return System.identityHashCode(this);
+    }
 
     private static final class Runtime implements ElythiaField {
         private final ElythiaField argument;

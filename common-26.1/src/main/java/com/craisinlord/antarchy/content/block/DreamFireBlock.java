@@ -1,17 +1,18 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.mixins.AccessorFireBlock;
+import com.craisinlord.antarchy.mixins.FireBlockAccessor;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.LevelReader;
 
 public class DreamFireBlock extends FireBlock {
     @SuppressWarnings("rawtypes")
@@ -49,13 +50,13 @@ public class DreamFireBlock extends FireBlock {
     }
 
     private void copyVanillaFlammability() {
-        AccessorFireBlock vanillaFire = (AccessorFireBlock) Blocks.FIRE;
-        Object2IntMap<net.minecraft.world.level.block.Block> vanillaIgniteOdds = vanillaFire.antarchy$getIgniteOdds();
-        Object2IntMap<net.minecraft.world.level.block.Block> vanillaBurnOdds = vanillaFire.antarchy$getBurnOdds();
-        AccessorFireBlock dreamFire = (AccessorFireBlock) (Object) this;
-        Object2IntMap<net.minecraft.world.level.block.Block> igniteOdds = dreamFire.antarchy$getIgniteOdds();
-        Object2IntMap<net.minecraft.world.level.block.Block> burnOdds = dreamFire.antarchy$getBurnOdds();
-        for (Object2IntMap.Entry<net.minecraft.world.level.block.Block> entry : vanillaIgniteOdds.object2IntEntrySet()) {
+        FireBlockAccessor vanillaFire = (FireBlockAccessor) Blocks.FIRE;
+        Object2IntMap<Block> vanillaIgniteOdds = vanillaFire.antarchy$getIgniteOdds();
+        Object2IntMap<Block> vanillaBurnOdds = vanillaFire.antarchy$getBurnOdds();
+        FireBlockAccessor dreamFire = (FireBlockAccessor) (Object) this;
+        Object2IntMap<Block> igniteOdds = dreamFire.antarchy$getIgniteOdds();
+        Object2IntMap<Block> burnOdds = dreamFire.antarchy$getBurnOdds();
+        for (Object2IntMap.Entry<Block> entry : vanillaIgniteOdds.object2IntEntrySet()) {
             igniteOdds.put(entry.getKey(), entry.getIntValue());
             burnOdds.put(entry.getKey(), vanillaBurnOdds.getInt(entry.getKey()));
         }

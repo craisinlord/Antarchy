@@ -2,12 +2,15 @@ package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
 import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
@@ -26,12 +29,12 @@ public interface PortalGunPortalCellAccess {
     default boolean portalGun$putFaceRecord(PortalGunPortalFaceRecord record) {
         PortalGunPortalFaceRecord existing = this.portalGun$getFaceRecord(record.face());
         if (existing != null
-                && (!java.util.Objects.equals(existing.gunId(), record.gunId())
+                && (!Objects.equals(existing.gunId(), record.gunId())
                 || existing.side() != record.side())) {
             return false;
         }
         this.portalGun$getFaceRecords().put(record.face(), record);
-        if (this instanceof net.minecraft.world.level.block.entity.BlockEntity blockEntity) {
+        if (this instanceof BlockEntity blockEntity) {
             blockEntity.setChanged();
         }
         return true;
@@ -43,14 +46,14 @@ public interface PortalGunPortalCellAccess {
             return null;
         }
         PortalGunPortalFaceRecord removed = this.portalGun$getFaceRecords().remove(face);
-        if (this instanceof net.minecraft.world.level.block.entity.BlockEntity blockEntity) {
+        if (this instanceof BlockEntity blockEntity) {
             blockEntity.setChanged();
         }
         return removed;
     }
 
     default void portalGun$updateFacePair(UUID portalId, UUID linkedPortalId, int pairTime) {
-        for (PortalGunPortalFaceRecord record : java.util.List.copyOf(this.portalGun$getFaceRecords().values())) {
+        for (PortalGunPortalFaceRecord record : List.copyOf(this.portalGun$getFaceRecords().values())) {
             if (record.portalId().equals(portalId)) {
                 this.portalGun$putFaceRecord(record.withPair(linkedPortalId, pairTime));
             }
@@ -58,7 +61,7 @@ public interface PortalGunPortalCellAccess {
     }
 
     default void portalGun$restoreMasterFaces(ServerLevel level, BlockPos pos) {
-        for (PortalGunPortalFaceRecord record : java.util.List.copyOf(this.portalGun$getFaceRecords().values())) {
+        for (PortalGunPortalFaceRecord record : List.copyOf(this.portalGun$getFaceRecords().values())) {
             if (record.ownerId() == null || record.portalId() == null) {
                 continue;
             }

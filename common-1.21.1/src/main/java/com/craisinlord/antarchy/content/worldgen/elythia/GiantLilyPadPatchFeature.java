@@ -18,7 +18,7 @@ public final class GiantLilyPadPatchFeature extends Feature<NoneFeatureConfigura
     private final float lotusChance;
 
     public GiantLilyPadPatchFeature(Codec<NoneFeatureConfiguration> codec) {
-        this(codec, 1.0F);
+        this(codec, 0.5F);
     }
 
     public GiantLilyPadPatchFeature(Codec<NoneFeatureConfiguration> codec, float lotusChance) {

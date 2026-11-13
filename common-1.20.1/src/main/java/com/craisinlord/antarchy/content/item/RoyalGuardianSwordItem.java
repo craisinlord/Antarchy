@@ -1,17 +1,22 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.entity.EntityReach;
+import com.craisinlord.antarchy.compat.item.WeaponAttributes;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.AntarchyGeoItem;
 import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.component.AntarchyItemTag;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -19,15 +24,16 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -52,14 +58,14 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem, Antarc
     }
 
     @Override
-    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
-        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot != EquipmentSlot.MAINHAND) {
             return super.getDefaultAttributeModifiers(slot);
         }
-        com.google.common.collect.ImmutableMultimap.Builder<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> builder =
-                com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (int) Math.round(AntarchySettings.royalGuardianSwordAttackDamage()), (float) AntarchySettings.royalGuardianSwordAttackSpeed());
-        com.craisinlord.antarchy.compat.entity.EntityReach.addModifier(builder, REACH_MODIFIER_ID, AntarchySettings.royalWeaponAttackReachBonus());
-        com.craisinlord.antarchy.compat.item.WeaponAttributes.add(builder, net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_KNOCKBACK, KNOCKBACK_MODIFIER_ID, AntarchySettings.royalWeaponAttackKnockbackBonus());
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
+                WeaponAttributes.base(this.tier, (int) Math.round(AntarchySettings.royalGuardianSwordAttackDamage()), (float) AntarchySettings.royalGuardianSwordAttackSpeed());
+        EntityReach.addModifier(builder, REACH_MODIFIER_ID, AntarchySettings.royalWeaponAttackReachBonus());
+        WeaponAttributes.add(builder, Attributes.ATTACK_KNOCKBACK, KNOCKBACK_MODIFIER_ID, AntarchySettings.royalWeaponAttackKnockbackBonus());
         return builder.build();
     }
 
@@ -74,14 +80,18 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem, Antarc
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!player.isShiftKeyDown()) return InteractionResultHolder.pass(stack);
+        if (!player.isShiftKeyDown()) {
+            return InteractionResultHolder.pass(stack);
+        }
         return InteractionResultHolder.pass(stack);
     }
 
-    public boolean tryCycleModeFromInput(net.minecraft.world.level.Level level, Player player, ItemStack stack) {
-        if (player.getMainHandItem() != stack) return false;
+    public boolean tryCycleModeFromInput(Level level, Player player, ItemStack stack) {
+        if (player.getMainHandItem() != stack) {
+            return false;
+        }
         Mode next = getMode(stack).next();
         setMode(stack, next);
         if (!level.isClientSide) {
@@ -104,7 +114,7 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem, Antarc
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable net.minecraft.world.level.Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         Mode mode = getMode(stack);
         tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_guardian_sword.mode",
                 Component.translatable(mode.translationKey)).withStyle(ChatFormatting.GOLD));
@@ -115,7 +125,7 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem, Antarc
     }
 
     public static Mode getMode(ItemStack stack) {
-        net.minecraft.nbt.CompoundTag tag = AntarchyItemTag.getOrEmpty(stack);
+        CompoundTag tag = AntarchyItemTag.getOrEmpty(stack);
         return tag.contains(MODE_TAG) ? Mode.fromId(tag.getInt(MODE_TAG)) : Mode.NONE;
     }
 
@@ -177,7 +187,7 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem, Antarc
             private AnimatedHeldItemRenderer<RoyalGuardianSwordItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }
@@ -187,14 +197,14 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem, Antarc
         });
     }
 
-    private final java.util.function.Supplier<Object> renderProvider = com.google.common.base.Suppliers.memoize(() -> {
+    private final Supplier<Object> renderProvider = Suppliers.memoize(() -> {
         Object[] holder = new Object[1];
         createRenderer(o -> holder[0] = o);
         return holder[0];
     });
 
     @Override
-    public java.util.function.Supplier<Object> getRenderProvider() {
+    public Supplier<Object> getRenderProvider() {
         return this.renderProvider;
     }
 }

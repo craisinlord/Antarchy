@@ -4,13 +4,14 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 public class RedAntNestFeature extends BaseAntNestFeature {
@@ -27,7 +28,7 @@ public class RedAntNestFeature extends BaseAntNestFeature {
 
     @Override
     protected BlockPos resolveNestPos(WorldGenLevel level, BlockPos origin) {
-        int startY = Math.min(level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ()) - 1, origin.getY());
+        int startY = Math.min(level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ()) - 1, origin.getY());
         int minY = level.getMinY() + 1;
         if (ThoraxisUndersideManager.isThoraxis(level.getLevel())) {
             minY = Math.max(minY, ThoraxisUndersideManager.GRAVITY_FLIP_Y + 1);

@@ -4,8 +4,10 @@ import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeGrowers;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -38,7 +40,7 @@ public class PeachSaplingBlock extends VegetationBlock implements BonemealableBl
             LevelReader level,
             ScheduledTickAccess tickAccess,
             BlockPos pos,
-            net.minecraft.core.Direction direction,
+            Direction direction,
             BlockPos neighborPos,
             BlockState neighborState,
             RandomSource random
@@ -104,7 +106,7 @@ public class PeachSaplingBlock extends VegetationBlock implements BonemealableBl
     private void placeConfiguredTree(
             ServerLevel level,
             Footprint footprint,
-            net.minecraft.resources.ResourceKey<Feature> featureKey,
+            ResourceKey<Feature> featureKey,
             RandomSource random
     ) {
         Holder.Reference<Feature> feature = level.registryAccess()

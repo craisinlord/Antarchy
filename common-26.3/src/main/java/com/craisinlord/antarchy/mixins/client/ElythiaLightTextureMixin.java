@@ -1,14 +1,19 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.client.FungalReserveAtmosphere;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.renderpearl.api.buffers.GpuBuffer;
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import com.mojang.renderpearl.api.commands.RenderPass;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.renderpearl.api.pipeline.BindGroupLayout;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.ShaderType;
+import com.mojang.renderpearl.api.pipeline.UniformType;
+import java.nio.ByteOrder;
+import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MappableRingBuffer;
@@ -39,12 +44,14 @@ public abstract class ElythiaLightTextureMixin {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
-        if (!AntarchySettings.elythiaDreamShadowsEnabled() || minecraft.level == null
-                || !minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA)) {
+        if (minecraft.level == null || !minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA)) {
             return;
         }
-        float strength = (float) Mth.clamp(AntarchySettings.elythiaDreamShadowsStrength(), 0.0D, 1.0D);
-        if (strength <= 0.0F) {
+        float strength = AntarchySettings.elythiaDreamShadowsEnabled()
+                ? (float) Mth.clamp(AntarchySettings.elythiaDreamShadowsStrength(), 0.0D, 1.0D)
+                : 0.0F;
+        float fungalDim = FungalReserveAtmosphere.lightDim();
+        if (strength <= 0.0F && fungalDim <= 0.0F) {
             return;
         }
         if (antarchy$dreamInfo == null) {
@@ -52,7 +59,7 @@ public abstract class ElythiaLightTextureMixin {
                     GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_MAP_WRITE, 16);
         }
         try (var mapped = antarchy$dreamInfo.currentBuffer().map(false, true)) {
-            mapped.data().order(java.nio.ByteOrder.nativeOrder()).putFloat(0, strength);
+            mapped.data().order(ByteOrder.nativeOrder()).putFloat(0, strength).putFloat(4, fungalDim);
         }
         antarchy$dreamFrame = true;
     }
@@ -69,12 +76,12 @@ public abstract class ElythiaLightTextureMixin {
                     .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_lightmap"))
                     .withCull(original.isCull())
                     .withPolygonMode(original.getPolygonMode())
-                    .withDepthStencilState(java.util.Optional.ofNullable(original.getDepthStencilState()));
-            builder.withVertexShader(original.getShaders().get(com.mojang.renderpearl.api.pipeline.ShaderType.VERTEX))
+                    .withDepthStencilState(Optional.ofNullable(original.getDepthStencilState()));
+            builder.withVertexShader(original.getShaders().get(ShaderType.VERTEX))
                     .withPrimitiveTopology(original.getPrimitiveTopology())
                     .withPushConstantSize(original.pushConstantSize())
-                    .withBindGroupLayout(com.mojang.renderpearl.api.pipeline.BindGroupLayout.builder()
-                            .withUniform("AntarchyDreamInfo", com.mojang.renderpearl.api.pipeline.UniformType.UNIFORM_BUFFER).build());
+                    .withBindGroupLayout(BindGroupLayout.builder()
+                            .withUniform("AntarchyDreamInfo", UniformType.UNIFORM_BUFFER).build());
             for (int index = 0; index < original.getVertexFormatBindings().size(); index++) {
                 var format = original.getVertexFormatBinding(index);
                 if (format != null) {

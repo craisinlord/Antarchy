@@ -4,8 +4,11 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.creative.CreativeTabContents;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 
 public final class AntarchyFabricCreativeModeTabs {
 
@@ -13,14 +16,14 @@ public final class AntarchyFabricCreativeModeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ANTARCHY_TAB = CREATIVE_MODE_TABS.register("antarchy",
             () -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
-                    .title(net.minecraft.network.chat.Component.translatable("itemGroup.antarchy.antarchy"))
+                    .title(Component.translatable("itemGroup.antarchy.antarchy"))
                     .icon(() -> new ItemStack(AntarchyFabricItems.GRAVITY_GUN.get()))
                     .displayItems((parameters, output) -> populateCreativeTab(output))
                     .build());
     private static void populateCreativeTab(CreativeModeTab.Output output) {
         CreativeTabContents.populateAntarchyTab(new CreativeTabContents.AntarchyTabOutput() {
             @Override
-            public void accept(net.minecraft.world.level.ItemLike item) {
+            public void accept(ItemLike item) {
                 output.accept(item);
             }
 
@@ -32,7 +35,7 @@ public final class AntarchyFabricCreativeModeTabs {
     }
 
     public static void registerRedstoneTabEntries() {
-        CreativeModeTabEvents.modifyOutputEvent(net.minecraft.world.item.CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
             entries.accept(AntarchyFabricItems.BLUESTONE_DUST.get());
             entries.accept(AntarchyFabricItems.BLUESTONE_BLOCK_ITEM.get());
             entries.accept(AntarchyFabricItems.BLUESTONE_TORCH_ITEM.get());

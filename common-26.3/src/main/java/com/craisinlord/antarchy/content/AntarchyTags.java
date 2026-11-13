@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content;
 
-import com.craisinlord.anthology.time.TimeDilationTags;
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.anthology.time.TimeDilationTags;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
@@ -9,8 +9,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.Fluid;
 
@@ -56,9 +56,9 @@ public final class AntarchyTags {
 
     public static final class DamageType {
         public static final TagKey<net.minecraft.world.damagesource.DamageType> BYPASSES_BLOODGLASS =
-                TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("antarchy", "bypasses_bloodglass"));
+                TagKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("antarchy", "bypasses_bloodglass"));
         public static final TagKey<net.minecraft.world.damagesource.DamageType> ANTARCHY_MAGIC_BURST =
-                TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("antarchy", "antarchy_magic_burst"));
+                TagKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("antarchy", "antarchy_magic_burst"));
 
         private DamageType() {
         }

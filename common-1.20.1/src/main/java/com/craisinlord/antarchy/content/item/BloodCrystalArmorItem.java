@@ -85,7 +85,7 @@ public class BloodCrystalArmorItem extends ArmorItem {
                 new AttributeModifier(
                         UUID.nameUUIDFromBytes((prefix + "_bloodglass_max").getBytes()),
                         prefix + "_bloodglass_max",
-                        1.0,
+                        1.0D,
                         AttributeModifier.Operation.ADDITION
                 )
         );

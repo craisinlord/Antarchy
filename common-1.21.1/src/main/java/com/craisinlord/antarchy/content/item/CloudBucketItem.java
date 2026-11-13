@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.item;
 
 import java.util.List;
-import net.minecraft.Util;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;

@@ -1,9 +1,9 @@
 {
-  "parent": "minecraft:block/slab_top",
+  "parent": "antarchy:block/tinted/slab_top_overlay",
   "textures": {
     "bottom": "antarchy:block/mossy_rockite_bricks",
     "side": "antarchy:block/mossy_rockite_bricks",
-    "top": "antarchy:block/mossy_rockite_bricks"
+    "top": "antarchy:block/mossy_rockite_bricks",
+    "overlay": "antarchy:block/mossy_rockite_bricks_overlay"
   }
 }
-

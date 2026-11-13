@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.Locale;
 import net.caffeinemc.mods.sodium.api.config.ConfigEntryPoint;
 import net.caffeinemc.mods.sodium.api.config.ConfigEntryPointForge;
 import net.caffeinemc.mods.sodium.api.config.structure.ConfigBuilder;
@@ -39,7 +40,7 @@ public final class PrimordialGrassSodiumOptions implements ConfigEntryPoint {
     }
 
     private static Component qualityName(Quality quality) {
-        return Component.translatable("options.antarchy.grass_quality." + quality.name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("options.antarchy.grass_quality." + quality.name().toLowerCase(Locale.ROOT));
     }
 
     private static Identifier id(String path) {

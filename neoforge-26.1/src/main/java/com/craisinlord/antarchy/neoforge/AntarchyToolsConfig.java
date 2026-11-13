@@ -469,7 +469,7 @@ public final class AntarchyToolsConfig {
         BLOOD_CRYSTAL_CHESTPLATE_DEFENSE  = b.comment("Armor defense value for Blood Crystal Chestplate. Default: 6 (iron).").defineInRange("chestplateDefense", 6, 0, 30);
         BLOOD_CRYSTAL_LEGGINGS_DEFENSE    = b.comment("Armor defense value for Blood Crystal Leggings. Default: 5 (iron).").defineInRange("leggingsDefense", 5, 0, 30);
         BLOOD_CRYSTAL_BOOTS_DEFENSE       = b.comment("Armor defense value for Blood Crystal Boots. Default: 2 (iron).").defineInRange("bootsDefense", 2, 0, 30);
-        BLOOD_CRYSTAL_ARMOR_TOUGHNESS     = b.comment("Armor toughness for all Blood Crystal armor pieces. Default: 0.0 (iron).").defineInRange("armorToughness", 0.0, 0.0, 20.0);
+        BLOOD_CRYSTAL_ARMOR_TOUGHNESS     = b.comment("Armor toughness for all Blood Crystal armor pieces. Default: 0.0 (iron).").defineInRange("armorToughness", 0.0D, 0.0D, 20.0D);
         BLOOD_CRYSTAL_HELMET_DURABILITY   = b.comment("Max durability of Blood Crystal Helmet. Default: 92.").defineInRange("helmetDurability", 92, 1, 2000);
         BLOOD_CRYSTAL_CHESTPLATE_DURABILITY = b.comment("Max durability of Blood Crystal Chestplate. Default: 134.").defineInRange("chestplateDurability", 134, 1, 2000);
         BLOOD_CRYSTAL_LEGGINGS_DURABILITY = b.comment("Max durability of Blood Crystal Leggings. Default: 126.").defineInRange("leggingsDurability", 126, 1, 2000);
@@ -652,7 +652,9 @@ public final class AntarchyToolsConfig {
     static int     krakensGraspTentacleDurationTicks()       { return KRAKENS_GRASP_TENTACLE_DURATION_TICKS.get(); }
     static double  krakensGraspTentacleRadius()               { return KRAKENS_GRASP_TENTACLE_RADIUS.get(); }
     static int     krakensGraspTentacleSlownessAmplifier()   { return KRAKENS_GRASP_TENTACLE_SLOWNESS_AMPLIFIER.get(); }
-    static int     krakensGraspTentacleSlownessRefreshTicks() { return KRAKENS_GRASP_TENTACLE_SLOWNESS_REFRESH_TICKS.get(); }
+    static int     krakensGraspTentacleSlownessRefreshTicks() {
+        return KRAKENS_GRASP_TENTACLE_SLOWNESS_REFRESH_TICKS.get();
+    }
     static double  scorpionWhipBaseDamage()                  { return SCORPION_WHIP_BASE_DAMAGE.get(); }
     static double  scorpionWhipReachBonus()                  { return SCORPION_WHIP_REACH_BONUS.get(); }
     static int     scorpionWhipPoisonDurationTicks()         { return SCORPION_WHIP_POISON_DURATION_TICKS.get(); }
@@ -689,10 +691,14 @@ public final class AntarchyToolsConfig {
     static int     fallenKingCrownArmorValue()               { return FALLEN_KING_CROWN_ARMOR_VALUE.get(); }
     static double  fallenKingCrownArmorToughness()           { return FALLEN_KING_CROWN_ARMOR_TOUGHNESS.get(); }
 
-    static int     bloodCrystalArmorShieldRechargeTicks() { return BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS.get(); }
+    static int     bloodCrystalArmorShieldRechargeTicks() {
+        return BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS.get();
+    }
     static int     bloodCrystalAppleShieldCount()         { return BLOOD_CRYSTAL_APPLE_SHIELD_COUNT.get(); }
     static int     bloodCrystalAppleDurationTicks()       { return BLOOD_CRYSTAL_APPLE_DURATION_TICKS.get(); }
-    static int     bloodCrystalAppleShieldRechargeTicks() { return BLOOD_CRYSTAL_APPLE_SHIELD_RECHARGE_TICKS.get(); }
+    static int     bloodCrystalAppleShieldRechargeTicks() {
+        return BLOOD_CRYSTAL_APPLE_SHIELD_RECHARGE_TICKS.get();
+    }
     static int     bloodCrystalHardMaxShields()           { return BLOOD_CRYSTAL_HARD_MAX_SHIELDS.get(); }
     static int     bloodCrystalHelmetDefense()            { return BLOOD_CRYSTAL_HELMET_DEFENSE.get(); }
     static int     bloodCrystalChestplateDefense()        { return BLOOD_CRYSTAL_CHESTPLATE_DEFENSE.get(); }
@@ -747,79 +753,225 @@ public final class AntarchyToolsConfig {
     static int     americanRegenerationAmplifier()            { return AMERICAN_REGENERATION_AMPLIFIER.get(); }
     static double  mogglesVisionRadius()                     { return MOGGLES_VISION_RADIUS.get(); }
 
-    static boolean eyeOfTheStormEnabled() { return EYE_OF_THE_STORM_ENABLED.get(); }
-    static int eyeOfTheStormUpdraftCooldownTicks() { return EYE_OF_THE_STORM_UPDRAFT_COOLDOWN_TICKS.get(); }
-    static double eyeOfTheStormUpdraftLaunchStrength() { return EYE_OF_THE_STORM_UPDRAFT_LAUNCH_STRENGTH.get(); }
-    static double eyeOfTheStormUpdraftHeight() { return EYE_OF_THE_STORM_UPDRAFT_HEIGHT.get(); }
-    static double eyeOfTheStormUpdraftRadius() { return EYE_OF_THE_STORM_UPDRAFT_RADIUS.get(); }
-    static int eyeOfTheStormUpdraftDurationTicks() { return EYE_OF_THE_STORM_UPDRAFT_DURATION_TICKS.get(); }
-    static int eyeOfTheStormSurgeCooldownTicks() { return EYE_OF_THE_STORM_SURGE_COOLDOWN_TICKS.get(); }
-    static double eyeOfTheStormSurgeRange() { return EYE_OF_THE_STORM_SURGE_RANGE.get(); }
-    static int eyeOfTheStormSurgeDurationTicks() { return EYE_OF_THE_STORM_SURGE_DURATION_TICKS.get(); }
-    static double eyeOfTheStormSurgeRadius() { return EYE_OF_THE_STORM_SURGE_RADIUS.get(); }
-    static double eyeOfTheStormSurgeHeight() { return EYE_OF_THE_STORM_SURGE_HEIGHT.get(); }
-    static double eyeOfTheStormSurgePullStrength() { return EYE_OF_THE_STORM_SURGE_PULL_STRENGTH.get(); }
-    static double eyeOfTheStormSurgeReturnStrength() { return EYE_OF_THE_STORM_SURGE_RETURN_STRENGTH.get(); }
-    static float eyeOfTheStormSurgeDamage() { return EYE_OF_THE_STORM_SURGE_DAMAGE.get().floatValue(); }
+    static boolean eyeOfTheStormEnabled() {
+        return EYE_OF_THE_STORM_ENABLED.get();
+    }
+    static int eyeOfTheStormUpdraftCooldownTicks() {
+        return EYE_OF_THE_STORM_UPDRAFT_COOLDOWN_TICKS.get();
+    }
+    static double eyeOfTheStormUpdraftLaunchStrength() {
+        return EYE_OF_THE_STORM_UPDRAFT_LAUNCH_STRENGTH.get();
+    }
+    static double eyeOfTheStormUpdraftHeight() {
+        return EYE_OF_THE_STORM_UPDRAFT_HEIGHT.get();
+    }
+    static double eyeOfTheStormUpdraftRadius() {
+        return EYE_OF_THE_STORM_UPDRAFT_RADIUS.get();
+    }
+    static int eyeOfTheStormUpdraftDurationTicks() {
+        return EYE_OF_THE_STORM_UPDRAFT_DURATION_TICKS.get();
+    }
+    static int eyeOfTheStormSurgeCooldownTicks() {
+        return EYE_OF_THE_STORM_SURGE_COOLDOWN_TICKS.get();
+    }
+    static double eyeOfTheStormSurgeRange() {
+        return EYE_OF_THE_STORM_SURGE_RANGE.get();
+    }
+    static int eyeOfTheStormSurgeDurationTicks() {
+        return EYE_OF_THE_STORM_SURGE_DURATION_TICKS.get();
+    }
+    static double eyeOfTheStormSurgeRadius() {
+        return EYE_OF_THE_STORM_SURGE_RADIUS.get();
+    }
+    static double eyeOfTheStormSurgeHeight() {
+        return EYE_OF_THE_STORM_SURGE_HEIGHT.get();
+    }
+    static double eyeOfTheStormSurgePullStrength() {
+        return EYE_OF_THE_STORM_SURGE_PULL_STRENGTH.get();
+    }
+    static double eyeOfTheStormSurgeReturnStrength() {
+        return EYE_OF_THE_STORM_SURGE_RETURN_STRENGTH.get();
+    }
+    static float eyeOfTheStormSurgeDamage() {
+        return EYE_OF_THE_STORM_SURGE_DAMAGE.get().floatValue();
+    }
 
-    static boolean royalArmorComesEnchanted() { return ROYAL_ARMOR_COMES_ENCHANTED.get(); }
-    static int royalArmorProtectionLevel() { return ROYAL_ARMOR_PROTECTION_LEVEL.get(); }
-    static int royalArmorEnchantability() { return ROYAL_ARMOR_ENCHANTABILITY.get(); }
-    static int royalArmorDurabilityMultiplier() { return ROYAL_ARMOR_DURABILITY_MULTIPLIER.get(); }
-    static int royalGuardianHelmetArmorValue() { return ROYAL_GUARDIAN_HELMET_ARMOR_VALUE.get(); }
-    static int royalGuardianChestplateArmorValue() { return ROYAL_GUARDIAN_CHESTPLATE_ARMOR_VALUE.get(); }
-    static int royalGuardianLeggingsArmorValue() { return ROYAL_GUARDIAN_LEGGINGS_ARMOR_VALUE.get(); }
-    static int royalGuardianBootsArmorValue() { return ROYAL_GUARDIAN_BOOTS_ARMOR_VALUE.get(); }
-    static double royalGuardianArmorToughness() { return ROYAL_GUARDIAN_ARMOR_TOUGHNESS.get(); }
-    static double royalGuardianArmorKnockbackResistance() { return ROYAL_GUARDIAN_ARMOR_KNOCKBACK_RESISTANCE.get(); }
-    static double royalGuardianHelmetJudgmentBonus() { return ROYAL_GUARDIAN_HELMET_JUDGMENT_BONUS.get(); }
-    static double royalGuardianChestplateJudgmentBonus() { return ROYAL_GUARDIAN_CHESTPLATE_JUDGMENT_BONUS.get(); }
-    static double royalGuardianLeggingsJudgmentBonus() { return ROYAL_GUARDIAN_LEGGINGS_JUDGMENT_BONUS.get(); }
-    static double royalGuardianBootsJudgmentBonus() { return ROYAL_GUARDIAN_BOOTS_JUDGMENT_BONUS.get(); }
-    static int royalGuardianJudgmentDurationTicks() { return ROYAL_GUARDIAN_JUDGMENT_DURATION_TICKS.get(); }
-    static int royalAssailantHelmetArmorValue() { return ROYAL_ASSAILANT_HELMET_ARMOR_VALUE.get(); }
-    static int royalAssailantChestplateArmorValue() { return ROYAL_ASSAILANT_CHESTPLATE_ARMOR_VALUE.get(); }
-    static int royalAssailantLeggingsArmorValue() { return ROYAL_ASSAILANT_LEGGINGS_ARMOR_VALUE.get(); }
-    static int royalAssailantBootsArmorValue() { return ROYAL_ASSAILANT_BOOTS_ARMOR_VALUE.get(); }
-    static double royalAssailantArmorToughness() { return ROYAL_ASSAILANT_ARMOR_TOUGHNESS.get(); }
-    static double royalAssailantArmorKnockbackResistance() { return ROYAL_ASSAILANT_ARMOR_KNOCKBACK_RESISTANCE.get(); }
-    static double royalAssailantHelmetDoubleDamageChance() { return ROYAL_ASSAILANT_HELMET_DOUBLE_DAMAGE_CHANCE.get(); }
-    static double royalAssailantChestplateDoubleDamageChance() { return ROYAL_ASSAILANT_CHESTPLATE_DOUBLE_DAMAGE_CHANCE.get(); }
-    static double royalAssailantLeggingsDoubleDamageChance() { return ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE.get(); }
-    static double royalAssailantBootsDoubleDamageChance() { return ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE.get(); }
-    static double royalGuardianSwordAttackDamage() { return ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE.get(); }
-    static double giantFryingPanAttackDamage() { return GIANT_FRYING_PAN_ATTACK_DAMAGE.get(); }
-    static int giantFryingPanCookTimeTicks() { return GIANT_FRYING_PAN_COOK_TIME_TICKS.get(); }
-    static double royalGuardianSwordAttackSpeed() { return ROYAL_GUARDIAN_SWORD_ATTACK_SPEED.get(); }
-    static int royalGuardianSwordElementalCooldownTicks() { return ROYAL_GUARDIAN_SWORD_ELEMENTAL_COOLDOWN_TICKS.get(); }
-    static double royalGuardianSwordFirePrimaryDamage() { return ROYAL_GUARDIAN_SWORD_FIRE_PRIMARY_DAMAGE.get(); }
-    static double royalGuardianSwordFireSplashDamage() { return ROYAL_GUARDIAN_SWORD_FIRE_SPLASH_DAMAGE.get(); }
-    static double royalGuardianSwordFrostSpikeDamage() { return ROYAL_GUARDIAN_SWORD_FROST_SPIKE_DAMAGE.get(); }
-    static double royalGuardianSwordStormPrimaryDamage() { return ROYAL_GUARDIAN_SWORD_STORM_PRIMARY_DAMAGE.get(); }
-    static double royalGuardianSwordStormJumpDamage() { return ROYAL_GUARDIAN_SWORD_STORM_JUMP_DAMAGE.get(); }
-    static int royalGuardianSwordStormMaxJumps() { return ROYAL_GUARDIAN_SWORD_STORM_MAX_JUMPS.get(); }
-    static double royalGuardianSwordStormJumpRange() { return ROYAL_GUARDIAN_SWORD_STORM_JUMP_RANGE.get(); }
-    static double royalAssailantBattleAxeAttackDamage() { return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_DAMAGE.get(); }
-    static double royalAssailantBattleAxeAttackSpeed() { return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_SPEED.get(); }
-    static double royalWeaponAttackReachBonus() { return ROYAL_WEAPON_ATTACK_REACH_BONUS.get(); }
-    static double royalWeaponAttackKnockbackBonus() { return ROYAL_WEAPON_ATTACK_KNOCKBACK_BONUS.get(); }
-    static int royalWeaponDurability() { return ROYAL_WEAPON_DURABILITY.get(); }
-    static int royalWeaponEnchantability() { return ROYAL_WEAPON_ENCHANTABILITY.get(); }
-    static int royalGuardianShieldDurability() { return ROYAL_GUARDIAN_SHIELD_DURABILITY.get(); }
-    static double royalGuardianMusterRange() { return ROYAL_GUARDIAN_MUSTER_RANGE.get(); }
-    static int royalGuardianMusterDurationTicks() { return ROYAL_GUARDIAN_MUSTER_DURATION_TICKS.get(); }
-    static int royalGuardianMusterCooldownTicks() { return ROYAL_GUARDIAN_MUSTER_COOLDOWN_TICKS.get(); }
-    static int royalGuardianMusterMobCap() { return ROYAL_GUARDIAN_MUSTER_MOB_CAP.get(); }
-    static double royalGuardianMusterDamageReduction() { return ROYAL_GUARDIAN_MUSTER_DAMAGE_REDUCTION.get(); }
-    static double royalGuardianMusterAttackBonus() { return ROYAL_GUARDIAN_MUSTER_ATTACK_BONUS.get(); }
-    static double royalGuardianMusterSpeedBonus() { return ROYAL_GUARDIAN_MUSTER_SPEED_BONUS.get(); }
-    static double royalGuardianMusterPassiveDamageFloor() { return ROYAL_GUARDIAN_MUSTER_PASSIVE_DAMAGE_FLOOR.get(); }
-    static double royalGuardianBoundaryRadius() { return ROYAL_GUARDIAN_BOUNDARY_RADIUS.get(); }
-    static int royalGuardianBoundaryDurationTicks() { return ROYAL_GUARDIAN_BOUNDARY_DURATION_TICKS.get(); }
-    static int royalGuardianBoundaryCooldownTicks() { return ROYAL_GUARDIAN_BOUNDARY_COOLDOWN_TICKS.get(); }
-    static int royalGuardianBoundaryStrengthAmplifier() { return ROYAL_GUARDIAN_BOUNDARY_STRENGTH_AMPLIFIER.get(); }
-    static int royalGuardianBoundaryArrestTicks() { return ROYAL_GUARDIAN_BOUNDARY_ARREST_TICKS.get(); }
-    static int royalGuardianBoundaryDropTicks() { return ROYAL_GUARDIAN_BOUNDARY_DROP_TICKS.get(); }
-    static int royalGuardianBoundaryProjectileCap() { return ROYAL_GUARDIAN_BOUNDARY_PROJECTILE_CAP.get(); }
+    static boolean royalArmorComesEnchanted() {
+        return ROYAL_ARMOR_COMES_ENCHANTED.get();
+    }
+    static int royalArmorProtectionLevel() {
+        return ROYAL_ARMOR_PROTECTION_LEVEL.get();
+    }
+    static int royalArmorEnchantability() {
+        return ROYAL_ARMOR_ENCHANTABILITY.get();
+    }
+    static int royalArmorDurabilityMultiplier() {
+        return ROYAL_ARMOR_DURABILITY_MULTIPLIER.get();
+    }
+    static int royalGuardianHelmetArmorValue() {
+        return ROYAL_GUARDIAN_HELMET_ARMOR_VALUE.get();
+    }
+    static int royalGuardianChestplateArmorValue() {
+        return ROYAL_GUARDIAN_CHESTPLATE_ARMOR_VALUE.get();
+    }
+    static int royalGuardianLeggingsArmorValue() {
+        return ROYAL_GUARDIAN_LEGGINGS_ARMOR_VALUE.get();
+    }
+    static int royalGuardianBootsArmorValue() {
+        return ROYAL_GUARDIAN_BOOTS_ARMOR_VALUE.get();
+    }
+    static double royalGuardianArmorToughness() {
+        return ROYAL_GUARDIAN_ARMOR_TOUGHNESS.get();
+    }
+    static double royalGuardianArmorKnockbackResistance() {
+        return ROYAL_GUARDIAN_ARMOR_KNOCKBACK_RESISTANCE.get();
+    }
+    static double royalGuardianHelmetJudgmentBonus() {
+        return ROYAL_GUARDIAN_HELMET_JUDGMENT_BONUS.get();
+    }
+    static double royalGuardianChestplateJudgmentBonus() {
+        return ROYAL_GUARDIAN_CHESTPLATE_JUDGMENT_BONUS.get();
+    }
+    static double royalGuardianLeggingsJudgmentBonus() {
+        return ROYAL_GUARDIAN_LEGGINGS_JUDGMENT_BONUS.get();
+    }
+    static double royalGuardianBootsJudgmentBonus() {
+        return ROYAL_GUARDIAN_BOOTS_JUDGMENT_BONUS.get();
+    }
+    static int royalGuardianJudgmentDurationTicks() {
+        return ROYAL_GUARDIAN_JUDGMENT_DURATION_TICKS.get();
+    }
+    static int royalAssailantHelmetArmorValue() {
+        return ROYAL_ASSAILANT_HELMET_ARMOR_VALUE.get();
+    }
+    static int royalAssailantChestplateArmorValue() {
+        return ROYAL_ASSAILANT_CHESTPLATE_ARMOR_VALUE.get();
+    }
+    static int royalAssailantLeggingsArmorValue() {
+        return ROYAL_ASSAILANT_LEGGINGS_ARMOR_VALUE.get();
+    }
+    static int royalAssailantBootsArmorValue() {
+        return ROYAL_ASSAILANT_BOOTS_ARMOR_VALUE.get();
+    }
+    static double royalAssailantArmorToughness() {
+        return ROYAL_ASSAILANT_ARMOR_TOUGHNESS.get();
+    }
+    static double royalAssailantArmorKnockbackResistance() {
+        return ROYAL_ASSAILANT_ARMOR_KNOCKBACK_RESISTANCE.get();
+    }
+    static double royalAssailantHelmetDoubleDamageChance() {
+        return ROYAL_ASSAILANT_HELMET_DOUBLE_DAMAGE_CHANCE.get();
+    }
+    static double royalAssailantChestplateDoubleDamageChance() {
+        return ROYAL_ASSAILANT_CHESTPLATE_DOUBLE_DAMAGE_CHANCE.get();
+    }
+    static double royalAssailantLeggingsDoubleDamageChance() {
+        return ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE.get();
+    }
+    static double royalAssailantBootsDoubleDamageChance() {
+        return ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE.get();
+    }
+    static double royalGuardianSwordAttackDamage() {
+        return ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE.get();
+    }
+    static double giantFryingPanAttackDamage() {
+        return GIANT_FRYING_PAN_ATTACK_DAMAGE.get();
+    }
+    static int giantFryingPanCookTimeTicks() {
+        return GIANT_FRYING_PAN_COOK_TIME_TICKS.get();
+    }
+    static double royalGuardianSwordAttackSpeed() {
+        return ROYAL_GUARDIAN_SWORD_ATTACK_SPEED.get();
+    }
+    static int royalGuardianSwordElementalCooldownTicks() {
+        return ROYAL_GUARDIAN_SWORD_ELEMENTAL_COOLDOWN_TICKS.get();
+    }
+    static double royalGuardianSwordFirePrimaryDamage() {
+        return ROYAL_GUARDIAN_SWORD_FIRE_PRIMARY_DAMAGE.get();
+    }
+    static double royalGuardianSwordFireSplashDamage() {
+        return ROYAL_GUARDIAN_SWORD_FIRE_SPLASH_DAMAGE.get();
+    }
+    static double royalGuardianSwordFrostSpikeDamage() {
+        return ROYAL_GUARDIAN_SWORD_FROST_SPIKE_DAMAGE.get();
+    }
+    static double royalGuardianSwordStormPrimaryDamage() {
+        return ROYAL_GUARDIAN_SWORD_STORM_PRIMARY_DAMAGE.get();
+    }
+    static double royalGuardianSwordStormJumpDamage() {
+        return ROYAL_GUARDIAN_SWORD_STORM_JUMP_DAMAGE.get();
+    }
+    static int royalGuardianSwordStormMaxJumps() {
+        return ROYAL_GUARDIAN_SWORD_STORM_MAX_JUMPS.get();
+    }
+    static double royalGuardianSwordStormJumpRange() {
+        return ROYAL_GUARDIAN_SWORD_STORM_JUMP_RANGE.get();
+    }
+    static double royalAssailantBattleAxeAttackDamage() {
+        return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_DAMAGE.get();
+    }
+    static double royalAssailantBattleAxeAttackSpeed() {
+        return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_SPEED.get();
+    }
+    static double royalWeaponAttackReachBonus() {
+        return ROYAL_WEAPON_ATTACK_REACH_BONUS.get();
+    }
+    static double royalWeaponAttackKnockbackBonus() {
+        return ROYAL_WEAPON_ATTACK_KNOCKBACK_BONUS.get();
+    }
+    static int royalWeaponDurability() {
+        return ROYAL_WEAPON_DURABILITY.get();
+    }
+    static int royalWeaponEnchantability() {
+        return ROYAL_WEAPON_ENCHANTABILITY.get();
+    }
+    static int royalGuardianShieldDurability() {
+        return ROYAL_GUARDIAN_SHIELD_DURABILITY.get();
+    }
+    static double royalGuardianMusterRange() {
+        return ROYAL_GUARDIAN_MUSTER_RANGE.get();
+    }
+    static int royalGuardianMusterDurationTicks() {
+        return ROYAL_GUARDIAN_MUSTER_DURATION_TICKS.get();
+    }
+    static int royalGuardianMusterCooldownTicks() {
+        return ROYAL_GUARDIAN_MUSTER_COOLDOWN_TICKS.get();
+    }
+    static int royalGuardianMusterMobCap() {
+        return ROYAL_GUARDIAN_MUSTER_MOB_CAP.get();
+    }
+    static double royalGuardianMusterDamageReduction() {
+        return ROYAL_GUARDIAN_MUSTER_DAMAGE_REDUCTION.get();
+    }
+    static double royalGuardianMusterAttackBonus() {
+        return ROYAL_GUARDIAN_MUSTER_ATTACK_BONUS.get();
+    }
+    static double royalGuardianMusterSpeedBonus() {
+        return ROYAL_GUARDIAN_MUSTER_SPEED_BONUS.get();
+    }
+    static double royalGuardianMusterPassiveDamageFloor() {
+        return ROYAL_GUARDIAN_MUSTER_PASSIVE_DAMAGE_FLOOR.get();
+    }
+    static double royalGuardianBoundaryRadius() {
+        return ROYAL_GUARDIAN_BOUNDARY_RADIUS.get();
+    }
+    static int royalGuardianBoundaryDurationTicks() {
+        return ROYAL_GUARDIAN_BOUNDARY_DURATION_TICKS.get();
+    }
+    static int royalGuardianBoundaryCooldownTicks() {
+        return ROYAL_GUARDIAN_BOUNDARY_COOLDOWN_TICKS.get();
+    }
+    static int royalGuardianBoundaryStrengthAmplifier() {
+        return ROYAL_GUARDIAN_BOUNDARY_STRENGTH_AMPLIFIER.get();
+    }
+    static int royalGuardianBoundaryArrestTicks() {
+        return ROYAL_GUARDIAN_BOUNDARY_ARREST_TICKS.get();
+    }
+    static int royalGuardianBoundaryDropTicks() {
+        return ROYAL_GUARDIAN_BOUNDARY_DROP_TICKS.get();
+    }
+    static int royalGuardianBoundaryProjectileCap() {
+        return ROYAL_GUARDIAN_BOUNDARY_PROJECTILE_CAP.get();
+    }
 
 }

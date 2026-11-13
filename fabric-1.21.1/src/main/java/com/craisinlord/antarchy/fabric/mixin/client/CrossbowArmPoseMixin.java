@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.fabric.mixin.client;
 
+import com.craisinlord.antarchy.content.item.AnvilCannonItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
-import com.craisinlord.antarchy.content.item.AnvilCannonItem;
 import com.craisinlord.antarchy.content.item.RpoLauncherItem;
 import com.craisinlord.antarchy.content.item.SizeRayItem;
 import com.craisinlord.antarchy.content.item.SquidzookaItem;

@@ -3,6 +3,10 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.client.model.AppleCowModel;
 import com.craisinlord.antarchy.content.entity.AppleCowEntity;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.EnchantedGoldenAppleCow;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.renderer.GeoEntityRenderer;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.geckolib.renderer.layer.GeoRenderLayer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -11,10 +15,6 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import com.geckolib.constant.dataticket.DataTicket;
-import com.geckolib.renderer.GeoEntityRenderer;
-import com.geckolib.renderer.base.RenderPassInfo;
-import com.geckolib.renderer.layer.GeoRenderLayer;
 
 public class AppleCowRenderer extends GeoEntityRenderer<AppleCowEntity, LivingEntityRenderState> {
     private static final DataTicket<Boolean> ENCHANTED_ADULT = DataTicket.create("antarchy_apple_cow_enchanted_adult", Boolean.class);

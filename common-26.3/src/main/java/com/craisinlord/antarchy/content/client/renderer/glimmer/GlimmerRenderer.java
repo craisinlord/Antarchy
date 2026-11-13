@@ -1,16 +1,17 @@
 package com.craisinlord.antarchy.content.client.renderer.glimmer;
 
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.client.Minecraft;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.client.model.glimmer.GlimmerFrogModel;
 import com.craisinlord.antarchy.content.client.model.glimmer.GlimmerModel;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.renderer.GeoEntityRenderer;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.geckolib.renderer.layer.GeoRenderLayer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -22,10 +23,11 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import com.geckolib.constant.dataticket.DataTicket;
-import com.geckolib.renderer.GeoEntityRenderer;
-import com.geckolib.renderer.base.RenderPassInfo;
-import com.geckolib.renderer.layer.GeoRenderLayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 
 public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity, LivingEntityRenderState> {
     private static final DataTicket<GlimmerFrogModel.State> FROG_STATE = DataTicket.create("antarchy_glimmer_frog_state", GlimmerFrogModel.State.class);
@@ -89,10 +91,10 @@ public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity, LivingEnti
         frog.color = color;
         frog.texture = entity.getVariant().getBehavior().texture(entity);
         frog.emissiveTexture = emissiveTexture;
-        net.minecraft.world.entity.Entity target = entity.getAbilityTarget();
+        Entity target = entity.getAbilityTarget();
         if (target != null) {
-            net.minecraft.world.phys.Vec3 mouth = entity.position().add(0.0D, entity.getBbHeight() * 0.5D, 0.0D);
-            net.minecraft.world.phys.Vec3 toTarget = target.getBoundingBox().getCenter().subtract(mouth);
+            Vec3 mouth = entity.position().add(0.0D, entity.getBbHeight() * 0.5D, 0.0D);
+            Vec3 toTarget = target.getBoundingBox().getCenter().subtract(mouth);
             frog.hasTongueTarget = true;
             frog.tongueTargetDistance = (float) toTarget.length();
             frog.tongueTargetPitch = (float) -Mth.atan2(toTarget.y, toTarget.horizontalDistance());

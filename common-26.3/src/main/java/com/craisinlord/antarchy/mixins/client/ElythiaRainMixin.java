@@ -1,3 +1,4 @@
+
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
@@ -20,8 +21,6 @@ public abstract class ElythiaRainMixin {
     private static final float ANTARCHY$RAIN_SPEED = 0.3F;
     @Unique
     private static final float[] ANTARCHY$RAIN_TINT = {0.78F, 0.32F, 1.0F};
-    @Unique
-    private static final float[] ANTARCHY$SPLASH_TINT = {0.8F, 0.4F, 1.0F};
     @Unique
     private static final float ANTARCHY$RAIN_ALPHA = 0.8F;
     @Unique

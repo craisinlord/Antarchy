@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class CritterCageRenderer implements BlockEntityRenderer<CritterCageBlockEntity> {
     public CritterCageRenderer(BlockEntityRendererProvider.Context context) {

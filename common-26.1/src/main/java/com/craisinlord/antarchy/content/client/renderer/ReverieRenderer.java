@@ -2,6 +2,10 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.ReverieModel;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.renderer.GeoEntityRenderer;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.geckolib.renderer.layer.GeoRenderLayer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,10 +17,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.constant.dataticket.DataTicket;
-import com.geckolib.renderer.GeoEntityRenderer;
-import com.geckolib.renderer.base.RenderPassInfo;
-import com.geckolib.renderer.layer.GeoRenderLayer;
 
 public class ReverieRenderer extends GeoEntityRenderer<ReverieEntity, LivingEntityRenderState> {
     private static final DataTicket<ReverieEntity.Mood> PREVIOUS_MOOD = DataTicket.create("antarchy_reverie_previous_mood", ReverieEntity.Mood.class);

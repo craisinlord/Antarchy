@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "antarchy:block/tinted/cube_all_overlay",
   "textures": {
-    "all": "antarchy:block/rockite_iron_ore"
+    "all": "antarchy:block/rockite_iron_ore",
+    "overlay": "antarchy:block/rockite_iron_ore_overlay"
   }
 }

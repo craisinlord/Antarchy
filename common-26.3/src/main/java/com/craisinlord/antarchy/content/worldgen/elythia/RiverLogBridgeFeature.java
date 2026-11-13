@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
@@ -11,8 +10,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
@@ -21,6 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -28,7 +28,9 @@ public class RiverLogBridgeFeature implements Feature {
     public static final MapCodec<RiverLogBridgeFeature> CODEC = MapCodec.unit(RiverLogBridgeFeature::new);
 
     @Override
-    public MapCodec<RiverLogBridgeFeature> codec() { return CODEC; }
+    public MapCodec<RiverLogBridgeFeature> codec() {
+        return CODEC;
+    }
     private static final int OVERHANG = 2;
     private static final ResourceKey<Biome> PEACH_FOREST = biome("peach_forest");
     private static final List<ResourceKey<Biome>> OURANWOOD_FORESTS = List.of(
@@ -37,7 +39,6 @@ public class RiverLogBridgeFeature implements Feature {
             biome("fungal_ouranwood_forest"),
             biome("fungal_reserve")
     );
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -65,7 +66,7 @@ public class RiverLogBridgeFeature implements Feature {
         for (int i = 0; i < damage.length; i++) damage[i] = random.nextFloat();
         for (int pass = 0; pass < 4; pass++) {
             for (int i = 1; i < damage.length - 1; i++) {
-                damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4f;
+                damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4F;
             }
         }
 
@@ -74,17 +75,25 @@ public class RiverLogBridgeFeature implements Feature {
         for (int step = from; step <= to; step++) {
             boolean overWater = step > 0 && step < crossing.steps();
             float dmg = damage[step - from] * damage[step - from];
-            if (!overWater && dmg > 0.5F) continue;
+            if (!overWater && dmg > 0.5F) {
+                continue;
+            }
 
             int x = crossing.x(step);
             int z = crossing.z(step);
             placed |= this.placeLog(level, crossing, pos.set(x, centerY, z), palette.pick(random));
-            if (!thick) continue;
+            if (!thick) {
+                continue;
+            }
 
             int[][] shell = {{perpX, 0, perpZ}, {-perpX, 0, -perpZ}, {0, 1, 0}, {0, -1, 0}};
             for (int[] o : shell) {
-                if (!overWater && random.nextFloat() < dmg * 1.5F) continue;
-                if (o[1] == 0 && random.nextFloat() < 0.12F) continue;
+                if (!overWater && random.nextFloat() < dmg * 1.5F) {
+                    continue;
+                }
+                if (o[1] == 0 && random.nextFloat() < 0.12F) {
+                    continue;
+                }
                 placed |= this.placeLog(level, crossing, pos.set(x + o[0], centerY + o[1], z + o[2]), palette.pick(random));
             }
         }
@@ -95,10 +104,14 @@ public class RiverLogBridgeFeature implements Feature {
 
         int topY = centerY + (thick ? 1 : 0);
         for (int step = from; step <= to; step++) {
-            if (random.nextFloat() >= 0.3F) continue;
+            if (random.nextFloat() >= 0.3F) {
+                continue;
+            }
             int x = crossing.x(step);
             int z = crossing.z(step);
-            if (!crossing.contains(x, z)) continue;
+            if (!crossing.contains(x, z)) {
+                continue;
+            }
             BlockState below = level.getBlockState(pos.set(x, topY, z));
             if (!below.is(Blocks.MOSS_BLOCK) && below.getBlock() instanceof RotatedPillarBlock && level.getBlockState(pos.set(x, topY + 1, z)).isAir()) {
                 level.setBlock(pos, Blocks.MOSS_CARPET.defaultBlockState(), 2);
@@ -124,11 +137,17 @@ public class RiverLogBridgeFeature implements Feature {
         for (int i = 0; i < count; i++) {
             int mx = x + random.nextInt(5) - 2;
             int mz = z + random.nextInt(5) - 2;
-            if (!crossing.contains(mx, mz)) continue;
+            if (!crossing.contains(mx, mz)) {
+                continue;
+            }
             pos.set(mx, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, mx, mz), mz);
-            if (!level.getBlockState(pos).isAir()) continue;
+            if (!level.getBlockState(pos).isAir()) {
+                continue;
+            }
             BlockPos below = pos.below();
-            if (!level.getFluidState(below).isEmpty() || !level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) continue;
+            if (!level.getFluidState(below).isEmpty() || !level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+                continue;
+            }
             level.setBlock(pos, random.nextFloat() < 0.3F ? Blocks.MOSS_BLOCK.defaultBlockState() : Blocks.MOSS_CARPET.defaultBlockState(), 2);
         }
     }

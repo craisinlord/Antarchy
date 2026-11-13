@@ -1,32 +1,42 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.entity.NearestFirstTargetGoal;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
+import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalEffectController;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerSite;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.anthology.gravity.GravityTransition;
 import com.craisinlord.anthology.time.TimeDilationApi;
 import com.craisinlord.anthology.time.TimeDilationFieldEntity;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerSite;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -37,12 +47,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -50,21 +61,15 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.animal.WaterAnimal;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
-import com.craisinlord.anthology.beam.BeamSettings;
-import com.craisinlord.anthology.beam.BeamTerrainMode;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
-import com.craisinlord.antarchy.content.entity.royal.attack.RoyalEffectController;
-import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 public class QueenEntity extends RoyalBossEntity {
     private static final EntityDataAccessor<Boolean> QUEEN_MUSIC_ACTIVE =
@@ -76,7 +81,7 @@ public class QueenEntity extends RoyalBossEntity {
 
     private static final ResourceLocation ACCEL_SPEED_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "queen_royal_acceleration_speed");
     private static final ResourceLocation ACCEL_FLY_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "queen_royal_acceleration_fly");
-    private static final DustParticleOptions ACCEL_DUST = new DustParticleOptions(new org.joml.Vector3f(1.0F, 0.15F, 0.15F), 2.0F);
+    private static final DustParticleOptions ACCEL_DUST = new DustParticleOptions(new Vector3f(1.0F, 0.15F, 0.15F), 2.0F);
 
     private static final int GRAVITY_STOMP_COOLDOWN = 180;
     private static final int MOMENTUM_LOCK_COOLDOWN = 420;
@@ -204,7 +209,7 @@ public class QueenEntity extends RoyalBossEntity {
     private Vec3 queenLandingWaypoint;
     @Nullable
     private Vec3 queenGroundChargeDirection;
-    private final java.util.Set<UUID> queenGroundChargeHits = new java.util.HashSet<>();
+    private final Set<UUID> queenGroundChargeHits = new HashSet<>();
     @Nullable
     private Phase pendingPhaseSignature;
     private boolean pendingPhaseTwoCrushingGravity;
@@ -225,7 +230,7 @@ public class QueenEntity extends RoyalBossEntity {
     @Nullable
     private BlockPos naturalTrailHome;
 
-    private record FrozenBolt(RoyalElementalProjectileEntity projectile, Vec3 velocity) {
+    public record FrozenBolt(RoyalElementalProjectileEntity projectile, Vec3 velocity) {
     }
 
     private enum QueenLandingStage {
@@ -341,6 +346,11 @@ public class QueenEntity extends RoyalBossEntity {
                 || this.queenGroundChargeTicks > 0
                 || this.royalEffects.active("momentum_lock")
                 || this.isQueenAbilityTelegraphActive();
+    }
+
+    @Override
+    protected int royalBeamVolleyGapTicks() {
+        return AntarchySettings.queenBeamVolleyGapTicks();
     }
 
     @Override
@@ -527,16 +537,24 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     @Override
-    protected SoundEvent royalBeamShootSound() { return AntarchySoundEvents.QUEEN_BEAM_SHOOT.get(); }
+    protected SoundEvent royalBeamShootSound() {
+        return AntarchySoundEvents.QUEEN_BEAM_SHOOT.get();
+    }
 
     @Override
-    protected SoundEvent royalBeamStartSound() { return AntarchySoundEvents.QUEEN_BEAM_START.get(); }
+    protected SoundEvent royalBeamStartSound() {
+        return AntarchySoundEvents.QUEEN_BEAM_START.get();
+    }
 
     @Override
-    protected SoundEvent royalBeamLoopSound() { return AntarchySoundEvents.QUEEN_BEAM_LOOP.get(); }
+    protected SoundEvent royalBeamLoopSound() {
+        return AntarchySoundEvents.QUEEN_BEAM_LOOP.get();
+    }
 
     @Override
-    protected SoundEvent royalBeamEndSound() { return AntarchySoundEvents.QUEEN_BEAM_END.get(); }
+    protected SoundEvent royalBeamEndSound() {
+        return AntarchySoundEvents.QUEEN_BEAM_END.get();
+    }
 
     @Override
     protected BeamSettings royalBeamSettings() {
@@ -931,10 +949,16 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickDreamFireballs() {
-        if (this.isRoyalRecoveryActive()) return;
-        if (!(this.level() instanceof ServerLevel level)) return;
+        if (this.isRoyalRecoveryActive()) {
+            return;
+        }
+        if (!(this.level() instanceof ServerLevel level)) {
+            return;
+        }
         LivingEntity target = this.getTarget();
-        if (target == null || !target.isAlive() || !this.canAttack(target)) return;
+        if (target == null || !target.isAlive() || !this.canAttack(target)) {
+            return;
+        }
         for (RoyalHead head : new RoyalHead[] {this.royalHead(RoyalHead.Slot.LEFT), this.royalHead(RoyalHead.Slot.CENTER), this.royalHead(RoyalHead.Slot.RIGHT)}) {
             int index = head.slot().ordinal();
             if (this.dreamFireballCooldownTicks[index] > 0) {
@@ -956,7 +980,7 @@ public class QueenEntity extends RoyalBossEntity {
             }
             final LivingEntity committedTarget = fireballTarget;
             if (!this.beginRoyalAttack("dream_fireball_" + slot.name(), this.headLane(head), cooldown, 12, 1, 5,
-                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    new RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             head.startShoot();
                             QueenEntity.this.triggerAnim(slot.controllerName(), "shoot");
@@ -1097,7 +1121,7 @@ public class QueenEntity extends RoyalBossEntity {
             return null;
         }
         AABB siteBounds = new AABB(homePos).inflate(160.0D);
-        java.util.List<QueenEntity> existing = level.getEntitiesOfClass(QueenEntity.class, siteBounds,
+        List<QueenEntity> existing = level.getEntitiesOfClass(QueenEntity.class, siteBounds,
                 queen -> queen.naturalTrailSiteId == siteId && queen.isAlive());
         if (!existing.isEmpty()) {
             return existing.getFirst();
@@ -1129,7 +1153,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickManticoreSummon() {
-        if (this.isRoyalRecoveryActive()) return;
+        if (this.isRoyalRecoveryActive()) {
+            return;
+        }
         if (this.manticoreSummonCooldownTicks > 0) {
             this.manticoreSummonCooldownTicks--;
             return;
@@ -1173,7 +1199,7 @@ public class QueenEntity extends RoyalBossEntity {
         }
         if (this.beginRoyalAttack("manticore_summon_animation", RoyalAttackLane.BODY, 1, 0, 1,
                 this.animationRecovery(59, 0, 1, 0),
-                new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                new RoyalAttackScheduler.Action() {
                     @Override public void onStart() {
                         QueenEntity.this.manticoreAnimationPending = false;
                         QueenEntity.this.triggerAnim("body_action", "minion_spawn");
@@ -1229,7 +1255,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickQueenAbilities() {
-        if (this.isRoyalRecoveryActive()) return;
+        if (this.isRoyalRecoveryActive()) {
+            return;
+        }
         if (this.gravityStompCooldownTicks > 0) this.gravityStompCooldownTicks--;
         if (this.momentumLockCooldownTicks > 0) this.momentumLockCooldownTicks--;
         if (this.crushingGravityCooldownTicks > 0) this.crushingGravityCooldownTicks--;
@@ -1275,11 +1303,13 @@ public class QueenEntity extends RoyalBossEntity {
                 }, this.random);
         if (chosen == null && this.lastQueenMajorAttack != null
                 && this.queenAttackReady(this.lastQueenMajorAttack, phase, majorBusy)
-                && java.util.Arrays.asList(candidates).contains(this.lastQueenMajorAttack)
+                && Arrays.asList(candidates).contains(this.lastQueenMajorAttack)
                 && this.queenAttackWeight(this.lastQueenMajorAttack, phase) > 0) {
             chosen = this.lastQueenMajorAttack;
         }
-        if (chosen == null) return;
+        if (chosen == null) {
+            return;
+        }
         final String selected = chosen;
         int cooldown = switch (selected) {
             case "gravity_stomp" -> GRAVITY_STOMP_COOLDOWN;
@@ -1299,7 +1329,7 @@ public class QueenEntity extends RoyalBossEntity {
                 || "gravitic_upheaval".equals(selected) ? 55 : 25;
         int actionRecovery = this.animationRecovery(actionAnimationTicks, actionWindup, 1, 14);
         if (!this.beginRoyalAttack(selected, lane, this.cooldown(cooldown),
-                actionWindup, 1, actionRecovery, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                actionWindup, 1, actionRecovery, new RoyalAttackScheduler.Action() {
                     @Override public void onStart() {
                         if ("momentum_lock".equals(selected)
                                 || "crushing_gravity".equals(selected)
@@ -1420,7 +1450,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private boolean queenAttackReady(String id, Phase phase, boolean majorBusy) {
-        if (majorBusy) return false;
+        if (majorBusy) {
+            return false;
+        }
         return switch (id) {
             case "gravity_stomp" -> this.gravityStompCooldownTicks <= 0
                     && !this.isRoyalFlying() && this.queenLandingStage == QueenLandingStage.GROUND_COMBAT;
@@ -1618,7 +1650,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickGravityStompTelegraph(ServerLevel level) {
-        if (this.gravityStompTelegraphTicks <= 0) return;
+        if (this.gravityStompTelegraphTicks <= 0) {
+            return;
+        }
         int elapsed = GRAVITY_STOMP_TELEGRAPH_TICKS - this.gravityStompTelegraphTicks;
         if (this.tickCount % 2 == 0) {
             double radius = Mth.lerp(elapsed / (double) GRAVITY_STOMP_TELEGRAPH_TICKS, 3.0D, GRAVITY_STOMP_RADIUS);
@@ -1632,7 +1666,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickBlackHoleTelegraph(ServerLevel level) {
-        if (this.blackHoleTelegraphTicks <= 0 || this.pendingBlackHoleAnchor == null) return;
+        if (this.blackHoleTelegraphTicks <= 0 || this.pendingBlackHoleAnchor == null) {
+            return;
+        }
         int elapsed = BLACK_HOLE_TELEGRAPH_TICKS - this.blackHoleTelegraphTicks;
         double progress = elapsed / (double) BLACK_HOLE_TELEGRAPH_TICKS;
         double fieldRadius = Math.max(4.0D, AntarchySettings.queenBlackHoleRadius());
@@ -1649,7 +1685,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickMomentumLockTelegraph(ServerLevel level) {
-        if (this.momentumLockTelegraphTicks <= 0) return;
+        if (this.momentumLockTelegraphTicks <= 0) {
+            return;
+        }
         int elapsed = MOMENTUM_LOCK_TELEGRAPH_TICKS - this.momentumLockTelegraphTicks;
         if (this.tickCount % 2 == 0) {
             this.spawnMomentumLockCage(level, elapsed / (double) MOMENTUM_LOCK_TELEGRAPH_TICKS);
@@ -1675,7 +1713,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickCrushingGravityTelegraph(ServerLevel level) {
-        if (this.crushingGravityTelegraphTicks <= 0) return;
+        if (this.crushingGravityTelegraphTicks <= 0) {
+            return;
+        }
         int elapsed = CRUSHING_GRAVITY_TELEGRAPH_TICKS - this.crushingGravityTelegraphTicks;
         double progress = elapsed / (double) CRUSHING_GRAVITY_TELEGRAPH_TICKS;
         if (this.tickCount % 2 == 0) {
@@ -1695,7 +1735,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickAccelerationTelegraph(ServerLevel level) {
-        if (this.accelerationTelegraphTicks <= 0) return;
+        if (this.accelerationTelegraphTicks <= 0) {
+            return;
+        }
         int elapsed = ACCELERATION_TELEGRAPH_TICKS - this.accelerationTelegraphTicks;
         double progress = elapsed / (double) ACCELERATION_TELEGRAPH_TICKS;
         this.spawnAccelerationHelix(level, progress);
@@ -1705,7 +1747,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickQueenChronosphereTelegraph(ServerLevel level) {
-        if (this.queenChronosphereTelegraphTicks <= 0) return;
+        if (this.queenChronosphereTelegraphTicks <= 0) {
+            return;
+        }
         int elapsed = 40 - this.queenChronosphereTelegraphTicks;
         Vec3 center = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
         if (this.tickCount % 2 == 0) {
@@ -1776,7 +1820,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickDebrisCycloneTelegraph(ServerLevel level) {
-        if (this.debrisCycloneTelegraphTicks <= 0) return;
+        if (this.debrisCycloneTelegraphTicks <= 0) {
+            return;
+        }
         int elapsed = DEBRIS_CYCLONE_TELEGRAPH_TICKS - this.debrisCycloneTelegraphTicks;
         double progress = elapsed / (double) DEBRIS_CYCLONE_TELEGRAPH_TICKS;
         double orbitRadius = Mth.lerp(Math.min(1.0D, progress * 1.6D), 1.0D, DEBRIS_CYCLONE_ORBIT_RADIUS);
@@ -1785,7 +1831,9 @@ public class QueenEntity extends RoyalBossEntity {
         GravityDirection gravity = GravityApi.getGravityDirection(this);
         for (int index = 0; index < count; index++) {
             FallingBlockEntity block = this.debrisCycloneBlocks.get(index);
-            if (!block.isAlive()) continue;
+            if (!block.isAlive()) {
+                continue;
+            }
             double angle = spinSpeed * this.tickCount + Mth.TWO_PI * index / Math.max(1, count);
             double localX = Math.cos(angle) * orbitRadius;
             double localZ = Math.sin(angle) * orbitRadius;
@@ -1804,7 +1852,9 @@ public class QueenEntity extends RoyalBossEntity {
     private void performDebrisCycloneLaunch(ServerLevel level, LivingEntity target) {
         Vec3 aimPoint = target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D);
         for (FallingBlockEntity block : this.debrisCycloneBlocks) {
-            if (!block.isAlive()) continue;
+            if (!block.isAlive()) {
+                continue;
+            }
             Vec3 toTarget = aimPoint.subtract(block.position());
             double distance = Math.max(1.0D, toTarget.length());
             boolean inverted = GravityApi.isGravityInverted(this);
@@ -1822,7 +1872,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickGraviticUpheavalTelegraph(ServerLevel level) {
-        if (this.graviticUpheavalTelegraphTicks <= 0) return;
+        if (this.graviticUpheavalTelegraphTicks <= 0) {
+            return;
+        }
         int elapsed = GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS - this.graviticUpheavalTelegraphTicks;
         if (this.tickCount % 3 == 0) {
             double progress = elapsed / (double) GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS;
@@ -2214,7 +2266,7 @@ public class QueenEntity extends RoyalBossEntity {
         }
     }
 
-    private <T extends net.minecraft.core.particles.ParticleOptions> void spawnQueenTelegraphRing(
+    private <T extends ParticleOptions> void spawnQueenTelegraphRing(
             ServerLevel level, Vec3 center, double radius, int count, T particle) {
         for (int index = 0; index < count; index++) {
             double angle = Mth.TWO_PI * index / count;

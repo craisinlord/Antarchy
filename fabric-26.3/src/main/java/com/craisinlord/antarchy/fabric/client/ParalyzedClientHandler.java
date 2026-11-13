@@ -1,25 +1,24 @@
 package com.craisinlord.antarchy.fabric.client;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 
-import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
-import net.minecraft.core.Holder;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
+import java.lang.reflect.Field;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec2;
 
-import java.lang.reflect.Field;
-
 public final class ParalyzedClientHandler {
-    private static final Holder<net.minecraft.world.effect.MobEffect> PARALYZED_EFFECT =
+    private static final Holder<MobEffect> PARALYZED_EFFECT =
             BuiltInRegistries.MOB_EFFECT.wrapAsHolder(AntarchyFabricMisc.PARALYZED.get());
 
     private static final Field MOVE_VECTOR = moveVectorField();
@@ -28,7 +27,7 @@ public final class ParalyzedClientHandler {
 
     private static final int PARTICLES_PER_ENTITY = 4;
 
-    private static final double PARTICLE_RADIUS = 24.0;
+    private static final double PARTICLE_RADIUS = 24.0D;
 
     private ParalyzedClientHandler() {
     }
@@ -91,13 +90,13 @@ public final class ParalyzedClientHandler {
         float h = entity.getBbHeight();
 
         for (int i = 0; i < PARTICLES_PER_ENTITY; i++) {
-            double px = entity.getX() + (Math.random() - 0.5) * w;
+            double px = entity.getX() + (Math.random() - 0.5D) * w;
             double py = entity.getY() + Math.random() * h;
-            double pz = entity.getZ() + (Math.random() - 0.5) * w;
+            double pz = entity.getZ() + (Math.random() - 0.5D) * w;
 
-            double vx = (Math.random() - 0.5) * 0.08;
-            double vy = Math.random() * 0.06;
-            double vz = (Math.random() - 0.5) * 0.08;
+            double vx = (Math.random() - 0.5D) * 0.08D;
+            double vy = Math.random() * 0.06D;
+            double vz = (Math.random() - 0.5D) * 0.08D;
 
             level.addParticle(particle, px, py, pz, vx, vy, vz);
         }

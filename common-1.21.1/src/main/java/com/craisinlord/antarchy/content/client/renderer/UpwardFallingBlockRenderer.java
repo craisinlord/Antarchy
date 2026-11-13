@@ -21,10 +21,12 @@ public class UpwardFallingBlockRenderer extends EntityRenderer<UpwardFallingBloc
     @Override
     public void render(UpwardFallingBlockEntity entity, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
         BlockState blockState = entity.getBlockState();
-        if (blockState.isAir()) return;
+        if (blockState.isAir()) {
+            return;
+        }
 
         poseStack.pushPose();
-        poseStack.translate(-0.5, 0.0, -0.5);
+        poseStack.translate(-0.5D, 0.0D, -0.5D);
         Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
                 blockState, poseStack, bufferSource, light, OverlayTexture.NO_OVERLAY
         );

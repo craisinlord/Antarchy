@@ -2,9 +2,9 @@ package com.craisinlord.antarchy.content.client.model;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.RollyPollyEntity;
-import net.minecraft.resources.Identifier;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class RollyPollyModel extends GeoModel<RollyPollyEntity> {
     private static final Identifier TEXTURE =

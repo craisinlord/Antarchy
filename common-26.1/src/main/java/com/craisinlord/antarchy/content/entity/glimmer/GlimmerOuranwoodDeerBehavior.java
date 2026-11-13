@@ -2,6 +2,10 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
+import com.geckolib.animation.RawAnimation;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
@@ -19,11 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animation.RawAnimation;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 public class GlimmerOuranwoodDeerBehavior implements GlimmerVariantBehavior {
     private static final int PASSIVE_REFRESH_DURATION = 20 * 4;

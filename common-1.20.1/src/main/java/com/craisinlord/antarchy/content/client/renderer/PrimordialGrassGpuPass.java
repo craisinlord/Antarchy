@@ -61,6 +61,8 @@ final class PrimordialGrassGpuPass {
             uniform vec4 TramplePos[32];
             uniform vec3 TrampleMotion[32];
             uniform int TrampleCount;
+            uniform vec4 VariantUv[3];
+            uniform float VariantHeight[3];
             out float vertexDistance;
             out vec4 vertexColor;
             out vec2 texCoord0;
@@ -82,11 +84,14 @@ final class PrimordialGrassGpuPass {
             void main() {
                 float h = Shape.x;
                 float f = Shape.y;
-                float exposure = Meta.x;
+                float metaByte = floor(Meta.x * 255.0 + 0.5);
+                float exposure = metaByte > 127.5 ? 1.0 : 0.0;
+                int variant = clamp(int(mod(metaByte, 128.0)), 0, 2);
+                float height = VariantHeight[variant];
                 float tuftHash = Meta.y;
                 float mirror = Flippable > 0.5 && mod(floor(tuftHash * 255.0 + 0.5), 2.0) > 0.5 ? -1.0 : 1.0;
                 vec3 root = Root + ChunkOffset;
-                vec3 rel = root + vec3(Offset.x * mirror, h * 1.125, Offset.y);
+                vec3 rel = root + vec3(Offset.x * mirror, h * height, Offset.y);
                 float calm = sin(CalmPhase + root.x * 0.07 + root.z * 0.09) * 0.04;
                 float gustTime = GustLocal - dot(root.xz, WindDir) / 0.31;
                 float idx = floor(gustTime / 800.0);
@@ -120,11 +125,11 @@ final class PrimordialGrassGpuPass {
                 float flutter = sin(CalmPhase * 3.0 + tuftHash * 6.2831855) * 0.1 * bend;
                 vec3 pos = rel;
                 pos.xz += windOffset * (1.0 - 0.6 * lean) + push * 0.5 * variation * bend + vec2(-push.y, push.x) * flutter;
-                pos.y -= h * h * 1.125 * 0.14 * lean * lean;
+                pos.y -= h * h * height * 0.14 * lean * lean;
                 gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
                 vertexDistance = FogShape == 0 ? length(pos) : max(length(pos.xz), abs(pos.y));
                 vertexColor = texture(Sampler2, clamp(vec2(UV2) / 256.0, vec2(0.5 / 16.0), vec2(15.5 / 16.0)));
-                texCoord0 = UV0;
+                texCoord0 = VariantUv[variant].xy + UV0 * VariantUv[variant].zw;
             }
             """;
 
@@ -174,6 +179,10 @@ final class PrimordialGrassGpuPass {
     private static int fogStartLocation;
     private static int fogEndLocation;
     private static int fogColorLocation;
+    private static int variantUvLocation;
+    private static int variantHeightLocation;
+    private static final float[] VARIANT_UV = new float[12];
+    private static final float[] VARIANT_HEIGHT = new float[3];
     private static int[] timerStart;
     private static int[] timerEnd;
     private static final boolean[] TIMER_PENDING = new boolean[TIMER_SLOTS];
@@ -190,15 +199,28 @@ final class PrimordialGrassGpuPass {
     }
 
     static boolean available() {
-        if (failed) return false;
+        if (failed) {
+            return false;
+        }
         return ensureInitialized();
     }
 
-    static void uploadMesh(TextureAtlasSprite sprite) {
+    static void setVariants(TextureAtlasSprite[] sprites) {
+        for (int i = 0; i < VARIANT_HEIGHT.length; i++) {
+            TextureAtlasSprite sprite = sprites[Math.min(i, sprites.length - 1)];
+            VARIANT_UV[i * 4] = sprite.getU0();
+            VARIANT_UV[i * 4 + 1] = sprite.getV0();
+            VARIANT_UV[i * 4 + 2] = sprite.getU1() - sprite.getU0();
+            VARIANT_UV[i * 4 + 3] = sprite.getV1() - sprite.getV0();
+            VARIANT_HEIGHT[i] = sprite.contents().height() / 16.0F;
+        }
+    }
+
+    private static void uploadMesh() {
         ByteBuffer data = BufferUtils.createByteBuffer(PrimordialGrassLod.shapeVertices() * MESH_STRIDE);
         for (int bands : PrimordialGrassLod.shapeBands()) {
             for (int faces = 1; faces <= PrimordialGrassLod.MAX_FACES; faces++) {
-                writeShape(data, sprite, bands, faces);
+                writeShape(data, bands, faces);
             }
         }
         data.flip();
@@ -207,24 +229,24 @@ final class PrimordialGrassGpuPass {
         GlStateManager._glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
-    private static void writeShape(ByteBuffer data, TextureAtlasSprite sprite, int bands, int faces) {
+    private static void writeShape(ByteBuffer data, int bands, int faces) {
         float flippable = faces == 1 ? 1.0F : 0.0F;
         for (int face = 0; face < faces; face++) {
             float x = face == 0 ? HALF_WIDTH : -HALF_WIDTH;
-            if (face > 0) writeMeshVertex(data, sprite, -x, -HALF_WIDTH, 0.0F, 0.0F, flippable);
+            if (face > 0) writeMeshVertex(data, -x, -HALF_WIDTH, 0.0F, 0.0F, flippable);
             for (int level = 0; level <= bands; level++) {
                 float h = level / (float) bands;
-                writeMeshVertex(data, sprite, -x, -HALF_WIDTH, h, 0.0F, flippable);
-                writeMeshVertex(data, sprite, x, HALF_WIDTH, h, 1.0F, flippable);
+                writeMeshVertex(data, -x, -HALF_WIDTH, h, 0.0F, flippable);
+                writeMeshVertex(data, x, HALF_WIDTH, h, 1.0F, flippable);
             }
-            if (face < faces - 1) writeMeshVertex(data, sprite, x, HALF_WIDTH, 1.0F, 1.0F, flippable);
+            if (face < faces - 1) writeMeshVertex(data, x, HALF_WIDTH, 1.0F, 1.0F, flippable);
         }
     }
 
-    private static void writeMeshVertex(ByteBuffer data, TextureAtlasSprite sprite, float x, float z, float h, float u, float flippable) {
+    private static void writeMeshVertex(ByteBuffer data, float x, float z, float h, float u, float flippable) {
         data.putFloat(x).putFloat(z);
         data.putFloat(h).putFloat((float) PrimordialGrassWind.flexibility(h));
-        data.putFloat(u == 0.0F ? sprite.getU0() : sprite.getU1()).putFloat(sprite.getV((1.0F - h) * 16.0F));
+        data.putFloat(u).putFloat(1.0F - h);
         data.putFloat(flippable);
     }
 
@@ -306,6 +328,12 @@ final class PrimordialGrassGpuPass {
             FloatBuffer gusts = stack.mallocFloat(GUST_TABLE_FLOATS);
             gusts.put(gustTable, 0, GUST_TABLE_FLOATS).flip();
             GL20.glUniform2fv(gustTableLocation, gusts);
+            FloatBuffer variantUv = stack.mallocFloat(VARIANT_UV.length);
+            variantUv.put(VARIANT_UV).flip();
+            GL20.glUniform4fv(variantUvLocation, variantUv);
+            FloatBuffer variantHeight = stack.mallocFloat(VARIANT_HEIGHT.length);
+            variantHeight.put(VARIANT_HEIGHT).flip();
+            GL20.glUniform1fv(variantHeightLocation, variantHeight);
             if (count > 0) {
                 FloatBuffer positions = stack.mallocFloat(count * 4);
                 positions.put(tramplePositions, 0, count * 4).flip();
@@ -342,10 +370,14 @@ final class PrimordialGrassGpuPass {
     }
 
     private static void beginTimer() {
-        if (!timerSupported) return;
+        if (!timerSupported) {
+            return;
+        }
         int slot = timerSlot;
         if (TIMER_PENDING[slot]) {
-            if (GL15.glGetQueryObjecti(timerEnd[slot], GL15.GL_QUERY_RESULT_AVAILABLE) == GL11.GL_FALSE) return;
+            if (GL15.glGetQueryObjecti(timerEnd[slot], GL15.GL_QUERY_RESULT_AVAILABLE) == GL11.GL_FALSE) {
+                return;
+            }
             long elapsed = GL33.glGetQueryObjecti64(timerEnd[slot], GL15.GL_QUERY_RESULT)
                     - GL33.glGetQueryObjecti64(timerStart[slot], GL15.GL_QUERY_RESULT);
             gpuNanos += (elapsed - gpuNanos) * TIMER_SMOOTHING;
@@ -356,7 +388,9 @@ final class PrimordialGrassGpuPass {
     }
 
     private static void endTimer() {
-        if (!timerActive) return;
+        if (!timerActive) {
+            return;
+        }
         timerActive = false;
         GL33.glQueryCounter(timerEnd[timerSlot], GL33.GL_TIMESTAMP);
         TIMER_PENDING[timerSlot] = true;
@@ -396,7 +430,10 @@ final class PrimordialGrassGpuPass {
             fogStartLocation = GL20.glGetUniformLocation(program, "FogStart");
             fogEndLocation = GL20.glGetUniformLocation(program, "FogEnd");
             fogColorLocation = GL20.glGetUniformLocation(program, "FogColor");
+            variantUvLocation = GL20.glGetUniformLocation(program, "VariantUv");
+            variantHeightLocation = GL20.glGetUniformLocation(program, "VariantHeight");
             meshBuffer = GL15.glGenBuffers();
+            uploadMesh();
             timerStart = new int[TIMER_SLOTS];
             timerEnd = new int[TIMER_SLOTS];
             for (int i = 0; i < TIMER_SLOTS; i++) {

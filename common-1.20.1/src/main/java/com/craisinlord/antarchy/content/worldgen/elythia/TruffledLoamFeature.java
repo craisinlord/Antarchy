@@ -39,7 +39,9 @@ public final class TruffledLoamFeature extends Feature<NoneFeatureConfiguration>
         int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
         BlockPos start = new BlockPos(x, surface - 1 - context.random().nextInt(3), z);
         List<BlockPos> cluster = new ArrayList<>();
-        if (!eligible(level, start, loam)) return false;
+        if (!eligible(level, start, loam)) {
+            return false;
+        }
         cluster.add(start);
         int size = 2 + context.random().nextInt(4);
         for (int attempt = 0; attempt < 24 && cluster.size() < size; attempt++) {
@@ -49,13 +51,17 @@ public final class TruffledLoamFeature extends Feature<NoneFeatureConfiguration>
                     && next.getZ() > minZ && next.getZ() < minZ + 15
                     && !cluster.contains(next) && eligible(level, next, loam)) cluster.add(next);
         }
-        if (cluster.size() < 2) return false;
+        if (cluster.size() < 2) {
+            return false;
+        }
         for (BlockPos pos : cluster) level.setBlock(pos, truffled.defaultBlockState(), 2);
         return true;
     }
 
     private static boolean eligible(WorldGenLevel level, BlockPos pos, Block loam) {
-        if (pos.getY() < level.getMinBuildHeight() + 1 || !soil(level.getBlockState(pos), loam)) return false;
+        if (pos.getY() < level.getMinBuildHeight() + 1 || !soil(level.getBlockState(pos), loam)) {
+            return false;
+        }
         int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ()) - 1;
         int depth = surface - pos.getY();
         BlockPos surfacePos = new BlockPos(pos.getX(), surface, pos.getZ());
@@ -64,7 +70,9 @@ public final class TruffledLoamFeature extends Feature<NoneFeatureConfiguration>
         for (Direction direction : Direction.values()) {
             BlockPos adjacent = pos.relative(direction);
             BlockState state = level.getBlockState(adjacent);
-            if (!state.getFluidState().isEmpty() || !state.isFaceSturdy(level, adjacent, direction.getOpposite())) return false;
+            if (!state.getFluidState().isEmpty() || !state.isFaceSturdy(level, adjacent, direction.getOpposite())) {
+                return false;
+            }
         }
         return true;
     }

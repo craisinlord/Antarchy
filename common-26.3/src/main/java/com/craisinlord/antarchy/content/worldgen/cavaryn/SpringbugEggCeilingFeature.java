@@ -36,7 +36,6 @@ public record SpringbugEggCeilingFeature() implements Feature {
             return false;
         }
 
-
         boolean placedAny = false;
         int placements = 0;
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();

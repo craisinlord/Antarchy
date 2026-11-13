@@ -1,15 +1,14 @@
 package com.craisinlord.antarchy.forge.mixins.infinity;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import net.lerariemann.infinity.util.config.Amendment;
 import net.lerariemann.infinity.util.core.ConfigType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Mixin(value = Amendment.class, remap = false)
 
@@ -22,13 +21,24 @@ public class AmendmentRareOresMixin {
                 ConfigType.BLOCKS,
                 new Amendment.UniversalModSelector(),
                 new Amendment.MatchingBlockTagSelector("antarchy:infinity_dimension_rare_ores"),
-                new Amendment.SetValue(0.02)
+                new Amendment.SetValue(0.02D)
         ));
         data.computeIfAbsent(ConfigType.EFFECTS, k -> new ArrayList<>()).add(new Amendment(
                 ConfigType.EFFECTS,
                 new Amendment.MatchingModSelector("antarchy"),
                 new Amendment.MatchingSelector("antarchy:paralyzed"),
-                new Amendment.SetValue(0.0)
+                new Amendment.SetValue(0.0D)
+        ));
+        data.computeIfAbsent(ConfigType.BIOMES, k -> new ArrayList<>()).add(new Amendment(
+                ConfigType.BIOMES,
+                new Amendment.MatchingModSelector("antarchy"),
+                new Amendment.MatchingAnySelector(List.of(
+                        "antarchy:biowart_caves",
+                        "antarchy:brooding_tunnels",
+                        "antarchy:cavaryn",
+                        "antarchy:cavaryn_moleworm_caves",
+                        "antarchy:glowcap_caves")),
+                new Amendment.SetValue(0.0D)
         ));
     }
 }

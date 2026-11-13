@@ -2,11 +2,11 @@ package com.craisinlord.antarchy.content.client.game;
 
 import com.craisinlord.antos.api.client.game.ComputerGame;
 import com.craisinlord.antos.api.client.game.ComputerGameRegistry;
+import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import java.util.function.IntPredicate;
-import java.util.function.Predicate;
 
 public final class AntarchyComputerGames {
     private AntarchyComputerGames() {}
@@ -26,10 +26,18 @@ public final class AntarchyComputerGames {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath("antarchy", path);
         ResourceLocation disk = ResourceLocation.fromNamespaceAndPath("antarchy", path + "_game");
         return new ComputerGame() {
-            @Override public ResourceLocation id() { return id; }
-            @Override public ResourceLocation diskId() { return disk; }
-            @Override public String title() { return title; }
-            @Override public Session create() { return factory.create(); }
+            @Override public ResourceLocation id() {
+                return id;
+            }
+            @Override public ResourceLocation diskId() {
+                return disk;
+            }
+            @Override public String title() {
+                return title;
+            }
+            @Override public Session create() {
+                return factory.create();
+            }
         };
     }
 
@@ -45,9 +53,17 @@ public final class AntarchyComputerGames {
         private GameSession(Runnable ticker, GameRenderer renderer, IntPredicate keyHandler, Predicate<Character> charHandler) {
             this.ticker = ticker; this.renderer = renderer; this.keyHandler = keyHandler; this.charHandler = charHandler;
         }
-        @Override public void tick() { ticker.run(); }
-        @Override public void render(GuiGraphics graphics, Font font, int x, int y, int width, int height) { renderer.render(graphics, font, x, y, width, height); }
-        @Override public boolean keyPressed(int keyCode) { return keyHandler.test(keyCode); }
-        @Override public boolean charTyped(char codePoint) { return charHandler.test(codePoint); }
+        @Override public void tick() {
+            ticker.run();
+        }
+        @Override public void render(GuiGraphics graphics, Font font, int x, int y, int width, int height) {
+            renderer.render(graphics, font, x, y, width, height);
+        }
+        @Override public boolean keyPressed(int keyCode) {
+            return keyHandler.test(keyCode);
+        }
+        @Override public boolean charTyped(char codePoint) {
+            return charHandler.test(codePoint);
+        }
     }
 }

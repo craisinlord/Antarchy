@@ -1,38 +1,45 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
-import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.UUIDUtil;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-import java.util.UUID;
-import org.jetbrains.annotations.Nullable;
+import com.craisinlord.antarchy.content.item.RoyalGuardianSwordAbilities;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
 import com.geckolib.util.GeckoLibUtil;
+import com.mojang.serialization.Codec;
+import java.util.UUID;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEcho {
     private static final RawAnimation SPIKE_ANIMATION = RawAnimation.begin().thenPlay("animation");
     private static final String ANIMATION_CONTROLLER = "ice_spike";
-    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> GLIMMER_ECHO =
-            net.minecraft.network.syncher.SynchedEntityData.defineId(RoyalIceSpikeEntity.class,
-                    net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(RoyalIceSpikeEntity.class,
+                    EntityDataSerializers.BOOLEAN);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean impacted;
     @Nullable
@@ -75,7 +82,7 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEch
     }
 
     @Override
-    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(GLIMMER_ECHO, false);
     }
 
@@ -110,7 +117,9 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEch
     private void impact(ServerLevel level) {
         DamageSource source = this.damageSources().magic();
         Entity owner = this.ownerId == null ? null : level.getEntity(this.ownerId);
-        if (this.ownerId != null && owner == null) return;
+        if (this.ownerId != null && owner == null) {
+            return;
+        }
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class,
                 new AABB(this.blockPosition()).inflate(this.customImpactRadius), entity -> entity.isAlive()
                         && entity.distanceToSqr(this.position()) <= this.customImpactRadius * this.customImpactRadius
@@ -119,14 +128,16 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEch
                     : owner instanceof RoyalBossEntity royalBoss
                             ? royalBoss.scaleRoyalDamage(AntarchySettings.kingIceSpikeDamage())
                             : (float) AntarchySettings.kingIceSpikeDamage();
-            boolean hit = owner instanceof net.minecraft.world.entity.player.Player player && this.customImpactDamage >= 0.0F
-                    ? com.craisinlord.antarchy.content.item.RoyalGuardianSwordAbilities.applySecondaryDamage(player, living, damage)
+            boolean hit = owner instanceof Player player && this.customImpactDamage >= 0.0F
+                    ? RoyalGuardianSwordAbilities.applySecondaryDamage(player, living, damage)
                     : living.hurtServer(level, source, damage);
-            if (!hit) continue;
+            if (!hit) {
+                continue;
+            }
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 60, living.getTicksFrozen() + this.customFreezeTicks));
             if (this.customSlowTicks > 0) {
-                living.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                        net.minecraft.world.effect.MobEffects.SLOWNESS, this.customSlowTicks, this.customSlowAmplifier));
+                living.addEffect(new MobEffectInstance(
+                        MobEffects.SLOWNESS, this.customSlowTicks, this.customSlowAmplifier));
             }
             living.setDeltaMovement(living.getDeltaMovement().add(0.0D, this.customKnockup, 0.0D));
             living.needsSync = true;
@@ -135,11 +146,17 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEch
     }
 
     private boolean canHitOwnerTarget(@Nullable Entity owner, LivingEntity target) {
-        if (owner == null) return this.ownerId == null;
-        if (target == owner || target.isAlliedTo(owner) || owner.isAlliedTo(target)) return false;
-        if (owner instanceof RoyalBossEntity royalBoss) return royalBoss.canDamageWithRoyalAttack(target);
-        if (owner instanceof net.minecraft.world.entity.player.Player player) {
-            return com.craisinlord.antarchy.content.item.RoyalGuardianSwordAbilities.canDamageTarget(player, target, false);
+        if (owner == null) {
+            return this.ownerId == null;
+        }
+        if (target == owner || target.isAlliedTo(owner) || owner.isAlliedTo(target)) {
+            return false;
+        }
+        if (owner instanceof RoyalBossEntity royalBoss) {
+            return royalBoss.canDamageWithRoyalAttack(target);
+        }
+        if (owner instanceof Player player) {
+            return RoyalGuardianSwordAbilities.canDamageTarget(player, target, false);
         }
         return true;
     }
@@ -157,7 +174,7 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEch
         this.impacted = tag.getBooleanOr("Impacted", false);
         this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
         tag.read("Owner", UUIDUtil.CODEC).ifPresent(id -> this.ownerId = id);
-        if (tag.read("CustomImpactDamage", com.mojang.serialization.Codec.FLOAT).isPresent()) {
+        if (tag.read("CustomImpactDamage", Codec.FLOAT).isPresent()) {
             this.customImpactDamage = tag.getFloatOr("CustomImpactDamage", 0.0F);
             this.customImpactRadius = tag.getDoubleOr("CustomImpactRadius", 0.0D);
             this.customFreezeTicks = tag.getIntOr("CustomFreezeTicks", 0);

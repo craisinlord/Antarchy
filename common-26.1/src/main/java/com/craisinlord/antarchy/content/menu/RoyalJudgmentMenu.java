@@ -53,12 +53,18 @@ public final class RoyalJudgmentMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        if (index < 0 || index >= this.slots.size()) return ItemStack.EMPTY;
+        if (index < 0 || index >= this.slots.size()) {
+            return ItemStack.EMPTY;
+        }
         Slot slot = this.slots.get(index);
-        if (!slot.hasItem()) return ItemStack.EMPTY;
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
         ItemStack original = slot.getItem().copy();
         ItemStack moved = slot.getItem().copy();
-        if (!this.moveItemStackTo(moved, 0, this.slots.size(), true)) return ItemStack.EMPTY;
+        if (!this.moveItemStackTo(moved, 0, this.slots.size(), true)) {
+            return ItemStack.EMPTY;
+        }
         slot.setByPlayer(moved.isEmpty() ? ItemStack.EMPTY : moved);
         slot.onTake(player, moved);
         return original;

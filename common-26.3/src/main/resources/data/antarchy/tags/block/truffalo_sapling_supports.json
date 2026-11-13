@@ -9,6 +9,7 @@
     "minecraft:farmland",
     "minecraft:rooted_dirt",
     "minecraft:moss_block",
-    "antarchy:blush_moss_block"
+    "antarchy:blush_moss_block",
+    "antarchy:primordial_moss_block"
   ]
 }

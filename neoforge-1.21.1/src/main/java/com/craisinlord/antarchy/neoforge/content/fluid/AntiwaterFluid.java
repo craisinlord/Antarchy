@@ -8,8 +8,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -112,7 +114,7 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
             return this.getFlowing(bestNeighborAmount - 1, false);
         }
 
-        return net.minecraft.world.level.material.Fluids.EMPTY.defaultFluidState();
+        return Fluids.EMPTY.defaultFluidState();
     }
 
     @Override
@@ -122,7 +124,7 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
         }
 
         if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
-            level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             this.scheduleCleanup(level, pos);
             return;
         }
@@ -150,7 +152,7 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
     @Override
     public void tick(Level level, BlockPos pos, FluidState state) {
         if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
-            level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             this.scheduleDependentCleanup(level, pos);
             return;
         }
@@ -389,7 +391,7 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
         }
 
         @Override
-        protected void createFluidStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<Fluid, FluidState> builder) {
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }

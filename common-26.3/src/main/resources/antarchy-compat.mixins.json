@@ -1,0 +1,18 @@
+{
+  "required": false,
+  "package": "com.craisinlord.antarchy.mixins",
+  "plugin": "com.craisinlord.antarchy.mixins.AntarchyMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ThoraxisBubbleParticlesMixin"
+  ],
+  "client": [
+    "client.PrimordialGrassSodiumMeshingMixin",
+    "compat.stellarview.StellarViewLunaDirectionMixin",
+    "compat.jei.JeiFloppyDiskModGroupMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "minVersion": "0.8"
+}

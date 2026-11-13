@@ -1,11 +1,11 @@
 package com.craisinlord.antarchy.mixins;
 
-import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

@@ -1,11 +1,10 @@
 package com.craisinlord.antarchy.fabric.client;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.mojang.blaze3d.platform.InputConstants;
-import org.lwjgl.glfw.GLFW;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import org.lwjgl.glfw.GLFW;
 
 public final class AntarchyKeyBindings {
     public static final String CATEGORY = "key.categories.antarchy";

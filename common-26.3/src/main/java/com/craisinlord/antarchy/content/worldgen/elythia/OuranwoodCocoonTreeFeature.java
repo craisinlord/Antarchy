@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,12 +20,9 @@ public class OuranwoodCocoonTreeFeature extends OuranwoodTreeFeature {
         return CODEC;
     }
 
-
     @Override
-    public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        if (!super.place(level, chunkGenerator, random, origin)) return false;
-        placeGuaranteedCocoon(level, origin, this.config(), random);
-        return true;
+    protected void afterTreePlaced(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random) {
+        placeGuaranteedCocoon(level, origin, config, random);
     }
 
     private void placeGuaranteedCocoon(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random) {

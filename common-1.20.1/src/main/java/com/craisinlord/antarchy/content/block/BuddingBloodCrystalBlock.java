@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -11,8 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-
-import java.util.function.Supplier;
 
 public class BuddingBloodCrystalBlock extends Block {
     private static final Direction[] DIRECTIONS = Direction.values();
@@ -81,4 +80,3 @@ public class BuddingBloodCrystalBlock extends Block {
         return state.is(block) && state.hasProperty(AmethystClusterBlock.FACING) && state.getValue(AmethystClusterBlock.FACING) == direction;
     }
 }
-

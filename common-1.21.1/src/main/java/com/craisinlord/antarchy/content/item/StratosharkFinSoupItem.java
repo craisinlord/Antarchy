@@ -1,13 +1,12 @@
 package com.craisinlord.antarchy.content.item;
 
+import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-
-import java.util.List;
 
 public class StratosharkFinSoupItem extends Item {
     public StratosharkFinSoupItem(Properties properties) {

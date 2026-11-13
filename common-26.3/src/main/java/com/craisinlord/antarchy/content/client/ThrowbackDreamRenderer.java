@@ -4,16 +4,15 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.mixins.client.PostChainAccessor;
 import com.craisinlord.antarchy.mixins.client.PostPassUniformAccessor;
 import com.mojang.renderpearl.api.buffers.GpuBuffer;
+import java.nio.ByteOrder;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-
-import java.nio.ByteOrder;
-import java.util.List;
-import java.util.Map;
 
 public final class ThrowbackDreamRenderer {
     private static final Identifier DREAM_EFFECT = Identifier.fromNamespaceAndPath("antarchy", "throwback_dream");

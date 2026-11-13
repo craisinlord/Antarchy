@@ -1,13 +1,18 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
-import net.minecraft.nbt.CompoundTag;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.function.IntFunction;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -31,7 +37,6 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -51,13 +56,9 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.Locale;
-import java.util.Objects;
-import java.util.function.IntFunction;
 
 public class JerryEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> STAGE =
@@ -97,7 +98,7 @@ public class JerryEntity extends Monster implements GeoEntity {
                 .add(Attributes.FLYING_SPEED, 0.45D);
     }
 
-    public static boolean canSpawn(EntityType<JerryEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, net.minecraft.core.BlockPos pos, net.minecraft.util.RandomSource random) {
+    public static boolean canSpawn(EntityType<JerryEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
@@ -124,7 +125,7 @@ public class JerryEntity extends Monster implements GeoEntity {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag dataTag) {
         if (spawnReason == MobSpawnType.SPAWN_EGG) {
             this.setStage(this.random.nextBoolean() ? Stage.ALPHA : Stage.GAMMA);
         }
@@ -349,7 +350,7 @@ public class JerryEntity extends Monster implements GeoEntity {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(BuiltInRegistries.ITEM.get(new ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "jerry_nucleus")))) {
+        if (stack.is(BuiltInRegistries.ITEM.get(new ResourceLocation(Antarchy.MODID, "jerry_nucleus")))) {
             if (!this.level().isClientSide) {
                 Stage nextStage = this.nextGrowthStage();
                 if (nextStage != this.getStage()) {
@@ -436,7 +437,7 @@ public class JerryEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    protected void checkFallDamage(double y, boolean onGround, BlockState state, net.minecraft.core.BlockPos pos) {
+    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
     }
 
     @Override

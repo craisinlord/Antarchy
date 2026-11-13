@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.Codec;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -13,9 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class ThoraxisBloodCrystalFeature extends Feature<ThoraxisBloodCrystalConfiguration> {
     private static final int SURFACE_SEARCH_RANGE = 32;

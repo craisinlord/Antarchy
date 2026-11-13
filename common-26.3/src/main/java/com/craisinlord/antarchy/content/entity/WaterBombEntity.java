@@ -5,41 +5,40 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import com.mojang.serialization.Codec;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
-import com.mojang.serialization.Codec;
 
 public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, GlimmerEcho {
 
@@ -120,11 +119,17 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, G
     @Override
     protected void onHitEntity(EntityHitResult result) {
         Entity entity = result.getEntity();
-        if (entity == this.getOwner()) return;
-        if (!(entity instanceof LivingEntity living)) return;
+        if (entity == this.getOwner()) {
+            return;
+        }
+        if (!(entity instanceof LivingEntity living)) {
+            return;
+        }
 
         UUID id = entity.getUUID();
-        if (this.hitCooldowns.getOrDefault(id, 0) > 0) return;
+        if (this.hitCooldowns.getOrDefault(id, 0) > 0) {
+            return;
+        }
 
         float damage = (float) AntarchySettings.waterBombDamage() * (this.isHuge() ? 3.0F : 1.0F)
                 * GlimmerEchoes.damageMultiplier(this.getOwner());
@@ -191,8 +196,8 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, G
         }
 
         double horizontal = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
-        this.setYRot((float) (net.minecraft.util.Mth.atan2(motion.z, motion.x) * (180.0D / Math.PI)) - 90.0F);
-        this.setXRot((float) (-(net.minecraft.util.Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI))));
+        this.setYRot((float) (Mth.atan2(motion.z, motion.x) * (180.0D / Math.PI)) - 90.0F);
+        this.setXRot((float) (-(Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI))));
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -58,7 +60,7 @@ public class AntimetalPoweredRailBlock extends AbstractAntimetalRailBlock {
     }
 
     @Override
-    public BlockState rotate(BlockState state, net.minecraft.world.level.block.Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return switch (rotation) {
             case CLOCKWISE_180 -> switch (state.getValue(SHAPE)) {
                 case NORTH_SOUTH -> state.setValue(SHAPE, RailShape.NORTH_SOUTH);
@@ -92,7 +94,7 @@ public class AntimetalPoweredRailBlock extends AbstractAntimetalRailBlock {
     }
 
     @Override
-    public BlockState mirror(BlockState state, net.minecraft.world.level.block.Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         RailShape shape = state.getValue(SHAPE);
         return switch (mirror) {
             case LEFT_RIGHT -> switch (shape) {

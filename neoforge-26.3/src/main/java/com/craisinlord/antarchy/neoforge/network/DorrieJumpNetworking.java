@@ -25,16 +25,24 @@ public final class DorrieJumpNetworking {
 
     private static void handleJumpInput(DorrieJumpInputPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player() instanceof ServerPlayer player)) return;
-            if (!(player.getVehicle() instanceof DorrieEntity dorrie)) return;
+            if (!(context.player() instanceof ServerPlayer player)) {
+                return;
+            }
+            if (!(player.getVehicle() instanceof DorrieEntity dorrie)) {
+                return;
+            }
             dorrie.setPressingJump(payload.pressing());
         });
     }
 
     private static void handleChargeInput(DorrieChargeJumpPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player() instanceof ServerPlayer player)) return;
-            if (!(player.getVehicle() instanceof DorrieEntity dorrie)) return;
+            if (!(context.player() instanceof ServerPlayer player)) {
+                return;
+            }
+            if (!(player.getVehicle() instanceof DorrieEntity dorrie)) {
+                return;
+            }
             if (payload.pressing()) {
                 dorrie.startJumpCharge();
             } else {

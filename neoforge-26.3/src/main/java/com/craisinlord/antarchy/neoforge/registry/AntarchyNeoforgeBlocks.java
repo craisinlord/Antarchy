@@ -4,26 +4,33 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.FossilBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.QueenTrailSpawnMarkerBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
-import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
-import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.UnderVaultBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.VortexLensBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
+import com.craisinlord.antarchy.content.fluid.AntiwaterLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
-import com.craisinlord.antarchy.neoforge.content.block.WildCornBlock;
+import com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeGrowers;
 import com.craisinlord.antarchy.neoforge.AntarchyWoodTypes;
+import com.craisinlord.antarchy.neoforge.content.block.WildCornBlock;
+import java.util.List;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -31,18 +38,16 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.ItemAbility;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -104,26 +109,26 @@ public final class AntarchyNeoforgeBlocks {
             id -> new MilkweedBlock(copyOf(id, Blocks.PEONY)));
     public static final DeferredBlock<GlimmeringReedBlock> GLIMMERING_REED = BLOCKS.register("glimmering_reed",
             id -> new GlimmeringReedBlock(copyOf(id, Blocks.SUNFLOWER).lightLevel(state -> 8)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.CamelliaBlock> CAMELLIA = BLOCKS.register("camellia",
-            id -> new com.craisinlord.antarchy.content.block.CamelliaBlock(copyOf(id, Blocks.PEONY)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.SpiderLilyBlock> SPIDER_LILY = BLOCKS.register("spider_lily",
-            id -> new com.craisinlord.antarchy.content.block.SpiderLilyBlock(copyOf(id, Blocks.POPPY)));
+    public static final DeferredBlock<CamelliaBlock> CAMELLIA = BLOCKS.register("camellia",
+            id -> new CamelliaBlock(copyOf(id, Blocks.PEONY)));
+    public static final DeferredBlock<SpiderLilyBlock> SPIDER_LILY = BLOCKS.register("spider_lily",
+            id -> new SpiderLilyBlock(copyOf(id, Blocks.POPPY)));
     public static final DeferredBlock<FlowerPotBlock> POTTED_SPIDER_LILY = BLOCKS.register("potted_spider_lily",
             id -> new FlowerPotBlock(SPIDER_LILY.get(), copyOf(id, Blocks.POTTED_DANDELION)));
     public static final DeferredBlock<GiantLilyPadBlock> GIANT_LILY_PAD = BLOCKS.register("giant_lily_pad",
             id -> new GiantLilyPadBlock(copyOf(id, Blocks.LILY_PAD)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.LotusBlock> LOTUS = BLOCKS.register("lotus",
-            id -> new com.craisinlord.antarchy.content.block.LotusBlock(copyOf(id, Blocks.SPORE_BLOSSOM)));
+    public static final DeferredBlock<LotusBlock> LOTUS = BLOCKS.register("lotus",
+            id -> new LotusBlock(copyOf(id, Blocks.SPORE_BLOSSOM)));
     public static final DeferredBlock<FlowerPotBlock> POTTED_LOTUS = BLOCKS.register("potted_lotus",
             id -> new FlowerPotBlock(LOTUS.get(), copyOf(id, Blocks.POTTED_DANDELION)));
     public static final DeferredBlock<SeashellBlock> SEASHELL = BLOCKS.register("seashell",
             id -> new SeashellBlock(copyOf(id, Blocks.TURTLE_EGG).noOcclusion()));
     public static final DeferredBlock<LucidAnchorBlock> LUCID_ANCHOR = BLOCKS.register("lucid_anchor",
             id -> new LucidAnchorBlock(copyOf(id, Blocks.BEACON).strength(3.0F)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FossilBlock> MYRMITE_FOSSIL = BLOCKS.register("myrmite_fossil", id -> new com.craisinlord.antarchy.content.block.FossilBlock(nyxiteProperties(id)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FossilBlock> BROODSTONE_FOSSIL = BLOCKS.register("broodstone_fossil", id -> new com.craisinlord.antarchy.content.block.FossilBlock(broodstoneProperties(id)));
+    public static final DeferredBlock<FossilBlock> MYRMITE_FOSSIL = BLOCKS.register("myrmite_fossil", id -> new FossilBlock(nyxiteProperties(id)));
+    public static final DeferredBlock<FossilBlock> BROODSTONE_FOSSIL = BLOCKS.register("broodstone_fossil", id -> new FossilBlock(broodstoneProperties(id)));
     public static final DeferredBlock<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
-            id -> new CritterCageBlock(propertiesOf(id).strength(5.0F, 6.0F).sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion()));
+            id -> new CritterCageBlock(propertiesOf(id).strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<PortalGunPortalMasterBlock> PORTAL_GUN_PORTAL_MASTER = BLOCKS.register("portal_gun_portal_master",
             id -> new PortalGunPortalMasterBlock(AntarchyNeoforgeBlocks::portalGunPortalMasterBlockEntityType, portalProperties(id)));
     public static final DeferredBlock<PortalGunPortalBaseBlock> PORTAL_GUN_PORTAL_BASE = BLOCKS.register("portal_gun_portal_base",
@@ -131,11 +136,11 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<DimensionalTearMarkerBlock> DIMENSIONAL_TEAR_MARKER = BLOCKS.register("dimensional_tear_marker",
             id -> new DimensionalTearMarkerBlock(AntarchyNeoforgeBlocks::dimensionalTearMarkerBlockEntityType,
                     propertiesOf(id).noCollision().noOcclusion().noLootTable().instabreak()
-                            .pushReaction(net.minecraft.world.level.material.PushReaction.POPPED)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.RemembranceTorchBlock> REMEMBRANCE_TORCH = BLOCKS.register("remembrance_torch",
-            id -> new com.craisinlord.antarchy.content.block.RemembranceTorchBlock(copyOf(id, Blocks.TORCH)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock> REMEMBRANCE_WALL_TORCH = BLOCKS.register("remembrance_wall_torch",
-            id -> new com.craisinlord.antarchy.content.block.RemembranceWallTorchBlock(copyOf(id, Blocks.WALL_TORCH).overrideLootTable(REMEMBRANCE_TORCH.get().getLootTable())));
+                            .pushReaction(PushReaction.POPPED)));
+    public static final DeferredBlock<RemembranceTorchBlock> REMEMBRANCE_TORCH = BLOCKS.register("remembrance_torch",
+            id -> new RemembranceTorchBlock(copyOf(id, Blocks.TORCH)));
+    public static final DeferredBlock<RemembranceWallTorchBlock> REMEMBRANCE_WALL_TORCH = BLOCKS.register("remembrance_wall_torch",
+            id -> new RemembranceWallTorchBlock(copyOf(id, Blocks.WALL_TORCH).overrideLootTable(REMEMBRANCE_TORCH.get().getLootTable())));
     public static final DeferredBlock<StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
             id -> new StandingSignBlock(AntarchyWoodTypes.OURANWOOD, copyOf(id, Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> OURANWOOD_WALL_SIGN = BLOCKS.register("ouranwood_wall_sign",
@@ -174,8 +179,8 @@ public final class AntarchyNeoforgeBlocks {
             id -> new PeachLeavesBlock(copyOf(id, Blocks.JUNGLE_LEAVES).randomTicks()));
     public static final DeferredBlock<HangingPeachBlock> PEACH_HANGING_PEACH = BLOCKS.register("hanging_peach",
             id -> new HangingPeachBlock(propertiesOf(id).noOcclusion().instabreak()));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.PeachSaplingBlock> PEACH_SAPLING = BLOCKS.register("peach_sapling",
-            id -> new com.craisinlord.antarchy.content.block.PeachSaplingBlock(copyOf(id, Blocks.OAK_SAPLING).randomTicks().noCollision()));
+    public static final DeferredBlock<PeachSaplingBlock> PEACH_SAPLING = BLOCKS.register("peach_sapling",
+            id -> new PeachSaplingBlock(copyOf(id, Blocks.OAK_SAPLING).randomTicks().noCollision()));
     public static final DeferredBlock<FlowerPotBlock> POTTED_PEACH_SAPLING = BLOCKS.register("potted_peach_sapling",
             id -> new FlowerPotBlock(PEACH_SAPLING.get(), copyOf(id, Blocks.POTTED_DANDELION)));
     public static final DeferredBlock<StandingSignBlock> PEACH_SIGN = BLOCKS.register("peach_sign",
@@ -212,8 +217,8 @@ public final class AntarchyNeoforgeBlocks {
             id -> new PressurePlateBlock(BlockSetType.JUNGLE, copyOf(id, Blocks.JUNGLE_PRESSURE_PLATE)));
     public static final DeferredBlock<ButtonBlock> NADIR_BUTTON = BLOCKS.register("nadir_button",
             id -> new ButtonBlock(BlockSetType.JUNGLE, 30, copyOf(id, Blocks.JUNGLE_BUTTON)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.NadirVeilBlock> NADIR_VEIL = BLOCKS.register("nadir_veil",
-            id -> new com.craisinlord.antarchy.content.block.NadirVeilBlock(copyOf(id, Blocks.JUNGLE_LEAVES).sound(SoundType.SLIME_BLOCK).noOcclusion()));
+    public static final DeferredBlock<NadirVeilBlock> NADIR_VEIL = BLOCKS.register("nadir_veil",
+            id -> new NadirVeilBlock(copyOf(id, Blocks.JUNGLE_LEAVES).sound(SoundType.SLIME_BLOCK).noOcclusion()));
     public static final DeferredBlock<NadirSaplingBlock> NADIR_SAPLING = BLOCKS.register("nadir_sapling",
             id -> new NadirSaplingBlock(copyOf(id, Blocks.OAK_SAPLING).randomTicks().noCollision()));
     public static final DeferredBlock<FlowerPotBlock> POTTED_NADIR_SAPLING = BLOCKS.register("potted_nadir_sapling",
@@ -372,8 +377,8 @@ public final class AntarchyNeoforgeBlocks {
             id -> new SlabBlock(nyxiteProperties(id)));
     public static final DeferredBlock<WallBlock> POLISHED_NYXITE_WALL = BLOCKS.register("polished_nyxite_wall",
             id -> new WallBlock(nyxiteProperties(id)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.PolishedNyxitePressurePlateBlock> POLISHED_NYXITE_PRESSURE_PLATE = BLOCKS.register("polished_nyxite_pressure_plate",
-            id -> new com.craisinlord.antarchy.content.block.PolishedNyxitePressurePlateBlock(BlockSetType.STONE, copyOf(id, Blocks.STONE_PRESSURE_PLATE)));
+    public static final DeferredBlock<PolishedNyxitePressurePlateBlock> POLISHED_NYXITE_PRESSURE_PLATE = BLOCKS.register("polished_nyxite_pressure_plate",
+            id -> new PolishedNyxitePressurePlateBlock(BlockSetType.STONE, copyOf(id, Blocks.STONE_PRESSURE_PLATE)));
     public static final DeferredBlock<ButtonBlock> POLISHED_NYXITE_BUTTON = BLOCKS.register("polished_nyxite_button",
             id -> new ButtonBlock(BlockSetType.STONE, 20, copyOf(id, Blocks.STONE_BUTTON)));
     public static final DeferredBlock<StairBlock> NYXITE_BRICK_STAIRS = BLOCKS.register("nyxite_brick_stairs",
@@ -428,10 +433,10 @@ public final class AntarchyNeoforgeBlocks {
             id -> new WallBlock(AntarchyObjects.shellstoneProperties().setId(blockKey(id))));
     public static final DeferredBlock<RotatedPillarBlock> SHELLSTONE_PILLAR = BLOCKS.register("shellstone_pillar",
             id -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties().setId(blockKey(id))));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FlytrapGooBlock> FLYTRAP_GOO_BLOCK = BLOCKS.register("flytrap_goo_block",
-            id -> new com.craisinlord.antarchy.content.block.FlytrapGooBlock(copyOf(id, Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p, b) -> false).isSuffocating((s, l, p) -> false)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
-            id -> new com.craisinlord.antarchy.content.block.CloudBlock(
+    public static final DeferredBlock<FlytrapGooBlock> FLYTRAP_GOO_BLOCK = BLOCKS.register("flytrap_goo_block",
+            id -> new FlytrapGooBlock(copyOf(id, Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p, b) -> false).isSuffocating((s, l, p) -> false)));
+    public static final DeferredBlock<CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
+            id -> new CloudBlock(
                     AntarchyNeoforgeItems::cloudBucketItem,
                     copyOf(id, Blocks.POWDER_SNOW).noLootTable().noOcclusion().emissiveRendering(state -> true)
             ));
@@ -544,8 +549,8 @@ public final class AntarchyNeoforgeBlocks {
             id -> createOre(id, Blocks.IRON_ORE, 0, 0, MapColor.RAW_IRON));
     public static final DeferredBlock<Block> MYRMITE_GOLD_ORE = BLOCKS.register("myrmite_gold_ore",
             id -> createOre(id, Blocks.GOLD_ORE, 0, 0, MapColor.GOLD));
-    public static final DeferredBlock<net.minecraft.world.level.block.RedStoneOreBlock> MYRMITE_REDSTONE_ORE = BLOCKS.register("myrmite_redstone_ore",
-            id -> new net.minecraft.world.level.block.RedStoneOreBlock(copyOf(id, Blocks.REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<RedStoneOreBlock> MYRMITE_REDSTONE_ORE = BLOCKS.register("myrmite_redstone_ore",
+            id -> new RedStoneOreBlock(copyOf(id, Blocks.REDSTONE_ORE).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> MYRMITE_LAPIS_ORE = BLOCKS.register("myrmite_lapis_ore",
             id -> createOre(id, Blocks.LAPIS_ORE, 2, 5, MapColor.LAPIS));
     public static final DeferredBlock<Block> MYRMITE_DIAMOND_ORE = BLOCKS.register("myrmite_diamond_ore",
@@ -558,8 +563,8 @@ public final class AntarchyNeoforgeBlocks {
             id -> createOre(id, Blocks.DEEPSLATE_IRON_ORE, 0, 0, MapColor.RAW_IRON));
     public static final DeferredBlock<Block> BROODSTONE_GOLD_ORE = BLOCKS.register("broodstone_gold_ore",
             id -> createOre(id, Blocks.DEEPSLATE_GOLD_ORE, 0, 0, MapColor.GOLD));
-    public static final DeferredBlock<net.minecraft.world.level.block.RedStoneOreBlock> BROODSTONE_REDSTONE_ORE = BLOCKS.register("broodstone_redstone_ore",
-            id -> new net.minecraft.world.level.block.RedStoneOreBlock(copyOf(id, Blocks.DEEPSLATE_REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<RedStoneOreBlock> BROODSTONE_REDSTONE_ORE = BLOCKS.register("broodstone_redstone_ore",
+            id -> new RedStoneOreBlock(copyOf(id, Blocks.DEEPSLATE_REDSTONE_ORE).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> BROODSTONE_LAPIS_ORE = BLOCKS.register("broodstone_lapis_ore",
             id -> createOre(id, Blocks.DEEPSLATE_LAPIS_ORE, 2, 5, MapColor.LAPIS));
     public static final DeferredBlock<Block> BROODSTONE_DIAMOND_ORE = BLOCKS.register("broodstone_diamond_ore",
@@ -590,8 +595,8 @@ public final class AntarchyNeoforgeBlocks {
             id -> new DreamTorchBlock(copyOf(id, Blocks.SOUL_TORCH)));
     public static final DeferredBlock<DreamWallTorchBlock> DREAM_WALL_TORCH = BLOCKS.register("dream_wall_torch",
             id -> new DreamWallTorchBlock(copyOf(id, Blocks.SOUL_WALL_TORCH).overrideLootTable(DREAM_TORCH.get().getLootTable())));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
-            id -> new com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock(copyOf(id, Blocks.SOUL_TORCH)));
+    public static final DeferredBlock<DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
+            id -> new DreamCeilingTorchBlock(copyOf(id, Blocks.SOUL_TORCH)));
     public static final DeferredBlock<LanternBlock> DREAM_LANTERN = BLOCKS.register("dream_lantern",
             id -> new LanternBlock(copyOf(id, Blocks.SOUL_LANTERN)));
     public static final DeferredBlock<DreamCampfireBlock> DREAM_CAMPFIRE = BLOCKS.register("dream_campfire",
@@ -610,10 +615,10 @@ public final class AntarchyNeoforgeBlocks {
                     .replaceable()));
     public static final DeferredBlock<CrawlingBlightEggBlock> CRAWLING_BLIGHT_EGG = BLOCKS.register("crawling_blight_egg",
             id -> new CrawlingBlightEggBlock(copyOf(id, Blocks.TURTLE_EGG)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrinceEggBlock> PRINCE_EGG = BLOCKS.register("prince_egg",
-            id -> new com.craisinlord.antarchy.content.block.PrinceEggBlock(copyOf(id, Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrincessEggBlock> PRINCESS_EGG = BLOCKS.register("princess_egg",
-            id -> new com.craisinlord.antarchy.content.block.PrincessEggBlock(copyOf(id, Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
+    public static final DeferredBlock<PrinceEggBlock> PRINCE_EGG = BLOCKS.register("prince_egg",
+            id -> new PrinceEggBlock(copyOf(id, Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
+    public static final DeferredBlock<PrincessEggBlock> PRINCESS_EGG = BLOCKS.register("princess_egg",
+            id -> new PrincessEggBlock(copyOf(id, Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
     public static final DeferredBlock<SpringbugEggBlock> SPRINGBUG_EGG = BLOCKS.register("springbug_egg",
             id -> new SpringbugEggBlock(copyOf(id, Blocks.TURTLE_EGG)));
     public static final DeferredBlock<SpitBugEggBlock> SPIT_BUG_EGG = BLOCKS.register("spit_bug_egg",
@@ -632,7 +637,7 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<Block> ROCKITE_GOLD_ORE = BLOCKS.register("rockite_gold_ore",
             id -> createOre(id, Blocks.GOLD_ORE, 0, 0, MapColor.COLOR_GRAY));
     public static final DeferredBlock<Block> ROCKITE_REDSTONE_ORE = BLOCKS.register("rockite_redstone_ore",
-            id -> new net.minecraft.world.level.block.RedStoneOreBlock(copyOf(id, Blocks.REDSTONE_ORE).mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops()));
+            id -> new RedStoneOreBlock(copyOf(id, Blocks.REDSTONE_ORE).mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> ROCKITE_LAPIS_ORE = BLOCKS.register("rockite_lapis_ore",
             id -> createOre(id, Blocks.LAPIS_ORE, 2, 5, MapColor.COLOR_GRAY));
     public static final DeferredBlock<Block> ROCKITE_DIAMOND_ORE = BLOCKS.register("rockite_diamond_ore",
@@ -775,10 +780,10 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     }
     public static final DeferredBlock<WaspNestBlock> WASP_NEST = BLOCKS.register("wasp_nest",
             id -> new WaspNestBlock(AntarchyNeoforgeItems::waspNestBlockEntityType, copyOf(id, Blocks.BEE_NEST)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock> OURANWOOD_SQUIRREL_NEST = BLOCKS.register("ouranwood_squirrel_nest",
-            id -> new com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock(copyOf(id, Blocks.COARSE_DIRT).noLootTable()));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.BrutalflyCocoonSpawnerBlock> BRUTALFLY_COCOON_SPAWNER = BLOCKS.register("brutalfly_cocoon_spawner",
-            id -> new com.craisinlord.antarchy.content.block.BrutalflyCocoonSpawnerBlock(propertiesOf(id).noCollision().instabreak().noLootTable()));
+    public static final DeferredBlock<OuranwoodSquirrelNestBlock> OURANWOOD_SQUIRREL_NEST = BLOCKS.register("ouranwood_squirrel_nest",
+            id -> new OuranwoodSquirrelNestBlock(copyOf(id, Blocks.COARSE_DIRT).noLootTable()));
+    public static final DeferredBlock<BrutalflyCocoonSpawnerBlock> BRUTALFLY_COCOON_SPAWNER = BLOCKS.register("brutalfly_cocoon_spawner",
+            id -> new BrutalflyCocoonSpawnerBlock(propertiesOf(id).noCollision().instabreak().noLootTable()));
     public static final DeferredBlock<HushweedBlock> HUSHWEED = BLOCKS.register("hushweed",
             id -> new HushweedBlock(copyOf(id, Blocks.AZALEA).noCollision().noOcclusion()));
     public static final DeferredBlock<HangingCreeprootsBlock> HANGING_CREEPROOTS = BLOCKS.register("hanging_creeproots",
@@ -790,7 +795,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<LiquidBlock> ICHOR_BLOCK = BLOCKS.register("ichor",
             id -> new LiquidBlock((FlowingFluid) AntarchyNeoforgeMisc.ICHOR.get(), copyOf(id, Blocks.WATER).noLootTable()));
     public static final DeferredBlock<LiquidBlock> ANTIWATER_BLOCK = BLOCKS.register("antiwater",
-            id -> new com.craisinlord.antarchy.content.fluid.AntiwaterLiquidBlock((FlowingFluid) AntarchyNeoforgeMisc.ANTIWATER.get(),
+            id -> new AntiwaterLiquidBlock((FlowingFluid) AntarchyNeoforgeMisc.ANTIWATER.get(),
                     copyOf(id, Blocks.WATER).noLootTable()));
     public static final DeferredBlock<LiquidBlock> LUMEN_BLOCK = BLOCKS.register("lumen",
             id -> new LumenLiquidBlock((FlowingFluid) AntarchyNeoforgeMisc.LUMEN.get(),
@@ -813,9 +818,9 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<AntNestBlock> TERMITE_NEST = BLOCKS.register("termite_nest",
             id -> new AntNestBlock(AntarchyNeoforgeEntities.TERMITE, AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.DIRT).noLootTable()));
 
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntTrapBlock> ANT_TRAP = BLOCKS.register("ant_trap",
-            id -> new com.craisinlord.antarchy.content.block.AntTrapBlock(
-                    () -> java.util.List.of(AntarchyNeoforgeEntities.RED_ANT.get(), AntarchyNeoforgeEntities.BROWN_ANT.get(), AntarchyNeoforgeEntities.RAINBOW_ANT.get(), AntarchyNeoforgeEntities.TERMITE.get()),
+    public static final DeferredBlock<AntTrapBlock> ANT_TRAP = BLOCKS.register("ant_trap",
+            id -> new AntTrapBlock(
+                    () -> List.of(AntarchyNeoforgeEntities.RED_ANT.get(), AntarchyNeoforgeEntities.BROWN_ANT.get(), AntarchyNeoforgeEntities.RAINBOW_ANT.get(), AntarchyNeoforgeEntities.TERMITE.get()),
                     AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.OAK_PRESSURE_PLATE).noOcclusion()));
     public static final DeferredBlock<Block> URANIUM_ORE = BLOCKS.register("uranium_ore",
             id -> createOre(id, Blocks.EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
@@ -896,30 +901,30 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
             id -> new StairBlock(POLISHED_ANTIMETAL.get().defaultBlockState(), copyOf(id, Blocks.POLISHED_BASALT).sound(antimetalSoundType())));
     public static final DeferredBlock<SlabBlock> POLISHED_ANTIMETAL_SLAB = BLOCKS.register("polished_antimetal_slab",
             id -> new SlabBlock(copyOf(id, Blocks.POLISHED_BASALT).sound(antimetalSoundType())));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock> ANTIMETAL_SCAFFOLDING = BLOCKS.register("antimetal_scaffolding",
-            id -> new com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock(copyOf(id, Blocks.SCAFFOLDING).sound(antimetalScaffoldingSoundType())));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalRailBlock> ANTIMETAL_RAIL = BLOCKS.register("antimetal_rail",
-            id -> new com.craisinlord.antarchy.content.block.AntimetalRailBlock(copyOf(id, Blocks.RAIL)));
+    public static final DeferredBlock<AntimetalScaffoldingBlock> ANTIMETAL_SCAFFOLDING = BLOCKS.register("antimetal_scaffolding",
+            id -> new AntimetalScaffoldingBlock(copyOf(id, Blocks.SCAFFOLDING).sound(antimetalScaffoldingSoundType())));
+    public static final DeferredBlock<AntimetalRailBlock> ANTIMETAL_RAIL = BLOCKS.register("antimetal_rail",
+            id -> new AntimetalRailBlock(copyOf(id, Blocks.RAIL)));
     public static final DeferredBlock<UpperBlock> UPPER = BLOCKS.register("upper",
             id -> new UpperBlock(AntarchyNeoforgeBlocks::upperBlockEntityType, copyOf(id, Blocks.HOPPER)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalPoweredRailBlock> ANTIMETAL_POWERED_RAIL = BLOCKS.register("antimetal_powered_rail",
-            id -> new com.craisinlord.antarchy.content.block.AntimetalPoweredRailBlock(copyOf(id, Blocks.POWERED_RAIL)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalDetectorRailBlock> ANTIMETAL_DETECTOR_RAIL = BLOCKS.register("antimetal_detector_rail",
-            id -> new com.craisinlord.antarchy.content.block.AntimetalDetectorRailBlock(copyOf(id, Blocks.DETECTOR_RAIL)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalActivatorRailBlock> ANTIMETAL_ACTIVATOR_RAIL = BLOCKS.register("antimetal_activator_rail",
-            id -> new com.craisinlord.antarchy.content.block.AntimetalActivatorRailBlock(copyOf(id, Blocks.ACTIVATOR_RAIL)));
+    public static final DeferredBlock<AntimetalPoweredRailBlock> ANTIMETAL_POWERED_RAIL = BLOCKS.register("antimetal_powered_rail",
+            id -> new AntimetalPoweredRailBlock(copyOf(id, Blocks.POWERED_RAIL)));
+    public static final DeferredBlock<AntimetalDetectorRailBlock> ANTIMETAL_DETECTOR_RAIL = BLOCKS.register("antimetal_detector_rail",
+            id -> new AntimetalDetectorRailBlock(copyOf(id, Blocks.DETECTOR_RAIL)));
+    public static final DeferredBlock<AntimetalActivatorRailBlock> ANTIMETAL_ACTIVATOR_RAIL = BLOCKS.register("antimetal_activator_rail",
+            id -> new AntimetalActivatorRailBlock(copyOf(id, Blocks.ACTIVATOR_RAIL)));
     public static final DeferredBlock<CorneaStalkBlock> CORNEA_STALK = BLOCKS.register("cornea_stalk",
             id -> new CorneaStalkBlock(copyOf(id, Blocks.SWEET_BERRY_BUSH).randomTicks()));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.GlowcapMushroomBlock> GLOWCAP_MUSHROOM = BLOCKS.register("glowcap_mushroom",
-            id -> new com.craisinlord.antarchy.content.block.GlowcapMushroomBlock(copyOf(id, Blocks.RED_MUSHROOM).lightLevel(state -> 12).randomTicks()));
+    public static final DeferredBlock<GlowcapMushroomBlock> GLOWCAP_MUSHROOM = BLOCKS.register("glowcap_mushroom",
+            id -> new GlowcapMushroomBlock(copyOf(id, Blocks.RED_MUSHROOM).lightLevel(state -> 12).randomTicks()));
     public static final DeferredBlock<FlowerPotBlock> POTTED_GLOWCAP_MUSHROOM = BLOCKS.register("potted_glowcap_mushroom",
             id -> new FlowerPotBlock(GLOWCAP_MUSHROOM.get(), copyOf(id, Blocks.POTTED_DANDELION).lightLevel(state -> 12)));
-    public static final DeferredBlock<net.minecraft.world.level.block.HugeMushroomBlock> GLOWCAP_MUSHROOM_BLOCK = BLOCKS.register("glowcap_mushroom_block",
-            id -> new net.minecraft.world.level.block.HugeMushroomBlock(copyOf(id, Blocks.RED_MUSHROOM_BLOCK).lightLevel(state -> 13)));
+    public static final DeferredBlock<HugeMushroomBlock> GLOWCAP_MUSHROOM_BLOCK = BLOCKS.register("glowcap_mushroom_block",
+            id -> new HugeMushroomBlock(copyOf(id, Blocks.RED_MUSHROOM_BLOCK).lightLevel(state -> 13)));
     public static final DeferredBlock<CornCropBlock> CORN_CROP = BLOCKS.register("corn_crop",
-            id -> new CornCropBlock(copyOf(id, Blocks.WHEAT).mapColor(net.minecraft.world.level.material.MapColor.PLANT).randomTicks().noCollision().noOcclusion()));
+            id -> new CornCropBlock(copyOf(id, Blocks.WHEAT).mapColor(MapColor.PLANT).randomTicks().noCollision().noOcclusion()));
     public static final DeferredBlock<WildCornBlock> WILD_CORN = BLOCKS.register("wild_corn",
-            id -> new WildCornBlock(copyOf(id, Blocks.WHEAT).mapColor(net.minecraft.world.level.material.MapColor.PLANT).noCollision().noOcclusion()));
+            id -> new WildCornBlock(copyOf(id, Blocks.WHEAT).mapColor(MapColor.PLANT).noCollision().noOcclusion()));
     public static final DeferredBlock<Block> FALLEN_KING_CROWN = BLOCKS.register("fallen_king_crown",
             id -> new Block(propertiesOf(id)
                     .strength(0.2F)
@@ -1041,24 +1046,24 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
             id -> new DirectionalThoraxisFlowerBlock(copyOf(id, Blocks.WARPED_ROOTS)));
     public static final DeferredBlock<Block> DEAD_STAR_CORAL_BLOCK = BLOCKS.register("dead_star_coral_block",
             id -> new Block(copyOf(id, Blocks.TUBE_CORAL_BLOCK)));
-    public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralPlantBlock> DEAD_STAR_CORAL = BLOCKS.register("dead_star_coral",
-            id -> new net.minecraft.world.level.block.BaseCoralPlantBlock(copyOf(id, Blocks.TUBE_CORAL)));
-    public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralFanBlock> DEAD_STAR_CORAL_FAN = BLOCKS.register("dead_star_coral_fan",
-            id -> new net.minecraft.world.level.block.BaseCoralFanBlock(copyOf(id, Blocks.TUBE_CORAL_FAN)));
-    public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralWallFanBlock> DEAD_STAR_CORAL_WALL_FAN = BLOCKS.register("dead_star_coral_wall_fan",
-            id -> new net.minecraft.world.level.block.BaseCoralWallFanBlock(copyOf(id, Blocks.TUBE_CORAL_WALL_FAN).overrideLootTable(DEAD_STAR_CORAL_FAN.get().getLootTable())));
+    public static final DeferredBlock<BaseCoralPlantBlock> DEAD_STAR_CORAL = BLOCKS.register("dead_star_coral",
+            id -> new BaseCoralPlantBlock(copyOf(id, Blocks.TUBE_CORAL)));
+    public static final DeferredBlock<BaseCoralFanBlock> DEAD_STAR_CORAL_FAN = BLOCKS.register("dead_star_coral_fan",
+            id -> new BaseCoralFanBlock(copyOf(id, Blocks.TUBE_CORAL_FAN)));
+    public static final DeferredBlock<BaseCoralWallFanBlock> DEAD_STAR_CORAL_WALL_FAN = BLOCKS.register("dead_star_coral_wall_fan",
+            id -> new BaseCoralWallFanBlock(copyOf(id, Blocks.TUBE_CORAL_WALL_FAN).overrideLootTable(DEAD_STAR_CORAL_FAN.get().getLootTable())));
     public static final DeferredBlock<Block> STAR_CORAL_BLOCK = BLOCKS.register("star_coral_block",
-            id -> new com.craisinlord.antarchy.content.block.StarCoralBlock(DEAD_STAR_CORAL_BLOCK.get(), copyOf(id, Blocks.TUBE_CORAL_BLOCK).lightLevel(state -> 8)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralPlantBlock> STAR_CORAL = BLOCKS.register("star_coral",
-            id -> new com.craisinlord.antarchy.content.block.StarCoralPlantBlock(DEAD_STAR_CORAL.get(), copyOf(id, Blocks.TUBE_CORAL).lightLevel(state -> 8)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralFanBlock> STAR_CORAL_FAN = BLOCKS.register("star_coral_fan",
-            id -> new com.craisinlord.antarchy.content.block.StarCoralFanBlock(DEAD_STAR_CORAL_FAN.get(), copyOf(id, Blocks.TUBE_CORAL_FAN).lightLevel(state -> 8)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
-            id -> new com.craisinlord.antarchy.content.block.StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), copyOf(id, Blocks.TUBE_CORAL_WALL_FAN).overrideLootTable(STAR_CORAL_FAN.get().getLootTable()).lightLevel(state -> 8)));
+            id -> new StarCoralBlock(DEAD_STAR_CORAL_BLOCK.get(), copyOf(id, Blocks.TUBE_CORAL_BLOCK).lightLevel(state -> 8)));
+    public static final DeferredBlock<StarCoralPlantBlock> STAR_CORAL = BLOCKS.register("star_coral",
+            id -> new StarCoralPlantBlock(DEAD_STAR_CORAL.get(), copyOf(id, Blocks.TUBE_CORAL).lightLevel(state -> 8)));
+    public static final DeferredBlock<StarCoralFanBlock> STAR_CORAL_FAN = BLOCKS.register("star_coral_fan",
+            id -> new StarCoralFanBlock(DEAD_STAR_CORAL_FAN.get(), copyOf(id, Blocks.TUBE_CORAL_FAN).lightLevel(state -> 8)));
+    public static final DeferredBlock<StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
+            id -> new StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), copyOf(id, Blocks.TUBE_CORAL_WALL_FAN).overrideLootTable(STAR_CORAL_FAN.get().getLootTable()).lightLevel(state -> 8)));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("royal_egg",
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("royal_egg",
             () -> new BlockEntityType<>(
-                    com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity::new,
+                    RoyalEggBlockEntity::new,
                     PRINCE_EGG.get(),
                     PRINCESS_EGG.get()
             ));
@@ -1101,15 +1106,15 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
                     LucidAnchorBlockEntity::new,
                     LUCID_ANCHOR.get()
             ));
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fossil", () -> new BlockEntityType<>(com.craisinlord.antarchy.content.block.entity.FossilBlockEntity::new, MYRMITE_FOSSIL.get(), BROODSTONE_FOSSIL.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fossil", () -> new BlockEntityType<>(FossilBlockEntity::new, MYRMITE_FOSSIL.get(), BROODSTONE_FOSSIL.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CritterCageBlockEntity>> CRITTER_CAGE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("critter_cage_block",
             () -> new BlockEntityType<>(
                     CritterCageBlockEntity::new,
                     CRITTER_CAGE_BLOCK.get()
             ));
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity>> BLUESTONE_COMPARATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bluestone_comparator",
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BluestoneComparatorBlockEntity>> BLUESTONE_COMPARATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bluestone_comparator",
             () -> new BlockEntityType<>(
-                    (pos, state) -> new com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity(pos, state, AntarchyNeoforgeBlocks::bluestoneComparatorBlockEntityType),
+                    (pos, state) -> new BluestoneComparatorBlockEntity(pos, state, AntarchyNeoforgeBlocks::bluestoneComparatorBlockEntityType),
                     BLUESTONE_COMPARATOR.get()
             ));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UpperBlockEntity>> UPPER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("upper",
@@ -1137,8 +1142,8 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
                     (pos, state) -> new DimensionalTearMarkerBlockEntity(pos, state, AntarchyNeoforgeBlocks::dimensionalTearMarkerBlockEntityType),
                     DIMENSIONAL_TEAR_MARKER.get()
             ));
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity>> REMEMBRANCE_TORCH_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("remembrance_torch",
-            () -> new BlockEntityType<>(com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity::new,
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RemembranceTorchBlockEntity>> REMEMBRANCE_TORCH_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("remembrance_torch",
+            () -> new BlockEntityType<>(RemembranceTorchBlockEntity::new,
                     REMEMBRANCE_TORCH.get(), REMEMBRANCE_WALL_TORCH.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QueenTrailSpawnMarkerBlockEntity>> QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("queen_trail_spawn_marker",
             () -> new BlockEntityType<>(
@@ -1163,7 +1168,6 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     static BlockBehaviour.Properties copyOf(Identifier id, BlockBehaviour block) {
         return BlockBehaviour.Properties.ofFullCopy(block).setId(blockKey(id));
     }
-
 
     private static BlockEntityType<UndertrialSpawnerBlockEntity> undertrialSpawnerBlockEntityType() {
         return UNDERTRIAL_SPAWNER_BLOCK_ENTITY.get();
@@ -1222,7 +1226,6 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
                 SoundType.MUD.getFallSound());
     }
 
-
     private static SoundType antimetalSoundType() {
         return new SoundType(1.0F, 1.0F,
                 AntarchyNeoforgeSounds.ANTIMETAL_PLACE.get(),
@@ -1253,7 +1256,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
         return BLOOD_CRYSTAL_CRYSTAL.get();
     }
 
-    private static BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
+    private static BlockEntityType<BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
         return BLUESTONE_COMPARATOR_BLOCK_ENTITY.get();
     }
 
@@ -1308,8 +1311,8 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
             return state.rotate(mirror.getRotation(state.getValue(FACING)));
         }
     }
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.CranberryLeavesBlock> CRANBERRY_LEAVES = BLOCKS.register("cranberry_leaves", id -> new com.craisinlord.antarchy.content.block.CranberryLeavesBlock(copyOf(id, Blocks.JUNGLE_LEAVES)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.JelliedCranberryBlock> JELLIED_CRANBERRY_BLOCK = BLOCKS.register("jellied_cranberry_block", id -> new com.craisinlord.antarchy.content.block.JelliedCranberryBlock(copyOf(id, Blocks.HONEY_BLOCK).mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED).noOcclusion().isViewBlocking((s, l, p, b) -> false).isSuffocating((s, l, p) -> false)));
+    public static final DeferredBlock<CranberryLeavesBlock> CRANBERRY_LEAVES = BLOCKS.register("cranberry_leaves", id -> new CranberryLeavesBlock(copyOf(id, Blocks.JUNGLE_LEAVES)));
+    public static final DeferredBlock<JelliedCranberryBlock> JELLIED_CRANBERRY_BLOCK = BLOCKS.register("jellied_cranberry_block", id -> new JelliedCranberryBlock(copyOf(id, Blocks.HONEY_BLOCK).mapColor(MapColor.COLOR_RED).noOcclusion().isViewBlocking((s, l, p, b) -> false).isSuffocating((s, l, p) -> false)));
     public static final DeferredBlock<RotatedPillarBlock> CRANBERRY_LOG = BLOCKS.register("cranberry_log",
             id -> new RotatedPillarBlock(copyOf(id, Blocks.JUNGLE_LOG)));
 
@@ -1325,34 +1328,34 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<Block> CRANBERRY_PLANKS = BLOCKS.register("cranberry_planks",
             id -> new Block(copyOf(id, Blocks.JUNGLE_PLANKS)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> CRANBERRY_STAIRS = BLOCKS.register("cranberry_stairs",
-            id -> new net.minecraft.world.level.block.StairBlock(CRANBERRY_PLANKS.get().defaultBlockState(), copyOf(id, Blocks.JUNGLE_STAIRS)));
+    public static final DeferredBlock<StairBlock> CRANBERRY_STAIRS = BLOCKS.register("cranberry_stairs",
+            id -> new StairBlock(CRANBERRY_PLANKS.get().defaultBlockState(), copyOf(id, Blocks.JUNGLE_STAIRS)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> CRANBERRY_SLAB = BLOCKS.register("cranberry_slab",
-            id -> new net.minecraft.world.level.block.SlabBlock(copyOf(id, Blocks.JUNGLE_SLAB)));
+    public static final DeferredBlock<SlabBlock> CRANBERRY_SLAB = BLOCKS.register("cranberry_slab",
+            id -> new SlabBlock(copyOf(id, Blocks.JUNGLE_SLAB)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.FenceBlock> CRANBERRY_FENCE = BLOCKS.register("cranberry_fence",
-            id -> new net.minecraft.world.level.block.FenceBlock(copyOf(id, Blocks.JUNGLE_FENCE)));
+    public static final DeferredBlock<FenceBlock> CRANBERRY_FENCE = BLOCKS.register("cranberry_fence",
+            id -> new FenceBlock(copyOf(id, Blocks.JUNGLE_FENCE)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.FenceGateBlock> CRANBERRY_FENCE_GATE = BLOCKS.register("cranberry_fence_gate",
-            id -> new net.minecraft.world.level.block.FenceGateBlock(net.minecraft.world.level.block.state.properties.WoodType.JUNGLE, copyOf(id, Blocks.JUNGLE_FENCE_GATE)));
+    public static final DeferredBlock<FenceGateBlock> CRANBERRY_FENCE_GATE = BLOCKS.register("cranberry_fence_gate",
+            id -> new FenceGateBlock(WoodType.JUNGLE, copyOf(id, Blocks.JUNGLE_FENCE_GATE)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.DoorBlock> CRANBERRY_DOOR = BLOCKS.register("cranberry_door",
-            id -> new net.minecraft.world.level.block.DoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE, copyOf(id, Blocks.JUNGLE_DOOR)));
+    public static final DeferredBlock<DoorBlock> CRANBERRY_DOOR = BLOCKS.register("cranberry_door",
+            id -> new DoorBlock(BlockSetType.JUNGLE, copyOf(id, Blocks.JUNGLE_DOOR)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.TrapDoorBlock> CRANBERRY_TRAPDOOR = BLOCKS.register("cranberry_trapdoor",
-            id -> new net.minecraft.world.level.block.TrapDoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE, copyOf(id, Blocks.JUNGLE_TRAPDOOR)));
+    public static final DeferredBlock<TrapDoorBlock> CRANBERRY_TRAPDOOR = BLOCKS.register("cranberry_trapdoor",
+            id -> new TrapDoorBlock(BlockSetType.JUNGLE, copyOf(id, Blocks.JUNGLE_TRAPDOOR)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.PressurePlateBlock> CRANBERRY_PRESSURE_PLATE = BLOCKS.register("cranberry_pressure_plate",
-            id -> new net.minecraft.world.level.block.PressurePlateBlock(net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE, copyOf(id, Blocks.JUNGLE_PRESSURE_PLATE)));
+    public static final DeferredBlock<PressurePlateBlock> CRANBERRY_PRESSURE_PLATE = BLOCKS.register("cranberry_pressure_plate",
+            id -> new PressurePlateBlock(BlockSetType.JUNGLE, copyOf(id, Blocks.JUNGLE_PRESSURE_PLATE)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.ButtonBlock> CRANBERRY_BUTTON = BLOCKS.register("cranberry_button",
-            id -> new net.minecraft.world.level.block.ButtonBlock(net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE, 30, copyOf(id, Blocks.JUNGLE_BUTTON)));
+    public static final DeferredBlock<ButtonBlock> CRANBERRY_BUTTON = BLOCKS.register("cranberry_button",
+            id -> new ButtonBlock(BlockSetType.JUNGLE, 30, copyOf(id, Blocks.JUNGLE_BUTTON)));
 
-    public static final DeferredBlock<net.minecraft.world.level.block.SaplingBlock> CRANBERRY_SAPLING = BLOCKS.register("cranberry_sapling", id -> new net.minecraft.world.level.block.SaplingBlock(com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeGrowers.CRANBERRY, copyOf(id, Blocks.OAK_SAPLING)));
+    public static final DeferredBlock<SaplingBlock> CRANBERRY_SAPLING = BLOCKS.register("cranberry_sapling", id -> new SaplingBlock(CranberryTreeGrowers.CRANBERRY, copyOf(id, Blocks.OAK_SAPLING)));
 
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrimordialGrassBlock> PRIMORDIAL_GRASS = BLOCKS.register("primordial_grass", id -> new com.craisinlord.antarchy.content.block.PrimordialGrassBlock(copyOf(id, Blocks.SHORT_GRASS)));
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrimordialMossBlock> PRIMORDIAL_MOSS_BLOCK = BLOCKS.register("primordial_moss_block", id -> new com.craisinlord.antarchy.content.block.PrimordialMossBlock(copyOf(id, Blocks.MOSS_BLOCK)));
-    public static final DeferredBlock<net.minecraft.world.level.block.CarpetBlock> PRIMORDIAL_MOSS_CARPET = BLOCKS.register("primordial_moss_carpet", id -> new net.minecraft.world.level.block.CarpetBlock(copyOf(id, Blocks.MOSS_CARPET)));
-    public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_PRIMORDIAL_GRASS = BLOCKS.register("potted_primordial_grass", id -> new net.minecraft.world.level.block.FlowerPotBlock(PRIMORDIAL_GRASS.get(), copyOf(id, Blocks.POTTED_DANDELION)));
+    public static final DeferredBlock<PrimordialGrassBlock> PRIMORDIAL_GRASS = BLOCKS.register("primordial_grass", id -> new PrimordialGrassBlock(copyOf(id, Blocks.SHORT_GRASS)));
+    public static final DeferredBlock<PrimordialMossBlock> PRIMORDIAL_MOSS_BLOCK = BLOCKS.register("primordial_moss_block", id -> new PrimordialMossBlock(copyOf(id, Blocks.MOSS_BLOCK)));
+    public static final DeferredBlock<CarpetBlock> PRIMORDIAL_MOSS_CARPET = BLOCKS.register("primordial_moss_carpet", id -> new CarpetBlock(copyOf(id, Blocks.MOSS_CARPET)));
+    public static final DeferredBlock<FlowerPotBlock> POTTED_PRIMORDIAL_GRASS = BLOCKS.register("potted_primordial_grass", id -> new FlowerPotBlock(PRIMORDIAL_GRASS.get(), copyOf(id, Blocks.POTTED_DANDELION)));
 }

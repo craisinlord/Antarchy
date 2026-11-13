@@ -1,23 +1,22 @@
 package com.craisinlord.antarchy.content.item;
 
-import java.util.function.Consumer;
-import net.minecraft.world.item.component.TooltipDisplay;
-import net.minecraft.world.InteractionResult;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
-
-import java.util.function.Supplier;
 
 public class LucidPearlItem extends Item {
 

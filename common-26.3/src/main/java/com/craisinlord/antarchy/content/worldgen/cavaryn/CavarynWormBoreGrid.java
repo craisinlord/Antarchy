@@ -12,17 +12,17 @@ public final class CavarynWormBoreGrid {
     public static final int CELL_SIZE = 160;
     private static final int CELL_REACH = 4;
     private static final int MAX_CACHED_CELLS = 16384;
-    private static final double MIN_Y = 26.0;
-    private static final double MAX_Y = 150.0;
-    private static final double START_MIN_Y = 36.0;
-    private static final double START_MAX_Y = 92.0;
-    private static final double RIB_SPACING = 5.5;
-    private static final double RIB_DEPTH = 0.9;
-    private static final double RIB_HALF_WIDTH = 0.12;
-    private static final double SWELL_PERIOD = 40.0;
-    private static final double SWELL_AMOUNT = 0.1;
-    private static final double MAX_RADIUS = 12.5;
-    private static final double FAR_DISTANCE = 3.0;
+    private static final double MIN_Y = 26.0D;
+    private static final double MAX_Y = 150.0D;
+    private static final double START_MIN_Y = 36.0D;
+    private static final double START_MAX_Y = 92.0D;
+    private static final double RIB_SPACING = 5.5D;
+    private static final double RIB_DEPTH = 0.9D;
+    private static final double RIB_HALF_WIDTH = 0.12D;
+    private static final double SWELL_PERIOD = 40.0D;
+    private static final double SWELL_AMOUNT = 0.1D;
+    private static final double MAX_RADIUS = 12.5D;
+    private static final double FAR_DISTANCE = 3.0D;
     private static final Segment[] NO_SEGMENTS = new Segment[0];
 
     private static final Map<Long, WeakReference<CavarynWormBoreGrid>> BY_SALT = new ConcurrentHashMap<>();
@@ -92,10 +92,10 @@ public final class CavarynWormBoreGrid {
     }
 
     private Segment[] collectChunk(int chunkX, int chunkZ) {
-        double minX = chunkX * 16.0;
-        double minZ = chunkZ * 16.0;
-        double maxX = minX + 16.0;
-        double maxZ = minZ + 16.0;
+        double minX = chunkX * 16.0D;
+        double minZ = chunkZ * 16.0D;
+        double maxX = minX + 16.0D;
+        double maxZ = minZ + 16.0D;
         int cellX = Math.floorDiv(chunkX * 16, CELL_SIZE);
         int cellZ = Math.floorDiv(chunkZ * 16, CELL_SIZE);
         List<Segment> found = new ArrayList<>();
@@ -135,8 +135,8 @@ public final class CavarynWormBoreGrid {
         for (int i = 0; i < count; i++) {
             double[] start = null;
             for (int attempt = 0; attempt < 4 && start == null; attempt++) {
-                double sx = cellX * (double) CELL_SIZE + 16.0 + random.nextDouble() * (CELL_SIZE - 32.0);
-                double sz = cellZ * (double) CELL_SIZE + 16.0 + random.nextDouble() * (CELL_SIZE - 32.0);
+                double sx = cellX * (double) CELL_SIZE + 16.0D + random.nextDouble() * (CELL_SIZE - 32.0D);
+                double sz = cellZ * (double) CELL_SIZE + 16.0D + random.nextDouble() * (CELL_SIZE - 32.0D);
                 double sy = START_MIN_Y + random.nextDouble() * (START_MAX_Y - START_MIN_Y);
                 if (this.startFilter.accepts(sx, sy, sz)) {
                     start = new double[]{sx, sy, sz};
@@ -151,15 +151,15 @@ public final class CavarynWormBoreGrid {
 
     private static Path walk(XoroshiroRandomSource random, double x, double y, double z) {
         int segmentCount = 24 + random.nextInt(11);
-        double baseRadius = 6.5 + random.nextDouble() * 2.0;
-        double yaw = random.nextDouble() * Math.PI * 2.0;
-        double pitch = (random.nextDouble() - 0.5) * 0.3;
-        double phase = random.nextDouble() * Math.PI * 2.0;
+        double baseRadius = 6.5D + random.nextDouble() * 2.0D;
+        double yaw = random.nextDouble() * Math.PI * 2.0D;
+        double pitch = (random.nextDouble() - 0.5D) * 0.3D;
+        double phase = random.nextDouble() * Math.PI * 2.0D;
         int coilStart = random.nextFloat() < 0.28F ? 4 + random.nextInt(Math.max(1, segmentCount - 8)) : -1;
         int coilLength = 10;
-        double coilTurn = random.nextBoolean() ? 0.62 : -0.62;
+        double coilTurn = random.nextBoolean() ? 0.62D : -0.62D;
         List<Segment> segments = new ArrayList<>(segmentCount + coilLength);
-        double distance = 0.0;
+        double distance = 0.0D;
         int total = coilStart >= 0 ? segmentCount + coilLength : segmentCount;
         for (int i = 0; i < total; i++) {
             boolean coiling = coilStart >= 0 && i >= coilStart && i < coilStart + coilLength;
@@ -167,18 +167,18 @@ public final class CavarynWormBoreGrid {
             double radius = baseRadius;
             if (coiling) {
                 yaw += coilTurn;
-                pitch = -0.12;
-                length = 9.0;
-                radius += 2.5;
+                pitch = -0.12D;
+                length = 9.0D;
+                radius += 2.5D;
             } else {
-                yaw += random.nextGaussian() * 0.28;
-                pitch = Mth.clamp(pitch * 0.75 + random.nextGaussian() * 0.1, -0.32, 0.32);
-                length = 10.0 + random.nextDouble() * 5.0;
+                yaw += random.nextGaussian() * 0.28D;
+                pitch = Mth.clamp(pitch * 0.75D + random.nextGaussian() * 0.1D, -0.32D, 0.32D);
+                length = 10.0D + random.nextDouble() * 5.0D;
             }
-            if (y < MIN_Y + 6.0) {
-                pitch = Math.abs(pitch) + 0.05;
-            } else if (y > MAX_Y - 6.0) {
-                pitch = -Math.abs(pitch) - 0.05;
+            if (y < MIN_Y + 6.0D) {
+                pitch = Math.abs(pitch) + 0.05D;
+            } else if (y > MAX_Y - 6.0D) {
+                pitch = -Math.abs(pitch) - 0.05D;
             }
             double horizontal = Math.cos(pitch) * length;
             double nx = x + Math.cos(yaw) * horizontal;
@@ -237,10 +237,10 @@ public final class CavarynWormBoreGrid {
             if (this.segments.length < source.length) {
                 this.segments = new Segment[source.length];
             }
-            double minX = qx * 4.0;
-            double minZ = qz * 4.0;
-            double maxX = minX + 4.0;
-            double maxZ = minZ + 4.0;
+            double minX = qx * 4.0D;
+            double minZ = qz * 4.0D;
+            double maxX = minX + 4.0D;
+            double maxZ = minZ + 4.0D;
             int found = 0;
             double minY = Double.MAX_VALUE;
             double maxY = -Double.MAX_VALUE;
@@ -277,13 +277,13 @@ public final class CavarynWormBoreGrid {
 
         @Override
         public double signedDistance(int x, int y, int z, double floor) {
-            double py = y + 0.5;
+            double py = y + 0.5D;
             if (py < this.minY || py > this.maxY) {
                 return Double.MAX_VALUE;
             }
             double best = Double.MAX_VALUE;
-            double px = x + 0.5;
-            double pz = z + 0.5;
+            double px = x + 0.5D;
+            double pz = z + 0.5D;
             Segment[] current = this.segments;
             for (int i = 0; i < this.count; i++) {
                 Segment segment = current[i];
@@ -360,8 +360,8 @@ public final class CavarynWormBoreGrid {
             this.start = start;
             this.radius = radius;
             this.phase = phase;
-            this.outerRadius = Math.min(MAX_RADIUS, radius * (1.0 + SWELL_AMOUNT));
-            double reach = this.outerRadius + 2.5;
+            this.outerRadius = Math.min(MAX_RADIUS, radius * (1.0D + SWELL_AMOUNT));
+            double reach = this.outerRadius + 2.5D;
             this.minX = Math.min(ax, bx) - reach;
             this.maxX = Math.max(ax, bx) + reach;
             this.minY = Math.min(ay, by) - reach;
@@ -374,7 +374,7 @@ public final class CavarynWormBoreGrid {
             double rx = px - this.ax;
             double ry = py - this.ay;
             double rz = pz - this.az;
-            double t = this.lengthSq > 0.0 ? Mth.clamp((rx * this.dx + ry * this.dy + rz * this.dz) / this.lengthSq, 0.0, 1.0) : 0.0;
+            double t = this.lengthSq > 0.0D ? Mth.clamp((rx * this.dx + ry * this.dy + rz * this.dz) / this.lengthSq, 0.0D, 1.0D) : 0.0D;
             double cx = rx - this.dx * t;
             double cy = ry - this.dy * t;
             double cz = rz - this.dz * t;
@@ -384,10 +384,10 @@ public final class CavarynWormBoreGrid {
                 return outside;
             }
             double along = this.start + this.length * t;
-            double swell = 1.0 + SWELL_AMOUNT * Math.sin(along * (Math.PI * 2.0 / SWELL_PERIOD) + this.phase);
+            double swell = 1.0D + SWELL_AMOUNT * Math.sin(along * (Math.PI * 2.0D / SWELL_PERIOD) + this.phase);
             double ribPhase = along / RIB_SPACING;
-            double ribOffset = Math.abs(ribPhase - Math.floor(ribPhase) - 0.5);
-            double rib = Math.max(0.0, 1.0 - (0.5 - ribOffset) / RIB_HALF_WIDTH);
+            double ribOffset = Math.abs(ribPhase - Math.floor(ribPhase) - 0.5D);
+            double rib = Math.max(0.0D, 1.0D - (0.5D - ribOffset) / RIB_HALF_WIDTH);
             double radius = Math.min(MAX_RADIUS, this.radius * swell) - RIB_DEPTH * rib;
             return distance - radius;
         }

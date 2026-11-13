@@ -5,12 +5,12 @@ import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem;
 import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
 import com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.TickEvent;
-import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class BigBerthaClientHandler {
@@ -21,7 +21,9 @@ public final class BigBerthaClientHandler {
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || mc.screen != null) {
             lastUseDown = false;

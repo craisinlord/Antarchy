@@ -1,16 +1,16 @@
 package com.craisinlord.antarchy.fabric.mixin.client;
 
+import com.craisinlord.antarchy.content.item.AnvilCannonItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
-import com.craisinlord.antarchy.content.item.AnvilCannonItem;
 import com.craisinlord.antarchy.content.item.RpoLauncherItem;
 import com.craisinlord.antarchy.content.item.SizeRayItem;
 import com.craisinlord.antarchy.content.item.SquidzookaItem;
 import com.craisinlord.antarchy.content.item.WaterCannonItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
-import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

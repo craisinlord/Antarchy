@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.block.entity.undertrial;
 
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -8,8 +9,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
-
-import java.util.function.Supplier;
 
 public final class UndertrialSounds {
     public static final Entry TRIAL_SPAWNER_SPAWN_MOB = new Entry("block.trial_spawner.spawn_mob", () -> SoundEvents.FIRECHARGE_USE);

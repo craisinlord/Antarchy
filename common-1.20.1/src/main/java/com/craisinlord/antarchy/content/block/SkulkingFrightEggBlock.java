@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
 import com.craisinlord.antarchy.content.block.AmberMossBlock;
 import com.craisinlord.antarchy.content.block.CrawlingBlightEggBlock;
+import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,8 +13,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameRules;
@@ -123,7 +125,7 @@ public class SkulkingFrightEggBlock extends Block {
     }
 
     @Override
-    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity, net.minecraft.world.item.ItemStack stack) {
+    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack stack) {
         super.playerDestroy(level, player, pos, state, blockEntity, stack);
         this.decreaseEggs(level, pos, state);
     }
@@ -134,7 +136,9 @@ public class SkulkingFrightEggBlock extends Block {
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -radius; dy <= radius; dy++) {
                 for (int dz = -radius; dz <= radius; dz++) {
-                    if (dx == 0 && dy == 0 && dz == 0) continue;
+                    if (dx == 0 && dy == 0 && dz == 0) {
+                        continue;
+                    }
                     mutable.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
                     BlockState nearby = level.getBlockState(mutable);
                     BlockPos immutable = mutable.immutable();
@@ -236,7 +240,7 @@ public class SkulkingFrightEggBlock extends Block {
         if (entity instanceof SkulkingFrightEntity || entity instanceof Bat) {
             return false;
         }
-        if (entity instanceof net.minecraft.world.entity.LivingEntity) {
+        if (entity instanceof LivingEntity) {
             return entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
         }
         return false;

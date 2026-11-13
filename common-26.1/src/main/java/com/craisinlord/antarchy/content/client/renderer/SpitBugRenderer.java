@@ -2,9 +2,9 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.SpitBugModel;
 import com.craisinlord.antarchy.content.entity.SpitBugEntity;
+import com.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import com.geckolib.renderer.GeoEntityRenderer;
 
 public class SpitBugRenderer extends GeoEntityRenderer<SpitBugEntity, LivingEntityRenderState> {
     public SpitBugRenderer(EntityRendererProvider.Context context) {

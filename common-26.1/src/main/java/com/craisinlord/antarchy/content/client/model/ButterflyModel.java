@@ -2,10 +2,10 @@ package com.craisinlord.antarchy.content.client.model;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.ButterflyEntity;
-import net.minecraft.resources.Identifier;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class ButterflyModel extends GeoModel<ButterflyEntity> {
     public static final DataTicket<String> TEXTURE_VARIANT = DataTicket.create("antarchy_butterfly_texture_variant", String.class);

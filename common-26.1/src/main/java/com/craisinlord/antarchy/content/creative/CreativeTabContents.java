@@ -1,19 +1,20 @@
 package com.craisinlord.antarchy.content.creative;
 
-import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GiantFryingPanToolHelper;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
+import com.craisinlord.antos.content.AntOSObjects;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,11 +24,9 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.ItemLike;
 
 public final class CreativeTabContents {
-    private static final String MODID = "antarchy";
-
     private CreativeTabContents() {}
 
-    private record CatalogEntry(String path, String neoTabPath, String insertAfterPath) {}
+    public record CatalogEntry(String path, String neoTabPath, String insertAfterPath) {}
 
     public interface AntarchyTabOutput {
         void accept(ItemLike item);
@@ -779,8 +778,8 @@ public final class CreativeTabContents {
         }
         for (String diskId : List.of("antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
                 "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:brutalfly", "antarchy:rainbow_ant", "antarchy:kraken", "antarchy:cavaryn", "antarchy:hercules_beetle", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex", "antarchy:basilisk_game", "antarchy:glimmer", "antarchy:king", "antarchy:queen", "antarchy:trayaurus_lab_notes")) {
-            ItemStack disk = new ItemStack(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK.get());
-            disk.set(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK_COMPONENT.get(), Identifier.parse(diskId));
+            ItemStack disk = new ItemStack(AntOSObjects.FLOPPY_DISK.get());
+            disk.set(AntOSObjects.FLOPPY_DISK_COMPONENT.get(), Identifier.parse(diskId));
             output.accept(disk);
         }
     }
@@ -873,7 +872,7 @@ public final class CreativeTabContents {
     }
 
     private static Item item(String path) {
-        return BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(MODID, path));
+        return BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(Antarchy.MODID, path));
     }
 
     private static Item vanillaItem(String path) {
@@ -881,7 +880,7 @@ public final class CreativeTabContents {
     }
 
     private static Holder<Potion> potion(String path) {
-        Potion potion = BuiltInRegistries.POTION.getValue(Identifier.fromNamespaceAndPath(MODID, path));
+        Potion potion = BuiltInRegistries.POTION.getValue(Identifier.fromNamespaceAndPath(Antarchy.MODID, path));
         return potion == null ? null : BuiltInRegistries.POTION.wrapAsHolder(potion);
     }
 }

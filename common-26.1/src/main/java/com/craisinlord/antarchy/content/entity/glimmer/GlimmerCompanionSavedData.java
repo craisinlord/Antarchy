@@ -13,6 +13,7 @@ import java.util.UUID;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -41,7 +42,7 @@ public class GlimmerCompanionSavedData extends SavedData {
         RETIRED
     }
 
-    private record Companion(UUID id, @Nullable GlimmerVariant variant) {
+    public record Companion(UUID id, @Nullable GlimmerVariant variant) {
     }
 
     private final Map<UUID, Companion> companionByOwner = new HashMap<>();
@@ -53,7 +54,7 @@ public class GlimmerCompanionSavedData extends SavedData {
 
     public static GlimmerCompanionSavedData load(CompoundTag tag) {
         GlimmerCompanionSavedData data = new GlimmerCompanionSavedData();
-        for (net.minecraft.nbt.Tag rawEntry : tag.getListOrEmpty(ENTRIES_KEY)) {
+        for (Tag rawEntry : tag.getListOrEmpty(ENTRIES_KEY)) {
             if (!(rawEntry instanceof CompoundTag entryTag)) {
                 continue;
             }
@@ -64,7 +65,7 @@ public class GlimmerCompanionSavedData extends SavedData {
                 data.companionByOwner.put(owner.get(), new Companion(companion.get(), variant));
             }
         }
-        for (net.minecraft.nbt.Tag rawEntry : tag.getListOrEmpty(RETIRED_KEY)) {
+        for (Tag rawEntry : tag.getListOrEmpty(RETIRED_KEY)) {
             if (rawEntry instanceof CompoundTag entryTag) {
                 entryTag.read(COMPANION_KEY, UUIDUtil.CODEC).ifPresent(data.retired::add);
             }

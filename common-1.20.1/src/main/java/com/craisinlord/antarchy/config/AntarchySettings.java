@@ -1,5 +1,9 @@
 package com.craisinlord.antarchy.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -28,7 +32,7 @@ public final class AntarchySettings {
     private static boolean fossilsEnabled = true;
     private static final String DEFAULT_FOSSIL_ENTITY_BLACKLIST = "minecraft:ender_dragon,minecraft:wither,minecraft:elder_guardian,minecraft:warden,antarchy:alpha_mantis,antarchy:brutalfly,antarchy:emperor_scorpion,antarchy:hercules_beetle,antarchy:kraken,antarchy:toreterror,antarchy:king,antarchy:queen,antarchy:prince,antarchy:princess";
     private static String fossilEntityBlacklist = DEFAULT_FOSSIL_ENTITY_BLACKLIST;
-    private static java.util.List<String> fossilEntityBlacklistEntries = parseEntryList(DEFAULT_FOSSIL_ENTITY_BLACKLIST);
+    private static List<String> fossilEntityBlacklistEntries = parseEntryList(DEFAULT_FOSSIL_ENTITY_BLACKLIST);
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
     private static boolean boatsClimbWaterSteps = true;
@@ -702,13 +706,13 @@ public final class AntarchySettings {
     private static double bossMagicWardReductionFraction = 0.5D;
     private static int bossMagicWardDurationTicks = 60;
     private static int bossMagicWardTriggerBreaches = 2;
-    private static java.util.List<String> magicBurstDamageNamespaces = new java.util.ArrayList<>(java.util.List.of("irons_spellbooks"));
+    private static List<String> magicBurstDamageNamespaces = new ArrayList<>(List.of("irons_spellbooks"));
 
     private AntarchySettings() {
     }
 
     private static ResourceKey<Level> dimensionKey(String id) {
-        return ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, new ResourceLocation(id));
+        return ResourceKey.create(Registries.DIMENSION, new ResourceLocation(id));
     }
 
     public static boolean disableInfinityBookPortalCreation() {
@@ -792,7 +796,7 @@ public final class AntarchySettings {
         return fossilEntityBlacklist;
     }
 
-    public static java.util.List<String> fossilEntityBlacklistEntries() {
+    public static List<String> fossilEntityBlacklistEntries() {
         return fossilEntityBlacklistEntries;
     }
 
@@ -1513,15 +1517,15 @@ public final class AntarchySettings {
         fossilEntityBlacklistEntries = parseEntryList(fossilEntityBlacklist);
     }
 
-    private static java.util.List<String> parseEntryList(String value) {
-        java.util.List<String> entries = new java.util.ArrayList<>();
+    private static List<String> parseEntryList(String value) {
+        List<String> entries = new ArrayList<>();
         for (String part : value.split(",")) {
-            String entry = part.trim().toLowerCase(java.util.Locale.ROOT);
+            String entry = part.trim().toLowerCase(Locale.ROOT);
             if (!entry.isEmpty()) {
                 entries.add(entry);
             }
         }
-        return java.util.List.copyOf(entries);
+        return List.copyOf(entries);
     }
 
     public static void setGlowVinesUnderLeaves(boolean value) {
@@ -3351,7 +3355,7 @@ public final class AntarchySettings {
     public static double bossMagicWardReductionFraction() { return bossMagicWardReductionFraction; }
     public static int bossMagicWardDurationTicks() { return bossMagicWardDurationTicks; }
     public static int bossMagicWardTriggerBreaches() { return bossMagicWardTriggerBreaches; }
-    public static java.util.List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
+    public static List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
 
     private static int throwbackWildZoneMinRadius = 48;
     private static int throwbackWildZoneMaxRadius = 72;
@@ -3367,7 +3371,7 @@ public final class AntarchySettings {
     private static boolean elythiaGrassWindEnabled = true;
     private static boolean elythiaWindSoundsEnabled = true;
     private static boolean elythiaWindLinesEnabled = true;
-    private static int primordialGrassDrawDistance = 96;
+    private static int primordialGrassDrawDistance = 40;
     private static boolean primordialGrassDynamic = true;
     private static int primordialGrassQuality = 1;
     private static Runnable primordialGrassSaver = () -> {};
@@ -3390,7 +3394,7 @@ public final class AntarchySettings {
     public static boolean elythiaWindLinesEnabled() { return elythiaWindLinesEnabled; }
     public static void setElythiaWindLinesEnabled(boolean value) { elythiaWindLinesEnabled = value; }
     public static int primordialGrassDrawDistance() { return primordialGrassDrawDistance; }
-    public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(32, Math.min(512, value)); }
+    public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(16, Math.min(128, value)); }
     public static boolean primordialGrassDynamic() { return primordialGrassDynamic; }
     public static void setPrimordialGrassDynamic(boolean value) { primordialGrassDynamic = value; }
     public static int primordialGrassQuality() { return primordialGrassQuality; }

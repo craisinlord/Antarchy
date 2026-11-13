@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.glimmer;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.compat.entity.EntityReach;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import net.minecraft.network.chat.Component;
@@ -13,7 +14,6 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -38,9 +38,9 @@ public class GlimmerAntBehavior implements GlimmerVariantBehavior {
     }
 
     public static void clearReach(Player owner) {
-        AttributeInstance instance = com.craisinlord.antarchy.compat.entity.EntityReach.instance(owner);
+        AttributeInstance instance = EntityReach.instance(owner);
         if (instance != null) {
-            instance.removeModifier(com.craisinlord.antarchy.compat.entity.EntityReach.modifierId(REACH_BOOST_ID));
+            instance.removeModifier(EntityReach.modifierId(REACH_BOOST_ID));
         }
     }
 
@@ -94,9 +94,9 @@ public class GlimmerAntBehavior implements GlimmerVariantBehavior {
 
     @Override
     public void tickPassiveEveryTick(GlimmerEntity entity, Player owner) {
-        AttributeInstance instance = com.craisinlord.antarchy.compat.entity.EntityReach.instance(owner);
-        if (instance != null && instance.getModifier(com.craisinlord.antarchy.compat.entity.EntityReach.modifierId(REACH_BOOST_ID)) == null) {
-            instance.addTransientModifier(com.craisinlord.antarchy.compat.entity.EntityReach.modifier(REACH_BOOST_ID, REACH_BOOST_AMOUNT, AttributeModifier.Operation.ADDITION));
+        AttributeInstance instance = EntityReach.instance(owner);
+        if (instance != null && instance.getModifier(EntityReach.modifierId(REACH_BOOST_ID)) == null) {
+            instance.addTransientModifier(EntityReach.modifier(REACH_BOOST_ID, REACH_BOOST_AMOUNT, AttributeModifier.Operation.ADDITION));
         }
 
         int timestamp = owner.getLastHurtMobTimestamp();

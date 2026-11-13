@@ -21,7 +21,9 @@ public abstract class SectionUploadBudgetMixin {
 
     @Inject(method = "uploadAllPendingUploads", at = @At("HEAD"), cancellable = true)
     private void antarchy$budgetUploads(CallbackInfo callback) {
-        if (this.closed) return;
+        if (this.closed) {
+            return;
+        }
         SectionUploadBudget.runFrame(this.toUpload);
         callback.cancel();
     }

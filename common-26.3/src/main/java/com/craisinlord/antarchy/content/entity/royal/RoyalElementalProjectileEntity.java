@@ -1,43 +1,48 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.anthology.multipart.MultipartEntityOwner;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
 
 public class RoyalElementalProjectileEntity extends ThrowableProjectile implements GeoEntity, GlimmerEcho {
     private static final EntityDataAccessor<Integer> ATTACK_TYPE =
@@ -155,7 +160,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         if (owner != null && target == owner) {
             return false;
         }
-        if (owner instanceof com.craisinlord.anthology.multipart.MultipartEntityOwner multipart) {
+        if (owner instanceof MultipartEntityOwner multipart) {
             Entity[] parts = multipart.anthology$getMultipartParts();
             if (parts != null) {
                 for (Entity part : parts) {
@@ -229,7 +234,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         int maxY = (int) Math.floor(center.y + radius);
         int maxZ = (int) Math.floor(center.z + radius);
         var fire = dream
-                ? BuiltInRegistries.BLOCK.getOptional(net.minecraft.resources.Identifier.fromNamespaceAndPath(
+                ? BuiltInRegistries.BLOCK.getOptional(Identifier.fromNamespaceAndPath(
                         "antarchy", "dream_fire")).orElse(Blocks.FIRE)
                 : Blocks.FIRE;
         for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
@@ -251,7 +256,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
             living.hurtServer(level, source, this.getOwner() instanceof RoyalBossEntity royalBoss
                     ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 80, living.getTicksFrozen() + 180));
-            living.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.SLOWNESS, 120, 3));
+            living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 120, 3));
         }
         if (!this.isGlimmerEcho() && level.getGameRules().get(GameRules.MOB_GRIEFING)) {
             coverInIce(level, center, AntarchySettings.kingIceballRadius(), AntarchySettings.kingElementalTerrainCap());
@@ -276,22 +281,28 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         int maxY = (int) Math.floor(center.y + radius);
         int maxZ = (int) Math.floor(center.z + radius);
         for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
-            if (changed >= cap || pos.distToCenterSqr(center.x, center.y, center.z) > radius * radius) continue;
+            if (changed >= cap || pos.distToCenterSqr(center.x, center.y, center.z) > radius * radius) {
+                continue;
+            }
             BlockState existing = level.getBlockState(pos);
-            if (existing.isAir() || !existing.getFluidState().isEmpty() || existing.hasBlockEntity()) continue;
-            if (existing.getDestroySpeed(level, pos) < 0.0F || existing.getBlock().getExplosionResistance() > 80.0F) continue;
+            if (existing.isAir() || !existing.getFluidState().isEmpty() || existing.hasBlockEntity()) {
+                continue;
+            }
+            if (existing.getDestroySpeed(level, pos) < 0.0F || existing.getBlock().getExplosionResistance() > 80.0F) {
+                continue;
+            }
             BlockState frozen = pos.getY() >= center.y + 1.0D ? Blocks.SNOW_BLOCK.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState();
             if (existing != frozen && level.setBlockAndUpdate(pos, frozen)) changed++;
         }
     }
 
-    protected net.minecraft.core.particles.ParticleOptions getTrailParticle() {
+    protected ParticleOptions getTrailParticle() {
         if (this.isIceball()) {
             return ParticleTypes.SNOWFLAKE;
         }
         if (this.isDreamFireball()
-                && BuiltInRegistries.PARTICLE_TYPE.getValue(net.minecraft.resources.Identifier.fromNamespaceAndPath(
-                        "antarchy", "dream_fire_flame")) instanceof net.minecraft.core.particles.ParticleOptions dreamFlame) {
+                && BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.fromNamespaceAndPath(
+                        "antarchy", "dream_fire_flame")) instanceof ParticleOptions dreamFlame) {
             return dreamFlame;
         }
         return ParticleTypes.FLAME;

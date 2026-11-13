@@ -1,11 +1,13 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.effect.JudgmentMarkAccess;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.renderer.base.GeoRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -21,7 +23,7 @@ public final class RoyalIndicatorRenderer {
     public static final DataTicket<Boolean> JUDGED =
             DataTicket.create("antarchy_royal_indicator_judged", Boolean.class);
     private static final Identifier COMMANDED_CROWN_TEXTURE = Identifier.fromNamespaceAndPath(
-            com.craisinlord.antarchy.Antarchy.MODID, "textures/vfx/commanded_vfx_side.png");
+            Antarchy.MODID, "textures/vfx/commanded_vfx_side.png");
     private static final RenderType CROWN_RENDER_TYPE = RenderTypes.entityTranslucentEmissive(COMMANDED_CROWN_TEXTURE);
 
     private RoyalIndicatorRenderer() {
@@ -91,10 +93,10 @@ public final class RoyalIndicatorRenderer {
         float top = 0.40F;
 
         poseStack.pushPose();
-        poseStack.mulPose(com.mojang.math.Axis.YP.rotation(rotation));
+        poseStack.mulPose(Axis.YP.rotation(rotation));
         for (int side = 0; side < 4; side++) {
             poseStack.pushPose();
-            poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(side * 90.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(side * 90.0F));
             collector.submitCustomGeometry(poseStack, CROWN_RENDER_TYPE, (pose, crown) ->
                     quad(crown, pose, -halfWidth, bottom, halfWidth, top, halfWidth, packedLight));
             poseStack.popPose();

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.vortex;
 
+import java.util.function.Supplier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,8 +13,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.function.Supplier;
 
 public class VortexChargeProjectileEntity extends ThrowableItemProjectile {
     public static Supplier<Item> defaultItemSupplier;

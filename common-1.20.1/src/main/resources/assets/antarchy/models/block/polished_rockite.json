@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "antarchy:block/tinted/cube_all",
   "textures": {
     "all": "antarchy:block/polished_rockite"
   }

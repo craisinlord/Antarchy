@@ -1,14 +1,15 @@
 package com.craisinlord.antarchy.forge;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.client.renderer.AntiwaterFluidRenderer;
 import com.craisinlord.antarchy.forge.content.fluid.AntiwaterFluidType;
+import com.craisinlord.antarchy.forge.registry.DeferredRegister;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import java.util.function.Consumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -18,12 +19,9 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.registries.RegistryObject;
-import com.craisinlord.antarchy.forge.registry.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.joml.Vector3f;
-
-import java.util.function.Consumer;
 
 public final class AntarchyForgeFluidTypes {
     private static final ResourceLocation WATER_STILL = new ResourceLocation("block/water_still");
@@ -89,7 +87,7 @@ public final class AntarchyForgeFluidTypes {
                         }
 
                         @Override
-                        public void modifyFogRender(Camera camera, net.minecraft.client.renderer.FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
+                        public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
                             RenderSystem.setShaderFogStart(0.5F);
                             RenderSystem.setShaderFogEnd(Math.min(farDistance, 12.0F));
                             RenderSystem.setShaderFogShape(FogShape.CYLINDER);
@@ -146,7 +144,7 @@ public final class AntarchyForgeFluidTypes {
                         }
 
                         @Override
-                        public void modifyFogRender(Camera camera, net.minecraft.client.renderer.FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
+                        public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
                             RenderSystem.setShaderFogStart(0.25F);
                             RenderSystem.setShaderFogEnd(Math.min(farDistance, 4.0F));
                             RenderSystem.setShaderFogShape(FogShape.CYLINDER);
@@ -203,7 +201,7 @@ public final class AntarchyForgeFluidTypes {
                         }
 
                         @Override
-                        public void modifyFogRender(Camera camera, net.minecraft.client.renderer.FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
+                        public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
                             RenderSystem.setShaderFogStart(0.5F);
                             RenderSystem.setShaderFogEnd(Math.min(farDistance, 10.0F));
                             RenderSystem.setShaderFogShape(FogShape.CYLINDER);
@@ -261,7 +259,7 @@ public final class AntarchyForgeFluidTypes {
                         }
 
                         @Override
-                        public void modifyFogRender(Camera camera, net.minecraft.client.renderer.FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
+                        public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
                             RenderSystem.setShaderFogStart(0.4F);
                             RenderSystem.setShaderFogEnd(Math.min(farDistance, 12.0F));
                             RenderSystem.setShaderFogShape(FogShape.CYLINDER);

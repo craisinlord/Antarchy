@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.network;
 
 import com.craisinlord.antarchy.Antarchy;
-import io.netty.buffer.ByteBuf;
-import com.craisinlord.anthology.network.StreamCodec;
 import com.craisinlord.anthology.network.CustomPacketPayload;
+import com.craisinlord.anthology.network.StreamCodec;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 public record ActivateRoyalBoundaryPayload() implements CustomPacketPayload {

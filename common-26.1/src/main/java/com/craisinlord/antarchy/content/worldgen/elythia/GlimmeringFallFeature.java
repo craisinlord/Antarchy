@@ -162,16 +162,22 @@ public final class GlimmeringFallFeature extends Feature<NoneFeatureConfiguratio
     }
 
     private static void stain(WorldGenLevel level, RandomSource random, Bounds bounds, BlockPos pos, Direction direction, boolean outer) {
-        if (outer && random.nextFloat() >= OUTER_STAIN_CHANCE) return;
+        if (outer && random.nextFloat() >= OUTER_STAIN_CHANCE) {
+            return;
+        }
         for (int reach = 1; reach <= STAIN_REACH; reach++) {
             BlockPos wall = pos.relative(direction, -reach);
-            if (!bounds.contains(wall)) return;
+            if (!bounds.contains(wall)) {
+                return;
+            }
             BlockState state = level.getBlockState(wall);
             if (state.is(ElythiaGeologyFeature.NATURAL_STONE)) {
                 level.setBlock(wall, ElythiaPalette.TIDESTONE.get().defaultBlockState(), 2);
                 return;
             }
-            if (state.isSolid()) return;
+            if (state.isSolid()) {
+                return;
+            }
         }
     }
 
@@ -221,7 +227,9 @@ public final class GlimmeringFallFeature extends Feature<NoneFeatureConfiguratio
                     for (int y = waterline - 4; y > waterline - 4 - MAX_RIM_FOOTING; y--) {
                         pos.set(x, y, z);
                         BlockState state = level.getBlockState(pos);
-                        if (state.isSolid() || !state.getFluidState().isEmpty()) break;
+                        if (state.isSolid() || !state.getFluidState().isEmpty()) {
+                            break;
+                        }
                         level.setBlock(pos, bankState(random), 2);
                     }
                 }

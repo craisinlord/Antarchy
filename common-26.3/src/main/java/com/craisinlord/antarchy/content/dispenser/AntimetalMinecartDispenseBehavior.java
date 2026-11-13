@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.dispenser;
 
-import net.minecraft.world.entity.EntityTypes;
 import com.craisinlord.antarchy.content.block.AbstractAntimetalRailBlock;
 import com.craisinlord.antarchy.content.minecart.AntimetalRailHelper;
 import net.minecraft.core.BlockPos;
@@ -9,12 +8,14 @@ import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MinecartItem;
 import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
@@ -28,7 +29,7 @@ public final class AntimetalMinecartDispenseBehavior extends DefaultDispenseItem
             return this.fallback.dispense(source, stack);
         }
 
-        Direction direction = source.state().getValue(net.minecraft.world.level.block.DispenserBlock.FACING);
+        Direction direction = source.state().getValue(DispenserBlock.FACING);
         BlockPos frontPos = source.pos().relative(direction);
         BlockState frontState = source.level().getBlockState(frontPos);
 
@@ -108,12 +109,24 @@ public final class AntimetalMinecartDispenseBehavior extends DefaultDispenseItem
     }
 
     private static EntityType<? extends AbstractMinecart> minecartType(Item item) {
-        if (item == Items.MINECART) return EntityTypes.MINECART;
-        if (item == Items.CHEST_MINECART) return EntityTypes.CHEST_MINECART;
-        if (item == Items.FURNACE_MINECART) return EntityTypes.FURNACE_MINECART;
-        if (item == Items.TNT_MINECART) return EntityTypes.TNT_MINECART;
-        if (item == Items.HOPPER_MINECART) return EntityTypes.HOPPER_MINECART;
-        if (item == Items.COMMAND_BLOCK_MINECART) return EntityTypes.COMMAND_BLOCK_MINECART;
+        if (item == Items.MINECART) {
+            return EntityTypes.MINECART;
+        }
+        if (item == Items.CHEST_MINECART) {
+            return EntityTypes.CHEST_MINECART;
+        }
+        if (item == Items.FURNACE_MINECART) {
+            return EntityTypes.FURNACE_MINECART;
+        }
+        if (item == Items.TNT_MINECART) {
+            return EntityTypes.TNT_MINECART;
+        }
+        if (item == Items.HOPPER_MINECART) {
+            return EntityTypes.HOPPER_MINECART;
+        }
+        if (item == Items.COMMAND_BLOCK_MINECART) {
+            return EntityTypes.COMMAND_BLOCK_MINECART;
+        }
         return null;
     }
 }

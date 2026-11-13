@@ -1,14 +1,15 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.craisinlord.antarchy.content.worldgen.WorldgenWriteZone;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.PeachLeavesBlock;
+import com.craisinlord.antarchy.content.worldgen.WorldgenWriteZone;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,12 +19,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class PeachTreeFeature implements Feature {
     public static final MapCodec<PeachTreeFeature> CODEC = PeachTreeConfiguration.CODEC.xmap(
@@ -54,7 +55,6 @@ public class PeachTreeFeature implements Feature {
     private final boolean large;
     private static final Identifier PEACH_LOG_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "peach_log");
     private static final Identifier PEACH_LEAVES_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "peach_leaves");
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -371,7 +371,7 @@ public class PeachTreeFeature implements Feature {
 
     private void refreshLeafDistances(WorldGenLevel level, Set<BlockPos> leafPositions, Set<BlockPos> logPositions) {
         ArrayDeque<BlockPos> queue = new ArrayDeque<>(logPositions);
-        java.util.Map<BlockPos, Integer> distances = new java.util.HashMap<>();
+        Map<BlockPos, Integer> distances = new HashMap<>();
         for (BlockPos logPos : logPositions) {
             distances.put(logPos, 0);
         }

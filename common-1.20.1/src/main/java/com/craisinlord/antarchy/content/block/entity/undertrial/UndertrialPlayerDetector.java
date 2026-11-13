@@ -1,5 +1,9 @@
 package com.craisinlord.antarchy.content.block.entity.undertrial;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -9,11 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Predicate;
 
 public interface UndertrialPlayerDetector {
     UndertrialPlayerDetector NO_CREATIVE_PLAYERS = (level, selector, pos, range, requireLineOfSight) -> collect(level, pos,

@@ -2,8 +2,10 @@ package com.craisinlord.antarchy.content.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -18,12 +20,12 @@ public class BluestoneBlock extends Block implements BluestoneSignalSource {
     }
 
     @Override
-    public int getSignal(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, Direction direction) {
+    public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
         return 15;
     }
 
     @Override
-    public int getDirectSignal(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, Direction direction) {
+    public int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
         return 15;
     }
 
@@ -42,7 +44,7 @@ public class BluestoneBlock extends Block implements BluestoneSignalSource {
     }
 
     @Override
-    public int getBluestoneSignal(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, Direction direction) {
+    public int getBluestoneSignal(LevelReader level, BlockPos pos, BlockState state, Direction direction) {
         return 15;
     }
 }

@@ -1,9 +1,11 @@
 package com.craisinlord.antarchy.content.entity.brutalfly;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
@@ -14,7 +16,6 @@ import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -32,10 +33,15 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -45,12 +51,10 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -178,11 +182,11 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final int GLIMMER_XP_REWARD = BASE_XP_REWARD * 5;
     private static final double GLIMMER_ABANDON_RANGE = 48.0D;
     private static final int GLIMMER_ABANDON_TICKS = 600;
-    private static final ResourceLocation GLIMMER_LOOT_TABLE = new ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "entities/brutalfly_glimmer");
+    private static final ResourceLocation GLIMMER_LOOT_TABLE = new ResourceLocation(Antarchy.MODID, "entities/brutalfly_glimmer");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bossEvent =
-            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, this.getDisplayName(), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
+            new EntityLinkedServerBossEvent(this, this.getDisplayName(), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
 
     @Nullable
     private Vec3 patrolTarget;
@@ -317,7 +321,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     @Override
     protected void customServerAiStep() {
-        if (this.isCocooned()) return;
+        if (this.isCocooned()) {
+            return;
+        }
         super.customServerAiStep();
     }
 
@@ -457,7 +463,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
 
         if (this.anchorPos != null) {
-            this.setPos(this.anchorPos.getX() + 0.5, this.anchorPos.getY() - 1.5, this.anchorPos.getZ() + 0.5);
+            this.setPos(this.anchorPos.getX() + 0.5D, this.anchorPos.getY() - 1.5D, this.anchorPos.getZ() + 0.5D);
             this.setDeltaMovement(Vec3.ZERO);
 
             if (!this.isHatching && !this.level().getBlockState(this.anchorPos).is(BlockTags.LOGS)) {
@@ -591,9 +597,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose pose) {
+    public EntityDimensions getDimensions(Pose pose) {
         if (isCocooned()) {
-            return net.minecraft.world.entity.EntityDimensions.scalable(2.0F, 5.0F);
+            return EntityDimensions.scalable(2.0F, 5.0F);
         }
         return super.getDimensions(pose);
     }
@@ -626,7 +632,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
 
         if (this.isCocooned() && !this.isHatching && !bypassesInvulnerability) {
-            if (this.level().isClientSide || this.cocoonHitCooldownTicks > 0 || !(source.getEntity() instanceof LivingEntity)) return false;
+            if (this.level().isClientSide || this.cocoonHitCooldownTicks > 0 || !(source.getEntity() instanceof LivingEntity)) {
+                return false;
+            }
             this.hurtTime = this.hurtDuration;
             this.cocoonHits++;
             this.cocoonHitCooldownTicks = COCOON_HIT_COOLDOWN_TICKS;

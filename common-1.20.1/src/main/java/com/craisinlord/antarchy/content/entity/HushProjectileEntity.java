@@ -3,10 +3,12 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import java.util.Comparator;
 import java.util.UUID;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,13 +20,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 public class HushProjectileEntity extends ThrowableItemProjectile {
     private static final int DREAD_DURATION_TICKS = 300;
     private static final double TRAVEL_SPEED = 0.27D;
     private static final int RETARGET_GRACE_TICKS = 60;
     private static final double RETARGET_SEARCH_RADIUS = 16.0D;
-    private static final DustParticleOptions HUSH_PARTICLES = new DustParticleOptions(new org.joml.Vector3f(1.0F, 0.05F, 0.05F), 1.0F);
+    private static final DustParticleOptions HUSH_PARTICLES = new DustParticleOptions(new Vector3f(1.0F, 0.05F, 0.05F), 1.0F);
     private static final String TARGET_UUID_KEY = "HushTarget";
 
     private UUID targetUuid;
@@ -50,7 +53,7 @@ public class HushProjectileEntity extends ThrowableItemProjectile {
     }
 
     @Override
-    public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
+    public boolean hurt(DamageSource source, float amount) {
         if (!this.level().isClientSide && !this.isRemoved()) {
             this.discard();
             return true;
@@ -128,7 +131,7 @@ public class HushProjectileEntity extends ThrowableItemProjectile {
                                 && entity.getType().is(AntarchyTags.Entities.HUSHWEED_TARGETS)
                                 && (!(entity instanceof Player player) || (!player.isCreative() && !player.isSpectator())))
                 .stream()
-                .min(java.util.Comparator.comparingDouble(this::distanceToSqr))
+                .min(Comparator.comparingDouble(this::distanceToSqr))
                 .orElse(null);
     }
 

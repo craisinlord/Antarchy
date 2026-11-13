@@ -1,10 +1,9 @@
 package com.craisinlord.antarchy.fabric.util;
 
-import net.minecraft.world.entity.LivingEntity;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.world.entity.LivingEntity;
 
 public class SpringyBootsFabricHelper {
     private static final Map<UUID, Long> PROTECTION_TIMES = new ConcurrentHashMap<>();

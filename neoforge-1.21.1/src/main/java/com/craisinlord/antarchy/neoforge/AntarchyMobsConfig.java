@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.neoforge;
 
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class AntarchyMobsConfig {
     public static final ModConfigSpec SPEC;
-
 
     private static final ModConfigSpec.BooleanValue ANTS_STEAL_FROM_CHESTS;
 
@@ -36,27 +36,21 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  TERMITE_ATTACK_DAMAGE;
     private static final ModConfigSpec.ConfigValue<String> TERMITE_DESTINATION_DIMENSION;
 
-
-
     private static final ModConfigSpec.BooleanValue EASTER_BUNNY_ENABLED;
     private static final ModConfigSpec.IntValue     EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT;
-
 
     private static final ModConfigSpec.DoubleValue WASP_HEALTH;
     private static final ModConfigSpec.DoubleValue WASP_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue WASP_MOVEMENT_SPEED;
-
 
     private static final ModConfigSpec.DoubleValue BOMBER_HEALTH;
     private static final ModConfigSpec.DoubleValue BOMBER_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_DAMAGE;
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
-
     private static final ModConfigSpec.DoubleValue SPRINGBUG_HEALTH;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_POUNCE_DAMAGE;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_CAMOUFLAGE_ALPHA;
-
 
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_HEALTH;
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_ATTACK_DAMAGE;
@@ -85,7 +79,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue SCORPION_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue SCORPION_ARMOR;
     private static final ModConfigSpec.DoubleValue SCORPION_KNOCKBACK_RESISTANCE;
-
 
     private static final ModConfigSpec.DoubleValue  KRAKEN_HEALTH;
     private static final ModConfigSpec.DoubleValue  KRAKEN_ATTACK_DAMAGE;
@@ -128,7 +121,7 @@ public final class AntarchyMobsConfig {
             QUEEN_BEAM_PHASE_ONE_CAP, QUEEN_BEAM_PHASE_TWO_CAP, QUEEN_BEAM_PHASE_THREE_CAP;
     private static final ModConfigSpec.DoubleValue QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE;
     private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_MINIMUM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
-    private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
+    private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_VOLLEY_GAP_TICKS, KING_BEAM_TERRAIN_CAP, QUEEN_BEAM_VOLLEY_GAP_TICKS;
     private static final ModConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
     private static final ModConfigSpec.DoubleValue KING_ROYAL_MUSTER_RADIUS;
     private static final ModConfigSpec.IntValue KING_ROYAL_MUSTER_COOLDOWN_TICKS, KING_ROYAL_MUSTER_WINDUP_TICKS,
@@ -156,7 +149,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue PRINCESS_KNOCKBACK_RESISTANCE;
     private static final ModConfigSpec.DoubleValue PRINCESS_FOLLOW_RANGE;
 
-
     private static final ModConfigSpec.DoubleValue BRUTALFLY_HEALTH;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SWIPE_DAMAGE;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SPIT_DAMAGE;
@@ -167,13 +159,11 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BRUTALFLY_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_FLYING_SPEED;
 
-
     private static final ModConfigSpec.DoubleValue  MANTIS_HEALTH;
     private static final ModConfigSpec.DoubleValue  MANTIS_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  MANTIS_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue  MANTIS_FLYING_SPEED;
     private static final ModConfigSpec.BooleanValue MANTIS_IGNORE_LIGHT_LEVEL;
-
 
     private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_HEALTH;
     private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_ATTACK_DAMAGE;
@@ -204,7 +194,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue GLIMMER_QUEEN_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue GLIMMER_QUEEN_COOLDOWN_MULTIPLIER;
 
-
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_HEALTH;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLL_SPEED_MULTIPLIER;
@@ -214,12 +203,10 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ARMOR;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLLED_ARMOR_BONUS;
 
-
     private static final ModConfigSpec.DoubleValue FLYTRAP_HEALTH;
     private static final ModConfigSpec.DoubleValue FLYTRAP_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue FLYTRAP_GRAB_DAMAGE;
     private static final ModConfigSpec.IntValue    FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS;
-
 
     private static final ModConfigSpec.DoubleValue CATERPILLAR_HEALTH;
     private static final ModConfigSpec.DoubleValue CATERPILLAR_MOVEMENT_SPEED;
@@ -260,9 +247,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue OCTOPUS_BOMB_HEALTH;
     private static final ModConfigSpec.DoubleValue OCTOPUS_BOMB_ATTACK_DAMAGE;
 
-
     private static final ModConfigSpec.DoubleValue ANT_DANCE_RADIUS;
-
 
     private static final ModConfigSpec.DoubleValue  REVERIE_HEALTH;
     private static final ModConfigSpec.DoubleValue  REVERIE_INTEREST_RADIUS;
@@ -277,7 +262,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  REVERIE_WARNING_THREAT_VERTICAL_RANGE;
     private static final ModConfigSpec.IntValue     REVERIE_DUPLICATION_COOLDOWN_TICKS;
 
-
     private static final ModConfigSpec.DoubleValue  NIGHTMARE_HEALTH;
     private static final ModConfigSpec.DoubleValue  NIGHTMARE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  NIGHTMARE_MOVEMENT_SPEED;
@@ -289,7 +273,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue     DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS;
     private static final ModConfigSpec.DoubleValue  DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE;
     private static final ModConfigSpec.BooleanValue DIMENSIONAL_TEARS_SPAWN_NATURALLY;
-
 
     private static final ModConfigSpec.BooleanValue BASILISK_PETRIFYING_GAZE_ENABLED;
     private static final ModConfigSpec.IntValue     BASILISK_SPAWN_MAX_LIGHT_LEVEL;
@@ -313,7 +296,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  BASILISK_PREY_PETRIFY_RANGE;
     private static final ModConfigSpec.IntValue     BASILISK_PREY_PETRIFY_TICKS;
 
-
     private static final ModConfigSpec.DoubleValue  TORETERROR_HEALTH;
     private static final ModConfigSpec.DoubleValue  TORETERROR_DAMAGE_RANGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_DAMAGE;
@@ -329,10 +311,8 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_GRAVITY;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_KNOCKBACK;
 
-
     private static final ModConfigSpec.DoubleValue CRAWLING_BLIGHT_HEALTH;
     private static final ModConfigSpec.DoubleValue CRAWLING_BLIGHT_ATTACK_DAMAGE;
-
 
     private static final ModConfigSpec.DoubleValue SKULKING_FRIGHT_HEALTH;
     private static final ModConfigSpec.DoubleValue SKULKING_FRIGHT_ATTACK_DAMAGE;
@@ -353,25 +333,19 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue JERRY_GAMMA_HEALTH;
     private static final ModConfigSpec.DoubleValue JERRY_GAMMA_ATTACK_DAMAGE;
 
-
     private static final ModConfigSpec.DoubleValue CHEEP_HEALTH;
     private static final ModConfigSpec.DoubleValue CHEEP_ATTACK_DAMAGE;
 
-
     private static final ModConfigSpec.DoubleValue DORRIE_HEALTH;
-
 
     private static final ModConfigSpec.DoubleValue OURANWOOD_DEER_HEALTH;
 
-
     private static final ModConfigSpec.DoubleValue GLIMMER_HEALTH;
-
 
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_HEALTH;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_CHARGE_DAMAGE;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_DAMAGE_RANGE;
-
 
     private static final ModConfigSpec.DoubleValue LUCID_ATTACK_RANGE;
     private static final ModConfigSpec.DoubleValue LUCID_PEARL_INVERTED_DURATION_SECONDS;
@@ -397,7 +371,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue VORTEX_LENS_PUSH_STRENGTH;
     private static final ModConfigSpec.DoubleValue VORTEX_LENS_LAUNCH_STRENGTH;
 
-
     private static final ModConfigSpec.BooleanValue DREAD_HALLUCINATION_SOUNDS_ENABLED;
     private static final ModConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MIN_INTERVAL;
     private static final ModConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MAX_INTERVAL;
@@ -407,7 +380,6 @@ public final class AntarchyMobsConfig {
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
-
 
         ANTS_STEAL_FROM_CHESTS = b
                 .comment("Whether ants will steal edible items from nearby chest inventories.")
@@ -489,7 +461,6 @@ public final class AntarchyMobsConfig {
                 .define("destinationDimension", "antarchy:cavaryn", AntarchyMobsConfig::isValidDimensionId);
         b.pop();
 
-
         b.push("easterBunny");
         EASTER_BUNNY_ENABLED = b
                 .comment(
@@ -505,13 +476,11 @@ public final class AntarchyMobsConfig {
                 .defineInRange("naturalSpawnChancePercent", 1, 0, 100);
         b.pop();
 
-
         b.push("wasp");
         WASP_HEALTH         = b.comment("Base max health.")                            .defineInRange("health",       16.0D, 1.0D, 32768.0D);
         WASP_ATTACK_DAMAGE  = b.comment("Base attack damage.")                         .defineInRange("attackDamage", 4.0D,  0.0D, 1024.0D);
         WASP_MOVEMENT_SPEED = b.comment("Base wasp speed used for both flying and movement. Vanilla bee default is 0.3, so 0.39 is 30% faster.").defineInRange("movementSpeed", 0.39D, 0.0D, 10.0D);
         b.pop();
-
 
         b.push("bomber");
         BOMBER_HEALTH           = b.comment("Base max health.")                                        .defineInRange("health",          10.0D, 1.0D, 32768.0D);
@@ -520,13 +489,11 @@ public final class AntarchyMobsConfig {
         BOMBER_EXPLOSION_RADIUS = b.comment("Explosion radius when a bomber detonates. TNT uses 4.0.").defineInRange("explosionRadius",  4.0D,  0.0D, 128.0D);
         b.pop();
 
-
         b.push("springbug");
         SPRINGBUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
         SPRINGBUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
         SPRINGBUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
         b.pop();
-
 
         b.push("emperorScorpion");
         EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 420.0D, 1.0D, 32768.0D);
@@ -566,7 +533,6 @@ public final class AntarchyMobsConfig {
         SCORPION_ARMOR = b.defineInRange("armor", 2.0D, 0.0D, 1024.0D);
         SCORPION_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
         b.pop();
-
 
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
@@ -622,6 +588,7 @@ public final class AntarchyMobsConfig {
         QUEEN_BEAM_TRACKING = b.defineInRange("queenBeamTracking", 0.1D, 0.0D, 1.0D);
         QUEEN_BEAM_TERRAIN_RADIUS = b.defineInRange("queenBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         QUEEN_BEAM_TERRAIN_CAP = b.defineInRange("queenBeamTerrainCap", 192, 0, 4096);
+        QUEEN_BEAM_VOLLEY_GAP_TICKS = b.comment("Quiet time shared by all three heads after a Queen beam volley ends, before any head may beam again. Scaled down in later phases.").defineInRange("queenBeamVolleyGapTicks", 140, 0, 2400);
         QUEEN_BEAM_PHASE_ONE_CAP = b.comment("Maximum simultaneous Queen beams in phase one.").defineInRange("queenBeamPhaseOneCap", 1, 1, 3);
         QUEEN_BEAM_PHASE_TWO_CAP = b.comment("Maximum simultaneous Queen beams in phase two.").defineInRange("queenBeamPhaseTwoCap", 2, 1, 3);
         QUEEN_BEAM_PHASE_THREE_CAP = b.comment("Maximum simultaneous Queen beams when phase three rolls a full volley.").defineInRange("queenBeamPhaseThreeCap", 3, 1, 3);
@@ -633,6 +600,7 @@ public final class AntarchyMobsConfig {
         KING_BEAM_WINDUP_TICKS = b.comment("Charge time before the King beam actually fires.").defineInRange("kingBeamWindupTicks", 20, 0, 1200);
         KING_BEAM_TRAVEL_TICKS = b.comment("Time for the King beam to extend from its head to its committed range.").defineInRange("kingBeamTravelTicks", 12, 1, 1200);
         KING_BEAM_COOLDOWN_TICKS = b.defineInRange("kingBeamCooldownTicks", 90, 1, 2400);
+        KING_BEAM_VOLLEY_GAP_TICKS = b.comment("Quiet time shared by all three heads after a King beam volley ends, before any head may beam again. Scaled down in later phases. During the gap he closes in instead of holding beam range.").defineInRange("kingBeamVolleyGapTicks", 140, 0, 2400);
         KING_BEAM_TRACKING = b.defineInRange("kingBeamTracking", 0.1D, 0.0D, 1.0D);
         KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
@@ -683,7 +651,6 @@ public final class AntarchyMobsConfig {
         PRINCESS_FOLLOW_RANGE = b.comment("Princess owner and target range.").defineInRange("princessFollowRange", 48.0D, 1.0D, 256.0D);
         b.pop();
 
-
         b.push("brutalfly");
         BRUTALFLY_HEALTH      = b.comment("Base max health.")                                          .defineInRange("health",      200.0D, 1.0D, 32768.0D);
         BRUTALFLY_SWIPE_DAMAGE = b.comment("Damage dealt by a claw swipe.")                           .defineInRange("swipeDamage",  15.0D, 0.0D, 1024.0D);
@@ -699,7 +666,6 @@ public final class AntarchyMobsConfig {
         GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer Brutalfly's spit and swipe cooldowns (lower = more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
 
-
         b.push("mantis");
         MANTIS_HEALTH             = b.comment("Base max health.")                                                                                                 .defineInRange("health",            50.0D, 1.0D, 32768.0D);
         MANTIS_ATTACK_DAMAGE      = b.comment("Base attack damage.")                                                                                              .defineInRange("attackDamage",       9.0D, 0.0D, 1024.0D);
@@ -707,7 +673,6 @@ public final class AntarchyMobsConfig {
         MANTIS_FLYING_SPEED       = b.comment("Base flying speed.")                                                                                               .defineInRange("flyingSpeed",        0.77D, 0.0D, 10.0D);
         MANTIS_IGNORE_LIGHT_LEVEL = b.comment("If false, mantises only spawn naturally in darkness (standard monster rules). If true, light level is ignored.").define("ignoreLightLevel", false);
         b.pop();
-
 
         b.push("alphaMantis");
         ALPHA_MANTIS_HEALTH                = b.comment("Base max health.")                                              .defineInRange("health",             420.0D, 1.0D, 32768.0D);
@@ -722,7 +687,6 @@ public final class AntarchyMobsConfig {
         GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER = b.comment("Attack cooldown and minion summon interval multiplier for the Glimmer Alpha Mantis (lower = more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
 
-
         b.push("rollyPolly");
         ROLLY_POLLY_HEALTH                = b.comment("Base max health.")                                                          .defineInRange("health",              25.0D, 1.0D, 32768.0D);
         ROLLY_POLLY_MOVEMENT_SPEED        = b.comment("Base movement speed.")                                                      .defineInRange("movementSpeed",        0.3D, 0.0D, 10.0D);
@@ -734,7 +698,6 @@ public final class AntarchyMobsConfig {
         ROLLY_POLLY_ROLLED_ARMOR_BONUS    = b.comment("Additional armor gained while rolled up.")                                  .defineInRange("rolledArmorBonus",    16.0D, 0.0D, 100.0D);
         b.pop();
 
-
         b.push("flytrap");
         FLYTRAP_HEALTH        = b.comment("Base max health.")                     .defineInRange("health",       80.0D, 1.0D, 32768.0D);
         FLYTRAP_ATTACK_DAMAGE = b.comment("Damage dealt by the sweep attack.")   .defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
@@ -743,7 +706,6 @@ public final class AntarchyMobsConfig {
                 .comment("Ticks a given entity is immune to repeat sweep-attack damage attempts after being hit once, so shields/armor absorbing a hit can't be shredded by every tick of the sweep's active window.")
                 .defineInRange("sweepHitCooldownTicks", 10, 0, 200);
         b.pop();
-
 
         b.push("caterpillar");
         CATERPILLAR_HEALTH = b.defineInRange("health", 6.0D, 0.1D, 32768.0D);
@@ -809,13 +771,11 @@ public final class AntarchyMobsConfig {
         OCTOPUS_BOMB_ATTACK_DAMAGE = b.defineInRange("attackDamage", 16.0D, 0.0D, 1024.0D);
         b.pop();
 
-
         b.push("antDance");
         ANT_DANCE_RADIUS = b
                 .comment("Radius in blocks where ants will dance around a playing jukebox.")
                 .defineInRange("radius", 5.0D, 1.0D, 32.0D);
         b.pop();
-
 
         b.push("reverie");
         REVERIE_HEALTH                         = b.comment("Base max health.")                                                                                         .defineInRange("health",                    20.0D, 1.0D, 1024.0D);
@@ -849,7 +809,6 @@ public final class AntarchyMobsConfig {
         DIMENSIONAL_TEARS_SPAWN_NATURALLY = b.define("spawnNaturally", true);
         b.pop();
 
-
         b.push("basilisk");
         BASILISK_PETRIFYING_GAZE_ENABLED = b
                 .comment("If false, the Basilisk will not use its petrifying gaze and will never apply the Paralyzed effect.")
@@ -877,7 +836,6 @@ public final class AntarchyMobsConfig {
         BASILISK_PREY_PETRIFY_RANGE = b.comment("Range in blocks for prey petrification checks.").defineInRange("preyPetrifyRange", 8.0D, 0.0D, 128.0D);
         BASILISK_PREY_PETRIFY_TICKS = b.comment("Ticks the prey petrify effect lasts.").defineInRange("preyPetrifyTicks", 200, 0, 20000);
         b.pop();
-
 
         b.push("lucid");
         LUCID_ATTACK_RANGE = b
@@ -910,7 +868,6 @@ public final class AntarchyMobsConfig {
         VORTEX_LENS_PUSH_STRENGTH = b.comment("How strongly bluestone-powered Vortex Lens vortexes push entities outward from the lens.").defineInRange("vortexLensPushStrength", 0.38D, 0.0D, 8.0D);
         VORTEX_LENS_LAUNCH_STRENGTH = b.comment("Launch velocity multiplier applied at the end of bluestone-powered Vortex Lens vortexes.").defineInRange("vortexLensLaunchStrength", 1.15D, 0.0D, 8.0D);
         b.pop();
-
 
         b.push("dread");
 
@@ -1006,45 +963,113 @@ public final class AntarchyMobsConfig {
         SPEC = b.build();
     }
 
-    static double caterpillarHealth() { return CATERPILLAR_HEALTH.get(); }
-    static double caterpillarMovementSpeed() { return CATERPILLAR_MOVEMENT_SPEED.get(); }
-    static double flyingSquirrelHealth() { return FLYING_SQUIRREL_HEALTH.get(); }
-    static double flyingSquirrelMovementSpeed() { return FLYING_SQUIRREL_MOVEMENT_SPEED.get(); }
-    static double butterflyHealth() { return BUTTERFLY_HEALTH.get(); }
-    static double butterflyMovementSpeed() { return BUTTERFLY_MOVEMENT_SPEED.get(); }
-    static double butterflyFlyingSpeed() { return BUTTERFLY_FLYING_SPEED.get(); }
-    static double bedBugHealth() { return BED_BUG_HEALTH.get(); }
-    static double bedBugAttackDamage() { return BED_BUG_ATTACK_DAMAGE.get(); }
-    static double bedBugMovementSpeed() { return BED_BUG_MOVEMENT_SPEED.get(); }
-    static double bedBugArmor() { return BED_BUG_ARMOR.get(); }
-    static double stratosharkHealth() { return STRATOSHARK_HEALTH.get(); }
-    static double stratosharkAttackDamage() { return STRATOSHARK_ATTACK_DAMAGE.get(); }
-    static double stratosharkMovementSpeed() { return STRATOSHARK_MOVEMENT_SPEED.get(); }
-    static double stratosharkFlyingSpeed() { return STRATOSHARK_FLYING_SPEED.get(); }
-    static double stratosharkKnockbackResistance() { return STRATOSHARK_KNOCKBACK_RESISTANCE.get(); }
-    static double missileSquidHealth() { return MISSILE_SQUID_HEALTH.get(); }
-    static double missileSquidAttackDamage() { return MISSILE_SQUID_ATTACK_DAMAGE.get(); }
-    static double missileSquidMovementSpeed() { return MISSILE_SQUID_MOVEMENT_SPEED.get(); }
-    static double missileSquidFlyingSpeed() { return MISSILE_SQUID_FLYING_SPEED.get(); }
-    static double missileSquidKnockbackResistance() { return MISSILE_SQUID_KNOCKBACK_RESISTANCE.get(); }
-    static double molewormHealth() { return MOLEWORM_HEALTH.get(); }
-    static double molewormAttackDamage() { return MOLEWORM_ATTACK_DAMAGE.get(); }
-    static double molewormMovementSpeed() { return MOLEWORM_MOVEMENT_SPEED.get(); }
-    static double molevoreHealth() { return MOLEVORE_HEALTH.get(); }
-    static double molevoreAttackDamage() { return MOLEVORE_ATTACK_DAMAGE.get(); }
-    static int molevoreSpinTicks() { return MOLEVORE_SPIN_TICKS.get(); }
-    static int molevoreCooldownTicks() { return MOLEVORE_COOLDOWN_TICKS.get(); }
-    static double molevoreChargeSpeed() { return MOLEVORE_CHARGE_SPEED.get(); }
-    static double molevoreBreakRange() { return MOLEVORE_BREAK_RANGE.get(); }
-    static double molevoreBreakVerticalRange() { return MOLEVORE_BREAK_VERTICAL_RANGE.get(); }
-    static double molevoreBreakHalfWidth() { return MOLEVORE_BREAK_HALF_WIDTH.get(); }
-    static double octopusBombHealth() { return OCTOPUS_BOMB_HEALTH.get(); }
-    static double octopusBombAttackDamage() { return OCTOPUS_BOMB_ATTACK_DAMAGE.get(); }
+    static double caterpillarHealth() {
+        return CATERPILLAR_HEALTH.get();
+    }
+    static double caterpillarMovementSpeed() {
+        return CATERPILLAR_MOVEMENT_SPEED.get();
+    }
+    static double flyingSquirrelHealth() {
+        return FLYING_SQUIRREL_HEALTH.get();
+    }
+    static double flyingSquirrelMovementSpeed() {
+        return FLYING_SQUIRREL_MOVEMENT_SPEED.get();
+    }
+    static double butterflyHealth() {
+        return BUTTERFLY_HEALTH.get();
+    }
+    static double butterflyMovementSpeed() {
+        return BUTTERFLY_MOVEMENT_SPEED.get();
+    }
+    static double butterflyFlyingSpeed() {
+        return BUTTERFLY_FLYING_SPEED.get();
+    }
+    static double bedBugHealth() {
+        return BED_BUG_HEALTH.get();
+    }
+    static double bedBugAttackDamage() {
+        return BED_BUG_ATTACK_DAMAGE.get();
+    }
+    static double bedBugMovementSpeed() {
+        return BED_BUG_MOVEMENT_SPEED.get();
+    }
+    static double bedBugArmor() {
+        return BED_BUG_ARMOR.get();
+    }
+    static double stratosharkHealth() {
+        return STRATOSHARK_HEALTH.get();
+    }
+    static double stratosharkAttackDamage() {
+        return STRATOSHARK_ATTACK_DAMAGE.get();
+    }
+    static double stratosharkMovementSpeed() {
+        return STRATOSHARK_MOVEMENT_SPEED.get();
+    }
+    static double stratosharkFlyingSpeed() {
+        return STRATOSHARK_FLYING_SPEED.get();
+    }
+    static double stratosharkKnockbackResistance() {
+        return STRATOSHARK_KNOCKBACK_RESISTANCE.get();
+    }
+    static double missileSquidHealth() {
+        return MISSILE_SQUID_HEALTH.get();
+    }
+    static double missileSquidAttackDamage() {
+        return MISSILE_SQUID_ATTACK_DAMAGE.get();
+    }
+    static double missileSquidMovementSpeed() {
+        return MISSILE_SQUID_MOVEMENT_SPEED.get();
+    }
+    static double missileSquidFlyingSpeed() {
+        return MISSILE_SQUID_FLYING_SPEED.get();
+    }
+    static double missileSquidKnockbackResistance() {
+        return MISSILE_SQUID_KNOCKBACK_RESISTANCE.get();
+    }
+    static double molewormHealth() {
+        return MOLEWORM_HEALTH.get();
+    }
+    static double molewormAttackDamage() {
+        return MOLEWORM_ATTACK_DAMAGE.get();
+    }
+    static double molewormMovementSpeed() {
+        return MOLEWORM_MOVEMENT_SPEED.get();
+    }
+    static double molevoreHealth() {
+        return MOLEVORE_HEALTH.get();
+    }
+    static double molevoreAttackDamage() {
+        return MOLEVORE_ATTACK_DAMAGE.get();
+    }
+    static int molevoreSpinTicks() {
+        return MOLEVORE_SPIN_TICKS.get();
+    }
+    static int molevoreCooldownTicks() {
+        return MOLEVORE_COOLDOWN_TICKS.get();
+    }
+    static double molevoreChargeSpeed() {
+        return MOLEVORE_CHARGE_SPEED.get();
+    }
+    static double molevoreBreakRange() {
+        return MOLEVORE_BREAK_RANGE.get();
+    }
+    static double molevoreBreakVerticalRange() {
+        return MOLEVORE_BREAK_VERTICAL_RANGE.get();
+    }
+    static double molevoreBreakHalfWidth() {
+        return MOLEVORE_BREAK_HALF_WIDTH.get();
+    }
+    static double octopusBombHealth() {
+        return OCTOPUS_BOMB_HEALTH.get();
+    }
+    static double octopusBombAttackDamage() {
+        return OCTOPUS_BOMB_ATTACK_DAMAGE.get();
+    }
 
     private AntarchyMobsConfig() {}
 
     private static boolean isValidDimensionId(Object value) {
-        return value instanceof String s && net.minecraft.resources.ResourceLocation.tryParse(s) != null;
+        return value instanceof String s && ResourceLocation.tryParse(s) != null;
     }
 
     static boolean antsStealFromChests()                    { return ANTS_STEAL_FROM_CHESTS.get(); }
@@ -1068,7 +1093,9 @@ public final class AntarchyMobsConfig {
     static double  rainbowAntHealth()                       { return RAINBOW_ANT_HEALTH.get(); }
     static double  rainbowAntMovementSpeed()                { return RAINBOW_ANT_MOVEMENT_SPEED.get(); }
     static double  rainbowAntAttackDamage()                 { return RAINBOW_ANT_ATTACK_DAMAGE.get(); }
-    static String  rainbowAntNonInfinityFallbackDimension() { return RAINBOW_ANT_NON_INFINITY_FALLBACK_DIMENSION.get(); }
+    static String  rainbowAntNonInfinityFallbackDimension() {
+        return RAINBOW_ANT_NON_INFINITY_FALLBACK_DIMENSION.get();
+    }
 
     static boolean termiteRequiresReagent()                 { return TERMITE_REQUIRES_REAGENT.get(); }
     static boolean termiteRightClickDimension()             { return TERMITE_RIGHT_CLICK_DIMENSION.get(); }
@@ -1076,7 +1103,6 @@ public final class AntarchyMobsConfig {
     static double  termiteMovementSpeed()                   { return TERMITE_MOVEMENT_SPEED.get(); }
     static double  termiteAttackDamage()                    { return TERMITE_ATTACK_DAMAGE.get(); }
     static String  termiteDestinationDimension()            { return TERMITE_DESTINATION_DIMENSION.get(); }
-
 
     static boolean easterBunnyEnabled()                     { return EASTER_BUNNY_ENABLED.get(); }
     static int     easterBunnyNaturalSpawnChancePercent()   { return EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT.get(); }
@@ -1181,6 +1207,8 @@ public final class AntarchyMobsConfig {
     static int     kingBeamWindupTicks()                    { return KING_BEAM_WINDUP_TICKS.get(); }
     static int     kingBeamTravelTicks()                    { return KING_BEAM_TRAVEL_TICKS.get(); }
     static int     kingBeamCooldownTicks()                  { return KING_BEAM_COOLDOWN_TICKS.get(); }
+    static int     kingBeamVolleyGapTicks()                 { return KING_BEAM_VOLLEY_GAP_TICKS.get(); }
+    static int     queenBeamVolleyGapTicks()                { return QUEEN_BEAM_VOLLEY_GAP_TICKS.get(); }
     static double  kingBeamTracking()                       { return KING_BEAM_TRACKING.get(); }
     static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
     static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
@@ -1247,24 +1275,60 @@ public final class AntarchyMobsConfig {
     static double  glimmerAlphaMantisHealthMultiplier()     { return GLIMMER_ALPHA_MANTIS_HEALTH_MULTIPLIER.get(); }
     static double  glimmerAlphaMantisDamageMultiplier()     { return GLIMMER_ALPHA_MANTIS_DAMAGE_MULTIPLIER.get(); }
     static double  glimmerAlphaMantisCooldownMultiplier()   { return GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER.get(); }
-    static double  glimmerEmperorScorpionHealthMultiplier() { return GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER.get(); }
-    static double  glimmerEmperorScorpionDamageMultiplier() { return GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER.get(); }
-    static double  glimmerEmperorScorpionCooldownMultiplier() { return GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER.get(); }
-    static double  glimmerBrutalflyHealthMultiplier() { return GLIMMER_BRUTALFLY_HEALTH_MULTIPLIER.get(); }
-    static double  glimmerBrutalflyDamageMultiplier() { return GLIMMER_BRUTALFLY_DAMAGE_MULTIPLIER.get(); }
-    static double  glimmerBrutalflyCooldownMultiplier() { return GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER.get(); }
-    static double  glimmerHerculesBeetleHealthMultiplier() { return GLIMMER_HERCULES_BEETLE_HEALTH_MULTIPLIER.get(); }
-    static double  glimmerHerculesBeetleDamageMultiplier() { return GLIMMER_HERCULES_BEETLE_DAMAGE_MULTIPLIER.get(); }
-    static double  glimmerHerculesBeetleCooldownMultiplier() { return GLIMMER_HERCULES_BEETLE_COOLDOWN_MULTIPLIER.get(); }
-    static double  glimmerKrakenHealthMultiplier() { return GLIMMER_KRAKEN_HEALTH_MULTIPLIER.get(); }
-    static double  glimmerKrakenDamageMultiplier() { return GLIMMER_KRAKEN_DAMAGE_MULTIPLIER.get(); }
-    static double  glimmerKrakenCooldownMultiplier() { return GLIMMER_KRAKEN_COOLDOWN_MULTIPLIER.get(); }
-    static double  glimmerKingHealthMultiplier() { return GLIMMER_KING_HEALTH_MULTIPLIER.get(); }
-    static double  glimmerKingDamageMultiplier() { return GLIMMER_KING_DAMAGE_MULTIPLIER.get(); }
-    static double  glimmerKingCooldownMultiplier() { return GLIMMER_KING_COOLDOWN_MULTIPLIER.get(); }
-    static double  glimmerQueenHealthMultiplier() { return GLIMMER_QUEEN_HEALTH_MULTIPLIER.get(); }
-    static double  glimmerQueenDamageMultiplier() { return GLIMMER_QUEEN_DAMAGE_MULTIPLIER.get(); }
-    static double  glimmerQueenCooldownMultiplier() { return GLIMMER_QUEEN_COOLDOWN_MULTIPLIER.get(); }
+    static double  glimmerEmperorScorpionHealthMultiplier() {
+        return GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER.get();
+    }
+    static double  glimmerEmperorScorpionDamageMultiplier() {
+        return GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER.get();
+    }
+    static double  glimmerEmperorScorpionCooldownMultiplier() {
+        return GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER.get();
+    }
+    static double  glimmerBrutalflyHealthMultiplier() {
+        return GLIMMER_BRUTALFLY_HEALTH_MULTIPLIER.get();
+    }
+    static double  glimmerBrutalflyDamageMultiplier() {
+        return GLIMMER_BRUTALFLY_DAMAGE_MULTIPLIER.get();
+    }
+    static double  glimmerBrutalflyCooldownMultiplier() {
+        return GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER.get();
+    }
+    static double  glimmerHerculesBeetleHealthMultiplier() {
+        return GLIMMER_HERCULES_BEETLE_HEALTH_MULTIPLIER.get();
+    }
+    static double  glimmerHerculesBeetleDamageMultiplier() {
+        return GLIMMER_HERCULES_BEETLE_DAMAGE_MULTIPLIER.get();
+    }
+    static double  glimmerHerculesBeetleCooldownMultiplier() {
+        return GLIMMER_HERCULES_BEETLE_COOLDOWN_MULTIPLIER.get();
+    }
+    static double  glimmerKrakenHealthMultiplier() {
+        return GLIMMER_KRAKEN_HEALTH_MULTIPLIER.get();
+    }
+    static double  glimmerKrakenDamageMultiplier() {
+        return GLIMMER_KRAKEN_DAMAGE_MULTIPLIER.get();
+    }
+    static double  glimmerKrakenCooldownMultiplier() {
+        return GLIMMER_KRAKEN_COOLDOWN_MULTIPLIER.get();
+    }
+    static double  glimmerKingHealthMultiplier() {
+        return GLIMMER_KING_HEALTH_MULTIPLIER.get();
+    }
+    static double  glimmerKingDamageMultiplier() {
+        return GLIMMER_KING_DAMAGE_MULTIPLIER.get();
+    }
+    static double  glimmerKingCooldownMultiplier() {
+        return GLIMMER_KING_COOLDOWN_MULTIPLIER.get();
+    }
+    static double  glimmerQueenHealthMultiplier() {
+        return GLIMMER_QUEEN_HEALTH_MULTIPLIER.get();
+    }
+    static double  glimmerQueenDamageMultiplier() {
+        return GLIMMER_QUEEN_DAMAGE_MULTIPLIER.get();
+    }
+    static double  glimmerQueenCooldownMultiplier() {
+        return GLIMMER_QUEEN_COOLDOWN_MULTIPLIER.get();
+    }
     static double  rollyPollyHealth()                       { return ROLLY_POLLY_HEALTH.get(); }
     static double  rollyPollyMovementSpeed()                { return ROLLY_POLLY_MOVEMENT_SPEED.get(); }
     static double  rollyPollyRollSpeedMultiplier()          { return ROLLY_POLLY_ROLL_SPEED_MULTIPLIER.get(); }
@@ -1288,7 +1352,9 @@ public final class AntarchyMobsConfig {
     static int     reverieNoticeDurationTicks()         { return REVERIE_NOTICE_DURATION_TICKS.get(); }
     static int     reverieInterestDurationTicks()       { return REVERIE_INTEREST_DURATION_TICKS.get(); }
     static int     reverieRebindCooldownTicks()         { return REVERIE_REBIND_COOLDOWN_TICKS.get(); }
-    static int     reverieDamageReactionDurationTicks() { return REVERIE_DAMAGE_REACTION_DURATION_TICKS.get(); }
+    static int     reverieDamageReactionDurationTicks() {
+        return REVERIE_DAMAGE_REACTION_DURATION_TICKS.get();
+    }
     static double  reverieDangerousFallDistance()       { return REVERIE_DANGEROUS_FALL_DISTANCE.get(); }
     static double  reverieDangerousFallSpeed()          { return REVERIE_DANGEROUS_FALL_SPEED.get(); }
     static double  reverieWarningThreatRadius()         { return REVERIE_WARNING_THREAT_RADIUS.get(); }
@@ -1299,8 +1365,12 @@ public final class AntarchyMobsConfig {
     static double  nightmareAttackDamage()              { return NIGHTMARE_ATTACK_DAMAGE.get(); }
     static int     dimensionalTearLifetimeTicks()        { return DIMENSIONAL_TEAR_LIFETIME_TICKS.get(); }
     static int     dimensionalTearInvertedDurationTicks(){ return DIMENSIONAL_TEAR_INVERTED_DURATION_TICKS.get(); }
-    static int     dimensionalTearEmergenceMinIntervalTicks() { return DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS.get(); }
-    static int     dimensionalTearEmergenceMaxIntervalTicks() { return DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS.get(); }
+    static int     dimensionalTearEmergenceMinIntervalTicks() {
+        return DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS.get();
+    }
+    static int     dimensionalTearEmergenceMaxIntervalTicks() {
+        return DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS.get();
+    }
     static float   dimensionalTearLucidEventChance()     { return DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE.get().floatValue(); }
     static boolean dimensionalTearsSpawnNaturally()       { return DIMENSIONAL_TEARS_SPAWN_NATURALLY.get(); }
     static double  nightmareMovementSpeed()             { return NIGHTMARE_MOVEMENT_SPEED.get(); }

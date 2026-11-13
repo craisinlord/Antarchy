@@ -22,15 +22,15 @@ public final class SnoutCompassAngle {
         }
         BlockPos target = entity instanceof LivingEntity ? SnoutCompassItem.target(stack, level) : null;
         double time = level.getGameTime();
-        if (target == null || entity.distanceToSqr(target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5) > 4225.0) {
-            return (float) Mth.positiveModulo(time * 0.013 + seed * 0.17 + Math.sin(time * 0.045) * 0.13, 1.0);
+        if (target == null || entity.distanceToSqr(target.getX() + 0.5D, target.getY() + 0.5D, target.getZ() + 0.5D) > 4225.0D) {
+            return (float) Mth.positiveModulo(time * 0.013D + seed * 0.17D + Math.sin(time * 0.045D) * 0.13D, 1.0D);
         }
-        double dx = target.getX() + 0.5 - entity.getX();
-        double dz = target.getZ() + 0.5 - entity.getZ();
-        double angle = 0.25 - entity.getYRot() / 360.0 + Math.atan2(dz, dx) / (Math.PI * 2.0);
-        if (dx * dx + dz * dz < 4.0) {
-            angle += Math.sin(time * 0.2) * 0.025;
+        double dx = target.getX() + 0.5D - entity.getX();
+        double dz = target.getZ() + 0.5D - entity.getZ();
+        double angle = 0.25D - entity.getYRot() / 360.0D + Math.atan2(dz, dx) / (Math.PI * 2.0D);
+        if (dx * dx + dz * dz < 4.0D) {
+            angle += Math.sin(time * 0.2D) * 0.025D;
         }
-        return (float) Mth.positiveModulo(angle, 1.0);
+        return (float) Mth.positiveModulo(angle, 1.0D);
     }
 }

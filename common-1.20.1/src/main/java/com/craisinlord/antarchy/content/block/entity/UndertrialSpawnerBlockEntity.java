@@ -9,6 +9,10 @@ import com.craisinlord.antarchy.content.block.entity.undertrial.UndertrialSpawne
 import com.craisinlord.antarchy.content.block.entity.undertrial.UndertrialSpawnerEffects;
 import com.craisinlord.antarchy.content.block.entity.undertrial.UndertrialSpawnerState;
 import com.craisinlord.anthology.effect.AnthologyEffects;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
@@ -18,6 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -33,11 +38,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Supplier;
 
 public final class UndertrialSpawnerBlockEntity extends BlockEntity implements UndertrialSpawner.StateAccessor {
     private static final String SPAWNER_TAG = "trial_spawner";
@@ -98,7 +98,7 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements U
             ResourceLocation detectionSound = new ResourceLocation(Antarchy.MODID,
                     level.random.nextBoolean() ? "undertrial_detect_player1" : "undertrial_detect_player2");
             level.playSound(null, pos, BuiltInRegistries.SOUND_EVENT.get(detectionSound),
-                    net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
+                    SoundSource.BLOCKS, 1.0F, 1.0F);
             for (int i = 0; i < 12; i++) {
                 level.addParticle(blockEntity.particle("undertrial_spawner_detection"), pos.getX() + 0.5D + (level.random.nextDouble() - 0.5D) * 1.4D,
                         pos.getY() + 0.15D + level.random.nextDouble() * 0.7D,

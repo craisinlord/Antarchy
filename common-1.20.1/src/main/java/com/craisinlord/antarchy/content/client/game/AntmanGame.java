@@ -44,7 +44,9 @@ public final class AntmanGame {
         reset(score);
     }
 
-    public void reset() { reset(0); }
+    public void reset() {
+        reset(0);
+    }
 
     public void reset(int currentScore) {
         generateMaze();
@@ -66,11 +68,15 @@ public final class AntmanGame {
         enemies.add(new Enemy(EnemyKind.ZOMBIE, WIDTH - 2.5D, 1.5D, Direction.DOWN));
     }
 
-    public void start() { if (phase == Phase.READY) phase = Phase.PLAYING; }
+    public void start() {
+        if (phase == Phase.READY) phase = Phase.PLAYING;
+    }
 
     public boolean tick() {
         collectedDiamond = false;
-        if (phase != Phase.PLAYING) return false;
+        if (phase != Phase.PLAYING) {
+            return false;
+        }
         ticks++;
         if (cornDogTicks > 0) cornDogTicks--;
         if (cornDogX < 0 && ++cornDogSpawnTicks >= 240) {
@@ -93,7 +99,9 @@ public final class AntmanGame {
         }
         for (int index = 0; index < enemies.size(); index++) {
             Enemy enemy = enemies.get(index);
-            if (!near(playerX, playerY, enemy.x(), enemy.y())) continue;
+            if (!near(playerX, playerY, enemy.x(), enemy.y())) {
+                continue;
+            }
             if (cornDogTicks > 0) {
                 score += 100;
                 highScore = Math.max(highScore, score);
@@ -112,25 +120,63 @@ public final class AntmanGame {
         return true;
     }
 
-    public void setDirection(Direction direction) { if (direction != null) requested = direction; }
-    public Phase phase() { return phase; }
-    public int score() { return score; }
-    public int highScore() { return highScore; }
-    public int lives() { return lives; }
-    public int width() { return WIDTH; }
-    public int height() { return HEIGHT; }
-    public double playerX() { return playerX; }
-    public double playerY() { return playerY; }
-    public int diamondX() { return diamondX; }
-    public int diamondY() { return diamondY; }
-    public int cornDogX() { return cornDogX; }
-    public int cornDogY() { return cornDogY; }
-    public int cornDogTicks() { return cornDogTicks; }
-    public int animationFrame() { return (ticks / 5) % 2; }
-    public Direction direction() { return direction; }
-    public List<Enemy> enemies() { return Collections.unmodifiableList(enemies); }
-    public boolean collectedDiamond() { return collectedDiamond; }
-    public boolean isWall(int x, int y) { return x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT || walls[y][x]; }
+    public void setDirection(Direction direction) {
+        if (direction != null) requested = direction;
+    }
+    public Phase phase() {
+        return phase;
+    }
+    public int score() {
+        return score;
+    }
+    public int highScore() {
+        return highScore;
+    }
+    public int lives() {
+        return lives;
+    }
+    public int width() {
+        return WIDTH;
+    }
+    public int height() {
+        return HEIGHT;
+    }
+    public double playerX() {
+        return playerX;
+    }
+    public double playerY() {
+        return playerY;
+    }
+    public int diamondX() {
+        return diamondX;
+    }
+    public int diamondY() {
+        return diamondY;
+    }
+    public int cornDogX() {
+        return cornDogX;
+    }
+    public int cornDogY() {
+        return cornDogY;
+    }
+    public int cornDogTicks() {
+        return cornDogTicks;
+    }
+    public int animationFrame() {
+        return (ticks / 5) % 2;
+    }
+    public Direction direction() {
+        return direction;
+    }
+    public List<Enemy> enemies() {
+        return Collections.unmodifiableList(enemies);
+    }
+    public boolean collectedDiamond() {
+        return collectedDiamond;
+    }
+    public boolean isWall(int x, int y) {
+        return x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT || walls[y][x];
+    }
 
     private void updatePlayer() {
         if (atCenter(playerX) && atCenter(playerY) && canMove(playerX, playerY, requested)) {
@@ -160,7 +206,9 @@ public final class AntmanGame {
         Direction best = current;
         double distance = Double.MAX_VALUE;
         for (Direction direction : Direction.values()) {
-            if (isOpposite(direction, current) || !canMove(x, y, direction)) continue;
+            if (isOpposite(direction, current) || !canMove(x, y, direction)) {
+                continue;
+            }
             double nx = x + direction.dx;
             double ny = y + direction.dy;
             double value = Math.abs(playerX - nx) + Math.abs(playerY - ny);
@@ -171,15 +219,21 @@ public final class AntmanGame {
     }
 
     private Direction zombieDirection(double x, double y, Direction current) {
-        if (random.nextInt(4) != 0 && canMove(x, y, current)) return current;
+        if (random.nextInt(4) != 0 && canMove(x, y, current)) {
+            return current;
+        }
         return randomDirection(x, y, current);
     }
 
     private Direction randomDirection(double x, double y, Direction current) {
         List<Direction> options = new ArrayList<>();
         for (Direction direction : Direction.values()) if (!isOpposite(direction, current) && canMove(x, y, direction)) options.add(direction);
-        if (options.isEmpty() && canMove(x, y, current.opposite())) return current.opposite();
-        if (options.isEmpty()) return current;
+        if (options.isEmpty() && canMove(x, y, current.opposite())) {
+            return current.opposite();
+        }
+        if (options.isEmpty()) {
+            return current;
+        }
         return options.get(random.nextInt(options.size()));
     }
 
@@ -189,9 +243,15 @@ public final class AntmanGame {
         return !isWall((int) Math.floor(nx), (int) Math.floor(ny));
     }
 
-    private boolean atCenter(double value) { return Math.abs((value - 0.5D) - Math.rint(value - 0.5D)) < 0.07D; }
-    private boolean near(double firstX, double firstY, double secondX, double secondY) { return Math.abs(firstX - secondX) < 0.45D && Math.abs(firstY - secondY) < 0.45D; }
-    private boolean isOpposite(Direction first, Direction second) { return first.dx + second.dx == 0 && first.dy + second.dy == 0; }
+    private boolean atCenter(double value) {
+        return Math.abs((value - 0.5D) - Math.rint(value - 0.5D)) < 0.07D;
+    }
+    private boolean near(double firstX, double firstY, double secondX, double secondY) {
+        return Math.abs(firstX - secondX) < 0.45D && Math.abs(firstY - secondY) < 0.45D;
+    }
+    private boolean isOpposite(Direction first, Direction second) {
+        return first.dx + second.dx == 0 && first.dy + second.dy == 0;
+    }
 
     private void generateMaze() {
         for (int y = 0; y < HEIGHT; y++) for (int x = 0; x < WIDTH; x++) walls[y][x] = true;

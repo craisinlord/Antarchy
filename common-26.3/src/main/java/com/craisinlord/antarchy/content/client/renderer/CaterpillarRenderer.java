@@ -2,9 +2,9 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.CaterpillarModel;
 import com.craisinlord.antarchy.content.entity.CaterpillarEntity;
+import com.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import com.geckolib.renderer.GeoEntityRenderer;
 
 public class CaterpillarRenderer extends GeoEntityRenderer<CaterpillarEntity, LivingEntityRenderState> {
     private static final float VISUAL_SCALE = 0.8F;

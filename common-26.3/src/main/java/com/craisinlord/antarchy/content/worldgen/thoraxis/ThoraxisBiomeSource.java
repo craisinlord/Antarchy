@@ -11,14 +11,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
-import net.minecraft.world.level.biome.BiomeResolver;
 
 public final class ThoraxisBiomeSource extends BiomeSource {
     private static final int VERTICAL_NOISE_SCALE = 8;
@@ -214,7 +214,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     }
 
     @Override
-    public void addDebugInfo(java.util.List<String> debug, BlockPos pos, Climate.Sampler sampler) {
+    public void addDebugInfo(List<String> debug, BlockPos pos, Climate.Sampler sampler) {
         this.delegate.addDebugInfo(debug, pos, sampler);
         debug.add("Thoraxis selector: seeded vertical/region noise");
         debug.add("Thoraxis Lucid Pools: y>=" + this.lucidPoolsMinY);
@@ -243,7 +243,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
         }).toList();
     }
 
-    private record RegionalBiomeOverlay(Identifier biome, double minNoise, double maxNoise) {
+    public record RegionalBiomeOverlay(Identifier biome, double minNoise, double maxNoise) {
         private static final Codec<RegionalBiomeOverlay> CODEC = RecordCodecBuilder.<RegionalBiomeOverlay>create(instance -> instance.group(
                 Identifier.CODEC.fieldOf("biome").forGetter(RegionalBiomeOverlay::biome),
                 Codec.DOUBLE.fieldOf("min_noise").forGetter(RegionalBiomeOverlay::minNoise),

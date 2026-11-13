@@ -14,7 +14,7 @@
     "surface": "floor",
     "vegetation_chance": 0.6,
     "vegetation_feature": {
-      "feature": "antarchy:primordial_moss_vegetation",
+      "feature": "antarchy:primordial_moss_bonemeal_vegetation",
       "placement": []
     },
     "vertical_range": 5,

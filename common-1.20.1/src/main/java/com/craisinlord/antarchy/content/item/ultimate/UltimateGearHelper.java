@@ -7,6 +7,7 @@ import java.util.Map;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -19,13 +20,13 @@ public final class UltimateGearHelper {
     private UltimateGearHelper() {
     }
 
-    public static ItemStack createUltimateArmorStack(net.minecraft.world.item.Item item, HolderLookup.Provider registries) {
+    public static ItemStack createUltimateArmorStack(Item item, HolderLookup.Provider registries) {
         ItemStack stack = new ItemStack(item);
         ensureUltimateArmorEnchantments(stack, registries);
         return stack;
     }
 
-    public static ItemStack createUltimateBowStack(net.minecraft.world.item.Item item, HolderLookup.Provider registries) {
+    public static ItemStack createUltimateBowStack(Item item, HolderLookup.Provider registries) {
         ItemStack stack = new ItemStack(item);
         ensureUltimateBowEnchantments(stack, registries);
         return stack;

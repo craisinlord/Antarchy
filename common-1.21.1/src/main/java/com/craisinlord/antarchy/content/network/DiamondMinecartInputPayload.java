@@ -19,7 +19,9 @@ public record DiamondMinecartInputPayload(byte inputFlags) implements CustomPack
     public static final byte FLAG_LEFT    = 0x04;
     public static final byte FLAG_RIGHT   = 0x08;
 
-    public boolean isForward() { return (inputFlags & FLAG_FORWARD) != 0; }
+    public boolean isForward() {
+        return (inputFlags & FLAG_FORWARD) != 0;
+    }
     public boolean isBack()    { return (inputFlags & FLAG_BACK)    != 0; }
     public boolean isLeft()    { return (inputFlags & FLAG_LEFT)    != 0; }
     public boolean isRight()   { return (inputFlags & FLAG_RIGHT)   != 0; }

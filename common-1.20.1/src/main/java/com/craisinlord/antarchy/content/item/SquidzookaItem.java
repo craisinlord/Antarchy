@@ -3,13 +3,19 @@ package com.craisinlord.antarchy.content.item;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItem;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.google.common.base.Suppliers;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -20,26 +26,23 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoItem;
-import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem, com.craisinlord.antarchy.content.client.AntarchyGeoItem {
+public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem, AntarchyGeoItem {
     private static final String FIRE_CONTROLLER = "fire_controller";
     private static final String FIRE_ANIMATION = "squidzooka_recoil";
     private static final Predicate<ItemStack> NO_PROJECTILES = stack -> false;
@@ -135,7 +138,7 @@ public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem, com
             private AnimatedHeldItemRenderer<SquidzookaItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }
@@ -145,14 +148,14 @@ public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem, com
         });
     }
 
-    private final java.util.function.Supplier<Object> renderProvider = com.google.common.base.Suppliers.memoize(() -> {
+    private final Supplier<Object> renderProvider = Suppliers.memoize(() -> {
         Object[] holder = new Object[1];
         createRenderer(o -> holder[0] = o);
         return holder[0];
     });
 
     @Override
-    public java.util.function.Supplier<Object> getRenderProvider() {
+    public Supplier<Object> getRenderProvider() {
         return this.renderProvider;
     }
 
@@ -178,7 +181,7 @@ public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem, com
     }
 
     private static boolean hasMultishot(ItemStack stack) {
-        return net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, stack) > 0;
+        return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, stack) > 0;
     }
 
     private static void spawnFireParticles(ServerLevel level, Player player) {

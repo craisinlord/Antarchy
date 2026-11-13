@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.client.model.NightmareModel;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -12,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import com.mojang.math.Axis;
 
 public class NightmareRenderer extends GeoEntityRenderer<NightmareEntity> {
     public NightmareRenderer(EntityRendererProvider.Context context) {

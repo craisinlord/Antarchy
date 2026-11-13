@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.client.model.RoyalBlackHoleModel;
 import com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -22,7 +23,7 @@ public class RoyalBlackHoleRenderer extends GeoEntityRenderer<RoyalBlackHoleEnti
         poseStack.pushPose();
         float scale = 1.5F * entity.visualGrowth();
         if (entity.isGravityInverted()) {
-            poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+            poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
         }
         poseStack.scale(scale, scale, scale);
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, 0xF000F0);

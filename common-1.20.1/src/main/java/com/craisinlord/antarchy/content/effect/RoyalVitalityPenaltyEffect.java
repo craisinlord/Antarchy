@@ -1,16 +1,16 @@
 package com.craisinlord.antarchy.content.effect;
 
 import com.craisinlord.antarchy.Antarchy;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-import net.minecraft.world.entity.LivingEntity;
 
 public final class RoyalVitalityPenaltyEffect extends MobEffect {
     public static final ResourceLocation MODIFIER_ID =
@@ -24,7 +24,9 @@ public final class RoyalVitalityPenaltyEffect extends MobEffect {
     @Override
     public void addAttributeModifiers(LivingEntity entity, AttributeMap attributeMap, int amplifier) {
         AttributeInstance maxHealth = attributeMap.getInstance(Attributes.MAX_HEALTH);
-        if (maxHealth == null) return;
+        if (maxHealth == null) {
+            return;
+        }
         maxHealth.removeModifier(MODIFIER_UUID);
         maxHealth.addTransientModifier(new AttributeModifier(
                 MODIFIER_UUID, MODIFIER_ID.toString(), -0.5D, AttributeModifier.Operation.MULTIPLY_TOTAL));
@@ -36,7 +38,9 @@ public final class RoyalVitalityPenaltyEffect extends MobEffect {
     @Override
     public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributeMap, int amplifier) {
         AttributeInstance maxHealth = attributeMap.getInstance(Attributes.MAX_HEALTH);
-        if (maxHealth == null) return;
+        if (maxHealth == null) {
+            return;
+        }
         maxHealth.removeModifier(MODIFIER_UUID);
     }
 }

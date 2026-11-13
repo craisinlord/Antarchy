@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.portalgun;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;

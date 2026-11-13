@@ -4,6 +4,10 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.HoverboardEntity;
 import com.craisinlord.antarchy.mixins.LivingEntityJumpingAccessor;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -11,11 +15,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import net.minecraft.world.entity.player.Player;
 
 public final class HoverboardSoundSystem {
     private static final float MIN_PITCH = 0.75F;
@@ -110,7 +110,7 @@ public final class HoverboardSoundSystem {
             float speedRatio = (float) Mth.clamp(speed / maxSpeed, 0.0D, 1.0D);
             boolean jumping = false;
             Entity passenger = this.hoverboard.getControllingPassenger();
-            if (passenger instanceof net.minecraft.world.entity.player.Player player) {
+            if (passenger instanceof Player player) {
                 jumping = ((LivingEntityJumpingAccessor) player).antarchy$isJumping();
             }
             boolean movingUpward = this.hoverboard.getDeltaMovement().y > 0.02D;

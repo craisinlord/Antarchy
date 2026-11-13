@@ -1,7 +1,6 @@
 {
-  "parent": "minecraft:block/wall_inventory",
+  "parent": "antarchy:block/tinted/wall_inventory",
   "textures": {
     "wall": "antarchy:block/polished_rockite"
   }
 }
-

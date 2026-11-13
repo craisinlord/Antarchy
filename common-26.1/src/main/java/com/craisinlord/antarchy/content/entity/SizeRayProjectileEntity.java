@@ -2,12 +2,12 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import net.minecraft.resources.Identifier;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -157,19 +157,21 @@ public class SizeRayProjectileEntity extends AbstractArrow {
 
     private void applyScaleChange(LivingEntity livingEntity, int chargeLevel) {
         AttributeInstance scaleAttribute = livingEntity.getAttribute(Attributes.SCALE);
-        if (scaleAttribute == null) return;
+        if (scaleAttribute == null) {
+            return;
+        }
 
         migrateLegacy(livingEntity, scaleAttribute);
         AttributeModifier existing = scaleAttribute.getModifier(SIZE_RAY_MODIFIER_ID);
-        double current = existing != null ? existing.amount() : 0.0;
+        double current = existing != null ? existing.amount() : 0.0D;
 
         double delta = AntarchySettings.sizeRayDeltaPerHit();
         double snappedCurrent = Math.round(current / delta) * delta;
         double next = this.sizeRayType == SizeRayType.SHRINK
                 ? snappedCurrent - delta * chargeLevel
                 : snappedCurrent + delta * chargeLevel;
-        double minOffset = AntarchySettings.sizeRayMinScale() - 1.0;
-        double maxOffset = AntarchySettings.sizeRayMaxScale() - 1.0;
+        double minOffset = AntarchySettings.sizeRayMinScale() - 1.0D;
+        double maxOffset = AntarchySettings.sizeRayMaxScale() - 1.0D;
         next = Mth.clamp(next, minOffset, maxOffset);
 
         writeModifier(scaleAttribute, next);
@@ -197,7 +199,7 @@ public class SizeRayProjectileEntity extends AbstractArrow {
 
     public static void writeModifier(AttributeInstance scaleAttribute, double offset) {
         scaleAttribute.removeModifier(SIZE_RAY_MODIFIER_ID);
-        if (offset != 0.0) {
+        if (offset != 0.0D) {
             scaleAttribute.addPermanentModifier(
                     new AttributeModifier(
                             SIZE_RAY_MODIFIER_ID,

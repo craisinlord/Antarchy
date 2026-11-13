@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.GiantLilyPadBlock;
@@ -10,6 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -20,7 +20,7 @@ public final class GiantLilyPadPatchFeature implements Feature {
 
     private GiantLilyPadPatchFeature(boolean peachForest) {
         this.peachForest = peachForest;
-        this.lotusChance = peachForest ? PEACH_FOREST_LOTUS_CHANCE : 1.0F;
+        this.lotusChance = peachForest ? PEACH_FOREST_LOTUS_CHANCE : 0.5F;
     }
 
     public MapCodec<GiantLilyPadPatchFeature> codec() {
@@ -29,10 +29,8 @@ public final class GiantLilyPadPatchFeature implements Feature {
 
     private final boolean peachForest;
 
-    private static final float PEACH_FOREST_LOTUS_CHANCE = 0.12F;
+    private static final float PEACH_FOREST_LOTUS_CHANCE = 0.5F;
     private final float lotusChance;
-
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

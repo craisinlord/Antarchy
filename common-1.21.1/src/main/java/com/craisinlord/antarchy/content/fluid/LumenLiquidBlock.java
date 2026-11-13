@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.fluid;
 
 import com.craisinlord.antarchy.content.block.ElythiaPalette;
+import com.craisinlord.antarchy.content.effect.LumenSoakedHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -84,6 +85,10 @@ public class LumenLiquidBlock extends LiquidBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
+        if (!level.isClientSide && entity instanceof LivingEntity living) {
+            LumenSoakedHooks.soak(living);
+            return;
+        }
         if (!level.isClientSide || !(entity instanceof LivingEntity) || !isSurfaceExposed(level, pos)) {
             return;
         }

@@ -23,6 +23,8 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 public class RoyalTreeFeature extends Feature<RoyalTreeConfiguration> {
+    private static final float TWO_PI = (float) (Math.PI * 2.0);
+
     public RoyalTreeFeature(Codec<RoyalTreeConfiguration> codec) {
         super(codec);
     }
@@ -70,26 +72,47 @@ public class RoyalTreeFeature extends Feature<RoyalTreeConfiguration> {
 
         placeButtress(level, random, config, origin, logs);
 
-        int struts = Mth.clamp(config.strutCount().sample(random), 0, 4);
+        int radius = config.canopyRadius().sample(random);
+        int layers = config.canopyLayers().sample(random);
+        int limbs = Mth.clamp(config.strutCount().sample(random), 0, 4);
+
+        int leaderX = topOffset[0] + random.nextInt(2);
+        int leaderZ = topOffset[1] + random.nextInt(2);
+        int crownY = height + 2 + random.nextInt(2);
+        placeLimb(level, random, config, origin.offset(leaderX, splitStartY, leaderZ), origin.offset(leaderX, crownY - 1, leaderZ), logs);
+
+        List<BlockPos> clumpCenters = new ArrayList<>();
+        List<int[]> clumpSizes = new ArrayList<>();
+        int centerRadius = limbs == 0 ? radius : Math.round(radius * 0.55F) + random.nextInt(2);
+        clumpCenters.add(origin.offset(leaderX, crownY, leaderZ));
+        clumpSizes.add(new int[]{Math.max(2, centerRadius), Math.max(2, Math.round(layers * 0.6F) + 1), Math.max(1, Math.round(layers * 0.4F))});
+
         int[][] corners = {{0, 0}, {1, 0}, {0, 1}, {1, 1}};
         List<int[]> pool = new ArrayList<>(List.of(corners));
         Collections.shuffle(pool, new Random(random.nextLong()));
-        for (int i = 0; i < struts && i < pool.size(); i++) {
+        for (int i = 0; i < limbs && i < pool.size(); i++) {
             int[] corner = pool.get(i);
             int outX = corner[0] == 1 ? 1 : -1;
             int outZ = corner[1] == 1 ? 1 : -1;
-            for (int y = splitStartY; y <= height; y++) {
-                int spread = Math.min((y - splitStartY + 1) / 2, 2);
-                int sx = topOffset[0] + corner[0] + outX * spread;
-                int sz = topOffset[1] + corner[1] + outZ * spread;
-                placeLog(level, random, config, origin.offset(sx, y, sz), logs);
-            }
-        }
+            double angle = Math.atan2(outZ, outX) + (random.nextFloat() - 0.5F) * 0.7F;
+            float reach = Math.max(2.0F, radius * (0.45F + random.nextFloat() * 0.15F));
+            int limbTopY = height + random.nextInt(Math.max(1, layers - 1));
 
-        int radius = config.canopyRadius().sample(random);
-        int layers = config.canopyLayers().sample(random);
-        BlockPos canopyCenter = origin.offset(topOffset[0], height, topOffset[1]);
-        placeCanopy(level, random, config, canopyCenter, radius, layers, 2, 2, leaves);
+            BlockPos start = origin.offset(topOffset[0] + corner[0], splitStartY, topOffset[1] + corner[1]);
+            int endX = (int) Math.round(Math.cos(angle) * reach);
+            int endZ = (int) Math.round(Math.sin(angle) * reach);
+            int midY = splitStartY + Math.round((limbTopY - splitStartY) * 0.6F);
+            BlockPos mid = new BlockPos(start.getX() + Math.round(endX * 0.35F), origin.getY() + midY, start.getZ() + Math.round(endZ * 0.35F));
+            BlockPos end = new BlockPos(start.getX() + endX, origin.getY() + limbTopY, start.getZ() + endZ);
+            placeLimb(level, random, config, start, mid, logs);
+            placeLimb(level, random, config, mid, end, logs);
+
+            int clumpRadius = Math.max(2, Math.round(radius * 0.5F) + random.nextInt(2));
+            int up = Math.max(2, Math.round(layers * 0.6F) + random.nextInt(2));
+            int down = Math.max(1, Math.round(up * 0.6F));
+            clumpCenters.add(end.above());
+            clumpSizes.add(new int[]{clumpRadius, up, down});
+        }
 
         int branches = Mth.clamp(config.branchCount().sample(random), 0, 8);
         int branchSpan = Math.max(1, height - 6);
@@ -109,7 +132,13 @@ public class RoyalTreeFeature extends Feature<RoyalTreeConfiguration> {
                 placeLog(level, random, config, cursor, logs, branchDir.getAxis());
             }
             int padRadius = 2 + random.nextInt(3);
-            placeCanopy(level, random, config, cursor.above(), padRadius, Math.max(2, padRadius - 1), 1, 0, leaves);
+            clumpCenters.add(cursor.above());
+            clumpSizes.add(new int[]{padRadius, Math.max(1, padRadius - 1), 1});
+        }
+
+        for (int i = 0; i < clumpCenters.size(); i++) {
+            int[] size = clumpSizes.get(i);
+            placeClump(level, random, config, clumpCenters.get(i), size[0], size[1], size[2], leaves);
         }
 
         refreshLeafDistances(level, leaves, logs);
@@ -140,51 +169,86 @@ public class RoyalTreeFeature extends Feature<RoyalTreeConfiguration> {
         }
     }
 
-    private void placeCanopy(
+    private void placeClump(
             WorldGenLevel level,
             RandomSource random,
             RoyalTreeConfiguration config,
             BlockPos center,
             int radius,
-            int layers,
-            int shell,
-            int bottomRecess,
+            int up,
+            int down,
             Set<BlockPos> leaves
     ) {
-        float rf = Math.max(1.0F, radius);
-        for (int dx = -radius - 1; dx <= radius + 1; dx++) {
-            for (int dz = -radius - 1; dz <= radius + 1; dz++) {
+        int lobes = 2 + random.nextInt(3);
+        float phase = random.nextFloat() * TWO_PI;
+        float amp = 0.14F + random.nextFloat() * 0.1F;
+        float noiseX = random.nextFloat() * TWO_PI;
+        float noiseZ = random.nextFloat() * TWO_PI;
+        int bound = Mth.ceil(radius * (1.0F + amp)) + 1;
+        for (int dx = -bound; dx <= bound; dx++) {
+            for (int dz = -bound; dz <= bound; dz++) {
                 float d = Mth.sqrt(dx * dx + dz * dz);
-                float norm = d / rf;
-                if (norm > 1.05F) {
+                float angle = (float) Math.atan2(dz, dx);
+                float edge = Math.max(1.0F, radius * (1.0F + amp * Mth.sin(lobes * angle + phase)));
+                float norm = d / edge;
+                if (norm > 1.0F) {
+                    continue;
+                }
+                if (norm > 0.8F && random.nextFloat() < 0.25F) {
                     continue;
                 }
 
-                int rimCut = 0;
-                if (norm > 0.7F && random.nextFloat() < 0.38F) {
-                    rimCut = 1;
+                float k = Mth.sqrt(Math.max(0.0F, 1.0F - norm * norm));
+                int jitter = 0;
+                if (norm < 0.85F) {
+                    float n = Mth.sin(dx * 0.8F + noiseX) * Mth.cos(dz * 0.8F + noiseZ);
+                    jitter = n > 0.45F ? 1 : (n < -0.55F ? -1 : 0);
                 }
-                if (d - rimCut > rf) {
-                    continue;
-                }
-
-                int topY = Math.round(layers * Mth.sqrt(Math.max(0.0F, 1.0F - norm * norm)));
-                if (topY < 1) {
-                    topY = 1;
-                }
-                int bottomY = Math.round(bottomRecess * (1.0F - Math.min(1.0F, norm)));
-                if (bottomY > topY) {
-                    continue;
-                }
-
+                int topY = Math.max(0, Math.round(up * k) + jitter);
+                int bottomY = -Math.round(down * k);
                 for (int y = bottomY; y <= topY; y++) {
-                    boolean interior = topY - y >= shell && y - bottomY >= shell && rf - d >= shell;
-                    if (interior) {
-                        continue;
-                    }
                     placeLeaf(level, random, config, center.offset(dx, y, dz), leaves);
                 }
+
+                if (norm > 0.6F && random.nextFloat() < 0.1F) {
+                    int length = 1 + random.nextInt(3);
+                    for (int h = 1; h <= length; h++) {
+                        BlockPos hang = center.offset(dx, bottomY - h, dz);
+                        if (!level.getBlockState(hang).isAir()) {
+                            break;
+                        }
+                        placeLeaf(level, random, config, hang, leaves);
+                    }
+                }
             }
+        }
+    }
+
+    private void placeLimb(WorldGenLevel level, RandomSource random, RoyalTreeConfiguration config, BlockPos from, BlockPos to, Set<BlockPos> logs) {
+        int dx = to.getX() - from.getX();
+        int dy = to.getY() - from.getY();
+        int dz = to.getZ() - from.getZ();
+        int ax = Math.abs(dx);
+        int ay = Math.abs(dy);
+        int az = Math.abs(dz);
+        Direction.Axis axis = ay >= Math.max(ax, az) ? Direction.Axis.Y : (ax >= az ? Direction.Axis.X : Direction.Axis.Z);
+        int x = 0;
+        int y = 0;
+        int z = 0;
+        placeLog(level, random, config, from, logs, axis);
+        int total = ax + ay + az;
+        for (int i = 0; i < total; i++) {
+            float px = Math.abs(x) < ax ? Math.abs(x) / (float) ax : Float.MAX_VALUE;
+            float py = Math.abs(y) < ay ? Math.abs(y) / (float) ay : Float.MAX_VALUE;
+            float pz = Math.abs(z) < az ? Math.abs(z) / (float) az : Float.MAX_VALUE;
+            if (py <= px && py <= pz) {
+                y += Integer.signum(dy);
+            } else if (px <= pz) {
+                x += Integer.signum(dx);
+            } else {
+                z += Integer.signum(dz);
+            }
+            placeLog(level, random, config, from.offset(x, y, z), logs, axis);
         }
     }
 

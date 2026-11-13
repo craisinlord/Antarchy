@@ -1,7 +1,9 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.Holder;
@@ -28,8 +30,8 @@ public abstract class GlimmeringTranslucencyMixin<T extends LivingEntity> {
             at = @At("HEAD")
     )
     private void antarchy$captureGlimmering(LivingEntity entity, float limbSwing, float partialTick,
-                                             com.mojang.blaze3d.vertex.PoseStack poseStack,
-                                             net.minecraft.client.renderer.MultiBufferSource buffer,
+                                             PoseStack poseStack,
+                                             MultiBufferSource buffer,
                                              int packedLight, CallbackInfo ci) {
         Holder<MobEffect> glimmering = AntarchyObjects.GLIMMERING_EFFECT.get();
         this.antarchy$glimmeringActive = glimmering != null && entity.hasEffect(glimmering);

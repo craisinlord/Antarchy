@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.List;
 import java.util.Locale;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;

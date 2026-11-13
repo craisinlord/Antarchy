@@ -1,14 +1,19 @@
 package com.craisinlord.antarchy.fabric;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
-import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
+import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
+import com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
 import com.craisinlord.antarchy.content.loot.AntarchyLootInjections;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
+import com.craisinlord.antos.fabric.AntOSFabricContent;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
@@ -16,7 +21,6 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -25,14 +29,13 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
 public final class AntarchyFabric implements ModInitializer {
-    private static final TagKey<net.minecraft.world.level.biome.Biome> SHELLSTONE_BIOMES = TagKey.create(
+    private static final TagKey<Biome> SHELLSTONE_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "has_shellstone")
     );
@@ -44,55 +47,55 @@ public final class AntarchyFabric implements ModInitializer {
             Registries.PLACED_FEATURE,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "shellstone_lower")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> MISSILE_SQUID_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> MISSILE_SQUID_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "missile_squid_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> OCTOPUS_BOMB_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> OCTOPUS_BOMB_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "octopus_bomb_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> MANTIS_OVERWORLD_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> MANTIS_OVERWORLD_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "mantis_overworld_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> OVERWORLD_ANT_NEST_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> OVERWORLD_ANT_NEST_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "overworld_ant_nest_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> RED_ANT_NEST_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> RED_ANT_NEST_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "red_ant_nest_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> IS_ELYTHIA = TagKey.create(
+    private static final TagKey<Biome> IS_ELYTHIA = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "is_elythia")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> APPLE_COW_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> APPLE_COW_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "apple_cow_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> GOLDEN_APPLE_COW_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> GOLDEN_APPLE_COW_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "golden_apple_cow_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> FLYING_SQUIRREL_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> FLYING_SQUIRREL_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "flying_squirrel_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> FLOWER_FOREST_BUTTERFLY_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> FLOWER_FOREST_BUTTERFLY_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "flower_forest_butterfly_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> FLOWER_FOREST_CATERPILLAR_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> FLOWER_FOREST_CATERPILLAR_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "flower_forest_caterpillar_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> MILKWEED_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> MILKWEED_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "milkweed_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> WILD_CORN_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> WILD_CORN_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "wild_corn_spawn_biomes")
     );
@@ -136,11 +139,11 @@ public final class AntarchyFabric implements ModInitializer {
             Registries.PLACED_FEATURE,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "corn_patch")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> HAS_SEASHELL = TagKey.create(
+    private static final TagKey<Biome> HAS_SEASHELL = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "has_seashell")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> HAS_RARE_SEASHELL = TagKey.create(
+    private static final TagKey<Biome> HAS_RARE_SEASHELL = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "has_rare_seashell")
     );
@@ -154,7 +157,7 @@ public final class AntarchyFabric implements ModInitializer {
     );
     @Override
     public void onInitialize() {
-        com.craisinlord.antos.fabric.AntOSFabricContent.register();
+        AntOSFabricContent.register();
         AntarchyGameRules.bootstrap((name, category, defaultValue) ->
                 GameRuleRegistry.register(name, category, GameRuleFactory.createBooleanRule(defaultValue))
         );
@@ -204,7 +207,7 @@ public final class AntarchyFabric implements ModInitializer {
                 return computerScientistDelegate.reload(barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
             }
         });
-        com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager pestControlDelegate = new com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager();
+        PestControlTradeManager pestControlDelegate = new PestControlTradeManager();
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override
             public ResourceLocation getFabricId() {
@@ -220,15 +223,15 @@ public final class AntarchyFabric implements ModInitializer {
         });
     }
 
-    private static final TagKey<net.minecraft.world.level.biome.Biome> CAVARYN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> CAVARYN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "is_cavaryn")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> DORRIE_OVERWORLD_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> DORRIE_OVERWORLD_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dorrie_overworld_spawn_biomes")
     );
-    private static final TagKey<net.minecraft.world.level.biome.Biome> DORRIE_ELYTHIA_SPAWN_BIOMES = TagKey.create(
+    private static final TagKey<Biome> DORRIE_ELYTHIA_SPAWN_BIOMES = TagKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dorrie_elythia_spawn_biomes")
     );
@@ -246,25 +249,25 @@ public final class AntarchyFabric implements ModInitializer {
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(MISSILE_SQUID_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.MONSTER,
+                MobCategory.MONSTER,
                 AntarchyFabricEntities.MISSILE_SQUID.get(),
                 2, 1, 2
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(OCTOPUS_BOMB_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.WATER_CREATURE,
+                MobCategory.WATER_CREATURE,
                 AntarchyFabricEntities.OCTOPUS_BOMB.get(),
                 2, 1, 2
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(MANTIS_OVERWORLD_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.MONSTER,
+                MobCategory.MONSTER,
                 AntarchyFabricEntities.MANTIS.get(),
                 8, 1, 1
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(MANTIS_OVERWORLD_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.MONSTER,
+                MobCategory.MONSTER,
                 AntarchyFabricEntities.ALPHA_MANTIS.get(),
                 1, 1, 1
         );
@@ -335,43 +338,43 @@ public final class AntarchyFabric implements ModInitializer {
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(APPLE_COW_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.CREATURE,
+                MobCategory.CREATURE,
                 AntarchyFabricEntities.APPLE_COW.get(),
                 10, 2, 4
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(GOLDEN_APPLE_COW_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.CREATURE,
+                MobCategory.CREATURE,
                 AntarchyFabricEntities.GOLDEN_APPLE_COW.get(),
                 1, 1, 3
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(FLYING_SQUIRREL_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.CREATURE,
+                MobCategory.CREATURE,
                 AntarchyFabricEntities.FLYING_SQUIRREL.get(),
                 8, 1, 3
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(FLOWER_FOREST_BUTTERFLY_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.AMBIENT,
+                MobCategory.AMBIENT,
                 AntarchyFabricEntities.BUTTERFLY.get(),
                 28, 2, 5
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(FLOWER_FOREST_CATERPILLAR_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.CREATURE,
+                MobCategory.CREATURE,
                 AntarchyFabricEntities.CATERPILLAR.get(),
                 24, 2, 4
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(DORRIE_OVERWORLD_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.CREATURE,
+                MobCategory.CREATURE,
                 AntarchyFabricEntities.DORRIE.get(),
                 1, 1, 1
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(DORRIE_ELYTHIA_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.CREATURE,
+                MobCategory.CREATURE,
                 AntarchyFabricEntities.DORRIE.get(),
                 10, 1, 2
         );

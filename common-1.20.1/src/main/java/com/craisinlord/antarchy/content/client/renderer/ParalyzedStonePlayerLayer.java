@@ -29,7 +29,7 @@ public final class ParalyzedStonePlayerLayer extends RenderLayer<AbstractClientP
         }
 
         poseStack.pushPose();
-        poseStack.scale(1.05f, 1.05f, 1.05f);
+        poseStack.scale(1.05F, 1.05F, 1.05F);
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(STONE_TEXTURE));
         this.getParentModel().renderToBuffer(
                 poseStack,

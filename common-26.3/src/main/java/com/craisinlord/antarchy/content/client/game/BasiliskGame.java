@@ -45,10 +45,14 @@ public final class BasiliskGame {
         placeFood();
     }
 
-    public void start() { if (phase == Phase.READY) phase = Phase.PLAYING; }
+    public void start() {
+        if (phase == Phase.READY) phase = Phase.PLAYING;
+    }
 
     public boolean tick() {
-        if (phase != Phase.PLAYING || ++ticks < 5) return false;
+        if (phase != Phase.PLAYING || ++ticks < 5) {
+            return false;
+        }
         ticks = 0;
         if (!isOpposite(requested, direction)) direction = requested;
         Part head = body.peekFirst();
@@ -69,15 +73,33 @@ public final class BasiliskGame {
         return true;
     }
 
-    public void setDirection(Direction direction) { if (direction != null && !isOpposite(direction, this.direction)) requested = direction; }
-    public Phase phase() { return phase; }
-    public int score() { return score; }
-    public int highScore() { return highScore; }
-    public int width() { return 20; }
-    public int height() { return 14; }
-    public int foodX() { return foodX; }
-    public int foodY() { return foodY; }
-    public Deque<Part> body() { return body; }
+    public void setDirection(Direction direction) {
+        if (direction != null && !isOpposite(direction, this.direction)) requested = direction;
+    }
+    public Phase phase() {
+        return phase;
+    }
+    public int score() {
+        return score;
+    }
+    public int highScore() {
+        return highScore;
+    }
+    public int width() {
+        return 20;
+    }
+    public int height() {
+        return 14;
+    }
+    public int foodX() {
+        return foodX;
+    }
+    public int foodY() {
+        return foodY;
+    }
+    public Deque<Part> body() {
+        return body;
+    }
 
     private void placeFood() {
         do {

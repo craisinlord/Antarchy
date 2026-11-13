@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/cube_column",
+  "parent": "antarchy:block/tinted/cube_column",
   "textures": {
     "end": "antarchy:block/rockite_pillar_top",
     "side": "antarchy:block/rockite_pillar"

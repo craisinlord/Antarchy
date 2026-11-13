@@ -10,9 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceKey;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -22,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resources.ResourceKey;
 
 public final class AntarchyConfigModuleFabric {
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();

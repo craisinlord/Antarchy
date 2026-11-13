@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.fabric.mixin;
 
-import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.item.SpringyBootsItem;
 import com.craisinlord.antarchy.fabric.util.SpringyBootsFabricHelper;
+import com.craisinlord.anthology.gravity.GravityApi;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +35,9 @@ public abstract class SpringyBootsFallDamageMixin {
     @ModifyVariable(method = "causeFallDamage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     private float antarchy$reduceSpringyBootsFallDamage(float fallDistance) {
         LivingEntity self = (LivingEntity) (Object) this;
-        if (!SpringyBootsItem.isWearingSpringyBoots(self)) return fallDistance;
+        if (!SpringyBootsItem.isWearingSpringyBoots(self)) {
+            return fallDistance;
+        }
         long protectionUntil = SpringyBootsFabricHelper.getProtectionUntil(self);
         if (self.level().getGameTime() < protectionUntil) {
             return fallDistance * 0.25F;

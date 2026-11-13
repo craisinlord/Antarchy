@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import java.util.Locale;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 
 public enum GlimmerVariant {
     APPLE_COW(new GlimmerAppleCowBehavior(), "apple_of_my_eye"),
@@ -35,7 +36,7 @@ public enum GlimmerVariant {
         return Component.translatable("glimmer_variant.antarchy." + this.name().toLowerCase(Locale.ROOT));
     }
 
-    public static GlimmerVariant random(net.minecraft.util.RandomSource random) {
+    public static GlimmerVariant random(RandomSource random) {
         GlimmerVariant[] values = values();
         return values[random.nextInt(values.length)];
     }

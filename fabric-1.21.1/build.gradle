@@ -44,8 +44,8 @@ dependencies {
     }
     compileOnly(files(zipTree("$rootDir/infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar")
             .matching { include "META-INF/jarjar/net.caffeinemc.sodium-neoforge-*-mod.jar" }))
-    modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
-    modLocalRuntime("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
+    modCompileOnly(files("$rootDir/integrated_api_jars/integrated_api-fabric-1.21.1-${intapi_version_1_21_1}.jar"))
+    modLocalRuntime(files("$rootDir/integrated_api_jars/integrated_api-fabric-1.21.1-${intapi_version_1_21_1}.jar"))
     modLocalRuntime("dev.architectury:architectury-fabric:${architectury_api_version}")
     compileOnly "mezz.jei:jei-1.21.1-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-1.21.1-fabric-api:${jei_version}"
@@ -102,7 +102,7 @@ tasks.named('processResources', ProcessResources).configure {
 
 tasks.named('processResources', ProcessResources).configure {
     doLast {
-        ['antarchy-common.mixins.json'].each { configName ->
+        ['antarchy-common.mixins.json', 'antarchy-compat.mixins.json'].each { configName ->
             var mixinConfig = new File(destinationDir, configName)
             var json = new groovy.json.JsonSlurper().parse(mixinConfig)
             json.put('refmap', 'antarchy.mixins.refmap.json')

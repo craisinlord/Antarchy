@@ -7,6 +7,8 @@ import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.mojang.serialization.Codec;
+import java.util.EnumSet;
+import java.util.function.IntFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -45,7 +47,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -54,12 +55,9 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.EnumSet;
-import java.util.function.IntFunction;
 
 public class SpringbugEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Boolean> CAMOUFLAGED =
@@ -201,7 +199,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag dataTag) {
         AttributeInstance maxHealthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
         if (maxHealthAttribute != null) {
             maxHealthAttribute.setBaseValue(AntarchySettings.springbugHealth());
@@ -765,7 +763,9 @@ public class SpringbugEntity extends Monster implements GeoEntity {
         @Override
         public void tick() {
             LivingEntity target = SpringbugEntity.this.getTarget();
-            if (target == null) return;
+            if (target == null) {
+                return;
+            }
 
             SpringbugEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
 

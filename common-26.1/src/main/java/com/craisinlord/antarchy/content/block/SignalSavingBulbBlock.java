@@ -48,7 +48,9 @@ public class SignalSavingBulbBlock extends Block {
         boolean receiving = level.hasNeighborSignal(pos);
         boolean wasPowered = state.getValue(POWERED);
 
-        if (receiving == wasPowered) return;
+        if (receiving == wasPowered) {
+            return;
+        }
 
         BlockState newState = state;
 

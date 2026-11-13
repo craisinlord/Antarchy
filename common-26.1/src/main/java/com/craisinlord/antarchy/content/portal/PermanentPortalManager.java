@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -94,7 +95,7 @@ public final class PermanentPortalManager {
         }
     }
 
-    private static void activatePortal(ServerLevel level, PermanentPortalType type, PermanentPortalShape shape, net.minecraft.sounds.SoundEvent sound, float volume, float pitch) {
+    private static void activatePortal(ServerLevel level, PermanentPortalType type, PermanentPortalShape shape, SoundEvent sound, float volume, float pitch) {
         shape.fill(level);
         Vec3 center = shape.center();
         level.playSound(null, center.x, center.y, center.z, sound, SoundSource.BLOCKS, volume, pitch);

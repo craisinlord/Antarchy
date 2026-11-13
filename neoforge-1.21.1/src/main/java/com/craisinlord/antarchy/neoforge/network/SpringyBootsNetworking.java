@@ -32,15 +32,25 @@ public final class SpringyBootsNetworking {
 
     private static void handleLaunch(SpringyBootsLaunchPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player() instanceof ServerPlayer player)) return;
-            if (!SpringyBootsItem.isWearingSpringyBoots(player)) return;
-            if (player.isSpectator() || player.isPassenger()) return;
+            if (!(context.player() instanceof ServerPlayer player)) {
+                return;
+            }
+            if (!SpringyBootsItem.isWearingSpringyBoots(player)) {
+                return;
+            }
+            if (player.isSpectator() || player.isPassenger()) {
+                return;
+            }
 
             ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
-            if (player.getCooldowns().isOnCooldown(boots.getItem())) return;
+            if (player.getCooldowns().isOnCooldown(boots.getItem())) {
+                return;
+            }
 
             int clampedCharge = Math.min(payload.chargeTicks(), SpringyBootsHelper.CHARGE_TICKS_MAX);
-            if (clampedCharge <= 0) return;
+            if (clampedCharge <= 0) {
+                return;
+            }
 
             float verticalBoost = SpringyBootsHelper.verticalBoostFor(clampedCharge);
             Vec3 current = player.getDeltaMovement();
@@ -56,7 +66,7 @@ public final class SpringyBootsNetworking {
             }
 
             player.setDeltaMovement(newX, newY, newZ);
-            player.setPos(player.getX(), player.getY() + 0.001, player.getZ());
+            player.setPos(player.getX(), player.getY() + 0.001D, player.getZ());
             player.hasImpulse = true;
             player.hurtMarked = true;
             player.resetFallDistance();
@@ -72,8 +82,12 @@ public final class SpringyBootsNetworking {
 
     @SubscribeEvent
     public static void onLivingFall(LivingFallEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!SpringyBootsItem.isWearingSpringyBoots(player)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        if (!SpringyBootsItem.isWearingSpringyBoots(player)) {
+            return;
+        }
         long protectionUntil = player.getPersistentData().getLong(SpringyBootsHelper.FALL_PROTECTION_NBT_KEY);
         if (player.level().getGameTime() < protectionUntil) {
             event.setDamageMultiplier(event.getDamageMultiplier() * 0.25F);

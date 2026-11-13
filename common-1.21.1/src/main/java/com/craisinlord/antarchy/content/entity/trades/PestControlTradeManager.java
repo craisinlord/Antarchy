@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -14,7 +15,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 
@@ -39,7 +39,9 @@ public final class PestControlTradeManager extends SimpleJsonResourceReloadListe
     protected void apply(Map<ResourceLocation, JsonElement> resources, ResourceManager manager, ProfilerFiller profiler) {
         List<Entry> parsed = new ArrayList<>();
         for (JsonElement resource : resources.values()) {
-            if (!resource.isJsonObject()) continue;
+            if (!resource.isJsonObject()) {
+                continue;
+            }
             JsonObject root = resource.getAsJsonObject();
             if (root.has("trades")) {
                 for (JsonElement element : root.getAsJsonArray("trades")) if (element.isJsonObject()) parsed.add(Entry.parse(element.getAsJsonObject()));
@@ -53,8 +55,8 @@ public final class PestControlTradeManager extends SimpleJsonResourceReloadListe
         private MerchantOffer offer(RandomSource random) {
             var buyItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(buy));
             var sellItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(sell));
-            var secondCost = secondBuy == null ? java.util.Optional.<ItemCost>empty()
-                    : java.util.Optional.of(new ItemCost(BuiltInRegistries.ITEM.get(ResourceLocation.parse(secondBuy)), secondBuyCount));
+            var secondCost = secondBuy == null ? Optional.<ItemCost>empty()
+                    : Optional.of(new ItemCost(BuiltInRegistries.ITEM.get(ResourceLocation.parse(secondBuy)), secondBuyCount));
             return new MerchantOffer(new ItemCost(buyItem, buyCount), secondCost, new ItemStack(sellItem, sellCount), maxUses, xp, 0.05F);
         }
 
@@ -69,7 +71,9 @@ public final class PestControlTradeManager extends SimpleJsonResourceReloadListe
         }
 
         private static int count(JsonObject stack) {
-            if (stack.has("min") && stack.has("max")) return stack.get("min").getAsInt();
+            if (stack.has("min") && stack.has("max")) {
+                return stack.get("min").getAsInt();
+            }
             return stack.has("count") ? stack.get("count").getAsInt() : stack.get("min").getAsInt();
         }
     }

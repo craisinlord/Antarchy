@@ -11,12 +11,12 @@ import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 public final class CavarynSpireGrid {
     public static final int CELL_SIZE = 128;
     private static final int MAX_CACHED_CELLS = 4096;
-    private static final double BASE_Y = 214.0;
-    private static final double MAX_TOP = 378.0;
+    private static final double BASE_Y = 214.0D;
+    private static final double MAX_TOP = 378.0D;
     private static final float FOREST_CHANCE = 0.4F;
     private static final float LONE_CHANCE = 0.15F;
     private static final float FUSE_CHANCE = 0.3F;
-    private static final double STRIPE_PITCH = 11.0;
+    private static final double STRIPE_PITCH = 11.0D;
 
     private static final Map<Long, WeakReference<CavarynSpireGrid>> BY_SALT = new ConcurrentHashMap<>();
 
@@ -48,13 +48,13 @@ public final class CavarynSpireGrid {
 
     public double signedDistance(int x, int y, int z) {
         ColumnCache cache = this.candidates(x, z);
-        double py = y + 0.5;
+        double py = y + 0.5D;
         if (py < cache.minY || py > cache.maxY) {
             return Double.MAX_VALUE;
         }
         double best = Double.MAX_VALUE;
         for (Spire spire : cache.spires) {
-            double value = spire.signedDistance(x + 0.5, py, z + 0.5);
+            double value = spire.signedDistance(x + 0.5D, py, z + 0.5D);
             if (value < best) {
                 best = value;
             }
@@ -64,23 +64,23 @@ public final class CavarynSpireGrid {
 
     public boolean onStripe(int x, int y, int z, double shell) {
         ColumnCache cache = this.candidates(x, z);
-        double py = y + 0.5;
+        double py = y + 0.5D;
         if (py < cache.minY || py > cache.maxY) {
             return false;
         }
         Spire nearest = null;
         double best = Double.MAX_VALUE;
         for (Spire spire : cache.spires) {
-            double value = spire.signedDistance(x + 0.5, py, z + 0.5);
+            double value = spire.signedDistance(x + 0.5D, py, z + 0.5D);
             if (value < best) {
                 best = value;
                 nearest = spire;
             }
         }
-        if (nearest == null || best > 0.0 || best < -shell) {
+        if (nearest == null || best > 0.0D || best < -shell) {
             return false;
         }
-        return nearest.stripe(x + 0.5, py, z + 0.5);
+        return nearest.stripe(x + 0.5D, py, z + 0.5D);
     }
 
     public int[] verticalRange(int x, int z) {
@@ -98,10 +98,10 @@ public final class CavarynSpireGrid {
         if (cache.valid && cache.qx == qx && cache.qz == qz) {
             return cache;
         }
-        double minX = qx * 4.0;
-        double minZ = qz * 4.0;
-        double maxX = minX + 4.0;
-        double maxZ = minZ + 4.0;
+        double minX = qx * 4.0D;
+        double minZ = qz * 4.0D;
+        double maxX = minX + 4.0D;
+        double maxZ = minZ + 4.0D;
         int cellX = Math.floorDiv(qx * 4, CELL_SIZE);
         int cellZ = Math.floorDiv(qz * 4, CELL_SIZE);
         List<Spire> found = new ArrayList<>();
@@ -149,45 +149,45 @@ public final class CavarynSpireGrid {
         } else {
             count = random.nextFloat() < LONE_CHANCE ? 1 : 0;
         }
-        double centerX = cellX * (double) CELL_SIZE + CELL_SIZE * (0.3 + random.nextDouble() * 0.4);
-        double centerZ = cellZ * (double) CELL_SIZE + CELL_SIZE * (0.3 + random.nextDouble() * 0.4);
+        double centerX = cellX * (double) CELL_SIZE + CELL_SIZE * (0.3D + random.nextDouble() * 0.4D);
+        double centerZ = cellZ * (double) CELL_SIZE + CELL_SIZE * (0.3D + random.nextDouble() * 0.4D);
         if (count > 0 && !this.filter.accepts(centerX, centerZ)) {
             return new Spire[0];
         }
-        double spread = forest ? 30.0 + random.nextDouble() * 14.0 : 0.0;
+        double spread = forest ? 30.0D + random.nextDouble() * 14.0D : 0.0D;
         List<Spire> spires = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            double angle = random.nextDouble() * Math.PI * 2.0;
+            double angle = random.nextDouble() * Math.PI * 2.0D;
             double distance = spread * Math.sqrt(random.nextDouble());
             double bx = centerX + Math.cos(angle) * distance;
             double bz = centerZ + Math.sin(angle) * distance;
             if (!this.filter.accepts(bx, bz)) {
                 continue;
             }
-            double height = 120.0 + random.nextDouble() * 45.0;
+            double height = 120.0D + random.nextDouble() * 45.0D;
             double top = Math.min(MAX_TOP, BASE_Y + height);
-            double radius = 9.0 + random.nextDouble() * 6.0;
+            double radius = 9.0D + random.nextDouble() * 6.0D;
             int lobes = random.nextFloat() < 0.6F ? 3 : 2;
-            double twist = (1.5 + random.nextDouble() * 2.0) * Math.PI * 2.0 / (top - BASE_Y);
+            double twist = (1.5D + random.nextDouble() * 2.0D) * Math.PI * 2.0D / (top - BASE_Y);
             if (random.nextBoolean()) {
                 twist = -twist;
             }
-            double lobeAmount = 0.3 + random.nextDouble() * 0.25;
-            double leanAngle = random.nextDouble() * Math.PI * 2.0;
-            double leanAmount = random.nextDouble() * 22.0;
+            double lobeAmount = 0.3D + random.nextDouble() * 0.25D;
+            double leanAngle = random.nextDouble() * Math.PI * 2.0D;
+            double leanAmount = random.nextDouble() * 22.0D;
             double leanX = Math.cos(leanAngle) * leanAmount;
             double leanZ = Math.sin(leanAngle) * leanAmount;
             if (!spires.isEmpty() && random.nextFloat() < FUSE_CHANCE) {
                 Spire other = spires.get(random.nextInt(spires.size()));
-                double meetX = other.axisX(other.topY - 6.0);
-                double meetZ = other.axisZ(other.topY - 6.0);
-                leanX = (meetX - bx) * 0.95;
-                leanZ = (meetZ - bz) * 0.95;
-                top = Math.min(MAX_TOP, other.topY - 2.0);
+                double meetX = other.axisX(other.topY - 6.0D);
+                double meetZ = other.axisZ(other.topY - 6.0D);
+                leanX = (meetX - bx) * 0.95D;
+                leanZ = (meetZ - bz) * 0.95D;
+                top = Math.min(MAX_TOP, other.topY - 2.0D);
             }
-            double swayAmount = 1.5 + random.nextDouble() * 2.5;
-            double swayPhase = random.nextDouble() * Math.PI * 2.0;
-            double lobePhase = random.nextDouble() * Math.PI * 2.0;
+            double swayAmount = 1.5D + random.nextDouble() * 2.5D;
+            double swayPhase = random.nextDouble() * Math.PI * 2.0D;
+            double lobePhase = random.nextDouble() * Math.PI * 2.0D;
             spires.add(new Spire(bx, bz, top, radius, lobes, twist, lobeAmount, leanX, leanZ, swayAmount, swayPhase, lobePhase));
         }
         return spires.toArray(new Spire[0]);
@@ -244,7 +244,7 @@ public final class CavarynSpireGrid {
             this.swayAmount = swayAmount;
             this.swayPhase = swayPhase;
             this.lobePhase = lobePhase;
-            double reach = radius * 1.7 * (1.0 + lobeAmount) + swayAmount + 2.0;
+            double reach = radius * 1.7D * (1.0D + lobeAmount) + swayAmount + 2.0D;
             this.minX = Math.min(baseX, baseX + leanX) - reach;
             this.maxX = Math.max(baseX, baseX + leanX) + reach;
             this.minZ = Math.min(baseZ, baseZ + leanZ) - reach;
@@ -257,21 +257,21 @@ public final class CavarynSpireGrid {
 
         double axisX(double y) {
             double t = this.progress(y);
-            return this.baseX + this.leanX * Math.pow(Math.max(0.0, t), 1.6) + this.swayAmount * Math.sin(t * Math.PI * 3.0 + this.swayPhase);
+            return this.baseX + this.leanX * Math.pow(Math.max(0.0D, t), 1.6D) + this.swayAmount * Math.sin(t * Math.PI * 3.0D + this.swayPhase);
         }
 
         double axisZ(double y) {
             double t = this.progress(y);
-            return this.baseZ + this.leanZ * Math.pow(Math.max(0.0, t), 1.6) + this.swayAmount * Math.cos(t * Math.PI * 3.0 + this.swayPhase);
+            return this.baseZ + this.leanZ * Math.pow(Math.max(0.0D, t), 1.6D) + this.swayAmount * Math.cos(t * Math.PI * 3.0D + this.swayPhase);
         }
 
         double radiusAt(double t) {
-            double taper = this.radius * (1.0 - 0.78 * Math.pow(t, 2.2));
-            if (t < 0.12) {
-                double flare = 1.0 - t / 0.12;
-                taper *= 1.0 + 0.7 * flare * flare;
+            double taper = this.radius * (1.0D - 0.78D * Math.pow(t, 2.2D));
+            if (t < 0.12D) {
+                double flare = 1.0D - t / 0.12D;
+                taper *= 1.0D + 0.7D * flare * flare;
             }
-            return Math.max(1.2, taper);
+            return Math.max(1.2D, taper);
         }
 
         double signedDistance(double px, double py, double pz) {
@@ -283,12 +283,12 @@ public final class CavarynSpireGrid {
             double dz = pz - this.axisZ(py);
             double distance = Math.sqrt(dx * dx + dz * dz);
             double theta = Math.atan2(dz, dx);
-            double lobe = 1.0 + this.lobeAmount * Math.cos(this.lobes * (theta - this.twist * (py - this.baseY)) + this.lobePhase);
+            double lobe = 1.0D + this.lobeAmount * Math.cos(this.lobes * (theta - this.twist * (py - this.baseY)) + this.lobePhase);
             double boundary = this.radiusAt(t) * lobe;
             double tip = this.topY - py;
             double inside = distance - boundary;
-            if (tip < 3.0) {
-                inside += (3.0 - tip) * 1.2;
+            if (tip < 3.0D) {
+                inside += (3.0D - tip) * 1.2D;
             }
             return inside;
         }
@@ -297,7 +297,7 @@ public final class CavarynSpireGrid {
             double dx = px - this.axisX(py);
             double dz = pz - this.axisZ(py);
             double theta = Math.atan2(dz, dx);
-            double phase = (py - this.baseY) - (theta - this.twist * (py - this.baseY)) * STRIPE_PITCH / (Math.PI * 2.0) * this.lobes;
+            double phase = (py - this.baseY) - (theta - this.twist * (py - this.baseY)) * STRIPE_PITCH / (Math.PI * 2.0D) * this.lobes;
             return Math.floorMod((long) Math.floor(phase), (long) STRIPE_PITCH) < 4L;
         }
     }

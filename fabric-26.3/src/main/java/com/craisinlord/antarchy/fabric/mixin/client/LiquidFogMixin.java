@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.fabric.mixin.client;
 
-import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
+import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.multiplayer.ClientLevel;

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.ElythiaEventClient;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState;
@@ -32,7 +33,7 @@ public final class HerculesBeetleClientHandler {
         HerculesBeetleImpactShakeClientState.tick();
         KingJudgmentFlashClientState.tick();
         HordeClientState.tick();
-            com.craisinlord.antarchy.content.client.ElythiaEventClient.tick();
+            ElythiaEventClient.tick();
 
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;

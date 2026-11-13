@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.geckolib.constant.dataticket.DataTicket;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -16,7 +17,6 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.constant.dataticket.DataTicket;
 
 public final class GlimmeringLivingLayer<S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLayer<S, M> {
     public static final DataTicket<Boolean> GLIMMERING = DataTicket.create("antarchy_glimmering_living", Boolean.class);

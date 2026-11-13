@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 
 public final class BloodglassHudRenderer {
@@ -23,13 +22,21 @@ public final class BloodglassHudRenderer {
 
     public static void render(GuiGraphics gui) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.options.hideGui) return;
+        if (mc.options.hideGui) {
+            return;
+        }
         Player player = mc.player;
-        if (player == null || player.isDeadOrDying()) return;
-        if (player.isCreative() || player.isSpectator()) return;
+        if (player == null || player.isDeadOrDying()) {
+            return;
+        }
+        if (player.isCreative() || player.isSpectator()) {
+            return;
+        }
 
         int total = BloodglassClientState.getShieldsMax();
-        if (total <= 0) return;
+        if (total <= 0) {
+            return;
+        }
 
         int active = BloodglassClientState.getShieldsActive();
         int w = mc.getWindow().getGuiScaledWidth();
@@ -37,9 +44,9 @@ public final class BloodglassHudRenderer {
 
         int maxHealth = Mth.ceil(player.getMaxHealth());
         int absorption = Mth.ceil(player.getAbsorptionAmount());
-        int healthHearts = Mth.ceil(maxHealth / 2.0f);
-        int absorptionHearts = Mth.ceil(absorption / 2.0f);
-        int totalVanillaRows = Mth.ceil((healthHearts + absorptionHearts) / 10.0f);
+        int healthHearts = Mth.ceil(maxHealth / 2.0F);
+        int absorptionHearts = Mth.ceil(absorption / 2.0F);
+        int totalVanillaRows = Mth.ceil((healthHearts + absorptionHearts) / 10.0F);
         boolean hasArmor = player.getArmorValue() > 0;
         int baseTop = h - 39 - (totalVanillaRows * 10) - (hasArmor ? 10 : 0);
 

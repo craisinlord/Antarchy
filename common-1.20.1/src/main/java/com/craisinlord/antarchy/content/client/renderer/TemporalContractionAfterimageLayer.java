@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
-import com.craisinlord.anthology.time.client.ContractionAfterimages;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
+import com.craisinlord.anthology.time.client.ContractionAfterimages;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Deque;
@@ -21,15 +21,21 @@ public final class TemporalContractionAfterimageLayer<T extends LivingEntity, M 
     private static final int RGB = 0x8FE6B4;
     private static final float BASE_ALPHA = 0.42F;
 
-    public TemporalContractionAfterimageLayer(RenderLayerParent<T, M> renderer) { super(renderer); }
+    public TemporalContractionAfterimageLayer(RenderLayerParent<T, M> renderer) {
+        super(renderer);
+    }
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T entity,
                        float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks,
                        float netHeadYaw, float headPitch) {
-        if (entity.isSpectator() || entity.isInvisible() || !entity.hasEffect(RoyalEffectHooks.contractedHolder())) return;
+        if (entity.isSpectator() || entity.isInvisible() || !entity.hasEffect(RoyalEffectHooks.contractedHolder())) {
+            return;
+        }
         Deque<ContractionAfterimages.Sample> samples = ContractionAfterimages.samples(entity);
-        if (samples == null || samples.isEmpty()) return;
+        if (samples == null || samples.isEmpty()) {
+            return;
+        }
         double curX = Mth.lerp(partialTick, entity.xo, entity.getX());
         double curY = Mth.lerp(partialTick, entity.yo, entity.getY());
         double curZ = Mth.lerp(partialTick, entity.zo, entity.getZ());
@@ -39,11 +45,17 @@ public final class TemporalContractionAfterimageLayer<T extends LivingEntity, M 
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(entity)));
         int index = 0;
         for (ContractionAfterimages.Sample sample : samples) {
-            if (index++ % 2 != 0) continue;
+            if (index++ % 2 != 0) {
+                continue;
+            }
             double dx = sample.x - curX, dy = sample.y - curY, dz = sample.z - curZ;
-            if (dx * dx + dy * dy + dz * dz < 0.0025D) continue;
+            if (dx * dx + dy * dy + dz * dz < 0.0025D) {
+                continue;
+            }
             float fade = ContractionAfterimages.fade(sample, now);
-            if (fade <= 0.02F) continue;
+            if (fade <= 0.02F) {
+                continue;
+            }
             Vector3f local = inverse.transformDirection(new Vector3f((float) dx, (float) dy, (float) dz));
             int color = ((int) (BASE_ALPHA * fade * 255.0F) & 0xFF) << 24 | RGB;
             model.setupAnim(entity, sample.limbPos, sample.limbSpeed, sample.ageInTicks,

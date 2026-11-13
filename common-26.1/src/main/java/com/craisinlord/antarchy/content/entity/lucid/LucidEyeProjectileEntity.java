@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.lucid;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -11,11 +12,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.function.Supplier;
 
 public class LucidEyeProjectileEntity extends ThrowableItemProjectile {
     public static Supplier<Item> defaultItemSupplier;
@@ -40,7 +40,7 @@ public class LucidEyeProjectileEntity extends ThrowableItemProjectile {
 
     @Override
     protected Item getDefaultItem() {
-        return defaultItemSupplier != null ? defaultItemSupplier.get() : net.minecraft.world.item.Items.ENDER_PEARL;
+        return defaultItemSupplier != null ? defaultItemSupplier.get() : Items.ENDER_PEARL;
     }
 
     @Override

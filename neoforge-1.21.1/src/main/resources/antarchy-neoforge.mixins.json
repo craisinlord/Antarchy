@@ -4,20 +4,10 @@
   "refmap": "antarchy.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "compat.SablePhysicsColliderBlockGetterMixin",
     "item.BucketItemThoraxisWaterMixin",
-    "entity.ParalyzedMobFreezeMixin",
-    "infinity.AmendmentRareOresMixin",
-    "infinity.ConfigGenInvocationMixin",
-    "infinity.ConfigGeneratorMixin",
-    "infinity.PortalCreatorMixin",
-    "infinity.PortalCreatorInvoker",
-    "infinity.WarpLogicMixin"
+    "entity.ParalyzedMobFreezeMixin"
   ],
-  "client": [
-    "infinity.ShaderPayloadRepeatSkipMixin",
-    "compat.AppleSkinOverlayMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   },

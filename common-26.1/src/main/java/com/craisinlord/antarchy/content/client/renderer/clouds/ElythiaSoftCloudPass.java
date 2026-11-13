@@ -10,24 +10,21 @@ import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.systems.CommandEncoder;
 import com.mojang.blaze3d.systems.RenderPass;
-import com.mojang.blaze3d.textures.FilterMode;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import java.util.OptionalInt;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalDouble;
+import java.util.OptionalInt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -38,6 +35,8 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 final class ElythiaSoftCloudPass {
     static final int MAX_CLEARINGS = 8;
@@ -64,6 +63,7 @@ final class ElythiaSoftCloudPass {
             .withVertexShader("core/screenquad")
             .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_soft_cloud_composite"))
             .withSampler("InSampler")
+            .withSampler("Sampler0")
             .withUniform("ElythiaSoftComposite", UniformType.UNIFORM_BUFFER)
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .withDepthStencilState(Optional.empty())
@@ -184,6 +184,7 @@ final class ElythiaSoftCloudPass {
             pass.setPipeline(COMPOSITE_PIPELINE);
             RenderSystem.bindDefaultUniforms(pass);
             pass.bindTexture("InSampler", coverage.getColorTextureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
+            pass.bindTexture("Sampler0", main.getDepthTextureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
             pass.setUniform("ElythiaSoftComposite", compositeBuffer);
             pass.draw(0, 3);
         }

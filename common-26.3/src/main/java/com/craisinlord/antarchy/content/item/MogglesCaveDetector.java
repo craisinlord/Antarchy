@@ -1,15 +1,14 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public final class MogglesCaveDetector {
 
@@ -27,7 +26,9 @@ public final class MogglesCaveDetector {
     }
 
     public static void tick(Player player, Level level) {
-        if (--cooldown > 0) return;
+        if (--cooldown > 0) {
+            return;
+        }
         cooldown = SCAN_INTERVAL;
         caveTarget = scan(player, level);
     }
@@ -55,11 +56,19 @@ public final class MogglesCaveDetector {
             BlockPos pos = queue.poll();
             for (Direction dir : Direction.values()) {
                 BlockPos next = pos.relative(dir);
-                if (origin.distManhattan(next) > PLAYER_SPACE_LIMIT) continue;
+                if (origin.distManhattan(next) > PLAYER_SPACE_LIMIT) {
+                    continue;
+                }
                 long key = next.asLong();
-                if (playerSpace.contains(key)) continue;
-                if (!level.isLoaded(next)) continue;
-                if (!level.getBlockState(next).isAir()) continue;
+                if (playerSpace.contains(key)) {
+                    continue;
+                }
+                if (!level.isLoaded(next)) {
+                    continue;
+                }
+                if (!level.getBlockState(next).isAir()) {
+                    continue;
+                }
                 playerSpace.add(key);
                 queue.add(next);
             }
@@ -72,20 +81,32 @@ public final class MogglesCaveDetector {
         for (int dx = -r; dx <= r; dx++) {
             for (int dy = -r; dy <= r; dy++) {
                 for (int dz = -r; dz <= r; dz++) {
-                    if (dx * dx + dy * dy + dz * dz > r * r) continue;
+                    if (dx * dx + dy * dy + dz * dz > r * r) {
+                        continue;
+                    }
                     BlockPos pos = origin.offset(dx, dy, dz);
                     long key = pos.asLong();
-                    if (playerSpace.contains(key)) continue;
-                    if (!level.isLoaded(pos)) continue;
-                    if (!level.getBlockState(pos).isAir()) continue;
-                    if (level.canSeeSky(pos)) continue;
+                    if (playerSpace.contains(key)) {
+                        continue;
+                    }
+                    if (!level.isLoaded(pos)) {
+                        continue;
+                    }
+                    if (!level.getBlockState(pos).isAir()) {
+                        continue;
+                    }
+                    if (level.canSeeSky(pos)) {
+                        continue;
+                    }
 
                     int airNeighbors = 0;
                     for (Direction dir : Direction.values()) {
                         BlockPos n = pos.relative(dir);
                         if (level.isLoaded(n) && level.getBlockState(n).isAir()) airNeighbors++;
                     }
-                    if (airNeighbors < MIN_AIR_NEIGHBORS) continue;
+                    if (airNeighbors < MIN_AIR_NEIGHBORS) {
+                        continue;
+                    }
 
                     double distSq = origin.distSqr(pos);
                     if (distSq < nearestDistSq) {

@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.HerculesBeetleModel;
-import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.client.renderer.GlimmerEchoRendering;
+import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;

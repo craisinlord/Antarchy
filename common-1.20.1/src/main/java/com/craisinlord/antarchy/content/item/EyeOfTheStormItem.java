@@ -8,7 +8,9 @@ import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
 import com.craisinlord.anthology.gravity.GravityApi;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
@@ -23,13 +25,13 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -175,7 +177,7 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
             private AnimatedHeldItemRenderer<EyeOfTheStormItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+            public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }
@@ -188,7 +190,7 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
         createGeoRenderer(provider -> consumer.accept(provider.getGeoItemRenderer()));
     }
 
-    public java.util.function.Supplier<Object> getRenderProvider() {
+    public Supplier<Object> getRenderProvider() {
         return () -> { final Object[] value = new Object[1]; createGeoRenderer(provider -> value[0] = provider.getGeoItemRenderer()); return value[0]; };
     }
 }

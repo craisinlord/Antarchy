@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.client.FungalReserveAtmosphere;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -32,11 +33,28 @@ public abstract class ElythiaLightTextureMixin {
     @Unique
     private static int antarchy$tint(int color, int blockLight) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (!AntarchySettings.elythiaDreamShadowsEnabled()
-                || minecraft.level == null
-                || !minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA)) {
+        if (minecraft.level == null || !minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA)) {
             return color;
         }
+        int shaded = AntarchySettings.elythiaDreamShadowsEnabled() ? antarchy$dreamShadow(color, blockLight) : color;
+        return antarchy$dim(shaded, FungalReserveAtmosphere.lightScale(blockLight));
+    }
+
+    @Unique
+    private static int antarchy$dim(int color, float scale) {
+        if (scale >= 1.0F) {
+            return color;
+        }
+        int packed = color & 0xFF000000;
+        for (int channel = 0; channel < 3; channel++) {
+            int value = color >> (channel * 8) & 0xFF;
+            packed |= Math.round(value * scale) << (channel * 8);
+        }
+        return packed;
+    }
+
+    @Unique
+    private static int antarchy$dreamShadow(int color, int blockLight) {
         float strength = (float) Mth.clamp(AntarchySettings.elythiaDreamShadowsStrength(), 0.0D, 1.0D);
         if (strength <= 0.0F) {
             return color;

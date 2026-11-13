@@ -1,14 +1,16 @@
 package com.craisinlord.antarchy.content.item.ultimate;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
@@ -33,9 +35,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class UltimateCrossbowItem extends CrossbowItem {
     private static final int MAX_ARROWS = 16;
@@ -74,22 +73,32 @@ public class UltimateCrossbowItem extends CrossbowItem {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeLeft) {
-        if (!(livingEntity instanceof Player player)) return;
-        if (CrossbowItem.isCharged(stack)) return;
+        if (!(livingEntity instanceof Player player)) {
+            return;
+        }
+        if (CrossbowItem.isCharged(stack)) {
+            return;
+        }
 
         int useTicks = getUseDuration(stack) - timeLeft;
         int maxTicks = getAdjustedChargeDuration(stack);
 
         int arrowsToLoad = Mth.clamp(
                 (int) Math.floor((double) useTicks / maxTicks * MAX_ARROWS), 0, MAX_ARROWS);
-        if (arrowsToLoad == 0) return;
+        if (arrowsToLoad == 0) {
+            return;
+        }
 
         ItemStack ammoType = player.getProjectile(stack);
-        if (ammoType.isEmpty()) return;
+        if (ammoType.isEmpty()) {
+            return;
+        }
 
         int available = player.isCreative() ? MAX_ARROWS : countMatchingArrows(player, ammoType);
         int toLoad = Math.min(arrowsToLoad, available);
-        if (toLoad == 0) return;
+        if (toLoad == 0) {
+            return;
+        }
 
         if (!player.isCreative()) {
             consumeArrows(player, ammoType, toLoad);
@@ -107,7 +116,9 @@ public class UltimateCrossbowItem extends CrossbowItem {
 
     private void fireOneShot(Level level, Player player, InteractionHand hand, ItemStack stack) {
         List<ItemStack> all = getLoadedProjectiles(stack);
-        if (all.isEmpty()) return;
+        if (all.isEmpty()) {
+            return;
+        }
 
         ItemStack arrow = all.remove(0);
         List<ItemStack> toFire = new ArrayList<>();
@@ -243,7 +254,9 @@ public class UltimateCrossbowItem extends CrossbowItem {
         int remaining = amount;
         for (int i = 0; i < player.getInventory().offhand.size() && remaining > 0; i++) {
             ItemStack slot = player.getInventory().offhand.get(i);
-            if (remaining <= 0) break;
+            if (remaining <= 0) {
+                break;
+            }
             if (ItemStack.isSameItemSameTags(slot, ammoType)) {
                 int take = Math.min(remaining, slot.getCount());
                 slot.shrink(take);
@@ -255,7 +268,9 @@ public class UltimateCrossbowItem extends CrossbowItem {
         }
         for (int i = 0; i < player.getInventory().items.size() && remaining > 0; i++) {
             ItemStack slot = player.getInventory().items.get(i);
-            if (remaining <= 0) break;
+            if (remaining <= 0) {
+                break;
+            }
             if (ItemStack.isSameItemSameTags(slot, ammoType)) {
                 int take = Math.min(remaining, slot.getCount());
                 slot.shrink(take);

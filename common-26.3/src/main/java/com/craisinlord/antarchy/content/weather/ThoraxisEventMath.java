@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.weather;
 
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;

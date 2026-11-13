@@ -1,9 +1,8 @@
 package com.craisinlord.antarchy.fabric.registry;
 
 import java.util.function.Supplier;
-
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 
 public class DeferredHolder<R, T extends R> implements Supplier<T> {
     private final ResourceKey<?> registryKey;

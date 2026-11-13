@@ -1,9 +1,8 @@
 {
-  "parent": "minecraft:block/slab",
+  "parent": "antarchy:block/tinted/slab",
   "textures": {
     "bottom": "antarchy:block/rockite",
     "side": "antarchy:block/rockite",
     "top": "antarchy:block/rockite"
   }
 }
-

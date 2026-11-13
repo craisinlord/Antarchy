@@ -1,21 +1,26 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.anthology.multipart.MultipartEntityOwner;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,8 +39,8 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RoyalElementalProjectileEntity extends ThrowableProjectile implements GeoEntity, GlimmerEcho {
@@ -154,7 +159,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         if (owner != null && target == owner) {
             return false;
         }
-        if (owner instanceof com.craisinlord.anthology.multipart.MultipartEntityOwner multipart) {
+        if (owner instanceof MultipartEntityOwner multipart) {
             Entity[] parts = multipart.anthology$getMultipartParts();
             if (parts != null) {
                 for (Entity part : parts) {
@@ -228,7 +233,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         int maxY = (int) Math.floor(center.y + radius);
         int maxZ = (int) Math.floor(center.z + radius);
         var fire = dream
-                ? BuiltInRegistries.BLOCK.getOptional(new net.minecraft.resources.ResourceLocation(
+                ? BuiltInRegistries.BLOCK.getOptional(new ResourceLocation(
                         "antarchy", "dream_fire")).orElse(Blocks.FIRE)
                 : Blocks.FIRE;
         for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
@@ -250,7 +255,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
             living.hurt(source, this.getOwner() instanceof RoyalBossEntity royalBoss
                     ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 80, living.getTicksFrozen() + 180));
-            living.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 120, 3));
+            living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 3));
         }
         if (!this.isGlimmerEcho() && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             coverInIce(level, center, AntarchySettings.kingIceballRadius(), AntarchySettings.kingElementalTerrainCap());
@@ -275,22 +280,28 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         int maxY = (int) Math.floor(center.y + radius);
         int maxZ = (int) Math.floor(center.z + radius);
         for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
-            if (changed >= cap || pos.distToCenterSqr(center.x, center.y, center.z) > radius * radius) continue;
+            if (changed >= cap || pos.distToCenterSqr(center.x, center.y, center.z) > radius * radius) {
+                continue;
+            }
             BlockState existing = level.getBlockState(pos);
-            if (existing.isAir() || !existing.getFluidState().isEmpty() || existing.hasBlockEntity()) continue;
-            if (existing.getDestroySpeed(level, pos) < 0.0F || existing.getBlock().getExplosionResistance() > 80.0F) continue;
+            if (existing.isAir() || !existing.getFluidState().isEmpty() || existing.hasBlockEntity()) {
+                continue;
+            }
+            if (existing.getDestroySpeed(level, pos) < 0.0F || existing.getBlock().getExplosionResistance() > 80.0F) {
+                continue;
+            }
             BlockState frozen = pos.getY() >= center.y + 1.0D ? Blocks.SNOW_BLOCK.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState();
             if (existing != frozen && level.setBlockAndUpdate(pos, frozen)) changed++;
         }
     }
 
-    protected net.minecraft.core.particles.ParticleOptions getTrailParticle() {
+    protected ParticleOptions getTrailParticle() {
         if (this.isIceball()) {
             return ParticleTypes.SNOWFLAKE;
         }
         if (this.isDreamFireball()
-                && BuiltInRegistries.PARTICLE_TYPE.get(new net.minecraft.resources.ResourceLocation(
-                        "antarchy", "dream_fire_flame")) instanceof net.minecraft.core.particles.ParticleOptions dreamFlame) {
+                && BuiltInRegistries.PARTICLE_TYPE.get(new ResourceLocation(
+                        "antarchy", "dream_fire_flame")) instanceof ParticleOptions dreamFlame) {
             return dreamFlame;
         }
         return ParticleTypes.FLAME;

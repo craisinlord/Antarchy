@@ -1,13 +1,17 @@
 package com.craisinlord.antarchy.content.entity.flying_squirrel;
 
-import software.bernie.geckolib.core.object.PlayState;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.OuranwoodAcornBlock;
 import com.craisinlord.antarchy.content.block.OuranwoodLeavesBlock;
+import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
 import it.unimi.dsi.fastutil.ints.IntArrays;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
@@ -31,13 +35,28 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -54,13 +73,12 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Predicate;
 
 public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     private static final ResourceKey<Level> ELYTHIA_DIMENSION = ResourceKey.create(
@@ -249,7 +267,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         this.goalSelector.addGoal(0, new ShoulderMountGoal());
         this.goalSelector.addGoal(1, this.temptGoal);
         this.goalSelector.addGoal(2, new FloatGoal(this));
-        this.goalSelector.addGoal(3, new net.minecraft.world.entity.ai.goal.PanicGoal(this, 1.5D));
+        this.goalSelector.addGoal(3, new PanicGoal(this, 1.5D));
         this.goalSelector.addGoal(4, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.0D, 10.0F, 5.0F, false));
         this.goalSelector.addGoal(6, new BreedGoal(this, 0.8D));
@@ -693,9 +711,9 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag dataTag) {
         SpawnGroupData finalized = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData, dataTag);
-        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.flyingSquirrelHealth());
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.flyingSquirrelHealth());
         this.assignRandomTextureVariant();
         this.stopGliding("spawn_initialized");
         this.wanderCooldown = 40 + this.random.nextInt(60);
@@ -1725,11 +1743,11 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     private static boolean isCanopySupport(BlockState state) {
-        return state.getBlock() instanceof OuranwoodLeavesBlock || state.is(net.minecraft.tags.BlockTags.LOGS);
+        return state.getBlock() instanceof OuranwoodLeavesBlock || state.is(BlockTags.LOGS);
     }
 
     private static boolean isClimbableTrunk(BlockState state) {
-        return state.is(net.minecraft.tags.BlockTags.LOGS);
+        return state.is(BlockTags.LOGS);
     }
 
     static boolean isStandableSurface(BlockState state) {
@@ -1741,7 +1759,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     static boolean isClimbPassable(BlockState state) {
-        return state.isAir() || state.is(net.minecraft.tags.BlockTags.LEAVES);
+        return state.isAir() || state.is(BlockTags.LEAVES);
     }
 
     static boolean isOpenStandPos(BlockGetter level, BlockPos pos) {
@@ -1793,8 +1811,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             int sx = x + direction.getStepX();
             int sz = z + direction.getStepZ();
-            if (reader.getBlockState(sx, y, sz).is(net.minecraft.tags.BlockTags.LOGS)
-                    || reader.getBlockState(sx, y + 1, sz).is(net.minecraft.tags.BlockTags.LOGS)) {
+            if (reader.getBlockState(sx, y, sz).is(BlockTags.LOGS)
+                    || reader.getBlockState(sx, y + 1, sz).is(BlockTags.LOGS)) {
                 return true;
             }
         }
@@ -1815,7 +1833,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     static boolean isGroundEscapeSurface(BlockState state) {
-        return state.is(net.minecraft.tags.BlockTags.DIRT)
+        return state.is(BlockTags.DIRT)
                 || state.is(Blocks.GRASS_BLOCK)
                 || state.is(Blocks.MOSS_BLOCK)
                 || state.is(Blocks.MOSS_CARPET);

@@ -4,48 +4,52 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.Heightmap;
-import java.util.HashMap;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import net.minecraft.world.level.levelgen.structure.templatesystem.NopProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.NopProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public final class KingsTreeGridFeature implements Feature {
     public static final MapCodec<KingsTreeGridFeature> CODEC = MapCodec.unit(KingsTreeGridFeature::new);
 
     private static final Map<ServerLevel, Set<Long>> CLAIMED_TREE_KINGS = new WeakHashMap<>();
-    private static final int CACHED_TILES = 64;
-    private static final Map<StructureTemplateManager, Set<Identifier>> RECENT_TILES = new WeakHashMap<>();
+    private static final int TILE_CACHE_SIZE = 16;
+    private static final Map<Identifier, Optional<StructureTemplate>> TILE_CACHE = new LinkedHashMap<>(32, 0.75F, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Identifier, Optional<StructureTemplate>> eldest) {
+            return this.size() > TILE_CACHE_SIZE;
+        }
+    };
     private static final Map<ServerLevel, Map<Long, Integer>> TREE_BASE_HEIGHTS = new WeakHashMap<>();
     private static final ConcurrentLinkedQueue<PendingKingSpawn> PENDING_KING_SPAWNS = new ConcurrentLinkedQueue<>();
     private static final int SPAWN_RETRY_TICKS = 100;
@@ -110,8 +114,7 @@ public final class KingsTreeGridFeature implements Feature {
 
         for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
             for (int tileZ = minTileZ; tileZ <= maxTileZ; tileZ++) {
-                var location = tileLocation(tileX, tileZ);
-                Optional<StructureTemplate> template = templates.get(location);
+                Optional<StructureTemplate> template = tile(templates, tileLocation(tileX, tileZ));
                 if (template.isEmpty()) {
                     continue;
                 }
@@ -119,13 +122,33 @@ public final class KingsTreeGridFeature implements Feature {
                 boolean tilePlaced = template.get().placeInWorld(level, tileOrigin, tileOrigin, settings, random, 2);
                 placed |= tilePlaced;
                 centralTilePlaced |= tileX == 0 && tileZ == 0 && tilePlaced;
-                retainTile(templates, location);
             }
         }
         if (centralTilePlaced) {
             queueTreeKing(level.getLevel(), centerX, centerZ, baseY);
         }
         return placed;
+    }
+
+    private static Optional<StructureTemplate> tile(StructureTemplateManager templates, Identifier location) {
+        synchronized (TILE_CACHE) {
+            Optional<StructureTemplate> cached = TILE_CACHE.get(location);
+            if (cached != null) {
+                return cached;
+            }
+        }
+        Optional<StructureTemplate> loaded = templates.get(location);
+        templates.remove(location);
+        synchronized (TILE_CACHE) {
+            Optional<StructureTemplate> raced = TILE_CACHE.putIfAbsent(location, loaded);
+            return raced != null ? raced : loaded;
+        }
+    }
+
+    public static void clearTileCache() {
+        synchronized (TILE_CACHE) {
+            TILE_CACHE.clear();
+        }
     }
 
     public static int treeBaseY(ServerLevel level, int centerX, int centerZ) {
@@ -176,27 +199,10 @@ public final class KingsTreeGridFeature implements Feature {
         return radius == 0 ? 1 : Math.max(8, radius / 12);
     }
 
-    private static void retainTile(StructureTemplateManager templates, Identifier location) {
-        Identifier evicted = null;
-        synchronized (RECENT_TILES) {
-            Set<Identifier> recent = RECENT_TILES.computeIfAbsent(templates, ignored -> new LinkedHashSet<>());
-            recent.remove(location);
-            recent.add(location);
-            if (recent.size() > CACHED_TILES) {
-                Iterator<Identifier> oldest = recent.iterator();
-                evicted = oldest.next();
-                oldest.remove();
-            }
-        }
-        if (evicted != null) {
-            templates.remove(evicted);
-        }
-    }
-
     private static void queueTreeKing(ServerLevel serverLevel, int centerX, int centerZ, int baseY) {
         long treeKey = KingsTreeSavedData.treeKey(centerX, centerZ);
         synchronized (CLAIMED_TREE_KINGS) {
-            if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new java.util.HashSet<>()).add(treeKey)) {
+            if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new HashSet<>()).add(treeKey)) {
                 return;
             }
         }
@@ -212,7 +218,7 @@ public final class KingsTreeGridFeature implements Feature {
             saved.treeBaseHeights().forEach(heights::putIfAbsent);
         }
         synchronized (CLAIMED_TREE_KINGS) {
-            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new java.util.HashSet<>());
+            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new HashSet<>());
             for (long treeKey : saved.pendingTrees()) {
                 if (claimed.add(treeKey)) {
                     PENDING_KING_SPAWNS.add(new PendingKingSpawn(new WeakReference<>(level),
@@ -225,6 +231,9 @@ public final class KingsTreeGridFeature implements Feature {
     }
 
     public static void tickPendingSpawns(ServerLevel level) {
+        if (!level.dimension().equals(KingsTreeGrid.ELYTHIA)) {
+            return;
+        }
         KingsTreeSavedData saved = KingsTreeSavedData.get(level);
         restoreSavedTrees(level, saved);
         int pendingCount = PENDING_KING_SPAWNS.size();

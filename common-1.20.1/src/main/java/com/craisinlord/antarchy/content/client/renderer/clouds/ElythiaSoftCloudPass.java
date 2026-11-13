@@ -110,7 +110,7 @@ final class ElythiaSoftCloudPass {
     private static final String COMPOSITE_FRAGMENT = """
             #version 150
             uniform sampler2D Coverage;
-            uniform vec2 TexelSize;
+            uniform sampler2D SceneDepth;
             uniform vec3 LitColor;
             uniform vec3 ShadowColor;
             uniform vec3 FogColor;
@@ -120,12 +120,40 @@ final class ElythiaSoftCloudPass {
             uniform float HazeStrength;
             in vec2 texCoord;
             out vec4 fragColor;
+            float viewDepth(float depth) {
+                return 1.0 / max(1.0 - depth, 1.0e-7);
+            }
+
+            vec4 gatherCoverage() {
+                ivec2 lowSize = textureSize(Coverage, 0);
+                ivec2 fullSize = textureSize(SceneDepth, 0);
+                vec2 scale = vec2(fullSize) / vec2(lowSize);
+                ivec2 pixel = clamp(ivec2(gl_FragCoord.xy), ivec2(0), fullSize - ivec2(1));
+                float center = viewDepth(texelFetch(SceneDepth, pixel, 0).r);
+                vec2 lowPosition = gl_FragCoord.xy / scale - 0.5;
+                ivec2 base = ivec2(floor(lowPosition));
+                vec2 fraction = lowPosition - vec2(base);
+                vec4 sum = vec4(0.0);
+                float total = 0.0;
+                for (int y = -1; y <= 2; y++) {
+                    for (int x = -1; x <= 2; x++) {
+                        vec2 offset = vec2(float(x), float(y)) - fraction;
+                        float spatial = max(0.0, 1.0 - length(offset) / 1.8);
+                        if (spatial <= 0.0) {
+                            continue;
+                        }
+                        ivec2 texel = clamp(base + ivec2(x, y), ivec2(0), lowSize - ivec2(1));
+                        ivec2 depthTexel = clamp(ivec2((vec2(texel) + 0.5) * scale), ivec2(0), fullSize - ivec2(1));
+                        float tap = viewDepth(texelFetch(SceneDepth, depthTexel, 0).r);
+                        float weight = spatial * exp(-abs(tap - center) / (center * 0.08));
+                        sum += texelFetch(Coverage, texel, 0) * weight;
+                        total += weight;
+                    }
+                }
+                return sum / max(total, 0.25);
+            }
             void main() {
-                vec4 c = texture(Coverage, texCoord) * 0.4
-                        + texture(Coverage, texCoord + vec2(TexelSize.x, 0.0)) * 0.15
-                        + texture(Coverage, texCoord - vec2(TexelSize.x, 0.0)) * 0.15
-                        + texture(Coverage, texCoord + vec2(0.0, TexelSize.y)) * 0.15
-                        + texture(Coverage, texCoord - vec2(0.0, TexelSize.y)) * 0.15;
+                vec4 c = gatherCoverage();
                 float count = c.b * StepInverse;
                 if (count < 0.02) {
                     discard;
@@ -167,7 +195,7 @@ final class ElythiaSoftCloudPass {
     private static int depthScaleLocation;
     private static int stepLocation;
     private static int coverageLocation;
-    private static int texelSizeLocation;
+    private static int compositeDepthLocation;
     private static int litColorLocation;
     private static int shadowColorLocation;
     private static int fogColorLocation;
@@ -264,7 +292,7 @@ final class ElythiaSoftCloudPass {
         );
         GlStateManager._glUseProgram(compositeProgram);
         GL20.glUniform1i(coverageLocation, 0);
-        GL20.glUniform2f(texelSizeLocation, 1.0F / width, 1.0F / height);
+        GL20.glUniform1i(compositeDepthLocation, 1);
         float r = (float) frame.cloudColor().x;
         float g = (float) frame.cloudColor().y;
         float b = (float) frame.cloudColor().z;
@@ -279,12 +307,18 @@ final class ElythiaSoftCloudPass {
         GL20.glUniform1f(maxAlphaLocation, MAX_ALPHA);
         GL20.glUniform1f(stepInverseLocation, 1.0F / COVERAGE_STEP);
         GL20.glUniform1f(hazeStrengthLocation, HAZE_STRENGTH);
+        GlStateManager._activeTexture(GL13.GL_TEXTURE1);
+        GlStateManager._bindTexture(main.getDepthTextureId());
+        GlStateManager._activeTexture(GL13.GL_TEXTURE0);
         GlStateManager._bindTexture(colorTexture);
         GlStateManager._glBindVertexArray(emptyVertexArray);
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 3);
         GlStateManager._glBindVertexArray(0);
         BufferUploader.invalidate();
 
+        GlStateManager._activeTexture(GL13.GL_TEXTURE1);
+        GlStateManager._bindTexture(0);
+        GlStateManager._activeTexture(GL13.GL_TEXTURE0);
         GlStateManager._bindTexture(0);
         GlStateManager._glUseProgram(0);
         resetShaderCache();
@@ -348,7 +382,7 @@ final class ElythiaSoftCloudPass {
             depthScaleLocation = GL20.glGetUniformLocation(coverageProgram, "DepthScale");
             stepLocation = GL20.glGetUniformLocation(coverageProgram, "Step");
             coverageLocation = GL20.glGetUniformLocation(compositeProgram, "Coverage");
-            texelSizeLocation = GL20.glGetUniformLocation(compositeProgram, "TexelSize");
+            compositeDepthLocation = GL20.glGetUniformLocation(compositeProgram, "SceneDepth");
             litColorLocation = GL20.glGetUniformLocation(compositeProgram, "LitColor");
             shadowColorLocation = GL20.glGetUniformLocation(compositeProgram, "ShadowColor");
             fogColorLocation = GL20.glGetUniformLocation(compositeProgram, "FogColor");

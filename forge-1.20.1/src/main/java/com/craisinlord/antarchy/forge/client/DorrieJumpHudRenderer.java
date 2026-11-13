@@ -18,13 +18,19 @@ public final class DorrieJumpHudRenderer {
     public static void render(GuiGraphics guiGraphics) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null || mc.screen != null || player.isDeadOrDying()) return;
+        if (player == null || mc.screen != null || player.isDeadOrDying()) {
+            return;
+        }
 
         Entity vehicle = player.getVehicle();
-        if (!(vehicle instanceof DorrieEntity dorrie)) return;
+        if (!(vehicle instanceof DorrieEntity dorrie)) {
+            return;
+        }
 
         int charge = dorrie.getJumpCharge();
-        if (charge <= 0) return;
+        if (charge <= 0) {
+            return;
+        }
 
         int width = mc.getWindow().getGuiScaledWidth();
         int height = mc.getWindow().getGuiScaledHeight();

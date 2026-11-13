@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.item;
 
-import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -9,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,7 +42,7 @@ public final class ManticoreWingsItem extends ElytraItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slotId, boolean selected) {
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean selected) {
         super.inventoryTick(stack, level, entity, slotId, selected);
         if (!(entity instanceof Player player) || level.isClientSide || !player.isFallFlying()
                 || player.getItemBySlot(EquipmentSlot.CHEST) != stack) {

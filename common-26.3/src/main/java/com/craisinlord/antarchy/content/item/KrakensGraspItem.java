@@ -1,9 +1,12 @@
 package com.craisinlord.antarchy.content.item;
 
-import net.minecraft.world.entity.EntityTypes;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.entity.kraken.KrakensGraspThrownTrident;
+import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -11,26 +14,28 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.Weapon;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.Weapon;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class KrakensGraspItem extends TridentItem {
@@ -63,7 +68,7 @@ public class KrakensGraspItem extends TridentItem {
         }
 
         var loyalty = registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOYALTY);
-        int desiredLevel = net.minecraft.util.Mth.clamp(AntarchySettings.krakensGraspInnateLoyaltyLevel(), 1, 3);
+        int desiredLevel = Mth.clamp(AntarchySettings.krakensGraspInnateLoyaltyLevel(), 1, 3);
         if (EnchantmentHelper.getItemEnchantmentLevel(loyalty, stack) >= desiredLevel) {
             return;
         }
@@ -78,8 +83,8 @@ public class KrakensGraspItem extends TridentItem {
         super.hurtEnemy(stack, target, attacker);
         if (attacker.level() instanceof ServerLevel serverLevel) {
             strikeLightning(target, serverLevel);
-            com.craisinlord.antarchy.content.entity.kraken.TentacleEntity.spawnAt(serverLevel,
-                    new net.minecraft.world.phys.Vec3(target.getX(), target.getY(), target.getZ()), attacker);
+            TentacleEntity.spawnAt(serverLevel,
+                    new Vec3(target.getX(), target.getY(), target.getZ()), attacker);
         }
     }
 
@@ -96,7 +101,7 @@ public class KrakensGraspItem extends TridentItem {
     }
 
     public static void strikeLightningAt(ServerLevel level, double x, double y, double z) {
-        LightningBolt lightningBolt = new LightningBolt(net.minecraft.world.entity.EntityTypes.LIGHTNING_BOLT, level);
+        LightningBolt lightningBolt = new LightningBolt(EntityTypes.LIGHTNING_BOLT, level);
         lightningBolt.snapTo(x, y, z);
         lightningBolt.setVisualOnly(true);
         level.addFreshEntity(lightningBolt);
@@ -125,11 +130,11 @@ public class KrakensGraspItem extends TridentItem {
 
         if (!level.isClientSide()) {
             stack.hurtAndBreak(1, player, user.getUsedItemHand().asEquipmentSlot());
-            com.craisinlord.antarchy.content.entity.kraken.KrakensGraspThrownTrident trident =
-                    new com.craisinlord.antarchy.content.entity.kraken.KrakensGraspThrownTrident(AntarchyObjects.KRAKENS_GRASP_TRIDENT.get(), player, level, stack.copy());
+            KrakensGraspThrownTrident trident =
+                    new KrakensGraspThrownTrident(AntarchyObjects.KRAKENS_GRASP_TRIDENT.get(), player, level, stack.copy());
             trident.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
             if (player.hasInfiniteMaterials()) {
-                trident.pickup = net.minecraft.world.entity.projectile.arrow.AbstractArrow.Pickup.CREATIVE_ONLY;
+                trident.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
             }
             level.addFreshEntity(trident);
             level.playSound(null, trident, SoundEvents.TRIDENT_THROW.value(), SoundSource.PLAYERS, 1.0F, 1.0F);

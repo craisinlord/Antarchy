@@ -6,11 +6,19 @@ import com.craisinlord.anthology.beam.BeamController;
 import com.craisinlord.anthology.beam.BeamOwner;
 import com.craisinlord.anthology.beam.BeamSettings;
 import com.craisinlord.anthology.beam.BeamTerrainMode;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.LoopType;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -51,6 +59,7 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -61,19 +70,12 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.object.LoopType;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
 
 public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntity, BeamOwner {
     private static final Identifier GROWTH_HEALTH_MODIFIER = Identifier.fromNamespaceAndPath("antarchy", "royal_mount_growth_health");
@@ -199,7 +201,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     public static AttributeSupplier.Builder createBaseAttributes(
             double health, double attackDamage, double movementSpeed, double flyingSpeed,
             double armor, double knockbackResistance, double followRange) {
-        return net.minecraft.world.entity.animal.Animal.createAnimalAttributes()
+        return Animal.createAnimalAttributes()
                 .add(Attributes.MAX_HEALTH, health)
                 .add(Attributes.ATTACK_DAMAGE, attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, movementSpeed)
@@ -360,7 +362,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
                 .orElseGet(() -> Math.max(tag.getIntOr("CommandCooldown", 0), tag.getIntOr("TimeFieldCooldown", 0)));
         this.signatureCooldownTicks = Math.max(0, signatureCooldown);
         this.setGrowthProgress(tag.getFloatOr("GrowthProgress", 0.0F));
-        tag.read("Health", com.mojang.serialization.Codec.FLOAT).ifPresent(this::setHealth);
+        tag.read("Health", Codec.FLOAT).ifPresent(this::setHealth);
         this.setFlying(tag.getBooleanOr("Flying", false) && this.canFly());
     }
 
@@ -635,7 +637,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     }
 
     @Override
-    public boolean canMate(net.minecraft.world.entity.animal.Animal other) {
+    public boolean canMate(Animal other) {
         return false;
     }
 
@@ -984,9 +986,15 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             return ACTION_NONE;
         }
         float roll = this.random.nextFloat() * total;
-        if ((roll -= signature) < 0.0F) return ACTION_SIGNATURE;
-        if ((roll -= beam) < 0.0F) return ACTION_BEAM;
-        if ((roll -= bite) < 0.0F) return ACTION_BITE;
+        if ((roll -= signature) < 0.0F) {
+            return ACTION_SIGNATURE;
+        }
+        if ((roll -= beam) < 0.0F) {
+            return ACTION_BEAM;
+        }
+        if ((roll -= bite) < 0.0F) {
+            return ACTION_BITE;
+        }
         return ACTION_SPIT;
     }
 
@@ -1146,13 +1154,21 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         return this.position().add(0.0D, 1.05D * scale, 0.0D).add(forward.scale(1.75D * scale)).add(side.scale((head - 1) * 0.85D * scale));
     }
 
-    public int getBeamHead() { return this.entityData.get(BEAM_HEAD); }
-    public boolean isFiringBeam() { return this.entityData.get(BEAM_ACTIVE); }
+    public int getBeamHead() {
+        return this.entityData.get(BEAM_HEAD);
+    }
+    public boolean isFiringBeam() {
+        return this.entityData.get(BEAM_ACTIVE);
+    }
     public Vec3 getBeamEndPosition() {
         return this.entityData.get(HAS_BEAM_END) ? new Vec3(this.entityData.get(BEAM_END_X), this.entityData.get(BEAM_END_Y), this.entityData.get(BEAM_END_Z)) : null;
     }
-    public RoyalBeamElement getBeamElement() { return RoyalBeamElement.GENERIC; }
-    public BeamController beamController() { return this.beamController; }
+    public RoyalBeamElement getBeamElement() {
+        return RoyalBeamElement.GENERIC;
+    }
+    public BeamController beamController() {
+        return this.beamController;
+    }
     private void setBeamEndPosition(@Nullable Vec3 position) {
         this.entityData.set(HAS_BEAM_END, position != null);
         if (position != null) {

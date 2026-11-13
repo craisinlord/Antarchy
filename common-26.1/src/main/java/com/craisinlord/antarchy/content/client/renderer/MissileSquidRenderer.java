@@ -1,14 +1,14 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.MissileSquidModel;
-import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.client.renderer.GlimmerEchoRendering;
+import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
+import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.geckolib.renderer.layer.GeoRenderLayer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import com.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -41,11 +41,15 @@ public class MissileSquidRenderer extends GeoEntityRenderer<MissileSquidEntity, 
     }
 
     private static final class MissileSquidEmissiveLayer extends GeoRenderLayer<MissileSquidEntity, Void, LivingEntityRenderState> {
-        private MissileSquidEmissiveLayer(GeoRenderer<MissileSquidEntity, Void, LivingEntityRenderState> renderer) { super(renderer); }
+        private MissileSquidEmissiveLayer(GeoRenderer<MissileSquidEntity, Void, LivingEntityRenderState> renderer) {
+            super(renderer);
+        }
 
         @Override
         public void submitRenderTask(RenderPassInfo<LivingEntityRenderState> info, SubmitNodeCollector tasks) {
-            if (!info.willRender()) return;
+            if (!info.willRender()) {
+                return;
+            }
             boolean glimmer = info.getOrDefaultGeckolibData(MissileSquidModel.GLIMMER_ECHO, false);
             RenderType type = RenderTypes.eyes(glimmer ? MissileSquidModel.GLIMMER_EMISSIVE_TEXTURE : MissileSquidModel.EMISSIVE_TEXTURE);
             PoseStack stack = info.poseStack();

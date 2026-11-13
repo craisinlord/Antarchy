@@ -1,17 +1,28 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.item.WeaponAttributes;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItem;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateToolHelper;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -20,14 +31,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoItem;
-import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class BattleAxeItem extends AxeItem implements GeoItem, com.craisinlord.antarchy.content.client.AntarchyGeoItem {
+public class BattleAxeItem extends AxeItem implements GeoItem, AntarchyGeoItem {
     private static final ResourceLocation MODEL_LOCATION = new ResourceLocation("antarchy", "geo/battle_axe.geo.json");
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("antarchy", "textures/item/battle_axe/battle_axe.png");
     private static final ResourceLocation ANIMATION_LOCATION = new ResourceLocation("antarchy", "animations/static_item.animation.json");
@@ -45,11 +53,11 @@ public class BattleAxeItem extends AxeItem implements GeoItem, com.craisinlord.a
     }
 
     @Override
-    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
-        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot != EquipmentSlot.MAINHAND) {
             return super.getDefaultAttributeModifiers(slot);
         }
-        return com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (float) this.attackDamage.getAsDouble(), (float) AntarchySettings.battleAxeAttackSpeed()).build();
+        return WeaponAttributes.base(this.tier, (float) this.attackDamage.getAsDouble(), (float) AntarchySettings.battleAxeAttackSpeed()).build();
     }
 
     @Override
@@ -90,7 +98,7 @@ public class BattleAxeItem extends AxeItem implements GeoItem, com.craisinlord.a
             private AnimatedHeldItemRenderer<BattleAxeItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }
@@ -100,14 +108,14 @@ public class BattleAxeItem extends AxeItem implements GeoItem, com.craisinlord.a
         });
     }
 
-    private final java.util.function.Supplier<Object> renderProvider = com.google.common.base.Suppliers.memoize(() -> {
+    private final Supplier<Object> renderProvider = Suppliers.memoize(() -> {
         Object[] holder = new Object[1];
         createRenderer(o -> holder[0] = o);
         return holder[0];
     });
 
     @Override
-    public java.util.function.Supplier<Object> getRenderProvider() {
+    public Supplier<Object> getRenderProvider() {
         return this.renderProvider;
     }
 }

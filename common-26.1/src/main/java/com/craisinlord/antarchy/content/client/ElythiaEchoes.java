@@ -6,26 +6,25 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.util.ARGB;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 
 public final class ElythiaEchoes {
     private static final int SAMPLE_INTERVAL = 4;
@@ -68,12 +67,12 @@ public final class ElythiaEchoes {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         ClientLevel level = minecraft.level;
-        if (player == null || level == null || minecraft.isPaused()) {
-            return;
-        }
         if (level != trackedLevel) {
             reset();
             trackedLevel = level;
+        }
+        if (player == null || level == null || minecraft.isPaused()) {
+            return;
         }
         if (!AntarchySettings.elythiaEchoes() || !level.dimension().equals(ThrowbackZones.ELYTHIA)) {
             replay = null;
@@ -169,7 +168,7 @@ public final class ElythiaEchoes {
         state.walkAnimationPos = limbPos;
         state.walkAnimationSpeed = limbSpeed;
         state.isCrouching = crouching;
-        state.pose = crouching ? net.minecraft.world.entity.Pose.CROUCHING : net.minecraft.world.entity.Pose.STANDING;
+        state.pose = crouching ? Pose.CROUCHING : Pose.STANDING;
         state.ageInTicks = age;
         PlayerModel model = (PlayerModel) ((LivingEntityRenderer) renderer).getModel();
         model.setupAnim(state);

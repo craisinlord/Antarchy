@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
@@ -12,6 +11,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -19,11 +19,12 @@ public final class LumenStreamFeature implements Feature {
     public static final MapCodec<LumenStreamFeature> CODEC = MapCodec.unit(LumenStreamFeature::new);
 
     @Override
-    public MapCodec<LumenStreamFeature> codec() { return CODEC; }
+    public MapCodec<LumenStreamFeature> codec() {
+        return CODEC;
+    }
     private static final int MAX_LENGTH = 36;
     private static final int MIN_LENGTH = 12;
     private static final int MAX_WIDTH = 2;
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

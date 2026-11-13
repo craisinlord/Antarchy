@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -26,17 +27,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -46,24 +49,32 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
     public static final EnumProperty<TilePosition> TILE_POSITION = EnumProperty.create("tile_position", TilePosition.class);
     public static final EnumProperty<PadRotation> ROTATION = EnumProperty.create("rotation", PadRotation.class);
     public static final BooleanProperty HAS_LOTUS = BooleanProperty.create("has_lotus");
+    public static final int MAX_SINK = 2;
+    public static final IntegerProperty SINK = IntegerProperty.create("sink", 0, MAX_SINK);
 
     private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 0.5D, 16.0D);
     private static final ThreadLocal<Boolean> REMOVING_STRUCTURE = ThreadLocal.withInitial(() -> false);
     private static final Map<TilePosition, Vec2> OFFSETS = createOffsets();
     private static final double LAUNCH_VERTICAL_SPEED = 0.82D;
-    private static final double LAUNCH_SPEED_PER_BLOCK = 0.1044D;
+    private static final double LAUNCH_SPEED_PER_BLOCK = 0.135D;
     private static final double NON_LIVING_HORIZONTAL_SCALE = 0.45D;
     private static final double NON_LIVING_VERTICAL_SCALE = 0.7D;
     private static final double PAD_SURFACE_HEIGHT = 0.25D;
     private static final float LAUNCH_SOUND_PITCH = 1.4F;
     private static final int LAUNCH_PARTICLE_COUNT = 12;
+    private static final double BOUNCE_FACTOR = 0.4D;
+    private static final double NON_LIVING_BOUNCE_SCALE = 0.8D;
+    private static final double MIN_BOUNCE_SPEED = 0.2D;
+    private static final float MIN_LANDING_FALL = 0.4F;
+    private static final int SINK_STAGE_TICKS = 5;
 
     public GiantLilyPadBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(TILE_POSITION, TilePosition.CENTER)
                 .setValue(ROTATION, PadRotation.DEG_0)
-                .setValue(HAS_LOTUS, false));
+                .setValue(HAS_LOTUS, false)
+                .setValue(SINK, 0));
     }
 
     @Override
@@ -73,7 +84,7 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(TILE_POSITION, ROTATION, HAS_LOTUS);
+        builder.add(TILE_POSITION, ROTATION, HAS_LOTUS, SINK);
     }
 
     @Override
@@ -157,13 +168,65 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
         return ItemInteractionResult.CONSUME;
     }
 
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         entity.causeFallDamage(fallDistance, 0.0F, level.damageSources().fall());
+        if (fallDistance < MIN_LANDING_FALL || !(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        BlockPos center = centerFrom(pos, state);
+        sinkStructure(serverLevel, center);
+        float volume = Math.min(1.0F, 0.35F + fallDistance * 0.1F);
+        serverLevel.playSound(null, pos, SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, volume, 0.75F + serverLevel.random.nextFloat() * 0.1F);
+        serverLevel.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, volume * 0.25F, 1.2F + serverLevel.random.nextFloat() * 0.2F);
+    }
+
+    @Override
+    public void updateEntityAfterFallOn(BlockGetter level, Entity entity) {
+        Vec3 motion = entity.getDeltaMovement();
+        if (entity.isSuppressingBounce() || motion.y > -MIN_BOUNCE_SPEED) {
+            super.updateEntityAfterFallOn(level, entity);
+            return;
+        }
+
+        double scale = entity instanceof LivingEntity ? 1.0D : NON_LIVING_BOUNCE_SCALE;
+        entity.setDeltaMovement(motion.x, -motion.y * BOUNCE_FACTOR * scale, motion.z);
+    }
+
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        BlockPos center = centerFrom(pos, state);
+        boolean rising = false;
+        for (TilePosition tilePosition : TilePosition.values()) {
+            BlockPos partPos = positionFor(center, tilePosition);
+            BlockState partState = level.getBlockState(partPos);
+            if (partState.is(this) && partState.getValue(SINK) > 0) {
+                int sink = partState.getValue(SINK) - 1;
+                level.setBlock(partPos, partState.setValue(SINK, sink), Block.UPDATE_CLIENTS);
+                if (sink > 0) {
+                    rising = true;
+                }
+            }
+        }
+        if (rising) {
+            level.scheduleTick(center, this, SINK_STAGE_TICKS);
+        }
+    }
+
+    private void sinkStructure(ServerLevel level, BlockPos center) {
+        for (TilePosition tilePosition : TilePosition.values()) {
+            BlockPos partPos = positionFor(center, tilePosition);
+            BlockState partState = level.getBlockState(partPos);
+            if (partState.is(this) && partState.getValue(SINK) != MAX_SINK) {
+                level.setBlock(partPos, partState.setValue(SINK, MAX_SINK), Block.UPDATE_CLIENTS);
+            }
+        }
+        level.scheduleTick(center, this, SINK_STAGE_TICKS);
     }
 
     @Override
@@ -192,7 +255,7 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
 
         if (player.level() instanceof ServerLevel level) {
             launchOccupants(level, player, centerFrom(pos, state), forwardX, forwardZ);
-            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, LAUNCH_SOUND_PITCH);
+            level.playSound(null, pos, SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, LAUNCH_SOUND_PITCH);
             level.sendParticles(ParticleTypes.SPLASH, player.getX(), pos.getY() + 0.1D, player.getZ(), LAUNCH_PARTICLE_COUNT, 0.5D, 0.05D, 0.5D, 0.0D);
         }
     }
@@ -239,7 +302,8 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
             BlockState partState = AntarchyObjects.GIANT_LILY_PAD.get().defaultBlockState()
                     .setValue(TILE_POSITION, tilePosition)
                     .setValue(ROTATION, rotation)
-                    .setValue(HAS_LOTUS, false);
+                    .setValue(HAS_LOTUS, false)
+                    .setValue(SINK, 0);
             level.setBlock(partPos, partState, Block.UPDATE_CLIENTS);
         }
     }

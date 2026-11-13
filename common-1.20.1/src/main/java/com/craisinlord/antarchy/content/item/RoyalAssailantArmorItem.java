@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.item.ArmorDurability;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.compat.item.ArmorDurability;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -81,7 +81,7 @@ public class RoyalAssailantArmorItem extends ArmorItem {
         }
 
         double doubleDamageChance = getDoubleDamageChance();
-        if (doubleDamageChance > 0.0) {
+        if (doubleDamageChance > 0.0D) {
             builder.put(AntarchyObjects.DOUBLE_DAMAGE_CHANCE.get().value(),
                     new AttributeModifier(UUID.nameUUIDFromBytes((prefix + "_double_damage_chance").getBytes()), prefix + "_double_damage_chance", doubleDamageChance, AttributeModifier.Operation.ADDITION));
         }

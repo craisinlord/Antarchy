@@ -21,10 +21,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.jetbrains.annotations.Nullable;
 
 public final class ThoraxisUndersideSkyRenderer {
     public static final ResourceKey<Level> THORAXIS = ResourceKey.create(

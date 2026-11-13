@@ -1,8 +1,9 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.OctopusBombModel;
-import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.craisinlord.antarchy.content.client.renderer.GlimmerEchoRendering;
+import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
+import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.geckolib.renderer.layer.GeoRenderLayer;
@@ -14,7 +15,6 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import com.geckolib.renderer.GeoEntityRenderer;
 
 public class OctopusBombRenderer extends GeoEntityRenderer<OctopusBombEntity, LivingEntityRenderState> {
     public OctopusBombRenderer(EntityRendererProvider.Context context) {
@@ -35,11 +35,15 @@ public class OctopusBombRenderer extends GeoEntityRenderer<OctopusBombEntity, Li
     }
 
     private static final class OctopusBombEmissiveLayer extends GeoRenderLayer<OctopusBombEntity, Void, LivingEntityRenderState> {
-        private OctopusBombEmissiveLayer(GeoRenderer<OctopusBombEntity, Void, LivingEntityRenderState> renderer) { super(renderer); }
+        private OctopusBombEmissiveLayer(GeoRenderer<OctopusBombEntity, Void, LivingEntityRenderState> renderer) {
+            super(renderer);
+        }
 
         @Override
         public void submitRenderTask(RenderPassInfo<LivingEntityRenderState> info, SubmitNodeCollector tasks) {
-            if (!info.willRender()) return;
+            if (!info.willRender()) {
+                return;
+            }
             boolean glimmer = info.getOrDefaultGeckolibData(OctopusBombModel.GLIMMER_ECHO, false);
             RenderType type = RenderTypes.eyes(glimmer ? OctopusBombModel.GLIMMER_EMISSIVE_TEXTURE : OctopusBombModel.EMISSIVE_TEXTURE);
             PoseStack stack = info.poseStack();

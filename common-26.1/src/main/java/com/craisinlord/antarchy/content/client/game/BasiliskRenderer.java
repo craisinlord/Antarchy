@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.client.game;
 
-import net.minecraft.client.gui.Font;
 import com.craisinlord.antos.content.client.ThemedGraphics;
+import net.minecraft.client.gui.Font;
 
 public final class BasiliskRenderer {
     private static final int BLACK = 0xFF020602;

@@ -2,18 +2,21 @@ package com.craisinlord.antarchy.content.worldgen.elythia.reef;
 
 import com.craisinlord.antarchy.content.worldgen.ocean.StarCoralPatchFeature;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.Identifier;
 import java.util.List;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -142,8 +145,8 @@ public final class ElythiaReefFeature implements Feature {
     }
 
     private static void placeMushroom(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
-        net.minecraft.world.level.block.state.BlockState coral = net.minecraft.core.registries.BuiltInRegistries.BLOCK
-                .getRandomElementOf(net.minecraft.tags.BlockTags.CORAL_BLOCKS, random)
+        BlockState coral = BuiltInRegistries.BLOCK
+                .getRandomElementOf(BlockTags.CORAL_BLOCKS, random)
                 .map(holder -> holder.value().defaultBlockState()).orElse(null);
         if (coral == null) {
             return;
@@ -166,7 +169,7 @@ public final class ElythiaReefFeature implements Feature {
                         continue;
                     }
                     cursor.setWithOffset(origin, x, y - drop, z);
-                    if ((level.getBlockState(cursor).is(Blocks.WATER) || level.getBlockState(cursor).is(net.minecraft.tags.BlockTags.CORALS))
+                    if ((level.getBlockState(cursor).is(Blocks.WATER) || level.getBlockState(cursor).is(BlockTags.CORALS))
                             && level.getBlockState(cursor.above()).is(Blocks.WATER)) {
                         level.setBlock(cursor, coral, 3);
                         decoration.place(level, generator, random, cursor);

@@ -6,17 +6,24 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.world.item.component.SwingAnimation;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -32,10 +39,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -53,20 +60,15 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
 
 public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final String SUMMONER_KEY = "QueenSummoner";
@@ -411,14 +413,14 @@ public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     public static void discardSummonedBy(ServerLevel level, UUID queenId) {
-        List<ManticoreEntity> summoned = new java.util.ArrayList<>();
+        List<ManticoreEntity> summoned = new ArrayList<>();
         for (Entity entity : level.getAllEntities()) {
             if (entity instanceof ManticoreEntity manticore && manticore.isAlive() && manticore.isSummonedBy(queenId)) {
                 summoned.add(manticore);
             }
         }
         for (ManticoreEntity manticore : summoned) {
-            level.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL,
+            level.sendParticles(ParticleTypes.REVERSE_PORTAL,
                     manticore.getX(), manticore.getY() + manticore.getBbHeight() * 0.5D, manticore.getZ(),
                     24, 0.5D, 0.5D, 0.5D, 0.1D);
             manticore.discard();
@@ -428,7 +430,7 @@ public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final int QUEEN_SUMMON_PEEL_TICKS = 100;
     private static final String SUMMONER_POS_KEY = "QueenSummonerPos";
     @Nullable
-    private net.minecraft.core.BlockPos lastSummonerPos;
+    private BlockPos lastSummonerPos;
 
     private void takeoff() {
         this.takeoffCooldown = TAKEOFF_COOLDOWN_TICKS;
@@ -591,7 +593,7 @@ public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
         super.readAdditionalSaveData(tag);
         this.summonerId = tag.read(SUMMONER_KEY, UUIDUtil.CODEC).orElse(null);
         this.playerSummonerId = tag.read(PLAYER_SUMMONER_KEY, UUIDUtil.CODEC).orElse(null);
-        this.lastSummonerPos = tag.getLong(SUMMONER_POS_KEY).map(net.minecraft.core.BlockPos::of).orElse(null);
+        this.lastSummonerPos = tag.getLong(SUMMONER_POS_KEY).map(BlockPos::of).orElse(null);
         this.lostSummonerTicks = 0;
         this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
         this.glimmerEchoOwner = tag.read(GLIMMER_ECHO_OWNER_KEY, UUIDUtil.CODEC).orElse(null);

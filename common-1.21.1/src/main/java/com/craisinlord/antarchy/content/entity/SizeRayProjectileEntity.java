@@ -2,13 +2,13 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -23,7 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class SizeRayProjectileEntity extends AbstractArrow {
-    
+
     public static final ResourceLocation SIZE_RAY_MODIFIER_ID =
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "size_ray_scale");
     private static final ResourceLocation LEGACY_SHRINK_MODIFIER_ID =
@@ -150,26 +150,27 @@ public class SizeRayProjectileEntity extends AbstractArrow {
         builder.define(CHARGE_LEVEL, 1);
     }
 
-    
     private void applyScaleChange(LivingEntity livingEntity) {
         this.applyScaleChange(livingEntity, this.getEffectiveChargeLevel());
     }
 
     private void applyScaleChange(LivingEntity livingEntity, int chargeLevel) {
         AttributeInstance scaleAttribute = livingEntity.getAttribute(Attributes.SCALE);
-        if (scaleAttribute == null) return;
+        if (scaleAttribute == null) {
+            return;
+        }
 
         migrateLegacy(livingEntity, scaleAttribute);
         AttributeModifier existing = scaleAttribute.getModifier(SIZE_RAY_MODIFIER_ID);
-        double current = existing != null ? existing.amount() : 0.0;
+        double current = existing != null ? existing.amount() : 0.0D;
 
         double delta = AntarchySettings.sizeRayDeltaPerHit();
         double snappedCurrent = Math.round(current / delta) * delta;
         double next = this.sizeRayType == SizeRayType.SHRINK
                 ? snappedCurrent - delta * chargeLevel
                 : snappedCurrent + delta * chargeLevel;
-        double minOffset = AntarchySettings.sizeRayMinScale() - 1.0;
-        double maxOffset = AntarchySettings.sizeRayMaxScale() - 1.0;
+        double minOffset = AntarchySettings.sizeRayMinScale() - 1.0D;
+        double maxOffset = AntarchySettings.sizeRayMaxScale() - 1.0D;
         next = Mth.clamp(next, minOffset, maxOffset);
 
         writeModifier(scaleAttribute, next);
@@ -195,10 +196,9 @@ public class SizeRayProjectileEntity extends AbstractArrow {
         this.setChargeLevel(Math.max(1, tag.getInt(CHARGE_LEVEL_KEY)));
     }
 
-    
     public static void writeModifier(AttributeInstance scaleAttribute, double offset) {
         scaleAttribute.removeModifier(SIZE_RAY_MODIFIER_ID);
-        if (offset != 0.0) {
+        if (offset != 0.0D) {
             scaleAttribute.addPermanentModifier(
                     new AttributeModifier(
                             SIZE_RAY_MODIFIER_ID,
@@ -209,7 +209,6 @@ public class SizeRayProjectileEntity extends AbstractArrow {
         }
     }
 
-    
     private static void migrateLegacy(LivingEntity livingEntity, AttributeInstance scaleAttribute) {
         scaleAttribute.removeModifier(LEGACY_SHRINK_MODIFIER_ID);
         scaleAttribute.removeModifier(LEGACY_GROW_MODIFIER_ID);

@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.client.game;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import net.minecraft.client.gui.Font;
 import com.craisinlord.antos.content.client.ThemedGraphics;
+import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 

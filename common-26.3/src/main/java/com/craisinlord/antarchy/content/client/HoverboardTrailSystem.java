@@ -3,6 +3,14 @@ package com.craisinlord.antarchy.content.client;
 import com.craisinlord.antarchy.content.entity.HoverboardEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -13,20 +21,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 public final class HoverboardTrailSystem {
     private static final int MAX_TRAIL_POINTS = 18;
     private static final int TRAIL_LIFETIME_TICKS = 12;
-    private static final float CORE_HALF_WIDTH = 0.0225f;
-    private static final float GLOW_HALF_WIDTH = 0.055f;
+    private static final float CORE_HALF_WIDTH = 0.0225F;
+    private static final float GLOW_HALF_WIDTH = 0.055F;
     private static final double MIN_DISTANCE_BETWEEN_POINTS = 0.04D;
     private static final double LATERAL_OFFSET = 0.5275D;
     private static final double REAR_OFFSET = 0.77D;
@@ -188,9 +187,9 @@ public final class HoverboardTrailSystem {
             PointSnapshot newer = points.get(i);
             PointSnapshot older = points.get(i + 1);
 
-            float alphaNearer = (glow ? 0.34f : 0.78f) * indexAlpha(i, n) * (1.0f - newer.progress());
-            float alphaFarther = (glow ? 0.34f : 0.78f) * indexAlpha(i + 1, n) * (1.0f - older.progress());
-            if (alphaNearer < 0.005f && alphaFarther < 0.005f) {
+            float alphaNearer = (glow ? 0.34F : 0.78F) * indexAlpha(i, n) * (1.0F - newer.progress());
+            float alphaFarther = (glow ? 0.34F : 0.78F) * indexAlpha(i + 1, n) * (1.0F - older.progress());
+            if (alphaNearer < 0.005F && alphaFarther < 0.005F) {
                 continue;
             }
 
@@ -234,9 +233,9 @@ public final class HoverboardTrailSystem {
 
     private static float indexAlpha(int i, int n) {
         if (n <= 1) {
-            return 1.0f;
+            return 1.0F;
         }
-        return 1.0f - (float) i / (float) (n - 1);
+        return 1.0F - (float) i / (float) (n - 1);
     }
 
     private static float[] colorFor(DyeColor color) {
@@ -265,9 +264,9 @@ public final class HoverboardTrailSystem {
 
     private static float[] rgb(int color) {
         return new float[] {
-                ((color >> 16) & 255) / 255.0f,
-                ((color >> 8) & 255) / 255.0f,
-                (color & 255) / 255.0f
+                ((color >> 16) & 255) / 255.0F,
+                ((color >> 8) & 255) / 255.0F,
+                (color & 255) / 255.0F
         };
     }
 

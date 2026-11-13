@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,7 +35,7 @@ public final class ThoraxisEventClient {
     private static final int EXPOSURE_DISTANCE = 24;
     private static final float FADE_STEP = 0.025F;
     private static final double BLIND_FOG_END = 40.0D;
-    private static final DustParticleOptions ANTIWATER_DUST = new DustParticleOptions(net.minecraft.util.ARGB.colorFromFloat(1.0F, 1.0F, 0.12F, 0.12F), 1.0F);
+    private static final DustParticleOptions ANTIWATER_DUST = new DustParticleOptions(ARGB.colorFromFloat(1.0F, 1.0F, 0.12F, 0.12F), 1.0F);
     private static final float[] BLIND_FOG_COLOR = {0.02F, 0.0F, 0.0F};
     private static final float[] FOG_COLOR = new float[3];
     private static final int SMOOTH_TICKS = 4;

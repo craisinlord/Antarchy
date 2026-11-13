@@ -67,7 +67,7 @@ public class RiverLogBridgeFeature extends Feature<NoneFeatureConfiguration> {
         for (int i = 0; i < damage.length; i++) damage[i] = random.nextFloat();
         for (int pass = 0; pass < 4; pass++) {
             for (int i = 1; i < damage.length - 1; i++) {
-                damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4f;
+                damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4F;
             }
         }
 
@@ -76,17 +76,25 @@ public class RiverLogBridgeFeature extends Feature<NoneFeatureConfiguration> {
         for (int step = from; step <= to; step++) {
             boolean overWater = step > 0 && step < crossing.steps();
             float dmg = damage[step - from] * damage[step - from];
-            if (!overWater && dmg > 0.5F) continue;
+            if (!overWater && dmg > 0.5F) {
+                continue;
+            }
 
             int x = crossing.x(step);
             int z = crossing.z(step);
             placed |= this.placeLog(level, crossing, pos.set(x, centerY, z), palette.pick(random));
-            if (!thick) continue;
+            if (!thick) {
+                continue;
+            }
 
             int[][] shell = {{perpX, 0, perpZ}, {-perpX, 0, -perpZ}, {0, 1, 0}, {0, -1, 0}};
             for (int[] o : shell) {
-                if (!overWater && random.nextFloat() < dmg * 1.5F) continue;
-                if (o[1] == 0 && random.nextFloat() < 0.12F) continue;
+                if (!overWater && random.nextFloat() < dmg * 1.5F) {
+                    continue;
+                }
+                if (o[1] == 0 && random.nextFloat() < 0.12F) {
+                    continue;
+                }
                 placed |= this.placeLog(level, crossing, pos.set(x + o[0], centerY + o[1], z + o[2]), palette.pick(random));
             }
         }
@@ -97,10 +105,14 @@ public class RiverLogBridgeFeature extends Feature<NoneFeatureConfiguration> {
 
         int topY = centerY + (thick ? 1 : 0);
         for (int step = from; step <= to; step++) {
-            if (random.nextFloat() >= 0.3F) continue;
+            if (random.nextFloat() >= 0.3F) {
+                continue;
+            }
             int x = crossing.x(step);
             int z = crossing.z(step);
-            if (!crossing.contains(x, z)) continue;
+            if (!crossing.contains(x, z)) {
+                continue;
+            }
             BlockState below = level.getBlockState(pos.set(x, topY, z));
             if (!below.is(Blocks.MOSS_BLOCK) && below.getBlock() instanceof RotatedPillarBlock && level.getBlockState(pos.set(x, topY + 1, z)).isAir()) {
                 level.setBlock(pos, Blocks.MOSS_CARPET.defaultBlockState(), 2);
@@ -126,11 +138,17 @@ public class RiverLogBridgeFeature extends Feature<NoneFeatureConfiguration> {
         for (int i = 0; i < count; i++) {
             int mx = x + random.nextInt(5) - 2;
             int mz = z + random.nextInt(5) - 2;
-            if (!crossing.contains(mx, mz)) continue;
+            if (!crossing.contains(mx, mz)) {
+                continue;
+            }
             pos.set(mx, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, mx, mz), mz);
-            if (!level.getBlockState(pos).isAir()) continue;
+            if (!level.getBlockState(pos).isAir()) {
+                continue;
+            }
             BlockPos below = pos.below();
-            if (!level.getFluidState(below).isEmpty() || !level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) continue;
+            if (!level.getFluidState(below).isEmpty() || !level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+                continue;
+            }
             level.setBlock(pos, random.nextFloat() < 0.3F ? Blocks.MOSS_BLOCK.defaultBlockState() : Blocks.MOSS_CARPET.defaultBlockState(), 2);
         }
     }

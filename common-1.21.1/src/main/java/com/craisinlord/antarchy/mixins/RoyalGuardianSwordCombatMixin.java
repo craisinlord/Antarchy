@@ -16,7 +16,9 @@ public abstract class RoyalGuardianSwordCombatMixin {
     @Inject(method = "hurt", at = @At("RETURN"))
     private void antarchy$releaseGuardianElement(DamageSource source, float amount,
             CallbackInfoReturnable<Boolean> cir) {
-        if (!cir.getReturnValue() || amount <= 0.0F || RoyalGuardianSwordAbilities.isApplyingSecondaryDamage()) return;
+        if (!cir.getReturnValue() || amount <= 0.0F || RoyalGuardianSwordAbilities.isApplyingSecondaryDamage()) {
+            return;
+        }
         Entity attacker = source.getEntity();
         if (!(attacker instanceof Player player) || source.getDirectEntity() != player
                 || !(player.getMainHandItem().getItem() instanceof RoyalGuardianSwordItem)

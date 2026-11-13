@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.block.Block;
 public class DeferredRegister<T> {
     public static final class Blocks extends DeferredRegister<Block> {
         private Blocks(String modId) {
-            super(net.minecraft.core.registries.Registries.BLOCK, modId);
+            super(Registries.BLOCK, modId);
         }
 
         public <I extends Block> DeferredBlock<I> register(String name, Supplier<? extends I> supplier) {
@@ -25,7 +26,7 @@ public class DeferredRegister<T> {
 
     public static final class Items extends DeferredRegister<Item> {
         private Items(String modId) {
-            super(net.minecraft.core.registries.Registries.ITEM, modId);
+            super(Registries.ITEM, modId);
         }
 
         public <I extends Item> DeferredItem<I> register(String name, Supplier<? extends I> supplier) {

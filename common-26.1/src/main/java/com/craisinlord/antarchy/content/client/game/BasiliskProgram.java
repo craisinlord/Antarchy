@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.client.game;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import com.craisinlord.antos.content.client.ThemedGraphics;
 import java.util.function.IntConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 
 public final class BasiliskProgram {
     private final BasiliskGame game;
@@ -22,12 +22,18 @@ public final class BasiliskProgram {
     }
 
     public void setInstalled(boolean installed) { this.installed = installed; if (!installed) game.reset(); }
-    public boolean installed() { return installed; }
-    public BasiliskGame game() { return game; }
+    public boolean installed() {
+        return installed;
+    }
+    public BasiliskGame game() {
+        return game;
+    }
     public void setStoredScores(int score, int highScore) { savedScore = score; savedHighScore = highScore; game.reset(score); }
     public void tick() { if (game.tick() && (game.score() != savedScore || game.highScore() != savedHighScore)) { if (game.score() > savedScore) Minecraft.getInstance().player.playSound(AntarchySoundEvents.BASILISK_BITE.get(), 0.5F, 1.2F); savedScore = game.score(); savedHighScore = game.highScore(); scoreSaver.accept(savedScore); } }
     public boolean keyPressed(int keyCode) {
-        if (!installed) return false;
+        if (!installed) {
+            return false;
+        }
         BasiliskGame.Direction direction = switch (keyCode) {
             case 265, 87 -> BasiliskGame.Direction.UP;
             case 264, 83 -> BasiliskGame.Direction.DOWN;
@@ -39,5 +45,7 @@ public final class BasiliskProgram {
         if (keyCode == 257 || keyCode == 335) { if (game.phase() != BasiliskGame.Phase.PLAYING) { game.reset(); game.start(); savedScore = 0; scoreSaver.accept(0); } return true; }
         return false;
     }
-    public void render(ThemedGraphics graphics, Font font, int x, int y, int width, int height) { BasiliskRenderer.render(graphics, font, game, x, y, width, height); }
+    public void render(ThemedGraphics graphics, Font font, int x, int y, int width, int height) {
+        BasiliskRenderer.render(graphics, font, game, x, y, width, height);
+    }
 }

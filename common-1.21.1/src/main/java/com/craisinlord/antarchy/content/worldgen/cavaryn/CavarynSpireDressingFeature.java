@@ -29,7 +29,7 @@ public final class CavarynSpireDressingFeature extends Feature<NoneFeatureConfig
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "biomite_turf"),
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "amber_moss_block")
     ));
-    private static final double SHELL = 2.0;
+    private static final double SHELL = 2.0D;
 
     public CavarynSpireDressingFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -40,8 +40,8 @@ public final class CavarynSpireDressingFeature extends Feature<NoneFeatureConfig
         WorldGenLevel level = context.level();
         NormalNoise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(SPIRE_NOISE);
         CavarynSpireGrid grid = CavarynSpireGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.getValue(1234.567, 89.123, -456.789),
-                noise.getValue(-987.654, 12.345, 654.321)
+                noise.getValue(1234.567D, 89.123D, -456.789D),
+                noise.getValue(-987.654D, 12.345D, 654.321D)
         ));
         Block chitin = BuiltInRegistries.BLOCK.getOptional(CHITIN_ID).orElse(null);
         if (grid == null || chitin == null) {

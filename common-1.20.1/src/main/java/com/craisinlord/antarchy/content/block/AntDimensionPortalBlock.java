@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
-import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.content.portal.PermanentPortalTeleporter;
+import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

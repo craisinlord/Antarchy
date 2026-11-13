@@ -3,24 +3,23 @@ package com.craisinlord.antarchy.neoforge;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatBridge;
 import com.craisinlord.antarchy.compat.infinity.InfinityWarpResult;
+import com.craisinlord.antarchy.neoforge.mixins.infinity.PortalCreatorInvoker;
+import java.util.ArrayList;
+import java.util.List;
 import net.codexarchonic.infinity.InfinityMod;
+import net.codexarchonic.infinity.access.MinecraftServerAccess;
 import net.codexarchonic.infinity.util.InfinityMethods;
 import net.codexarchonic.infinity.util.teleport.PortalCreator;
 import net.codexarchonic.infinity.util.teleport.WarpLogic;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
-import net.codexarchonic.infinity.access.MinecraftServerAccess;
-import com.craisinlord.antarchy.neoforge.mixins.infinity.PortalCreatorInvoker;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.world.level.Level;
 
 public final class NeoForgeInfinityCompat implements InfinityCompatBridge {
     @Override

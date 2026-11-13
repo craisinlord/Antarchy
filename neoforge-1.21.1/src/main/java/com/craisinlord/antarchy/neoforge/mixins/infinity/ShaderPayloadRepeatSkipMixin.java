@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.neoforge.mixins.infinity;
 
+import java.lang.ref.WeakReference;
 import net.codexarchonic.infinity.registry.payload.s2c.ShaderS2CPayload;
 import net.codexarchonic.infinity.util.loading.ShaderLoader;
 import net.minecraft.client.Minecraft;
@@ -9,8 +10,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
-import java.lang.ref.WeakReference;
 
 @Mixin(value = ShaderS2CPayload.class, remap = false)
 public class ShaderPayloadRepeatSkipMixin {

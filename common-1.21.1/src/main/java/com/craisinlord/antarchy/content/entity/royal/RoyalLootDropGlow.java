@@ -16,9 +16,13 @@ public final class RoyalLootDropGlow {
     }
 
     public static void tick(ItemEntity itemEntity) {
-        if (itemEntity.level().isClientSide) return;
+        if (itemEntity.level().isClientSide) {
+            return;
+        }
         for (String tag : itemEntity.getTags()) {
-            if (!tag.startsWith(TAG_PREFIX)) continue;
+            if (!tag.startsWith(TAG_PREFIX)) {
+                continue;
+            }
             long expiryTick;
             try {
                 expiryTick = Long.parseLong(tag.substring(TAG_PREFIX.length()));

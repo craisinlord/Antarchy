@@ -1,8 +1,12 @@
 package com.craisinlord.antarchy.fabric.client;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
 
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
-import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.DeathScreen;
@@ -12,12 +16,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public final class LucidSoundHandler {
     private static final double START_SCAN_RADIUS = 96.0D;
@@ -69,7 +67,9 @@ public final class LucidSoundHandler {
         );
 
         for (LucidEntity lucid : lucids) {
-            if (!lucid.shouldPlayAmbientLoop()) continue;
+            if (!lucid.shouldPlayAmbientLoop()) {
+                continue;
+            }
 
             LucidLoopSet set = ACTIVE_LOOPS.get(lucid.getUUID());
             if (set == null) {
@@ -196,7 +196,9 @@ public final class LucidSoundHandler {
             this.z = entity.getZ();
         }
 
-        private void setEntity(LucidEntity entity) { this.entity = entity; }
+        private void setEntity(LucidEntity entity) {
+            this.entity = entity;
+        }
 
         @Override
         public void tick() {
@@ -210,7 +212,9 @@ public final class LucidSoundHandler {
         }
 
         @Override
-        public boolean canStartSilent() { return true; }
+        public boolean canStartSilent() {
+            return true;
+        }
     }
 
     private static final class LucidOneShotSound extends AbstractTickableSoundInstance {

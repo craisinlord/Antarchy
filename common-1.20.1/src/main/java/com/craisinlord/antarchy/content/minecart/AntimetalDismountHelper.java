@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.minecart;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
@@ -17,7 +18,7 @@ public final class AntimetalDismountHelper {
             new Vec3(-1, -1, 1),
             new Vec3(1, -1, -1),
             new Vec3(1, -1, 1),
-            new Vec3(0, -1.6, 0)
+            new Vec3(0, -1.6D, 0)
     };
 
     private AntimetalDismountHelper() {
@@ -44,12 +45,12 @@ public final class AntimetalDismountHelper {
                 pos.x + width / 2.0D, pos.y + height, pos.z + width / 2.0D
         );
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-        int minX = net.minecraft.util.Mth.floor(box.minX);
-        int maxX = net.minecraft.util.Mth.floor(box.maxX);
-        int minY = net.minecraft.util.Mth.floor(box.minY);
-        int maxY = net.minecraft.util.Mth.floor(box.maxY);
-        int minZ = net.minecraft.util.Mth.floor(box.minZ);
-        int maxZ = net.minecraft.util.Mth.floor(box.maxZ);
+        int minX = Mth.floor(box.minX);
+        int maxX = Mth.floor(box.maxX);
+        int minY = Mth.floor(box.minY);
+        int maxY = Mth.floor(box.maxY);
+        int minZ = Mth.floor(box.minZ);
+        int maxZ = Mth.floor(box.maxZ);
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {

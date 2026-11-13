@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyOrbEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

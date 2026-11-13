@@ -38,7 +38,7 @@ public final class ParalyzedStoneLivingLayer<S extends LivingEntityRenderState, 
             return;
         }
         poseStack.pushPose();
-        poseStack.scale(1.02f, 1.02f, 1.02f);
+        poseStack.scale(1.02F, 1.02F, 1.02F);
         submitNodeCollector.order(1).submitModel(
                 this.getParentModel(),
                 state,

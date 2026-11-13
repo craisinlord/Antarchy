@@ -4,35 +4,34 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
 
 public class WindVortexEntity extends Entity {
     private static final EntityDataAccessor<Float> HEIGHT =
@@ -201,7 +200,7 @@ public class WindVortexEntity extends Entity {
                 }
             } else {
                 this.setDeltaMovement(this.travelVelocity);
-                this.move(net.minecraft.world.entity.MoverType.SELF, this.travelVelocity);
+                this.move(MoverType.SELF, this.travelVelocity);
                 if (--this.travelTicksRemaining <= 0) {
                     this.travelling = false;
                     this.noPhysics = false;
@@ -226,12 +225,12 @@ public class WindVortexEntity extends Entity {
                 }
             } else {
                 this.setDeltaMovement(drift);
-                this.move(net.minecraft.world.entity.MoverType.SELF, drift);
+                this.move(MoverType.SELF, drift);
             }
         } else {
             Vec3 drift = this.getDeltaMovement().multiply(DRIFT_FRICTION, DRIFT_FRICTION, DRIFT_FRICTION);
             this.setDeltaMovement(drift);
-            this.move(net.minecraft.world.entity.MoverType.SELF, drift);
+            this.move(MoverType.SELF, drift);
         }
 
         if ((this.tickCount & 1) == 0) {
@@ -292,7 +291,7 @@ public class WindVortexEntity extends Entity {
         this.noPhysics = false;
         this.travelVelocity = Vec3.ZERO;
         this.setDeltaMovement(Vec3.ZERO);
-        if (hit instanceof net.minecraft.world.phys.BlockHitResult blockHit) {
+        if (hit instanceof BlockHitResult blockHit) {
             Vec3 normal = Vec3.atLowerCornerOf(blockHit.getDirection().getNormal());
             this.setPos(blockHit.getLocation().add(normal.scale(0.05D)));
         }
@@ -313,7 +312,7 @@ public class WindVortexEntity extends Entity {
     }
 
     private void flowAroundBlock(HitResult hit) {
-        if (!(hit instanceof net.minecraft.world.phys.BlockHitResult blockHit)) {
+        if (!(hit instanceof BlockHitResult blockHit)) {
             return;
         }
 

@@ -2,12 +2,11 @@ package com.craisinlord.antarchy.fabric.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
+import java.util.Collection;
+import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Collection;
-import java.util.Map;
 
 public final class SeparateLargeItemModels {
     private static final Map<Item, ResourceLocation> GUI_MODELS = Map.ofEntries(

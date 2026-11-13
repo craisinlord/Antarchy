@@ -1,8 +1,7 @@
 package com.craisinlord.antarchy.fabric.client;
+
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
-
-import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -12,6 +11,7 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 
@@ -25,7 +25,7 @@ public final class FallenKingCrownArmorStandLayer extends RenderLayer<ArmorStand
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, ArmorStand armorStand, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-        ItemStack headStack = armorStand.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD);
+        ItemStack headStack = armorStand.getItemBySlot(EquipmentSlot.HEAD);
         if (!headStack.is(AntarchyFabricItems.FALLEN_KING_CROWN.get()) || armorStand.isInvisible()) {
             return;
         }

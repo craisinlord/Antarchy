@@ -1,31 +1,38 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.entity.EntityReach;
+import com.craisinlord.antarchy.compat.item.WeaponAttributes;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity;
-import com.craisinlord.antarchy.config.AntarchySettings;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class RoyalAssailantBattleAxeItem extends AxeItem {
     private static final int BLACK_HOLE_COOLDOWN_TICKS = 20 * 20;
     private static final int DILATED_DURATION_TICKS = 100;
-    private static final net.minecraft.resources.ResourceLocation REACH_MODIFIER_ID = new net.minecraft.resources.ResourceLocation("antarchy", "royal_assailant_battleaxe_reach");
-    private static final net.minecraft.resources.ResourceLocation KNOCKBACK_MODIFIER_ID = new net.minecraft.resources.ResourceLocation("antarchy", "royal_assailant_battleaxe_knockback");
+    private static final ResourceLocation REACH_MODIFIER_ID = new ResourceLocation("antarchy", "royal_assailant_battleaxe_reach");
+    private static final ResourceLocation KNOCKBACK_MODIFIER_ID = new ResourceLocation("antarchy", "royal_assailant_battleaxe_knockback");
     private final Tier tier;
 
     public RoyalAssailantBattleAxeItem(Tier tier, Item.Properties properties) {
@@ -34,14 +41,14 @@ public class RoyalAssailantBattleAxeItem extends AxeItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
-        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot != EquipmentSlot.MAINHAND) {
             return super.getDefaultAttributeModifiers(slot);
         }
-        com.google.common.collect.ImmutableMultimap.Builder<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> builder =
-                com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (float) AntarchySettings.royalAssailantBattleAxeAttackDamage(), (float) AntarchySettings.royalAssailantBattleAxeAttackSpeed());
-        com.craisinlord.antarchy.compat.entity.EntityReach.addModifier(builder, REACH_MODIFIER_ID, AntarchySettings.royalWeaponAttackReachBonus());
-        com.craisinlord.antarchy.compat.item.WeaponAttributes.add(builder, net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_KNOCKBACK, KNOCKBACK_MODIFIER_ID, AntarchySettings.royalWeaponAttackKnockbackBonus() + 1.0D);
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
+                WeaponAttributes.base(this.tier, (float) AntarchySettings.royalAssailantBattleAxeAttackDamage(), (float) AntarchySettings.royalAssailantBattleAxeAttackSpeed());
+        EntityReach.addModifier(builder, REACH_MODIFIER_ID, AntarchySettings.royalWeaponAttackReachBonus());
+        WeaponAttributes.add(builder, Attributes.ATTACK_KNOCKBACK, KNOCKBACK_MODIFIER_ID, AntarchySettings.royalWeaponAttackKnockbackBonus() + 1.0D);
         return builder.build();
     }
 

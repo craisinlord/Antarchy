@@ -11,14 +11,17 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +43,7 @@ final class ElythiaGiantCloudRenderer {
     private static final int[][] NORMALS = {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
 
     private static final List<Tower> TOWERS = new ArrayList<>();
+    private static final Map<Long, Tower> SWIRLS = new HashMap<>();
     private static boolean anchored;
     private static long anchorSeed;
     private static double anchorWindX;
@@ -59,6 +63,8 @@ final class ElythiaGiantCloudRenderer {
         private final double scale;
         private final double x;
         private final double z;
+        private final boolean swirl;
+        private final double baseY;
         @Nullable
         private CompletableFuture<Mesh> pending;
         private boolean pendingSoft;
@@ -71,10 +77,16 @@ final class ElythiaGiantCloudRenderer {
         private boolean failed;
 
         private Tower(long seed, double scale, double x, double z) {
+            this(seed, scale, x, z, false, BASE_Y);
+        }
+
+        private Tower(long seed, double scale, double x, double z, boolean swirl, double baseY) {
             this.seed = seed;
             this.scale = scale;
             this.x = x;
             this.z = z;
+            this.swirl = swirl;
+            this.baseY = baseY;
         }
 
         @Nullable
@@ -93,8 +105,9 @@ final class ElythiaGiantCloudRenderer {
                 ElythiaGiantCloud known = this.cloud;
                 long seed = this.seed;
                 double scale = this.scale;
+                boolean swirl = this.swirl;
                 this.pending = CompletableFuture.supplyAsync(() -> {
-                    ElythiaGiantCloud giant = known != null ? known : ElythiaGiantCloud.generate(seed, scale);
+                    ElythiaGiantCloud giant = known != null ? known : swirl ? ElythiaGiantCloud.generateSwirl(seed) : ElythiaGiantCloud.generate(seed, scale);
                     return soft ? buildSoftMesh(giant) : buildMesh(giant);
                 });
             }
@@ -169,6 +182,9 @@ final class ElythiaGiantCloudRenderer {
         double now = level.getGameTime() + partialTick;
         updateClearing(now, anchored && anchorSeed == seed && strength > 0.0F && anyBuilt());
         clearingCount = 0;
+        updateSwirls(level, camX, camZ);
+        drawTowers(SWIRLS.values(), poseStack, projectionMatrix, cloudColor, status, camX, camY, camZ, terrainFogEnd,
+                soft, softDraws, 0.0D, 0.0D, 1.0F, 1.0F, false);
         if (strength <= 0.0F || anchorSeed != seed) {
             if (strength <= 0.0F || anchored) {
                 reset();
@@ -193,7 +209,15 @@ final class ElythiaGiantCloudRenderer {
         float growth = growthProgress * growthProgress * (3.0F - 2.0F * growthProgress);
         double driftX = (wind[0] - anchorWindX) * DRIFT_SCALE;
         double driftZ = (wind[1] - anchorWindZ) * DRIFT_SCALE;
-        for (Tower tower : TOWERS) {
+        drawTowers(TOWERS, poseStack, projectionMatrix, cloudColor, status, camX, camY, camZ, terrainFogEnd, soft,
+                softDraws, driftX, driftZ, growth, strength, true);
+    }
+
+    private static void drawTowers(Collection<Tower> towers, PoseStack poseStack, Matrix4f projectionMatrix,
+                                   Vec3 cloudColor, CloudStatus status, double camX, double camY, double camZ,
+                                   float terrainFogEnd, boolean soft, List<ElythiaSoftCloudPass.Draw> softDraws,
+                                   double driftX, double driftZ, float growth, float strength, boolean clearing) {
+        for (Tower tower : towers) {
             VertexBuffer vertexBuffer = tower.buffer(soft);
             ElythiaGiantCloud giant = tower.cloud;
             if (vertexBuffer == null || giant == null) {
@@ -202,26 +226,30 @@ final class ElythiaGiantCloudRenderer {
             double dx = tower.x + driftX - camX;
             double dz = tower.z + driftZ - camZ;
             float distance = (float) Math.sqrt(dx * dx + dz * dz);
-            float fogEnd = Math.max(terrainFogEnd, distance * 1.9F + 200.0F);
+            float fogEnd = clearing ? Math.max(terrainFogEnd, distance * 1.9F + 200.0F) : terrainFogEnd * 1.1F;
+            if (!clearing && distance > fogEnd + Math.max(giant.sizeX(), giant.sizeZ()) * giant.voxel()) {
+                continue;
+            }
             float offsetX = (float) (dx + giant.originX());
-            float offsetY = (float) (BASE_Y - camY);
+            float offsetY = (float) (tower.baseY - camY);
             float offsetZ = (float) (dz + giant.originZ());
-            if (clearingCount < ElythiaSoftCloudPass.MAX_CLEARINGS) {
+            if (clearing && clearingCount < ElythiaSoftCloudPass.MAX_CLEARINGS) {
                 int index = clearingCount * 4;
                 CLEARINGS[index] = (float) dx;
                 CLEARINGS[index + 1] = 0.0F;
                 CLEARINGS[index + 2] = (float) dz;
-                CLEARINGS[index + 3] = Math.max(giant.sizeX(), giant.sizeZ()) * ElythiaGiantCloud.VOXEL * 0.5F;
+                CLEARINGS[index + 3] = Math.max(giant.sizeX(), giant.sizeZ()) * giant.voxel() * 0.5F;
                 clearingCount++;
             }
             if (tower.builtSoft) {
-                float towerHeight = giant.sizeY() * ElythiaGiantCloud.VOXEL;
-                float growthTop = offsetY + (0.3F + 0.7F * growth) * towerHeight + 40.0F;
+                float growthTop = clearing
+                        ? offsetY + (0.3F + 0.7F * growth) * giant.sizeY() * giant.voxel() + 40.0F
+                        : ElythiaSoftCloudPass.NO_GROWTH_LIMIT;
                 softDraws.add(new ElythiaSoftCloudPass.Draw(vertexBuffer, offsetX, offsetY, offsetZ, fogEnd, strength,
                         growthTop, false));
                 continue;
             }
-            RenderSystem.setShaderFogStart(Math.max(terrainFogEnd * 0.5F, distance * 0.55F));
+            RenderSystem.setShaderFogStart((clearing ? Math.max(terrainFogEnd * 0.5F, distance * 0.55F) : fogEnd * 0.6F));
             RenderSystem.setShaderFogEnd(fogEnd);
             RenderSystem.setShaderColor((float) cloudColor.x, (float) cloudColor.y, (float) cloudColor.z, strength);
             poseStack.pushPose();
@@ -251,6 +279,21 @@ final class ElythiaGiantCloudRenderer {
         return clearingCount;
     }
 
+    private static void updateSwirls(ClientLevel level, double camX, double camZ) {
+        ElythiaSwirlClouds.forEachSite(camX, camZ, (key, seed, x, z) -> {
+            if (!SWIRLS.containsKey(key)) {
+                SWIRLS.put(key, new Tower(seed, 1.0D, x, z, true, ElythiaSwirlClouds.baseY(level, x, z, seed)));
+            }
+        });
+        SWIRLS.values().removeIf(tower -> {
+            if (ElythiaSwirlClouds.outOfRange(tower.x, tower.z, camX, camZ)) {
+                tower.discard();
+                return true;
+            }
+            return false;
+        });
+    }
+
     private static boolean anyBuilt() {
         for (Tower tower : TOWERS) {
             if (tower.built) {
@@ -274,6 +317,17 @@ final class ElythiaGiantCloudRenderer {
         TOWERS.clear();
         anchored = false;
         anchorRetryAt = Long.MIN_VALUE;
+    }
+
+    static void releaseAll() {
+        reset();
+        for (Tower tower : SWIRLS.values()) {
+            tower.discard();
+        }
+        SWIRLS.clear();
+        clearingLevel = 0.0F;
+        clearingTime = Double.NaN;
+        clearingCount = 0;
     }
 
     private static boolean tryAnchor(Minecraft minecraft, ClientLevel level, long seed, double[] wind, double camX, double camZ) {
@@ -357,7 +411,7 @@ final class ElythiaGiantCloudRenderer {
         BufferBuilder builder = ElythiaCloudRenderer.acquireBuilder();
         try {
             builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL);
-            float voxel = ElythiaGiantCloud.VOXEL;
+            float voxel = giant.voxel();
             float totalHeight = giant.sizeY() * voxel;
             for (int by = 0; by < giant.sizeY(); by += PUFF_CELLS) {
                 for (int bz = 0; bz < giant.sizeZ(); bz += PUFF_CELLS) {
@@ -478,7 +532,7 @@ final class ElythiaGiantCloudRenderer {
                                     && !giant.filled(cell[0] + normal[0], cell[1] + normal[1], cell[2] + normal[2]);
                         }
                     }
-                    float plane = (depth + Math.max(normal[axis], 0)) * ElythiaGiantCloud.VOXEL;
+                    float plane = (depth + Math.max(normal[axis], 0)) * giant.voxel();
                     for (int v = 0; v < height; v++) {
                         for (int u = 0; u < width; u++) {
                             if (!mask[v * width + u]) {
@@ -504,8 +558,8 @@ final class ElythiaGiantCloudRenderer {
                                 }
                             }
                             emit(builder, normal, axis, uAxis, vAxis, plane,
-                                    u * ElythiaGiantCloud.VOXEL, (u + runU) * ElythiaGiantCloud.VOXEL,
-                                    v * ElythiaGiantCloud.VOXEL, (v + runV) * ElythiaGiantCloud.VOXEL);
+                                    u * giant.voxel(), (u + runU) * giant.voxel(),
+                                    v * giant.voxel(), (v + runV) * giant.voxel());
                         }
                     }
                 }

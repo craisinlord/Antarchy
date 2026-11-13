@@ -86,12 +86,12 @@ public final class CavarynCavityUnionFunction implements DensityFunction {
             this.loadColumns(resolved, currentQx, currentQz);
         }
         int y = context.blockY();
-        double py = y + 0.5;
+        double py = y + 0.5D;
         if (py < this.activeMinY || py > this.activeMaxY) {
-            return 1.0;
+            return 1.0D;
         }
         double floor = this.minValue;
-        double best = 1.0;
+        double best = 1.0D;
         CavarynColumn[] current = this.active;
         for (int i = 0; i < this.activeCount; i++) {
             double value = CavarynColumn.density(current[i].signedDistance(x, y, z, CavarynColumn.FLOOR));

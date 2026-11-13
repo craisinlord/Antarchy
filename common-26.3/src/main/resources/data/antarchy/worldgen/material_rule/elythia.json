@@ -465,6 +465,19 @@
                                     }
                                   },
                                   {
+                                    "type": "minecraft:condition",
+                                    "if_true": {
+                                      "type": "minecraft:noise_threshold",
+                                      "noise": "antarchy:elythia_river_tidestone",
+                                      "min_threshold": 0.05,
+                                      "max_threshold": 1000
+                                    },
+                                    "then_run": {
+                                      "type": "minecraft:block",
+                                      "result_state": "antarchy:tidestone"
+                                    }
+                                  },
+                                  {
                                     "type": "minecraft:block",
                                     "result_state": "minecraft:mud"
                                   }
@@ -1496,8 +1509,77 @@
             },
             {
               "biome_is": [
+                "antarchy:sky_isles_royal_grove"
+              ],
+              "then_run": {
+                "type": "minecraft:sequence",
+                "sequence": [
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:stone_depth",
+                      "add_surface_depth": false,
+                      "offset": 0,
+                      "secondary_depth_range": 0,
+                      "surface_type": "floor"
+                    },
+                    "then_run": {
+                      "type": "minecraft:sequence",
+                      "sequence": [
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:water",
+                            "offset": -1,
+                            "surface_depth_multiplier": 0,
+                            "add_stone_depth": false
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "minecraft:grass_block"
+                          }
+                        },
+                        {
+                          "type": "minecraft:block",
+                          "result_state": "minecraft:dirt"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:water",
+                      "offset": -1,
+                      "surface_depth_multiplier": 2,
+                      "add_stone_depth": false
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": "minecraft:dirt"
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:water",
+                      "offset": -4,
+                      "surface_depth_multiplier": 3,
+                      "add_stone_depth": true
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": "minecraft:dirt"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "biome_is": [
                 "antarchy:primordial_plains",
-                "antarchy:cranberry_fields"
+                "antarchy:cranberry_fields",
+                "antarchy:sky_isles"
               ],
               "then_run": {
                 "type": "minecraft:sequence",

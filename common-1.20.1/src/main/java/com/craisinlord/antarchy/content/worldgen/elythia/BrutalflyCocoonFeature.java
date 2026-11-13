@@ -13,6 +13,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 public class BrutalflyCocoonFeature extends Feature<NoneFeatureConfiguration> {
     private static final int MAX_ANCHOR_Y = 160;
@@ -86,7 +87,7 @@ public class BrutalflyCocoonFeature extends Feature<NoneFeatureConfiguration> {
         level.scheduleTick(markerPos, marker, 20);
     }
 
-    static @org.jetbrains.annotations.Nullable BlockPos findCocoonBlocker(WorldGenLevel level, BlockPos anchor) {
+    static @Nullable BlockPos findCocoonBlocker(WorldGenLevel level, BlockPos anchor) {
         if (!hasCanopySupport(level, anchor)) {
             return anchor;
         }

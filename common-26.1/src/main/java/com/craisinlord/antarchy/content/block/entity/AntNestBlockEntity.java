@@ -9,6 +9,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -19,10 +20,13 @@ import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class AntNestBlockEntity extends BlockEntity {
     private static final String STORED_ANTS = "StoredAnts";
     private static final String NBT_INITIALIZED = "Initialized";
+    private static final String NBT_PLAYER_PLACED = "PlayerPlaced";
     private static final String NBT_REBROOD_COOLDOWN = "RebroodCooldown";
     private static final int RELEASE_COOLDOWN_MIN = 80;
     private static final int RELEASE_COOLDOWN_RANGE = 100;
@@ -38,23 +42,24 @@ public class AntNestBlockEntity extends BlockEntity {
     private int releaseCooldown = RELEASE_COOLDOWN_MIN;
     private int rebroodCooldown = REBROOD_COOLDOWN_TICKS;
     private boolean initialized = false;
+    private boolean playerPlaced = false;
 
     public AntNestBlockEntity(BlockPos pos, BlockState blockState) {
         super(AntarchyObjects.ANT_NEST_BLOCK_ENTITY.get(), pos, blockState);
     }
 
     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, AntNestBlockEntity nest) {
-        if (state.getBlock() instanceof com.craisinlord.antarchy.content.block.AntTrapBlock) {
+        if (state.getBlock() instanceof AntTrapBlock) {
             if (level.getGameTime() % 20L == 0L && nest.storedAnts.size() < nest.maxOccupants()) {
-                net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(pos).inflate(15.0D);
+                AABB searchArea = new AABB(pos).inflate(15.0D);
                 for (BaseAntEntity ant : level.getEntitiesOfClass(BaseAntEntity.class, searchArea, BaseAntEntity::isAlive)) {
-                    if (ant.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) > 225.0D) {
+                    if (ant.distanceToSqr(Vec3.atCenterOf(pos)) > 225.0D) {
                         continue;
                     }
                     if (!nest.canAccept(ant.getType())) {
                         continue;
                     }
-                    if (ant.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) <= 2.25D) {
+                    if (ant.distanceToSqr(Vec3.atCenterOf(pos)) <= 2.25D) {
                         nest.tryStoreAnt(ant);
                         if (nest.storedAnts.size() >= nest.maxOccupants()) {
                             break;
@@ -121,6 +126,15 @@ public class AntNestBlockEntity extends BlockEntity {
         this.setChanged();
     }
 
+    public boolean isPlayerPlaced() {
+        return this.playerPlaced;
+    }
+
+    public void setPlayerPlaced() {
+        this.playerPlaced = true;
+        this.setChanged();
+    }
+
     public boolean canAccept(EntityType<?> antType) {
         return this.nestBlock().canAccept(antType) && this.storedAnts.size() < this.maxOccupants();
     }
@@ -171,7 +185,7 @@ public class AntNestBlockEntity extends BlockEntity {
         }
 
         BlockPos origin = this.getBlockPos();
-        java.util.List<BlockPos> candidates = new java.util.ArrayList<>();
+        List<BlockPos> candidates = new ArrayList<>();
         for (int y = 1; y <= 3; y++) {
             candidates.add(origin.above(y));
             for (int radius = 1; radius <= 2; radius++) {
@@ -234,6 +248,7 @@ public class AntNestBlockEntity extends BlockEntity {
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.putBoolean(NBT_INITIALIZED, this.initialized);
+        output.putBoolean(NBT_PLAYER_PLACED, this.playerPlaced);
         output.putInt(NBT_REBROOD_COOLDOWN, this.rebroodCooldown);
         ValueOutput.TypedOutputList<CompoundTag> listTag = output.list(STORED_ANTS, CompoundTag.CODEC);
         for (StoredAnt storedAnt : this.storedAnts) {
@@ -245,6 +260,7 @@ public class AntNestBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         this.initialized = input.getBooleanOr(NBT_INITIALIZED, false);
+        this.playerPlaced = input.getBooleanOr(NBT_PLAYER_PLACED, false);
         this.rebroodCooldown = input.getIntOr(NBT_REBROOD_COOLDOWN, REBROOD_COOLDOWN_TICKS);
         this.storedAnts.clear();
         for (CompoundTag antTag : input.listOrEmpty(STORED_ANTS, CompoundTag.CODEC)) {
@@ -261,7 +277,7 @@ public class AntNestBlockEntity extends BlockEntity {
         }
 
         private static StoredAnt load(CompoundTag tag) {
-            EntityType<?> antType = BuiltInRegistries.ENTITY_TYPE.getOptional(net.minecraft.resources.Identifier.parse(tag.getStringOr("id", ""))).orElse(EntityType.SILVERFISH);
+            EntityType<?> antType = BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(tag.getStringOr("id", ""))).orElse(EntityType.SILVERFISH);
             return new StoredAnt(antType, tag.getCompoundOrEmpty("data"));
         }
 

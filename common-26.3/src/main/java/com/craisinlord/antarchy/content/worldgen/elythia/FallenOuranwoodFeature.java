@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -14,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -21,8 +21,9 @@ public class FallenOuranwoodFeature implements Feature {
     public static final MapCodec<FallenOuranwoodFeature> CODEC = MapCodec.unit(FallenOuranwoodFeature::new);
 
     @Override
-    public MapCodec<FallenOuranwoodFeature> codec() { return CODEC; }
-
+    public MapCodec<FallenOuranwoodFeature> codec() {
+        return CODEC;
+    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -47,7 +48,7 @@ public class FallenOuranwoodFeature implements Feature {
         for (int i = 0; i < length; i++) damage[i] = random.nextFloat();
         for (int pass = 0; pass < 4; pass++) {
             for (int i = 1; i < length - 1; i++) {
-                damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4f;
+                damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4F;
             }
         }
         for (int i = 0; i < length; i++) damage[i] = damage[i] * damage[i];
@@ -61,7 +62,9 @@ public class FallenOuranwoodFeature implements Feature {
 
             float dmg = damage[step];
 
-            if (dmg > 0.78f) continue;
+            if (dmg > 0.78F) {
+                continue;
+            }
 
             int surfaceY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, bx, bz);
             int centerY = Math.max(anchorY, Math.min(anchorY + 2, surfaceY)) + outerRadius;
@@ -69,30 +72,42 @@ public class FallenOuranwoodFeature implements Feature {
             for (int dy = -outerRadius; dy <= outerRadius; dy++) {
                 for (int dp = -outerRadius; dp <= outerRadius; dp++) {
                     double dist = Math.sqrt(dy * dy + dp * dp);
-                    if (dist > outerRadius + 0.5) continue;
+                    if (dist > outerRadius + 0.5D) {
+                        continue;
+                    }
 
-                    boolean isShell = dist >= outerRadius - 0.5;
+                    boolean isShell = dist >= outerRadius - 0.5D;
 
-                    if (hollow && dist < outerRadius - 0.5) continue;
+                    if (hollow && dist < outerRadius - 0.5D) {
+                        continue;
+                    }
 
-                    if (dmg > 0.55f && !isShell) continue;
-                    if (dmg > 0.55f && random.nextFloat() < (dmg - 0.55f) * 3.5f) continue;
+                    if (dmg > 0.55F && !isShell) {
+                        continue;
+                    }
+                    if (dmg > 0.55F && random.nextFloat() < (dmg - 0.55F) * 3.5F) {
+                        continue;
+                    }
 
-                    if (isShell && random.nextFloat() < dmg * 0.4f) continue;
+                    if (isShell && random.nextFloat() < dmg * 0.4F) {
+                        continue;
+                    }
 
                     int px = axis == Direction.Axis.X ? bx : bx + dp;
                     int pz = axis == Direction.Axis.Z ? bz : bz + dp;
                     BlockPos pos = new BlockPos(px, centerY + dy, pz);
 
-                    if (!canReplace(level.getBlockState(pos))) continue;
+                    if (!canReplace(level.getBlockState(pos))) {
+                        continue;
+                    }
 
                     float r = random.nextFloat();
                     BlockState toPlace;
-                    if (r < 0.08f) {
+                    if (r < 0.08F) {
                         toPlace = Blocks.MOSS_BLOCK.defaultBlockState();
-                    } else if (r < 0.22f) {
+                    } else if (r < 0.22F) {
                         toPlace = freshLogState;
-                    } else if (r < 0.32f) {
+                    } else if (r < 0.32F) {
                         toPlace = woodState;
                     } else {
                         toPlace = mossyLogState;
@@ -113,12 +128,16 @@ public class FallenOuranwoodFeature implements Feature {
             int my = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, mx, mz);
             BlockPos mossPos = new BlockPos(mx, my, mz);
 
-            if (!canReplace(level.getBlockState(mossPos))) continue;
+            if (!canReplace(level.getBlockState(mossPos))) {
+                continue;
+            }
             BlockState below = level.getBlockState(mossPos.below());
-            if (!below.isFaceSturdy(level, mossPos.below(), Direction.UP)) continue;
+            if (!below.isFaceSturdy(level, mossPos.below(), Direction.UP)) {
+                continue;
+            }
 
             level.setBlock(mossPos,
-                    random.nextFloat() < 0.35f
+                    random.nextFloat() < 0.35F
                             ? Blocks.MOSS_BLOCK.defaultBlockState()
                             : Blocks.MOSS_CARPET.defaultBlockState(),
                     2);

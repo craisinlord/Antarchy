@@ -14,9 +14,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.core.object.Color;
 
 public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEntity> {
     private static final int CROSSFADE_TICKS = 12;

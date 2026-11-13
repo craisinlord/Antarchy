@@ -5,22 +5,22 @@ import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.mixins.client.ElytraModelAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelPart;
 
 public final class BrutalflyElytraLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("antarchy", "textures/models/armor/brutalfly_wings.png");
@@ -63,7 +63,7 @@ public final class BrutalflyElytraLayer extends RenderLayer<AbstractClientPlayer
         ModelPart leftWing = accessor.antarchy$getLeftWing();
         ModelPart rightWing = accessor.antarchy$getRightWing();
         float strength = animationState != null ? animationState.strength() : 0.0F;
-        float flap = net.minecraft.util.Mth.sin(progress * net.minecraft.util.Mth.PI);
+        float flap = Mth.sin(progress * Mth.PI);
         float liftOffset = flap * (2.8F + strength * 0.8F);
         float pitchOffset = flap * (0.35F + strength * 0.12F);
         float tipCurl = flap * (0.30F + strength * 0.10F);

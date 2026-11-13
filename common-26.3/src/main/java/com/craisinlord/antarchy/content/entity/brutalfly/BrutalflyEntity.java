@@ -1,26 +1,34 @@
 package com.craisinlord.antarchy.content.entity.brutalfly;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,10 +41,15 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -46,25 +59,18 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.util.GeckoLibUtil;
 
 public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
@@ -182,11 +188,11 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final double GLIMMER_ABANDON_RANGE = 48.0D;
     private static final int GLIMMER_ABANDON_TICKS = 600;
     private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
-            Identifier.fromNamespaceAndPath(com.craisinlord.antarchy.Antarchy.MODID, "entities/brutalfly_glimmer"));
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "entities/brutalfly_glimmer"));
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bossEvent =
-            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, this.getDisplayName(), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
+            new EntityLinkedServerBossEvent(this, this.getDisplayName(), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
 
     @Nullable
     private Vec3 patrolTarget;
@@ -321,7 +327,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     @Override
     protected void customServerAiStep(ServerLevel level) {
-        if (this.isCocooned()) return;
+        if (this.isCocooned()) {
+            return;
+        }
         super.customServerAiStep(level);
     }
 
@@ -469,7 +477,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
 
         if (this.anchorPos != null) {
-            this.setPos(this.anchorPos.getX() + 0.5, this.anchorPos.getY() - 1.5, this.anchorPos.getZ() + 0.5);
+            this.setPos(this.anchorPos.getX() + 0.5D, this.anchorPos.getY() - 1.5D, this.anchorPos.getZ() + 0.5D);
             this.setDeltaMovement(Vec3.ZERO);
 
             if (!this.isHatching && !this.level().getBlockState(this.anchorPos).is(BlockTags.LOGS)) {
@@ -607,9 +615,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+    public EntityDimensions getDefaultDimensions(Pose pose) {
         if (isCocooned()) {
-            return net.minecraft.world.entity.EntityDimensions.scalable(2.0F, 5.0F);
+            return EntityDimensions.scalable(2.0F, 5.0F);
         }
         return super.getDefaultDimensions(pose);
     }
@@ -642,7 +650,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
         }
 
         if (this.isCocooned() && !this.isHatching && !bypassesInvulnerability) {
-            if (this.level().isClientSide() || this.cocoonHitCooldownTicks > 0 || !(source.getEntity() instanceof LivingEntity)) return false;
+            if (this.level().isClientSide() || this.cocoonHitCooldownTicks > 0 || !(source.getEntity() instanceof LivingEntity)) {
+                return false;
+            }
             this.hurtTime = this.hurtDuration;
             this.cocoonHits++;
             this.cocoonHitCooldownTicks = COCOON_HIT_COOLDOWN_TICKS;
@@ -1520,7 +1530,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         tag.putBoolean("IsCocooned", this.isCocooned());
@@ -1540,7 +1550,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     }
 
     @Override
-    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
         this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
         this.phaseStage = tag.getInt("PhaseStage").isPresent() ? Mth.clamp(tag.getIntOr("PhaseStage", 0), 0, 2) : this.stageForHealth();

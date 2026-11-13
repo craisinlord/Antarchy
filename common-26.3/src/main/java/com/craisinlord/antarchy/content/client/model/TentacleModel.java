@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.client.model;
 
 import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
-import net.minecraft.resources.Identifier;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class TentacleModel extends GeoModel<TentacleEntity> {
     @Override

@@ -1,19 +1,21 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
-import com.craisinlord.anthology.time.TimeDilationAnchor;
-import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.anthology.time.TimeDilationApi;
-import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.BlockSuction;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.time.TimeDilationAnchor;
+import com.craisinlord.anthology.time.TimeDilationApi;
 import com.craisinlord.anthology.time.TimeDilationEntityAccess;
+import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -455,7 +457,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
     }
 
     private void spawnRing(ServerLevel level, double y, double radius, int count,
-                           net.minecraft.core.particles.ParticleOptions particle) {
+                           ParticleOptions particle) {
         for (int index = 0; index < count; index++) {
             double angle = Mth.TWO_PI * index / count;
             level.sendParticles(GlimmerEchoes.particle(this, particle),
@@ -654,12 +656,12 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
         }
         LivingEntity owner = this.ownerEntity();
         if (owner instanceof QueenEntity) {
-            return entity.getType().is(com.craisinlord.antarchy.content.AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK);
+            return entity.getType().is(AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK);
         }
         if (entity instanceof RoyalBossEntity) {
             return true;
         }
-        return entity.getType().is(com.craisinlord.antarchy.content.AntarchyTags.Entities.TIME_DILATION_IMMUNE);
+        return entity.getType().is(AntarchyTags.Entities.TIME_DILATION_IMMUNE);
     }
 
     @Nullable

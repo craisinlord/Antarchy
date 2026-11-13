@@ -1,18 +1,17 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.component.AntarchyItemTag;
+import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import com.craisinlord.antarchy.content.component.AntarchyItemTag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.sounds.SoundEvents;
-
-import java.util.List;
 
 public final class TemporalTunerItem extends Item {
     public static final double STEP = 0.1D;
@@ -30,7 +29,7 @@ public final class TemporalTunerItem extends Item {
     }
 
     private static boolean hasTunerAnywhere(Player player) {
-        for (java.util.List<ItemStack> compartment : java.util.List.of(player.getInventory().items, player.getInventory().armor, player.getInventory().offhand)) {
+        for (List<ItemStack> compartment : List.of(player.getInventory().items, player.getInventory().armor, player.getInventory().offhand)) {
             for (ItemStack stack : compartment) {
                 if (!stack.isEmpty() && stack.getItem() instanceof TemporalTunerItem) {
                     return true;

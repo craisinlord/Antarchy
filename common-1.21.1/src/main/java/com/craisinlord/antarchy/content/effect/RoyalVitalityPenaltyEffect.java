@@ -20,7 +20,9 @@ public final class RoyalVitalityPenaltyEffect extends MobEffect {
     @Override
     public void addAttributeModifiers(AttributeMap attributeMap, int amplifier) {
         AttributeInstance maxHealth = attributeMap.getInstance(Attributes.MAX_HEALTH);
-        if (maxHealth == null) return;
+        if (maxHealth == null) {
+            return;
+        }
         maxHealth.addOrUpdateTransientModifier(new AttributeModifier(
                 MODIFIER_ID, -0.5D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     }
@@ -28,7 +30,9 @@ public final class RoyalVitalityPenaltyEffect extends MobEffect {
     @Override
     public void removeAttributeModifiers(AttributeMap attributeMap) {
         AttributeInstance maxHealth = attributeMap.getInstance(Attributes.MAX_HEALTH);
-        if (maxHealth == null) return;
+        if (maxHealth == null) {
+            return;
+        }
         maxHealth.removeModifier(MODIFIER_ID);
     }
 }

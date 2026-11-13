@@ -1,17 +1,18 @@
 package com.craisinlord.antarchy.content.horde;
 
-import com.craisinlord.antarchy.content.network.HordeIntensityPayload;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.JerryEntity;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
+import com.craisinlord.antarchy.content.network.HordeIntensityPayload;
 import com.craisinlord.antarchy.content.util.LegacySavedDataFiles;
 import com.mojang.serialization.Codec;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,14 +21,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -36,19 +39,21 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.phys.AABB;
@@ -514,7 +519,7 @@ public final class CavarynHordeManager {
                 choices.add(new TargetedSpawnChoice(choice, target));
             }
         }
-        java.util.Collections.shuffle(choices);
+        Collections.shuffle(choices);
         return choices;
     }
 
@@ -616,7 +621,7 @@ public final class CavarynHordeManager {
         } else {
             level.playSound(null, spawnPos, SoundEvents.GRAVEL_BREAK, SoundSource.HOSTILE, 0.7F, 0.75F + level.getRandom().nextFloat() * 0.25F);
         }
-        level.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, spawnPos.getX() + 0.5D, spawnPos.getY() + 0.2D, spawnPos.getZ() + 0.5D, 8, 0.4D, 0.2D, 0.4D, 0.03D);
+        level.sendParticles(ParticleTypes.POOF, spawnPos.getX() + 0.5D, spawnPos.getY() + 0.2D, spawnPos.getZ() + 0.5D, 8, 0.4D, 0.2D, 0.4D, 0.03D);
         return true;
     }
 
@@ -676,7 +681,7 @@ public final class CavarynHordeManager {
             if (!level.noCollision(type.getSpawnAABB(candidate.getX() + 0.5D, candidate.getY(), candidate.getZ() + 0.5D))) {
                 continue;
             }
-            if (target.hasLineOfSight(new net.minecraft.world.entity.item.ItemEntity(level, candidate.getX() + 0.5D, candidate.getY(), candidate.getZ() + 0.5D, net.minecraft.world.item.ItemStack.EMPTY))) {
+            if (target.hasLineOfSight(new ItemEntity(level, candidate.getX() + 0.5D, candidate.getY(), candidate.getZ() + 0.5D, ItemStack.EMPTY))) {
                 continue;
             }
             return candidate;
@@ -705,7 +710,7 @@ public final class CavarynHordeManager {
             return false;
         }
         BlockPos below = pos.below();
-        return level.getBlockState(below).isFaceSturdy(level, below, net.minecraft.core.Direction.UP)
+        return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)
                 && level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above());
     }
@@ -748,7 +753,7 @@ public final class CavarynHordeManager {
     }
 
     private static boolean mobSpawningEnabled(ServerLevel level) {
-        return level.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS);
+        return level.getGameRules().get(GameRules.SPAWN_MOBS);
     }
 
     private static void clearDisabledState(ServerLevel level, HordeData data) {
@@ -867,19 +872,19 @@ public final class CavarynHordeManager {
 
         static HordeData load(CompoundTag tag) {
             HordeData data = new HordeData();
-            for (net.minecraft.nbt.Tag rawEntry : tag.getListOrEmpty(PLAYERS_KEY)) {
+            for (Tag rawEntry : tag.getListOrEmpty(PLAYERS_KEY)) {
                 if (!(rawEntry instanceof CompoundTag entry)) {
                     continue;
                 }
                 data.players.put(entry.read("Player", UUIDUtil.CODEC).orElseThrow(), PlayerAttention.load(entry));
             }
-            for (net.minecraft.nbt.Tag rawEntry : tag.getListOrEmpty(ENCOUNTERS_KEY)) {
+            for (Tag rawEntry : tag.getListOrEmpty(ENCOUNTERS_KEY)) {
                 if (!(rawEntry instanceof CompoundTag entry)) {
                     continue;
                 }
                 data.encounters.add(Encounter.load(entry));
             }
-            for (net.minecraft.nbt.Tag rawEntry : tag.getListOrEmpty(AREA_SPAWN_COOLDOWNS_KEY)) {
+            for (Tag rawEntry : tag.getListOrEmpty(AREA_SPAWN_COOLDOWNS_KEY)) {
                 if (!(rawEntry instanceof CompoundTag entry)) {
                     continue;
                 }
@@ -1027,7 +1032,7 @@ public final class CavarynHordeManager {
         }
 
         private static void readUuidList(ListTag list, Set<UUID> uuids) {
-            for (net.minecraft.nbt.Tag rawEntry : list) {
+            for (Tag rawEntry : list) {
                 uuids.add(((CompoundTag) rawEntry).read("Id", UUIDUtil.CODEC).orElseThrow());
             }
         }

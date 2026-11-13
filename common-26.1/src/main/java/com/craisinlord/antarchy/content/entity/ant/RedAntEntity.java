@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.ant;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.geckolib.animatable.GeoEntity;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -12,7 +13,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import com.geckolib.animatable.GeoEntity;
 
 public class RedAntEntity extends BaseAntEntity implements GeoEntity {
     public RedAntEntity(EntityType<? extends BaseAntEntity> entityType, Level level) {
@@ -68,7 +68,7 @@ public class RedAntEntity extends BaseAntEntity implements GeoEntity {
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.isLeashed() && !this.hasCustomName();
+        return !this.isLeashed() && !this.hasCustomName() && !this.isPlayerTended();
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -19,6 +18,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
 public final class CavarynSkyRenderer {
     public static final ResourceKey<Level> CAVARYN = ResourceKey.create(
@@ -26,7 +27,7 @@ public final class CavarynSkyRenderer {
             new ResourceLocation(Antarchy.MODID, "cavaryn")
     );
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     private static VertexBuffer orangeStarBuffer;
 
     private CavarynSkyRenderer() {
@@ -40,7 +41,7 @@ public final class CavarynSkyRenderer {
             Minecraft minecraft,
             ClientLevel level,
             PoseStack poseStack,
-            org.joml.Matrix4f projectionMatrix,
+            Matrix4f projectionMatrix,
             float partialTick,
             Camera camera,
             boolean isFoggy,
@@ -150,8 +151,12 @@ public final class CavarynSkyRenderer {
 
     private static float[] pickStarColor(Random random) {
         float roll = random.nextFloat();
-        if (roll < 0.70F) return new float[]{1.00F, 0.55F, 0.14F};
-        if (roll < 0.90F) return new float[]{1.00F, 0.70F, 0.24F};
+        if (roll < 0.70F) {
+            return new float[]{1.00F, 0.55F, 0.14F};
+        }
+        if (roll < 0.90F) {
+            return new float[]{1.00F, 0.70F, 0.24F};
+        }
         return new float[]{1.00F, 0.84F, 0.40F};
     }
 }

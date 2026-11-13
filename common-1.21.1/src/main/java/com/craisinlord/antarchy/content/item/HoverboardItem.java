@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.entity.HoverboardEntity;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.function.Predicate;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -54,8 +55,8 @@ public class HoverboardItem extends Item {
 
         HoverboardEntity hoverboard = new HoverboardEntity(this.entityType, level);
         Vec3 spawnPos = hitResult.getLocation();
-        boolean invertedPlacement = com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager.isThoraxis(level)
-                && spawnPos.y < com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager.GRAVITY_FLIP_Y;
+        boolean invertedPlacement = ThoraxisUndersideManager.isThoraxis(level)
+                && spawnPos.y < ThoraxisUndersideManager.GRAVITY_FLIP_Y;
         double spawnY = invertedPlacement ? spawnPos.y - hoverboard.getBbHeight() : spawnPos.y;
         hoverboard.moveTo(spawnPos.x, spawnY, spawnPos.z, player.getYRot(), 0.0F);
         hoverboard.setColor(this.color);

@@ -2,7 +2,9 @@ package com.craisinlord.antarchy.neoforge.registry;
 
 import com.craisinlord.antarchy.content.creative.CreativeTabContents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -22,7 +24,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ANTARCHY_TAB = CREATIVE_MODE_TABS.register("antarchy",
             () -> CreativeModeTab.builder()
-                    .title(net.minecraft.network.chat.Component.translatable("itemGroup.antarchy.antarchy"))
+                    .title(Component.translatable("itemGroup.antarchy.antarchy"))
                     .icon(() -> new ItemStack(AntarchyNeoforgeItems.BIG_BERTHA.get()))
                     .displayItems((parameters, output) -> {})
                     .build());
@@ -31,7 +33,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
         if (event.getTabKey() == ANTARCHY_TAB.getKey()) {
             CreativeTabContents.populateAntarchyTab(new CreativeTabContents.AntarchyTabOutput() {
                 @Override
-                public void accept(net.minecraft.world.level.ItemLike item) {
+                public void accept(ItemLike item) {
                     event.accept(item);
                 }
 
@@ -45,7 +47,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
         CreativeTabContents.populateNeoForgeVanillaTab(event.getTabKey(), event.getParameters().holders(),
                 new CreativeTabContents.NeoForgeVanillaTabOutput() {
                     @Override
-                    public void accept(net.minecraft.world.level.ItemLike item) {
+                    public void accept(ItemLike item) {
                         event.accept(item);
                     }
 
@@ -55,7 +57,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
                     }
 
                     @Override
-                    public void insertAfter(net.minecraft.world.level.ItemLike anchor, net.minecraft.world.level.ItemLike item) {
+                    public void insertAfter(ItemLike anchor, ItemLike item) {
                         event.insertAfter(new ItemStack(anchor), new ItemStack(item), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
                     }
                 });

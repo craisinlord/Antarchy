@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -10,20 +9,23 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jetbrains.annotations.Nullable;
 
 public class BrutalflyCocoonFeature implements Feature {
     public static final MapCodec<BrutalflyCocoonFeature> CODEC = MapCodec.unit(BrutalflyCocoonFeature::new);
 
     @Override
-    public MapCodec<BrutalflyCocoonFeature> codec() { return CODEC; }
+    public MapCodec<BrutalflyCocoonFeature> codec() {
+        return CODEC;
+    }
     private static final int MAX_ANCHOR_Y = 160;
     private static final int COCOON_CLEAR_RADIUS = 1;
     private static final int COCOON_CLEAR_MIN_Y_OFFSET = -16;
     private static final int COCOON_CLEAR_MAX_Y_OFFSET = -1;
     private static final int MIN_CANOPY_SUPPORTS = 4;
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -83,7 +85,7 @@ public class BrutalflyCocoonFeature implements Feature {
         level.scheduleTick(markerPos, marker, 20);
     }
 
-    static @org.jetbrains.annotations.Nullable BlockPos findCocoonBlocker(WorldGenLevel level, BlockPos anchor) {
+    static @Nullable BlockPos findCocoonBlocker(WorldGenLevel level, BlockPos anchor) {
         if (!hasCanopySupport(level, anchor)) {
             return anchor;
         }

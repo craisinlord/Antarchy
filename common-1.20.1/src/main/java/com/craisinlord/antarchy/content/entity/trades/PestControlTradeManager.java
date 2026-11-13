@@ -14,7 +14,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 
 public final class PestControlTradeManager extends SimpleJsonResourceReloadListener {
@@ -38,7 +37,9 @@ public final class PestControlTradeManager extends SimpleJsonResourceReloadListe
     protected void apply(Map<ResourceLocation, JsonElement> resources, ResourceManager manager, ProfilerFiller profiler) {
         List<Entry> parsed = new ArrayList<>();
         for (JsonElement resource : resources.values()) {
-            if (!resource.isJsonObject()) continue;
+            if (!resource.isJsonObject()) {
+                continue;
+            }
             JsonObject root = resource.getAsJsonObject();
             if (root.has("trades")) {
                 for (JsonElement element : root.getAsJsonArray("trades")) if (element.isJsonObject()) parsed.add(Entry.parse(element.getAsJsonObject()));
@@ -68,7 +69,9 @@ public final class PestControlTradeManager extends SimpleJsonResourceReloadListe
         }
 
         private static int count(JsonObject stack) {
-            if (stack.has("min") && stack.has("max")) return stack.get("min").getAsInt();
+            if (stack.has("min") && stack.has("max")) {
+                return stack.get("min").getAsInt();
+            }
             return stack.has("count") ? stack.get("count").getAsInt() : stack.get("min").getAsInt();
         }
     }

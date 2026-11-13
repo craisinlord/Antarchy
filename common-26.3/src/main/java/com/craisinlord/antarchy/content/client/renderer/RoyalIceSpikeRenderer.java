@@ -3,11 +3,11 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.client.model.RoyalIceSpikeModel;
 import com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity;
 import com.geckolib.renderer.GeoEntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 
 public class RoyalIceSpikeRenderer extends GeoEntityRenderer<RoyalIceSpikeEntity, EntityRenderState> {
     public RoyalIceSpikeRenderer(EntityRendererProvider.Context context) {

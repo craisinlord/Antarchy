@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.dispenser;
 
-import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
@@ -16,7 +16,9 @@ public class WaterCannonDispenseBehavior extends DefaultDispenseItemBehavior {
         Position position = DispenserBlock.getDispensePosition(source);
 
         WaterBombEntity bomb = AntarchyObjects.WATER_BOMB.get().create(source.level());
-        if (bomb == null) return super.execute(source, stack);
+        if (bomb == null) {
+            return super.execute(source, stack);
+        }
         bomb.setPos(position.x(), position.y(), position.z());
         bomb.shoot(direction.getStepX(), direction.getStepY() + 0.1D, direction.getStepZ(), 1.5F, 0.0F);
         source.level().addFreshEntity(bomb);

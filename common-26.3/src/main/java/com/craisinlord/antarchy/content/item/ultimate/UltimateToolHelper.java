@@ -26,8 +26,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -295,10 +295,18 @@ public final class UltimateToolHelper {
     }
 
     private static ToolKind toolKindOf(Item item) {
-        if (item instanceof UltimatePickaxeItem) return ToolKind.PICKAXE;
-        if (item instanceof UltimateAxeItem) return ToolKind.AXE;
-        if (item instanceof UtlimateShovelItem) return ToolKind.SHOVEL;
-        if (item instanceof UltimateHoeItem) return ToolKind.HOE;
+        if (item instanceof UltimatePickaxeItem) {
+            return ToolKind.PICKAXE;
+        }
+        if (item instanceof UltimateAxeItem) {
+            return ToolKind.AXE;
+        }
+        if (item instanceof UtlimateShovelItem) {
+            return ToolKind.SHOVEL;
+        }
+        if (item instanceof UltimateHoeItem) {
+            return ToolKind.HOE;
+        }
         return null;
     }
 
@@ -430,7 +438,7 @@ public final class UltimateToolHelper {
         Vec3 blockCenter = Vec3.atCenterOf(pos);
         Vec3 delta = eye.subtract(blockCenter);
 
-        if (delta.lengthSqr() < 1.0E-4) {
+        if (delta.lengthSqr() < 1.0E-4D) {
             return player.getDirection().getOpposite();
         }
 

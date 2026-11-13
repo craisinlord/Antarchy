@@ -3,6 +3,15 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import java.util.EnumSet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -10,32 +19,24 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.animal.cow.Cow;
-import net.minecraft.world.entity.Shearable;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
-
-import java.util.EnumSet;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Shearable;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class AppleCowEntity extends Cow implements GeoEntity, Shearable {
     private static final EntityDataAccessor<Boolean> SLEEPING =
@@ -167,13 +168,13 @@ public abstract class AppleCowEntity extends Cow implements GeoEntity, Shearable
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         this.stopCowSleeping();
         return super.hurtServer(level, source, amount);
     }
 
     @Override
-    public boolean hurtClient(net.minecraft.world.damagesource.DamageSource source) {
+    public boolean hurtClient(DamageSource source) {
         this.stopCowSleeping();
         return super.hurtClient(source);
     }
@@ -377,7 +378,7 @@ public abstract class AppleCowEntity extends Cow implements GeoEntity, Shearable
     }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, net.minecraft.world.damagesource.DamageSource damageSource, boolean recentlyHit) {
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, damageSource, recentlyHit);
 
         if (this.isBaby() || this.isSheared()) {
@@ -388,7 +389,7 @@ public abstract class AppleCowEntity extends Cow implements GeoEntity, Shearable
         this.spawnAtLocation(level, new ItemStack(this.shearDropItem(), count));
     }
 
-    private net.minecraft.world.item.Item shearDropItem() {
+    private Item shearDropItem() {
         if (this instanceof AppleCowEntityVariants.EnchantedGoldenAppleCow) {
             return Items.ENCHANTED_GOLDEN_APPLE;
         }

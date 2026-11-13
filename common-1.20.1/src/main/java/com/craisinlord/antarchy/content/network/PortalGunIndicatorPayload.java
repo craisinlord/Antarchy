@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.network;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.anthology.network.CustomPacketPayload;
+import com.craisinlord.anthology.network.StreamCodec;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
-import com.craisinlord.anthology.network.StreamCodec;
-import com.craisinlord.anthology.network.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record PortalGunIndicatorPayload(UUID gunId, boolean blueAvailable, boolean orangeAvailable) implements CustomPacketPayload {

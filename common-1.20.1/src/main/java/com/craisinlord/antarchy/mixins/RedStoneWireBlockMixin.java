@@ -4,7 +4,6 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.BluestoneBlock;
 import com.craisinlord.antarchy.content.block.BluestoneComparatorBlock;
 import com.craisinlord.antarchy.content.block.BluestoneRepeaterBlock;
-import com.craisinlord.antarchy.content.block.BluestoneSignalHelper;
 import com.craisinlord.antarchy.content.block.BluestoneTorchBlock;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

@@ -8,7 +8,9 @@ final class PrimordialGrassSodiumVisibility {
 
     static boolean visible(int sectionX, int sectionY, int sectionZ) {
         SodiumWorldRenderer renderer = SodiumWorldRenderer.instanceNullable();
-        if (renderer == null) return true;
+        if (renderer == null) {
+            return true;
+        }
         double x = sectionX * 16.0D;
         double y = sectionY * 16.0D;
         double z = sectionZ * 16.0D;

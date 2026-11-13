@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.mixins;
 
-import com.craisinlord.antarchy.content.item.InnateEnchantmentHelper;
 import com.craisinlord.antarchy.content.item.GiantFryingPanItem;
+import com.craisinlord.antarchy.content.item.InnateEnchantmentHelper;
 import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

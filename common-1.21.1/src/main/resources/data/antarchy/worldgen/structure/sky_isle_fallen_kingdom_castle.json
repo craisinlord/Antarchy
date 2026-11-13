@@ -1,0 +1,19 @@
+{
+  "type": "integrated_api:generic_structure",
+  "start_pool": "antarchy:fallen_kingdom_castle/fallen_kingdom_castle",
+  "size": 12,
+  "start_height": {
+    "type": "minecraft:constant",
+    "value": {
+      "absolute": 266
+    }
+  },
+  "biomes": "#antarchy:has_structure/sky_isle_fallen_kingdom_castle_biomes",
+  "step": "surface_structures",
+  "enhanced_terrain_adaptation": {
+    "type": "integrated_api:none"
+  },
+  "override_piece_terrain_adaptation": true,
+  "spawn_overrides": {},
+  "liquid_settings": "ignore_waterlogging"
+}

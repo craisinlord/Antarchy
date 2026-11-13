@@ -1,15 +1,56 @@
 package com.craisinlord.antarchy.forge.registry;
 
-import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
-import com.craisinlord.antarchy.content.network.ToggleTigerEyeCamouflagePayload;
+import com.craisinlord.antarchy.content.client.AntTransitClientState;
+import com.craisinlord.antarchy.content.client.AntarchyGameClientState;
+import com.craisinlord.antarchy.content.client.BloodCrystalKatanaTrailClientState;
+import com.craisinlord.antarchy.content.client.BloodglassClientState;
+import com.craisinlord.antarchy.content.client.ElythiaEchoes;
+import com.craisinlord.antarchy.content.client.ElythiaEventClient;
+import com.craisinlord.antarchy.content.client.HordeClientState;
+import com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState;
+import com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState;
+import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
+import com.craisinlord.antarchy.content.client.ThrowbackClientState;
+import com.craisinlord.antarchy.content.client.TigerEyeCamouflageClientState;
+import com.craisinlord.antarchy.content.client.WormHookTetherClientState;
+import com.craisinlord.antarchy.content.effect.RoyalBoundaryManager;
+import com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity;
+import com.craisinlord.antarchy.content.item.GiantFryingPanItem;
+import com.craisinlord.antarchy.content.item.RoyalAssailantArmorItem;
 import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
+import com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload;
+import com.craisinlord.antarchy.content.network.AntTransitPayload;
+import com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler;
+import com.craisinlord.antarchy.content.network.AntarchyGamePayload;
+import com.craisinlord.antarchy.content.network.AntarchyGameResultPayload;
+import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
+import com.craisinlord.antarchy.content.network.BloodglassStatePayload;
+import com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload;
+import com.craisinlord.antarchy.content.network.ElythiaEventPayload;
+import com.craisinlord.antarchy.content.network.HordeIntensityPayload;
+import com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload;
+import com.craisinlord.antarchy.content.network.OpenGiantFryingPanPayload;
+import com.craisinlord.antarchy.content.network.RoyalMountActionPayload;
+import com.craisinlord.antarchy.content.network.RoyalMountVerticalPayload;
+import com.craisinlord.antarchy.content.network.ScorpionWhipTetherPayload;
+import com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload;
+import com.craisinlord.antarchy.content.network.ThoraxisEventPayload;
+import com.craisinlord.antarchy.content.network.ThrowbackZonePayload;
+import com.craisinlord.antarchy.content.network.TigerEyeCamouflageStatePayload;
+import com.craisinlord.antarchy.content.network.ToggleRoyalInversionPayload;
+import com.craisinlord.antarchy.content.network.ToggleTigerEyeCamouflagePayload;
+import com.craisinlord.antarchy.content.network.WormHookTetherPayload;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
+import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
 import com.craisinlord.antarchy.forge.network.AntarchyGravityNetworking;
 import com.craisinlord.antarchy.forge.network.BrutalflyElytraNetworking;
 import com.craisinlord.antarchy.forge.network.DorrieJumpNetworking;
 import com.craisinlord.antarchy.forge.network.HerculesBeetleNetworking;
 import com.craisinlord.antarchy.forge.network.SpringyBootsNetworking;
-import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 public class AntarchyForgePayloadHandlers {
     private AntarchyForgePayloadHandlers() {}
@@ -20,50 +61,50 @@ public class AntarchyForgePayloadHandlers {
 
     static void registerPayloadHandlers(AntarchyForgePayloadRegistrar registrar) {
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE,
-                com.craisinlord.antarchy.content.network.ElythiaEventPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload))
+                ElythiaEventPayload.TYPE,
+                ElythiaEventPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> ElythiaEventClient.handle(payload))
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE,
-                com.craisinlord.antarchy.content.network.ThrowbackZonePayload.STREAM_CODEC,
+                ThrowbackZonePayload.TYPE,
+                ThrowbackZonePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.ThrowbackClientState.update(payload.strength())
+                        ThrowbackClientState.update(payload.strength())
                 )
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE,
-                com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ElythiaEchoes.handleTest(payload.immediate()))
+                ElythiaEchoTestPayload.TYPE,
+                ElythiaEchoTestPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> ElythiaEchoes.handleTest(payload.immediate()))
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.AntTransitPayload.TYPE,
-                com.craisinlord.antarchy.content.network.AntTransitPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.AntTransitClientState.handle(payload))
+                AntTransitPayload.TYPE,
+                AntTransitPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> AntTransitClientState.handle(payload))
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.ThoraxisEventPayload.TYPE,
-                com.craisinlord.antarchy.content.network.ThoraxisEventPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ThoraxisEventClient.handle(payload))
+                ThoraxisEventPayload.TYPE,
+                ThoraxisEventPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> ThoraxisEventClient.handle(payload))
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.TYPE,
-                com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ThoraxisEventClient.handleUpdate(payload))
+                ThoraxisBubbleUpdatePayload.TYPE,
+                ThoraxisBubbleUpdatePayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> ThoraxisEventClient.handleUpdate(payload))
         );
         registrar.playToServer(
-                com.craisinlord.antarchy.content.network.AntarchyGamePayload.TYPE,
-                com.craisinlord.antarchy.content.network.AntarchyGamePayload.STREAM_CODEC,
+                AntarchyGamePayload.TYPE,
+                AntarchyGamePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) {
-                        com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler.handle(player, payload);
+                    if (ctx.player() instanceof ServerPlayer player) {
+                        AntarchyGameNetworkHandler.handle(player, payload);
                     }
                 })
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.AntarchyGameResultPayload.TYPE,
-                com.craisinlord.antarchy.content.network.AntarchyGameResultPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.AntarchyGameClientState.update(payload))
+                AntarchyGameResultPayload.TYPE,
+                AntarchyGameResultPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> AntarchyGameClientState.update(payload))
         );
         AntarchyGravityNetworking.register(registrar);
         BrutalflyElytraNetworking.register(registrar);
@@ -71,82 +112,82 @@ public class AntarchyForgePayloadHandlers {
         DorrieJumpNetworking.register(registrar);
         HerculesBeetleNetworking.register(registrar);
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload.TYPE,
-                com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload.STREAM_CODEC,
+                KingJudgmentFlashPayload.TYPE,
+                KingJudgmentFlashPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState.trigger(payload.durationTicks()))
+                        KingJudgmentFlashClientState.trigger(payload.durationTicks()))
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.BloodglassStatePayload.TYPE,
-                com.craisinlord.antarchy.content.network.BloodglassStatePayload.STREAM_CODEC,
+                BloodglassStatePayload.TYPE,
+                BloodglassStatePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.BloodglassClientState.update(payload.shieldsActive(), payload.shieldsMax())
+                        BloodglassClientState.update(payload.shieldsActive(), payload.shieldsMax())
                 )
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.TigerEyeCamouflageStatePayload.TYPE,
-                com.craisinlord.antarchy.content.network.TigerEyeCamouflageStatePayload.STREAM_CODEC,
+                TigerEyeCamouflageStatePayload.TYPE,
+                TigerEyeCamouflageStatePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.TigerEyeCamouflageClientState.update(payload.entityId(), payload.active(), payload.blockStateId())
+                        TigerEyeCamouflageClientState.update(payload.entityId(), payload.active(), payload.blockStateId())
                 )
         );
         registrar.playToServer(
-                com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.TYPE,
-                com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.STREAM_CODEC,
+                ActivateRoyalBoundaryPayload.TYPE,
+                ActivateRoyalBoundaryPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) {
-                        com.craisinlord.antarchy.content.effect.RoyalBoundaryManager.activate(player);
+                    if (ctx.player() instanceof ServerPlayer player) {
+                        RoyalBoundaryManager.activate(player);
                     }
                 })
         );
         registrar.playToServer(
-                com.craisinlord.antarchy.content.network.ToggleRoyalInversionPayload.TYPE,
-                com.craisinlord.antarchy.content.network.ToggleRoyalInversionPayload.STREAM_CODEC,
+                ToggleRoyalInversionPayload.TYPE,
+                ToggleRoyalInversionPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) {
-                        com.craisinlord.antarchy.content.item.RoyalAssailantArmorItem.toggleInversion(player);
+                    if (ctx.player() instanceof ServerPlayer player) {
+                        RoyalAssailantArmorItem.toggleInversion(player);
                     }
                 })
         );
         registrar.playToServer(
-                com.craisinlord.antarchy.content.network.OpenGiantFryingPanPayload.TYPE,
-                com.craisinlord.antarchy.content.network.OpenGiantFryingPanPayload.STREAM_CODEC,
+                OpenGiantFryingPanPayload.TYPE,
+                OpenGiantFryingPanPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) {
-                        com.craisinlord.antarchy.content.item.GiantFryingPanItem.openHeldMenu(player);
+                    if (ctx.player() instanceof ServerPlayer player) {
+                        GiantFryingPanItem.openHeldMenu(player);
                     }
                 })
         );
         registrar.playToServer(
-                com.craisinlord.antarchy.content.network.RoyalMountActionPayload.TYPE,
-                com.craisinlord.antarchy.content.network.RoyalMountActionPayload.STREAM_CODEC,
+                RoyalMountActionPayload.TYPE,
+                RoyalMountActionPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer mountingPlayer
-                            && payload.action() == com.craisinlord.antarchy.content.network.RoyalMountActionPayload.MOUNT) {
-                        com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity.tryAssistedMount(mountingPlayer);
+                    if (ctx.player() instanceof ServerPlayer mountingPlayer
+                            && payload.action() == RoyalMountActionPayload.MOUNT) {
+                        RoyalMountEntity.tryAssistedMount(mountingPlayer);
                         return;
                     }
-                    if (!(ctx.player() instanceof net.minecraft.server.level.ServerPlayer player)
-                            || !(player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount)) {
+                    if (!(ctx.player() instanceof ServerPlayer player)
+                            || !(player.getVehicle() instanceof RoyalMountEntity mount)) {
                         return;
                     }
                     switch (payload.action()) {
-                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.FLIGHT_TOGGLE -> mount.toggleMountedFlight(player);
-                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.BITE -> mount.handleMountedBite(player);
-                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.SPIT -> mount.handleMountedSpit(player);
-                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.BEAM -> mount.handleMountedBeam(player);
-                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.SIGNATURE -> mount.handleMountedSignature(player);
+                        case RoyalMountActionPayload.FLIGHT_TOGGLE -> mount.toggleMountedFlight(player);
+                        case RoyalMountActionPayload.BITE -> mount.handleMountedBite(player);
+                        case RoyalMountActionPayload.SPIT -> mount.handleMountedSpit(player);
+                        case RoyalMountActionPayload.BEAM -> mount.handleMountedBeam(player);
+                        case RoyalMountActionPayload.SIGNATURE -> mount.handleMountedSignature(player);
                         default -> {
                         }
                     }
                 })
         );
         registrar.playToServer(
-                com.craisinlord.antarchy.content.network.RoyalMountVerticalPayload.TYPE,
-                com.craisinlord.antarchy.content.network.RoyalMountVerticalPayload.STREAM_CODEC,
+                RoyalMountVerticalPayload.TYPE,
+                RoyalMountVerticalPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player
-                            && player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount) {
+                    if (ctx.player() instanceof ServerPlayer player
+                            && player.getVehicle() instanceof RoyalMountEntity mount) {
                         mount.setRiderAscend(payload.ascend());
                         mount.setRiderDescend(payload.descend());
                     }
@@ -156,14 +197,14 @@ public class AntarchyForgePayloadHandlers {
                 ToggleTigerEyeCamouflagePayload.TYPE,
                 ToggleTigerEyeCamouflagePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (!(ctx.player() instanceof net.minecraft.server.level.ServerPlayer player)) {
+                    if (!(ctx.player() instanceof ServerPlayer player)) {
                         return;
                     }
                     TigerEyeCamouflageController.ToggleResult result = TigerEyeCamouflageController.toggle(player);
                     if (result != TigerEyeCamouflageController.ToggleResult.NO_CHANGE) {
-                        com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore.sendToTrackingEntity(
+                        AntarchyForgeNetworkCore.sendToTrackingEntity(
                                 player,
-                                com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.payload(player)
+                                TigerEyeCamouflageSync.payload(player)
                         );
                     }
                     String messageKey = switch (result) {
@@ -176,7 +217,7 @@ public class AntarchyForgePayloadHandlers {
                         case NO_CHANGE -> null;
                     };
                     if (messageKey != null) {
-                        player.displayClientMessage(net.minecraft.network.chat.Component.translatable(messageKey), true);
+                        player.displayClientMessage(Component.translatable(messageKey), true);
                     }
                 })
         );
@@ -184,28 +225,28 @@ public class AntarchyForgePayloadHandlers {
                 BloodCrystalKatanaTrailPayload.TYPE,
                 BloodCrystalKatanaTrailPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.BloodCrystalKatanaTrailClientState.trigger(payload.entityId(), payload.durationTicks())
+                        BloodCrystalKatanaTrailClientState.trigger(payload.entityId(), payload.durationTicks())
                 )
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.ScorpionWhipTetherPayload.TYPE,
-                com.craisinlord.antarchy.content.network.ScorpionWhipTetherPayload.STREAM_CODEC,
+                ScorpionWhipTetherPayload.TYPE,
+                ScorpionWhipTetherPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState.update(payload.playerId(), payload.targetId())
+                        ScorpionWhipTetherClientState.update(payload.playerId(), payload.targetId())
                 )
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.WormHookTetherPayload.TYPE,
-                com.craisinlord.antarchy.content.network.WormHookTetherPayload.STREAM_CODEC,
+                WormHookTetherPayload.TYPE,
+                WormHookTetherPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.WormHookTetherClientState.update(payload.playerId(), payload.hookId())
+                        WormHookTetherClientState.update(payload.playerId(), payload.hookId())
                 )
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.HordeIntensityPayload.TYPE,
-                com.craisinlord.antarchy.content.network.HordeIntensityPayload.STREAM_CODEC,
+                HordeIntensityPayload.TYPE,
+                HordeIntensityPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.HordeClientState.update(payload.intensity())
+                        HordeClientState.update(payload.intensity())
                 )
         );
     }

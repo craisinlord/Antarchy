@@ -1,22 +1,29 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
-import net.minecraft.core.UUIDUtil;
-import java.util.Optional;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
-import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.AntarchyGameRules;
-import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
+import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -24,17 +31,18 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -46,14 +54,15 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -61,19 +70,14 @@ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
 
 public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private static final double ATTRIBUTE_EPSILON = 1.0E-4D;
@@ -88,6 +92,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private static final String NEST_Y = "NestY";
     private static final String NEST_Z = "NestZ";
     private static final String TELEPORT_ACTIVATED = "TeleportActivated";
+    private static final String PLAYER_TENDED = "PlayerTended";
     private static final String MARCH_LEADER_UUID = "MarchLeaderUuid";
     private static final String MARCH_ORDER_KEY = "MarchOrder";
     private static final int MIN_OUTSIDE_NEST_TICKS = 20 * 30;
@@ -131,13 +136,13 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenLoop("attack");
     private static final RawAnimation DANCE_ANIM = RawAnimation.begin().thenLoop("dance");
 
-
     @Nullable
     private BlockPos nestPos;
     @Nullable
     private BlockPos jukeboxPos;
     private int outsideNestTicks;
     private boolean teleportActivated;
+    private boolean playerTended;
     @Nullable
     private UUID marchLeaderUuid;
     private int marchOrder = -1;
@@ -183,9 +188,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-            net.minecraft.world.entity.EntitySpawnReason spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
-        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, this.configuredMaxHealth());
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+            EntitySpawnReason spawnReason, SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, this.configuredMaxHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
 
@@ -215,7 +220,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new AntDanceGoal());
         this.goalSelector.addGoal(2, new PanicGoal(this, 1.4D));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, Ingredient.of(net.minecraft.core.registries.BuiltInRegistries.ITEM.getOrThrow(this.breedingFoodsTag())), false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(this.breedingFoodsTag())), false));
         this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new AntSharedMarchForageGoal());
         this.goalSelector.addGoal(7, new AntMarchFollowGoal());
@@ -315,14 +320,18 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (this.isFood(itemStack)) {
-            return super.mobInteract(player, hand);
+            InteractionResult result = super.mobInteract(player, hand);
+            if (result.consumesAction()) {
+                this.markPlayerTended();
+            }
+            return result;
         }
 
         return AntTeleportHelper.handleInteraction(this, player, itemStack);
     }
 
     @Override
-    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (this.isDancing() && (source == this.damageSources().inWall() || source == this.damageSources().cramming())) {
             return false;
         }
@@ -331,7 +340,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.server.level.ServerLevel level, Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         boolean attacked = super.doHurtTarget(level, target);
         if (attacked) {
             if (this instanceof RedAntEntity) {
@@ -351,6 +360,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
         output.putInt(OUTSIDE_NEST_TICKS_KEY, this.outsideNestTicks);
         output.putBoolean(TELEPORT_ACTIVATED, this.teleportActivated);
+        output.putBoolean(PLAYER_TENDED, this.playerTended);
         if (this.marchLeaderUuid != null) {
             output.store(MARCH_LEADER_UUID, UUIDUtil.CODEC, this.marchLeaderUuid);
             output.putInt(MARCH_ORDER_KEY, this.marchOrder);
@@ -375,6 +385,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
         this.outsideNestTicks = input.getIntOr(OUTSIDE_NEST_TICKS_KEY, 0);
         this.teleportActivated = input.getBooleanOr(TELEPORT_ACTIVATED, false);
+        this.playerTended = input.getBooleanOr(PLAYER_TENDED, false);
         Optional<UUID> marchLeader = input.read(MARCH_LEADER_UUID, UUIDUtil.CODEC);
         if (marchLeader.isPresent()) {
             this.marchLeaderUuid = marchLeader.get();
@@ -406,6 +417,24 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         this.markNestCacheDirty();
     }
 
+    public boolean isPlayerTended() {
+        return this.playerTended;
+    }
+
+    public void markPlayerTended() {
+        this.playerTended = true;
+        this.markNestCacheDirty();
+    }
+
+    @Override
+    public boolean requiresCustomPersistence() {
+        return this.playerTended || super.requiresCustomPersistence();
+    }
+
+    private boolean canAdoptNest(AntNestBlockEntity nestBlockEntity) {
+        return nestBlockEntity.canAccept(this.getType()) && (!this.playerTended || nestBlockEntity.isPlayerPlaced());
+    }
+
     public void onEnterNest() {
         this.clearCarriedFood();
         this.outsideNestTicks = 0;
@@ -429,15 +458,16 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        BaseAntEntity child = this.getType().create(level, net.minecraft.world.entity.EntitySpawnReason.BREEDING) instanceof BaseAntEntity antChild ? antChild : null;
+        BaseAntEntity child = this.getType().create(level, EntitySpawnReason.BREEDING) instanceof BaseAntEntity antChild ? antChild : null;
         if (child != null) {
             child.setNestPos(this.nestPos);
+            child.markPlayerTended();
         }
         return child;
     }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, net.minecraft.world.damagesource.DamageSource damageSource, boolean recentlyHit) {
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, damageSource, recentlyHit);
         if (this.isCarryingFood()) {
             ItemStack droppedFood = this.getCarriedFood().copy();
@@ -488,20 +518,33 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     protected abstract String needsReagentMessageKey();
     protected abstract double configuredMaxHealth();
 
-    protected boolean requiresActivationReagent() { return false; }
-    protected double configuredAttackDamage() { return 1.0D; }
-    protected boolean canForageGroundFood() { return true; }
-    protected boolean canGroupWithNestmates() { return true; }
-    protected boolean canMarch() { return true; }
-    protected boolean canTraverseFluidFloor(FluidState fluidState) { return false; }
+    protected boolean requiresActivationReagent() {
+        return false;
+    }
+    protected double configuredAttackDamage() {
+        return 1.0D;
+    }
+    protected boolean canForageGroundFood() {
+        return true;
+    }
+    protected boolean canGroupWithNestmates() {
+        return true;
+    }
+    protected boolean canMarch() {
+        return true;
+    }
+    protected boolean canTraverseFluidFloor(FluidState fluidState) {
+        return false;
+    }
     protected boolean isAntGriefingEnabled() {
         return this.level() instanceof ServerLevel serverLevel
                 && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)
                 && serverLevel.getGameRules().get(AntarchyGameRules.RULE_DO_ANT_GREIFING);
     }
 
-    
-    protected boolean handlePriorityForaging() { return false; }
+    protected boolean handlePriorityForaging() {
+        return false;
+    }
 
     private boolean shouldUseSharedMarchForageGoal() {
         return this.canRunAntMovementGoals()
@@ -583,7 +626,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
                 LevelChunk chunk = serverLevel.getChunk(chunkX, chunkZ);
                 for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-                    if (!(blockEntity instanceof AntNestBlockEntity nestBlockEntity) || !nestBlockEntity.canAccept(this.getType())) {
+                    if (!(blockEntity instanceof AntNestBlockEntity nestBlockEntity) || !this.canAdoptNest(nestBlockEntity)) {
                         continue;
                     }
 
@@ -616,7 +659,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
                 origin.offset(-NEST_SEARCH_RADIUS_HORIZONTAL, -NEST_SEARCH_RADIUS_VERTICAL, -NEST_SEARCH_RADIUS_HORIZONTAL),
                 origin.offset(NEST_SEARCH_RADIUS_HORIZONTAL, NEST_SEARCH_RADIUS_VERTICAL, NEST_SEARCH_RADIUS_HORIZONTAL))) {
             BlockEntity blockEntity = this.level().getBlockEntity(pos);
-            if (!(blockEntity instanceof AntNestBlockEntity nestBlockEntity) || !nestBlockEntity.canAccept(this.getType())) {
+            if (!(blockEntity instanceof AntNestBlockEntity nestBlockEntity) || !this.canAdoptNest(nestBlockEntity)) {
                 continue;
             }
 
@@ -1062,6 +1105,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         if (this.nestPos == null
                 || this.tickCount % 5 != 0
                 || !this.canEnterNest()
+                || !this.hasUsableNest()
                 || !this.isNearNestEntrance()) {
             return false;
         }
@@ -1129,7 +1173,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
                 this.cachedHasUsableNest = false;
             } else if (this.level().isLoaded(this.nestPos)) {
                 this.cachedHasUsableNest = this.level().getBlockEntity(this.nestPos) instanceof AntNestBlockEntity nestBlockEntity
-                        && nestBlockEntity.canAccept(this.getType());
+                        && this.canAdoptNest(nestBlockEntity);
             } else if (this.nestCacheDirty) {
                 this.cachedHasUsableNest = true;
             }
@@ -1637,7 +1681,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private final class AntReturnToNestGoal extends AbstractAntMoveGoal {
-        
+
         private int navDoneStreak;
 
         @Override
@@ -1692,7 +1736,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
     }
 
-    
     private final class AntFoodEscapeGoal extends AvoidEntityGoal<Player> {
         AntFoodEscapeGoal() {
             super(BaseAntEntity.this, Player.class, 12.0F, ESCAPE_MOVE_SPEED, ESCAPE_MOVE_SPEED);
@@ -1709,7 +1752,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
     }
 
-    
     private final class AntRandomStrollGoal extends WaterAvoidingRandomStrollGoal {
         private static final double FORWARD_BIAS_DISTANCE = 8.0D;
         private static final int FORWARD_SEARCH_RADIUS = 8;
@@ -1745,7 +1787,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             Vec3 heading = getStrollHeading();
             Vec3 forwardBias = position().add(heading.scale(FORWARD_BIAS_DISTANCE));
             Vec3 forward = findStrollTarget(BlockPos.containing(forwardBias), FORWARD_SEARCH_RADIUS);
-            if (forward != null) return forward;
+            if (forward != null) {
+                return forward;
+            }
             return findStrollTarget(blockPosition(), WIDE_SEARCH_RADIUS);
         }
 
@@ -1764,9 +1808,15 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
                     }
                 }
 
-                if (candidate == null) continue;
-                if (candidate.distSqr(blockPosition()) < MIN_DISTANCE_SQR) continue;
-                if (nestPos != null && candidate.distSqr(nestPos) > MAX_NEST_WANDER_DISTANCE_SQR) continue;
+                if (candidate == null) {
+                    continue;
+                }
+                if (candidate.distSqr(blockPosition()) < MIN_DISTANCE_SQR) {
+                    continue;
+                }
+                if (nestPos != null && candidate.distSqr(nestPos) > MAX_NEST_WANDER_DISTANCE_SQR) {
+                    continue;
+                }
 
                 return new Vec3(candidate.getX() + 0.5D, candidate.getY(), candidate.getZ() + 0.5D);
             }
@@ -1776,18 +1826,26 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         private Vec3 getStrollHeading() {
             Vec3 movement = getDeltaMovement();
             Vec3 horizontal = new Vec3(movement.x, 0.0D, movement.z);
-            if (horizontal.lengthSqr() > 1.0E-4D) return horizontal.normalize();
+            if (horizontal.lengthSqr() > 1.0E-4D) {
+                return horizontal.normalize();
+            }
             float yawRad = getYRot() * ((float) Math.PI / 180.0F);
             return new Vec3(-Mth.sin(yawRad), 0.0D, Mth.cos(yawRad));
         }
 
         private boolean isValidStrollPos(BlockPos pos) {
-            if (!level().getBlockState(pos).isAir()) return false;
+            if (!level().getBlockState(pos).isAir()) {
+                return false;
+            }
             BlockPos below = pos.below();
             BlockState floor = level().getBlockState(below);
             FluidState fluidBelow = floor.getFluidState();
-            if (!fluidBelow.isEmpty() && !BaseAntEntity.this.canTraverseFluidFloor(fluidBelow)) return false;
-            if (!floor.isFaceSturdy(level(), below, Direction.UP)) return false;
+            if (!fluidBelow.isEmpty() && !BaseAntEntity.this.canTraverseFluidFloor(fluidBelow)) {
+                return false;
+            }
+            if (!floor.isFaceSturdy(level(), below, Direction.UP)) {
+                return false;
+            }
             AABB box = getBoundingBox().move(
                     pos.getX() + 0.5D - getX(),
                     pos.getY() - getY(),

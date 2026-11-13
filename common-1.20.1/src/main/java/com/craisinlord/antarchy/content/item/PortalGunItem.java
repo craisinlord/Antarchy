@@ -1,23 +1,29 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
-import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
-import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalCellAccess;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItem;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import com.craisinlord.anthology.gravity.GravityApi;
-import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
-import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
+import com.craisinlord.antarchy.content.component.AntarchyItemTag;
+import com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync;
 import com.craisinlord.antarchy.content.portalgun.PortalGunMoonMath;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
 import com.craisinlord.antarchy.content.portalgun.PortalGunVariant;
-import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
-import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.component.AntarchyItemTag;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.google.common.base.Suppliers;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -25,16 +31,21 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -49,26 +60,23 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class PortalGunItem extends Item implements GeoItem, com.craisinlord.antarchy.content.client.AntarchyGeoItem {
+public class PortalGunItem extends Item implements GeoItem, AntarchyGeoItem {
     private static final String LED_CONTROLLER = "led_controller";
     private static final String FIRE_CONTROLLER = "fire_controller";
     private static final String LAST_SIDE_TAG = "antarchy.portal_gun_last_side";
@@ -114,7 +122,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
         ItemStack stack = player.getItemInHand(usedHand);
         if (level.isClientSide) {
             if (!player.isShiftKeyDown()) {
-                com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.reportFromClient();
+                PortalGunMoonAimSync.reportFromClient();
             }
             return InteractionResultHolder.consume(stack);
         }
@@ -261,8 +269,8 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
                 || !portal.getMasterPos().equals(placement.masterPos())) {
             return false;
         }
-        return new HashSet<>(java.util.Arrays.asList(portal.getPortalSpots()))
-                .equals(new HashSet<>(java.util.Arrays.asList(placement.portalSpots())));
+        return new HashSet<>(Arrays.asList(portal.getPortalSpots()))
+                .equals(new HashSet<>(Arrays.asList(placement.portalSpots())));
     }
 
     public ItemStack findMatchingGunStack(Player player, UUID gunId) {
@@ -315,7 +323,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
         if (!level.dimensionType().hasSkyLight() || level.dimensionType().hasCeiling()) {
             return false;
         }
-        Boolean clientAim = player instanceof ServerPlayer serverPlayer ? com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clientAim(serverPlayer) : null;
+        Boolean clientAim = player instanceof ServerPlayer serverPlayer ? PortalGunMoonAimSync.clientAim(serverPlayer) : null;
         if (clientAim != null) {
             return clientAim;
         }
@@ -327,7 +335,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
         Vec3 delta = endPos.subtract(start);
         double length = delta.length();
         int steps = (int) Math.max(4.0D, Math.min(48.0D, length * 2.0D));
-        net.minecraft.core.particles.ParticleOptions particle = side == PortalGunPortalEntity.PortalSide.BLUE ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
+        ParticleOptions particle = side == PortalGunPortalEntity.PortalSide.BLUE ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
         for (int i = 0; i <= steps; i++) {
             double t = (double) i / steps;
             Vec3 point = start.add(delta.scale(t));
@@ -350,12 +358,12 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
     }
 
     public static int getPortalWidth(ItemStack stack) {
-        net.minecraft.nbt.CompoundTag data = stack.getTag();
+        CompoundTag data = stack.getTag();
         return Mth.clamp(data == null ? 1 : data.getInt(PORTAL_WIDTH_TAG), 1, MAX_PORTAL_WIDTH);
     }
 
     public static int getPortalHeight(ItemStack stack) {
-        net.minecraft.nbt.CompoundTag data = stack.getTag();
+        CompoundTag data = stack.getTag();
         return Mth.clamp(data == null || !data.contains(PORTAL_HEIGHT_TAG) ? 2 : data.getInt(PORTAL_HEIGHT_TAG), 2, MAX_PORTAL_HEIGHT);
     }
 
@@ -391,7 +399,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
     private Vec3 worldLook(LivingEntity entity) {
         Vec3 look = entity.getLookAngle();
         return GravityApi.isGravityInverted(entity)
-                ? com.craisinlord.anthology.gravity.GravityRotationUtil.vecPlayerToWorld(
+                ? GravityRotationUtil.vecPlayerToWorld(
                         look, GravityApi.getGravityDirection(entity))
                 : look;
     }
@@ -421,7 +429,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
         float yaw = PortalGunPlacement.yawFor(facing, heightAxis);
         BlockPos hitPos = hitResult.getBlockPos();
         int maxRadius = Math.max(width, height);
-        List<Integer> radiusOrder = new java.util.ArrayList<>(maxRadius);
+        List<Integer> radiusOrder = new ArrayList<>(maxRadius);
         for (int radius = 0; radius < maxRadius; radius++) {
             radiusOrder.add(radius);
         }
@@ -431,7 +439,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
         for (int radius : radiusOrder) {
             for (int horizontalOffset = radius; horizontalOffset >= 0; horizontalOffset--) {
                 for (int verticalOffset = radius; verticalOffset >= 0; verticalOffset--) {
-                    List<BlockPos> supports = new java.util.ArrayList<>(width * height);
+                    List<BlockPos> supports = new ArrayList<>(width * height);
                     for (int widthCell = 1 - width; widthCell <= 0; widthCell++) {
                         for (int heightCell = 1 - height; heightCell <= 0; heightCell++) {
                             supports.add(this.referenceSupportPosition(hitPos, facing, heightAxis, horizontalOffset, verticalOffset, widthCell, heightCell));
@@ -602,7 +610,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
                     placement.upAxis(),
                     placement.masterPos(),
                     placement.basePos(),
-                    java.util.Arrays.asList(placement.portalSpots()),
+                    Arrays.asList(placement.portalSpots()),
                     placement.compensatedSpots(),
                     pairTime,
                     placement.width(),
@@ -652,7 +660,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
     }
 
     private PortalGunPortalEntity.PortalSide getLastSide(ItemStack stack) {
-        net.minecraft.nbt.CompoundTag customData = stack.getTag();
+        CompoundTag customData = stack.getTag();
         if (customData == null) {
             return null;
         }
@@ -671,7 +679,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
     }
 
     public static PortalGunPortalEntity.PortalSide getMoonSide(ItemStack stack) {
-        net.minecraft.nbt.CompoundTag customData = stack.getTag();
+        CompoundTag customData = stack.getTag();
         if (customData == null) {
             return null;
         }
@@ -685,7 +693,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
     }
 
     public static UUID getGunId(ItemStack stack) {
-        net.minecraft.nbt.CompoundTag customData = stack.getTag();
+        CompoundTag customData = stack.getTag();
         if (customData == null || !customData.hasUUID(GUN_ID_TAG)) {
             return null;
         }
@@ -693,7 +701,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
     }
 
     private UUID ensureGunId(ItemStack stack) {
-        net.minecraft.nbt.CompoundTag customData = stack.getTag();
+        CompoundTag customData = stack.getTag();
         UUID gunId;
         if (customData != null && customData.hasUUID(GUN_ID_TAG)) {
             gunId = customData.getUUID(GUN_ID_TAG);
@@ -734,7 +742,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
     }
 
     public static UUID getPortalOwnerId(ItemStack stack, UUID fallback) {
-        net.minecraft.nbt.CompoundTag customData = stack.getTag();
+        CompoundTag customData = stack.getTag();
         if (customData == null) {
             return fallback;
         }
@@ -750,7 +758,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
         if (stack.isEmpty() || stack.getItem() != this) {
             return false;
         }
-        net.minecraft.nbt.CompoundTag customData = stack.getTag();
+        CompoundTag customData = stack.getTag();
         return customData != null && customData.hasUUID(GUN_ID_TAG) && gunId.equals(customData.getUUID(GUN_ID_TAG));
     }
 
@@ -766,7 +774,7 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
 
     private Component portalColorName(PortalGunPortalEntity.PortalSide side) {
         return Component.translatable(this.variant.colorTranslationKey(side))
-                .withStyle(style -> style.withColor(net.minecraft.network.chat.TextColor.fromRgb(this.variant.color(side))));
+                .withStyle(style -> style.withColor(TextColor.fromRgb(this.variant.color(side))));
     }
 
     @Override
@@ -794,11 +802,11 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
     }
 
     public void createRenderer(Consumer<Object> consumer) {
-        consumer.accept(new com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer() {
+        consumer.accept(new AntarchyGeoItemRenderer() {
             private AnimatedHeldItemRenderer<PortalGunItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, PortalGunItem.this.variant.modelTexture(), ANIMATION_LOCATION));
                 }
@@ -807,14 +815,14 @@ public class PortalGunItem extends Item implements GeoItem, com.craisinlord.anta
         });
     }
 
-    private final java.util.function.Supplier<Object> renderProvider = com.google.common.base.Suppliers.memoize(() -> {
+    private final Supplier<Object> renderProvider = Suppliers.memoize(() -> {
         Object[] holder = new Object[1];
         createRenderer(o -> holder[0] = o);
         return holder[0];
     });
 
     @Override
-    public java.util.function.Supplier<Object> getRenderProvider() {
+    public Supplier<Object> getRenderProvider() {
         return this.renderProvider;
     }
 }

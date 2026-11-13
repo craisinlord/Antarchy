@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -17,7 +18,7 @@ public final class CustomBrewingRecipes {
     private static final ResourceLocation CORN_ID = new ResourceLocation("antarchy", "corn");
     private static final ResourceLocation HIGH_FRUCTOSE_CORN_SYRUP_ID = new ResourceLocation("antarchy", "high_fructose_corn_syrup");
     private static final ResourceLocation ROOT_BEER_ID = new ResourceLocation("antarchy", "root_beer");
-    private static final TagKey<Item> ROOTS = TagKey.create(net.minecraft.core.registries.Registries.ITEM, new ResourceLocation("antarchy", "roots"));
+    private static final TagKey<Item> ROOTS = TagKey.create(Registries.ITEM, new ResourceLocation("antarchy", "roots"));
 
     private CustomBrewingRecipes() {
     }

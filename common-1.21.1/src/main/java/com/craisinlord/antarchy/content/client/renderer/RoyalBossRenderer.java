@@ -1,25 +1,26 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
-import com.craisinlord.anthology.beam.client.BeamRenderTypes;
 import com.craisinlord.antarchy.content.client.model.RoyalBossModel;
-import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
+import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
+import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalHead;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.anthology.beam.client.BeamRenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import com.mojang.math.Axis;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -111,7 +112,9 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
             if (!animatable.isRoyalAccelerated() && (RoyalEffectHooks.contractedHolder() == null
                     || !animatable.hasEffect(RoyalEffectHooks.contractedHolder()))) return;
             Vec3 movement = animatable.getDeltaMovement();
-            if (movement.lengthSqr() < 1.0E-5D) return;
+            if (movement.lengthSqr() < 1.0E-5D) {
+                return;
+            }
             RenderType afterimageType = RenderType.entityTranslucent(this.getRenderer().getTextureLocation(animatable));
             VertexConsumer afterimageBuffer = bufferSource.getBuffer(afterimageType);
             int[] colors = animatable instanceof QueenEntity ? QUEEN_AFTERIMAGE_COLORS : KING_AFTERIMAGE_COLORS;
@@ -189,7 +192,9 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
     private void renderBeam(RoyalBossEntity entity, RoyalHead.Slot beamHead, float partialTick,
                             PoseStack poseStack, MultiBufferSource bufferSource) {
         Vec3 end = entity.getRoyalBeamEndPosition(beamHead);
-        if (end == null) return;
+        if (end == null) {
+            return;
+        }
         double x = Mth.lerp(partialTick, entity.xo, entity.getX());
         double y = Mth.lerp(partialTick, entity.yo, entity.getY());
         double z = Mth.lerp(partialTick, entity.zo, entity.getZ());
@@ -279,7 +284,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         poseStack.mulPose(Axis.YP.rotation((float) (Math.PI * 0.5D - yaw)));
         poseStack.mulPose(Axis.XP.rotation((float) (-Math.PI * 0.5D + pitch)));
         poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
-        org.joml.Matrix4f pose = poseStack.last().pose();
+        Matrix4f pose = poseStack.last().pose();
 
         VertexConsumer innerBuffer = bufferSource.getBuffer(BeamRenderTypes.beam(inner));
         drawLocalBeam(innerBuffer, pose, length, BEAM_INNER_RADIUS, 4, innerV, 0.5F);
@@ -292,7 +297,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         poseStack.popPose();
     }
 
-    private static void drawLocalBeam(VertexConsumer vertices, org.joml.Matrix4f pose, double length,
+    private static void drawLocalBeam(VertexConsumer vertices, Matrix4f pose, double length,
                                       float radius, int sections, float scroll, float uvLengthScale) {
         float endV = scroll + (float) length * uvLengthScale;
         float previousX = -radius;
@@ -314,7 +319,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         }
     }
 
-    private static void emitBeamQuad(VertexConsumer vertices, org.joml.Matrix4f pose,
+    private static void emitBeamQuad(VertexConsumer vertices, Matrix4f pose,
                                      Vec3 a, Vec3 b, Vec3 c, Vec3 d,
                                      float minU, float minV, float maxU, float maxV, int endAlpha) {
         beamVertex(vertices, pose, a, minU, minV, 255);
@@ -323,7 +328,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         beamVertex(vertices, pose, d, minU, maxV, 255);
     }
 
-    static void drawBeamImpact(VertexConsumer vertices, org.joml.Matrix4f pose, float z, float size) {
+    static void drawBeamImpact(VertexConsumer vertices, Matrix4f pose, float z, float size) {
         PoseStack endpoint = new PoseStack();
         endpoint.last().pose().set(pose);
         endpoint.translate(0.0D, 0.0D, z);
@@ -332,7 +337,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         endpoint.scale(size / 16.0F, size / 16.0F, size / 16.0F);
         endpoint.translate(0.0D, 24.0D, 0.0D);
 
-        org.joml.Matrix4f modelPose = endpoint.last().pose();
+        Matrix4f modelPose = endpoint.last().pose();
         emitQuadUv(vertices, modelPose,
                 new Vec3(-11.0D, 0.0D, -11.0D), new Vec3(11.0D, 0.0D, -11.0D),
                 new Vec3(11.0D, 0.0D, 11.0D), new Vec3(-11.0D, 0.0D, 11.0D),
@@ -383,7 +388,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         endpoint.popPose();
     }
 
-    private static void drawModelPlane(VertexConsumer vertices, org.joml.Matrix4f pose,
+    private static void drawModelPlane(VertexConsumer vertices, Matrix4f pose,
                                        int x, int y, int z, int width, int height, int u, int v) {
         emitQuadUv(vertices, pose,
                 new Vec3(x + width, y, z), new Vec3(x, y, z),
@@ -391,7 +396,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
                 (u + width) / 128.0F, v / 128.0F, u / 128.0F, (v + height) / 128.0F);
     }
 
-    private static void emitQuadUv(VertexConsumer vertices, org.joml.Matrix4f pose,
+    private static void emitQuadUv(VertexConsumer vertices, Matrix4f pose,
                                    Vec3 a, Vec3 b, Vec3 c, Vec3 d,
                                    float minU, float minV, float maxU, float maxV) {
         vertex(vertices, pose, a, minU, minV);
@@ -400,15 +405,15 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         vertex(vertices, pose, d, minU, maxV);
     }
 
-    private static void vertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v) {
+    private static void vertex(VertexConsumer vertices, Matrix4f pose, Vec3 pos, float u, float v) {
         vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z)
                 .setColor(1.0F, 1.0F, 1.0F, 1.0F).setUv(u, v)
-                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(240)
                 .setNormal(0.0F, 1.0F, 0.0F);
     }
 
-    private static void beamVertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v, int alpha) {
+    private static void beamVertex(VertexConsumer vertices, Matrix4f pose, Vec3 pos, float u, float v, int alpha) {
         vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z)
                 .setColor(1.0F, 1.0F, 1.0F, alpha / 255.0F).setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY)

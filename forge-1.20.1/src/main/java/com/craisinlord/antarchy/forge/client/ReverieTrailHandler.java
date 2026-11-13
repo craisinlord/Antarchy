@@ -1,26 +1,13 @@
 package com.craisinlord.antarchy.forge.client;
 
-import net.minecraftforge.fml.common.Mod;
-
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import org.joml.Matrix4f;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +16,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import org.joml.Matrix4f;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ReverieTrailHandler {
@@ -37,10 +35,10 @@ public final class ReverieTrailHandler {
     private static final int IDLE_LIFETIME_TICKS = 8;
     private static final int NORMAL_LIFETIME_TICKS = 14;
     private static final int DASH_LIFETIME_TICKS = 22;
-    private static final float CORE_LINE_WIDTH = 0.035f;
-    private static final float GLOW_LINE_WIDTH = 0.10f;
-    private static final double MIN_DISTANCE_BETWEEN_POINTS = 0.05;
-    private static final double DASH_DISTANCE_THRESHOLD = 0.35;
+    private static final float CORE_LINE_WIDTH = 0.035F;
+    private static final float GLOW_LINE_WIDTH = 0.10F;
+    private static final double MIN_DISTANCE_BETWEEN_POINTS = 0.05D;
+    private static final double DASH_DISTANCE_THRESHOLD = 0.35D;
 
     private static final Map<Integer, ArrayDeque<TrailPoint>> TRAILS = new HashMap<>();
 
@@ -60,7 +58,7 @@ public final class ReverieTrailHandler {
         }
 
         float progress() {
-            return lifetime <= 0 ? 1f : (float) age / (float) lifetime;
+            return lifetime <= 0 ? 1F : (float) age / (float) lifetime;
         }
 
         boolean expired() {
@@ -70,23 +68,29 @@ public final class ReverieTrailHandler {
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) {
             TRAILS.clear();
             return;
         }
-        if (mc.isPaused()) return;
+        if (mc.isPaused()) {
+            return;
+        }
 
         Set<Integer> activeIds = new HashSet<>();
 
         for (Entity entity : mc.level.entitiesForRendering()) {
-            if (!(entity instanceof ReverieEntity reverie)) continue;
+            if (!(entity instanceof ReverieEntity reverie)) {
+                continue;
+            }
 
             int id = reverie.getId();
             activeIds.add(id);
             ReverieEntity.Mood mood = reverie.getMood();
-            Vec3 pos = reverie.position().add(0.0, reverie.getBbHeight() * 0.5, 0.0);
+            Vec3 pos = reverie.position().add(0.0D, reverie.getBbHeight() * 0.5D, 0.0D);
 
             ArrayDeque<TrailPoint> points = TRAILS.computeIfAbsent(id, k -> new ArrayDeque<>());
 
@@ -116,18 +120,28 @@ public final class ReverieTrailHandler {
     }
 
     private static int lifetimeFor(ReverieEntity.Mood mood, boolean isDash) {
-        if (isDash || mood == ReverieEntity.Mood.PURPLE) return DASH_LIFETIME_TICKS;
-        if (mood == ReverieEntity.Mood.WHITE) return IDLE_LIFETIME_TICKS;
+        if (isDash || mood == ReverieEntity.Mood.PURPLE) {
+            return DASH_LIFETIME_TICKS;
+        }
+        if (mood == ReverieEntity.Mood.WHITE) {
+            return IDLE_LIFETIME_TICKS;
+        }
         return NORMAL_LIFETIME_TICKS;
     }
 
     @SubscribeEvent
     public static void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
-        if (TRAILS.isEmpty()) return;
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+            return;
+        }
+        if (TRAILS.isEmpty()) {
+            return;
+        }
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return;
+        if (mc.level == null) {
+            return;
+        }
 
         Camera camera = event.getCamera();
         Vec3 camPos = camera.getPosition();
@@ -179,12 +193,16 @@ public final class ReverieTrailHandler {
             TrailPoint newer = points.get(i);
             TrailPoint older = points.get(i + 1);
 
-            float alphaNearer  = (glow ? glowAlpha(newer.mood) : coreAlpha(newer.mood)) * indexAlpha(i, n)       * (1f - newer.progress());
-            float alphaFarther = (glow ? glowAlpha(older.mood) : coreAlpha(older.mood)) * indexAlpha(i + 1, n)   * (1f - older.progress());
-            if (alphaNearer < 0.005f && alphaFarther < 0.005f) continue;
+            float alphaNearer  = (glow ? glowAlpha(newer.mood) : coreAlpha(newer.mood)) * indexAlpha(i, n)       * (1F - newer.progress());
+            float alphaFarther = (glow ? glowAlpha(older.mood) : coreAlpha(older.mood)) * indexAlpha(i + 1, n)   * (1F - older.progress());
+            if (alphaNearer < 0.005F && alphaFarther < 0.005F) {
+                continue;
+            }
 
             Vec3 right = cameraFacingRight(newer.pos, older.pos, camPos);
-            if (right == null) continue;
+            if (right == null) {
+                continue;
+            }
 
             float halfWidth = glow ? glowHalfWidth(newer.mood) : coreHalfWidth(newer.mood);
             right = right.scale(halfWidth);
@@ -203,30 +221,38 @@ public final class ReverieTrailHandler {
 
     private static Vec3 cameraFacingRight(Vec3 a, Vec3 b, Vec3 camPos) {
         Vec3 segDir = b.subtract(a);
-        if (segDir.lengthSqr() < 1e-12) return null;
+        if (segDir.lengthSqr() < 1e-12) {
+            return null;
+        }
         segDir = segDir.normalize();
-        Vec3 mid = a.add(b).scale(0.5);
+        Vec3 mid = a.add(b).scale(0.5D);
         Vec3 toCamera = camPos.subtract(mid);
-        if (toCamera.lengthSqr() < 1e-12) return null;
+        if (toCamera.lengthSqr() < 1e-12) {
+            return null;
+        }
         toCamera = toCamera.normalize();
         Vec3 right = segDir.cross(toCamera);
         if (right.lengthSqr() < 1e-10) {
-            right = segDir.cross(new Vec3(0.0, 1.0, 0.0));
-            if (right.lengthSqr() < 1e-10) return null;
+            right = segDir.cross(new Vec3(0.0D, 1.0D, 0.0D));
+            if (right.lengthSqr() < 1e-10) {
+                return null;
+            }
         }
         return right.normalize();
     }
 
     private static float indexAlpha(int i, int n) {
-        if (n <= 1) return 1f;
-        return 1f - (float) i / (float) (n - 1);
+        if (n <= 1) {
+            return 1F;
+        }
+        return 1F - (float) i / (float) (n - 1);
     }
 
-    private static final float[] COLOR_WHITE  = { 1.0f, 1.0f, 1.0f };
-    private static final float[] COLOR_YELLOW = { 1.0f, 0.85f, 0.1f };
-    private static final float[] COLOR_RED    = { 1.0f, 0.1f, 0.05f };
-    private static final float[] COLOR_PURPLE = { 0.7f, 0.1f, 1.0f };
-    private static final float[] COLOR_BLUE   = { 0.1f, 0.5f, 1.0f };
+    private static final float[] COLOR_WHITE  = { 1.0F, 1.0F, 1.0F };
+    private static final float[] COLOR_YELLOW = { 1.0F, 0.85F, 0.1F };
+    private static final float[] COLOR_RED    = { 1.0F, 0.1F, 0.05F };
+    private static final float[] COLOR_PURPLE = { 0.7F, 0.1F, 1.0F };
+    private static final float[] COLOR_BLUE   = { 0.1F, 0.5F, 1.0F };
 
     private static float[] color(ReverieEntity.Mood mood) {
         return switch (mood) {
@@ -240,43 +266,43 @@ public final class ReverieTrailHandler {
 
     private static float glowAlpha(ReverieEntity.Mood mood) {
         return switch (mood) {
-            case WHITE  -> 0.15f;
-            case YELLOW -> 0.30f;
-            case RED    -> 0.55f;
-            case PURPLE -> 0.65f;
-            case BLUE   -> 0.35f;
+            case WHITE  -> 0.15F;
+            case YELLOW -> 0.30F;
+            case RED    -> 0.55F;
+            case PURPLE -> 0.65F;
+            case BLUE   -> 0.35F;
         };
     }
 
     private static float coreAlpha(ReverieEntity.Mood mood) {
         return switch (mood) {
-            case WHITE  -> 0.35f;
-            case YELLOW -> 0.55f;
-            case RED    -> 0.85f;
-            case PURPLE -> 0.95f;
-            case BLUE   -> 0.60f;
+            case WHITE  -> 0.35F;
+            case YELLOW -> 0.55F;
+            case RED    -> 0.85F;
+            case PURPLE -> 0.95F;
+            case BLUE   -> 0.60F;
         };
     }
 
     private static float glowHalfWidth(ReverieEntity.Mood mood) {
-        float base = GLOW_LINE_WIDTH * 0.5f;
+        float base = GLOW_LINE_WIDTH * 0.5F;
         return switch (mood) {
-            case WHITE  -> base * 0.60f;
-            case YELLOW -> base * 0.80f;
-            case RED    -> base * 1.00f;
-            case PURPLE -> base * 1.25f;
-            case BLUE   -> base * 0.90f;
+            case WHITE  -> base * 0.60F;
+            case YELLOW -> base * 0.80F;
+            case RED    -> base * 1.00F;
+            case PURPLE -> base * 1.25F;
+            case BLUE   -> base * 0.90F;
         };
     }
 
     private static float coreHalfWidth(ReverieEntity.Mood mood) {
-        float base = CORE_LINE_WIDTH * 0.5f;
+        float base = CORE_LINE_WIDTH * 0.5F;
         return switch (mood) {
-            case WHITE  -> base * 0.60f;
-            case YELLOW -> base * 0.80f;
-            case RED    -> base * 1.20f;
-            case PURPLE -> base * 1.50f;
-            case BLUE   -> base * 1.00f;
+            case WHITE  -> base * 0.60F;
+            case YELLOW -> base * 0.80F;
+            case RED    -> base * 1.20F;
+            case PURPLE -> base * 1.50F;
+            case BLUE   -> base * 1.00F;
         };
     }
 }

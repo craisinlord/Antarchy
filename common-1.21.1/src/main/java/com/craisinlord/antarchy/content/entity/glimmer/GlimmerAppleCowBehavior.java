@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -105,9 +106,9 @@ public class GlimmerAppleCowBehavior implements GlimmerVariantBehavior {
         entity.startShearCooldown(SHEAR_REGROW_TICKS);
         entity.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
         stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
-                ? net.minecraft.world.entity.EquipmentSlot.MAINHAND
-                : net.minecraft.world.entity.EquipmentSlot.OFFHAND);
-        entity.spawnAtLocation(new net.minecraft.world.item.ItemStack(AntarchyObjects.SPIRIT_APPLE.get()), entity.getBbHeight() * 0.6F);
+                ? EquipmentSlot.MAINHAND
+                : EquipmentSlot.OFFHAND);
+        entity.spawnAtLocation(new ItemStack(AntarchyObjects.SPIRIT_APPLE.get()), entity.getBbHeight() * 0.6F);
         return InteractionResult.SUCCESS;
     }
 

@@ -3,7 +3,19 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.mojang.serialization.Codec;
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -29,16 +41,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.lang.ref.WeakReference;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration> {
     private static final Map<ServerLevel, Set<Long>> CLAIMED_TREE_KINGS = new WeakHashMap<>();
     private static final Map<ServerLevel, Map<Long, Integer>> TREE_BASE_HEIGHTS = new WeakHashMap<>();
@@ -47,6 +49,13 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
     private static final int SPAWN_ANGLES = 16;
     private static final double[] SPAWN_RADII = {96.0D, 80.0D, 64.0D};
     private static final double[] SPAWN_HEIGHT_OFFSETS = {0.0D, 18.0D, -12.0D, 32.0D};
+    private static final int TILE_CACHE_SIZE = 16;
+    private static final Map<ResourceLocation, Optional<StructureTemplate>> TILE_CACHE = new LinkedHashMap<>(32, 0.75F, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<ResourceLocation, Optional<StructureTemplate>> eldest) {
+            return this.size() > TILE_CACHE_SIZE;
+        }
+    };
     private static final int[] GROUND_SAMPLE_RADII = {0, 48, 96, 144, 192};
     private static final double GROUND_SAMPLE_PERCENTILE = 0.25D;
     private static final int TREE_MIN_X = -191;
@@ -106,8 +115,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
 
         for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
             for (int tileZ = minTileZ; tileZ <= maxTileZ; tileZ++) {
-                var location = tileLocation(tileX, tileZ);
-                Optional<StructureTemplate> template = templates.get(location);
+                Optional<StructureTemplate> template = tile(templates, tileLocation(tileX, tileZ));
                 if (template.isEmpty()) {
                     continue;
                 }
@@ -115,13 +123,33 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
                 boolean tilePlaced = template.get().placeInWorld(level, tileOrigin, tileOrigin, settings, random, 2);
                 placed |= tilePlaced;
                 centralTilePlaced |= tileX == 0 && tileZ == 0 && tilePlaced;
-                templates.remove(location);
             }
         }
         if (centralTilePlaced) {
             queueTreeKing(level.getLevel(), centerX, centerZ, baseY);
         }
         return placed;
+    }
+
+    private static Optional<StructureTemplate> tile(StructureTemplateManager templates, ResourceLocation location) {
+        synchronized (TILE_CACHE) {
+            Optional<StructureTemplate> cached = TILE_CACHE.get(location);
+            if (cached != null) {
+                return cached;
+            }
+        }
+        Optional<StructureTemplate> loaded = templates.get(location);
+        templates.remove(location);
+        synchronized (TILE_CACHE) {
+            Optional<StructureTemplate> raced = TILE_CACHE.putIfAbsent(location, loaded);
+            return raced != null ? raced : loaded;
+        }
+    }
+
+    public static void clearTileCache() {
+        synchronized (TILE_CACHE) {
+            TILE_CACHE.clear();
+        }
     }
 
     public static int treeBaseY(ServerLevel level, int centerX, int centerZ) {
@@ -175,7 +203,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
     private static void queueTreeKing(ServerLevel serverLevel, int centerX, int centerZ, int baseY) {
         long treeKey = KingsTreeSavedData.treeKey(centerX, centerZ);
         synchronized (CLAIMED_TREE_KINGS) {
-            if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new java.util.HashSet<>()).add(treeKey)) {
+            if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new HashSet<>()).add(treeKey)) {
                 return;
             }
         }
@@ -191,7 +219,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
             saved.treeBaseHeights().forEach(heights::putIfAbsent);
         }
         synchronized (CLAIMED_TREE_KINGS) {
-            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new java.util.HashSet<>());
+            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new HashSet<>());
             for (long treeKey : saved.pendingTrees()) {
                 if (claimed.add(treeKey)) {
                     PENDING_KING_SPAWNS.add(new PendingKingSpawn(new WeakReference<>(level),
@@ -204,6 +232,9 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
     }
 
     public static void tickPendingSpawns(ServerLevel level) {
+        if (!level.dimension().equals(KingsTreeGrid.ELYTHIA)) {
+            return;
+        }
         KingsTreeSavedData saved = KingsTreeSavedData.get(level);
         restoreSavedTrees(level, saved);
         int pendingCount = PENDING_KING_SPAWNS.size();
@@ -249,7 +280,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
                 centerX - 512.0D, serverLevel.getMinBuildHeight(), centerZ - 512.0D,
                 centerX + 512.0D, serverLevel.getMaxBuildHeight(), centerZ + 512.0D);
         List<KingEntity> treeKings = serverLevel.getEntitiesOfClass(KingEntity.class, searchBox,
-                king -> king.isAlive() && !com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes.isGlimmerEcho(king) && king.isTreePatrolFor(treeCenter));
+                king -> king.isAlive() && !GlimmerEchoes.isGlimmerEcho(king) && king.isTreePatrolFor(treeCenter));
         if (!treeKings.isEmpty()) {
             for (int index = 1; index < treeKings.size(); index++) {
                 treeKings.get(index).discard();

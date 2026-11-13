@@ -68,7 +68,7 @@ public class RedAntEntity extends BaseAntEntity implements GeoEntity {
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.isLeashed() && !this.hasCustomName();
+        return !this.isLeashed() && !this.hasCustomName() && !this.isPlayerTended();
     }
 
     @Override

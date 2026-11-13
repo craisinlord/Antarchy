@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric.util;
 
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -8,8 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.function.Predicate;
 
 public final class CustomFluidPhysicsChecks {
     public static final int TOUCHING_NONE = 0;

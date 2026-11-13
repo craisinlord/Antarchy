@@ -52,8 +52,8 @@ dependencies {
             .matching { include "META-INF/jarjar/net.caffeinemc.sodium-neoforge-*-mod.jar" }))
     compileOnly(files(rootProject.file("infinite_dimensions_jars/antos-neoforge-1.21.1-${antos_version}.jar")))
     runtimeOnly(files(rootProject.file("infinite_dimensions_jars/antos-neoforge-1.21.1-${antos_version}.jar")))
-    compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
-    runtimeOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
+    compileOnly(files(rootProject.file("integrated_api_jars/integrated_api-neoforge-1.21.1-${intapi_version_1_21_1}.jar")))
+    runtimeOnly(files(rootProject.file("integrated_api_jars/integrated_api-neoforge-1.21.1-${intapi_version_1_21_1}.jar")))
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}"
     compileOnly(files(rootProject.file("anthology_jars/anthology-${anthology_version}+1.21.1-neoforge.jar")))
     runtimeOnly(files(rootProject.file("anthology_jars/anthology-${anthology_version}+1.21.1-neoforge.jar")))

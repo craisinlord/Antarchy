@@ -1,21 +1,29 @@
 package com.craisinlord.antarchy.content.entity;
 
-import java.util.Optional;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,10 +37,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -42,15 +50,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public class AlphaMantisEntity extends MantisEntity {
     private static final double ALPHA_ATTACK_START_RANGE = 5.5D;
@@ -155,8 +160,8 @@ public class AlphaMantisEntity extends MantisEntity {
 
     private static final float KNOCKBACK_STRENGTH = 0.5F;
 
-    private static final net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable> GLIMMER_LOOT_TABLE = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE,
-            net.minecraft.resources.Identifier.fromNamespaceAndPath(com.craisinlord.antarchy.Antarchy.MODID, "entities/alpha_mantis_glimmer"));
+    private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "entities/alpha_mantis_glimmer"));
 
     private enum AlphaAction {
         NONE,
@@ -173,7 +178,7 @@ public class AlphaMantisEntity extends MantisEntity {
     }
 
     private final ServerBossEvent bossEvent =
-            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, Component.translatable("entity.antarchy.alpha_mantis"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
+            new EntityLinkedServerBossEvent(this, Component.translatable("entity.antarchy.alpha_mantis"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
 
     private int summonCooldownTicks;
     private int phaseTransitionTicks;
@@ -902,6 +907,7 @@ public class AlphaMantisEntity extends MantisEntity {
             case FEINT_RAISE -> {
                 this.action = AlphaAction.FEINT_RAISE;
                 this.actionTicks = 0;
+                this.markAttackAnimationStart();
                 this.feintCooldownTicks = this.scaledCooldown(FEINT_COOLDOWN_TICKS);
                 this.getNavigation().stop();
                 this.playSound(AntarchySoundEvents.MANTIS_ATTACK.get(), 1.0F, 0.8F);
@@ -921,6 +927,7 @@ public class AlphaMantisEntity extends MantisEntity {
             case CATCH -> {
                 this.action = AlphaAction.CATCH;
                 this.actionTicks = 0;
+                this.markAttackAnimationStart();
                 this.catchReady = false;
                 this.catchFlanked = false;
                 this.shieldTicks = 0;

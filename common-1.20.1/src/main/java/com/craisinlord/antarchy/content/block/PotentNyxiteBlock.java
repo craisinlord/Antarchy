@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.state.PotentNyxiteState;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;

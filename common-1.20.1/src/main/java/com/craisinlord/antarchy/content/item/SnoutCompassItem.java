@@ -16,10 +16,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.EmptyBlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 
@@ -73,7 +74,9 @@ public final class SnoutCompassItem extends Item {
 
     public static BlockPos target(ItemStack stack, Level level) {
         CompoundTag data = stack.getTag();
-        if (data == null) return null;
+        if (data == null) {
+            return null;
+        }
         return data.contains(TARGET) && data.getString(DIMENSION).equals(level.dimension().location().toString())
                 ? BlockPos.of(data.getLong(TARGET)) : null;
     }
@@ -84,7 +87,7 @@ public final class SnoutCompassItem extends Item {
     }
 
     private static BlockState loadedState(ServerLevel level, BlockPos pos) {
-        LevelChunk chunk = (LevelChunk) level.getChunkSource().getChunk(pos.getX() >> 4, pos.getZ() >> 4, net.minecraft.world.level.chunk.ChunkStatus.FULL, false);
+        LevelChunk chunk = (LevelChunk) level.getChunkSource().getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.FULL, false);
         return chunk == null ? null : chunk.getBlockState(pos);
     }
 
@@ -168,7 +171,7 @@ public final class SnoutCompassItem extends Item {
                 int chunkIndex = sectionCursor / sections;
                 int chunkX = minChunkX + chunkIndex % width;
                 int chunkZ = minChunkZ + chunkIndex / width;
-                LevelChunk chunk = (LevelChunk) level.getChunkSource().getChunk(chunkX, chunkZ, net.minecraft.world.level.chunk.ChunkStatus.FULL, false);
+                LevelChunk chunk = (LevelChunk) level.getChunkSource().getChunk(chunkX, chunkZ, ChunkStatus.FULL, false);
                 probes++;
                 LevelChunkSection section = chunk == null ? null : chunk.getSection(level.getSectionIndexFromSectionY(sectionY));
                 if (section == null || !section.maybeHas(state -> state.is(truffled))) {

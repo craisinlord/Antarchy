@@ -1,45 +1,43 @@
 package com.craisinlord.antarchy.content.client.renderer.clouds;
 
-import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.renderpearl.api.commands.RenderPass;
-import com.mojang.renderpearl.api.pipeline.BlendFunction;
-import com.mojang.renderpearl.api.pipeline.BlendFactor;
-import com.mojang.renderpearl.api.pipeline.ColorTargetState;
-import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
-import com.mojang.renderpearl.api.vertex.VertexFormat;
-import java.util.Optional;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier;
-import com.craisinlord.antarchy.content.client.renderer.AntarchySkyDraw;
-
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ElythiaWind;
+import com.craisinlord.antarchy.content.client.renderer.AntarchySkyDraw;
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
+import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.renderpearl.api.pipeline.BlendFactor;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.DepthStencilState;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public final class ElythiaCloudRenderer {
-    private static BufferBuilder beginBuilder() {
-        return AntarchySkyDraw.begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL);
+    private static BufferBuilder beginBuilder(ByteBufferBuilder bytes) {
+        return new BufferBuilder(bytes, PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL);
     }
 
     private static RenderPipeline createCloudPipeline() {
@@ -50,7 +48,7 @@ public final class ElythiaCloudRenderer {
                 .withCull(false)
                 .withPolygonMode(original.getPolygonMode())
                 .withDepthStencilState(Optional.ofNullable(original.getDepthStencilState()).map(state ->
-                        new com.mojang.renderpearl.api.pipeline.DepthStencilState(state.depthTest(), false, state.depthBiasScaleFactor(), state.depthBiasConstant())))
+                        new DepthStencilState(state.depthTest(), false, state.depthBiasScaleFactor(), state.depthBiasConstant())))
                 .withVertexShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_cloud"))
                 .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_cloud"))
                 .withPrimitiveTopology(PrimitiveTopology.QUADS)
@@ -69,13 +67,46 @@ public final class ElythiaCloudRenderer {
     private static final int SECTION_CELLS = 32;
     private static final float CLEARING_DIM = 0.3F;
 
+    private static boolean queued;
+    @Nullable
+    private static CloudStatus queuedStatus;
+    @Nullable
+    private static Vec3 queuedCamera;
+    private static long queuedGameTime;
+    private static float queuedPartialTick;
+    private static int queuedColor;
+    private static int queuedRange;
+
     private static final Layer[] LAYERS = {
             new Layer(ElythiaCloudField.LOW, 240.0F, 0.8D, 0.0D, 0.8F, true),
             new Layer(ElythiaCloudField.MID, 320.0F, 1.2D, 20.0D, 0.8F, true),
-            new Layer(ElythiaCloudField.HIGH, 510.0F, 2.0D, 40.0D, 0.7F, false)
+            new Layer(ElythiaCloudField.HIGH, 510.0F, 2.0D, 40.0D, 0.7F, true)
     };
 
     private ElythiaCloudRenderer() {
+    }
+
+    public static void queue(CloudStatus status, Vec3 cameraPosition, long gameTime, float partialTick,
+                             int packedCloudColor, int cloudRangeChunks) {
+        queuedStatus = status;
+        queuedCamera = cameraPosition;
+        queuedGameTime = gameTime;
+        queuedPartialTick = partialTick;
+        queuedColor = packedCloudColor;
+        queuedRange = cloudRangeChunks;
+        queued = true;
+    }
+
+    public static void renderQueued(Minecraft minecraft) {
+        if (!queued) {
+            return;
+        }
+        queued = false;
+        ClientLevel level = minecraft.level;
+        if (level == null || !ElythiaSkyRenderer.shouldRender(level) || queuedStatus == null || queuedCamera == null) {
+            return;
+        }
+        render(minecraft, level, queuedStatus, queuedCamera, queuedGameTime, queuedPartialTick, queuedColor, queuedRange);
     }
 
     public static void render(Minecraft minecraft, ClientLevel level, CloudStatus status, Vec3 cameraPosition,
@@ -99,8 +130,7 @@ public final class ElythiaCloudRenderer {
         CameraRenderState camera = minecraft.gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
         float depthFar = camera.depthFar;
         Matrix4f modelView = AntarchySkyDraw.modelView();
-        Frustum frustum = new Frustum(modelView, camera.projectionMatrix);
-        frustum.prepare(0.0D, 0.0D, 0.0D);
+        FrustumIntersection frustum = new FrustumIntersection(new Matrix4f(camera.projectionMatrix).mul(modelView));
         RenderTarget target = null;
         double camX = cameraPosition.x;
         double camY = cameraPosition.y;
@@ -137,7 +167,7 @@ public final class ElythiaCloudRenderer {
         }
     }
 
-    private static void drawLayer(Layer layer, Matrix4f modelView, Vector4f color, Frustum frustum, double[] wind,
+    private static void drawLayer(Layer layer, Matrix4f modelView, Vector4f color, FrustumIntersection frustum, double[] wind,
                                   double camX, double camY, double camZ, float terrainFogEnd, float cloudRange, float depthFar,
                                   @Nullable RenderTarget target) {
         List<Section> sections = layer.sections();
@@ -145,7 +175,7 @@ public final class ElythiaCloudRenderer {
             return;
         }
         float vertical = (float) Math.abs(layer.baseY + layer.thickness() * 0.5F - camY);
-        float fogEnd = Math.max(terrainFogEnd, vertical + cloudRange);
+        float fogEnd = Math.min(Math.max(terrainFogEnd, vertical + cloudRange), horizonLimit(depthFar, vertical));
         Vector3f fogRange = new Vector3f(fogEnd * FOG_START_FRACTION, fogEnd, 0.0F);
         forEachSection(layer, sections, frustum, wind, camX, camY, camZ, Math.min(fogEnd, depthFar),
                 (section, originX, originY, originZ) -> {
@@ -158,7 +188,7 @@ public final class ElythiaCloudRenderer {
             Layer layer,
             List<ElythiaSoftCloudPass.Draw> draws,
             float visibility,
-            Frustum frustum,
+            FrustumIntersection frustum,
             double[] wind,
             double camX,
             double camY,
@@ -172,11 +202,16 @@ public final class ElythiaCloudRenderer {
             return;
         }
         float vertical = (float) Math.abs(layer.baseY + layer.thickness() * 0.5F - camY);
-        float fogEnd = Math.max(terrainFogEnd, vertical + cloudRange);
+        float fogEnd = Math.min(Math.max(terrainFogEnd, vertical + cloudRange), horizonLimit(depthFar, vertical));
         forEachSection(layer, sections, frustum, wind, camX, camY, camZ, Math.min(fogEnd, depthFar),
                 (section, originX, originY, originZ) -> draws.add(
                         new ElythiaSoftCloudPass.Draw(section.buffer(), originX, originY, originZ, fogEnd, visibility,
                                 ElythiaSoftCloudPass.NO_GROWTH_LIMIT, true)));
+    }
+
+    private static float horizonLimit(float depthFar, float vertical) {
+        float reach = depthFar * 0.9F;
+        return (float) Math.sqrt(Math.max(reach * reach - vertical * vertical, reach * reach * 0.04F));
     }
 
     private interface SectionConsumer {
@@ -186,7 +221,18 @@ public final class ElythiaCloudRenderer {
     private record Section(AntarchySkyDraw.StaticMesh buffer, float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
     }
 
-    private static void forEachSection(Layer layer, List<Section> sections, Frustum frustum, double[] wind,
+    private record SectionMesh(MeshData data, ByteBufferBuilder bytes, float minX, float minY, float minZ,
+                               float maxX, float maxY, float maxZ) {
+    }
+
+    public static void releaseAll() {
+        for (Layer layer : LAYERS) {
+            layer.release();
+        }
+        ElythiaGiantCloudRenderer.releaseAll();
+    }
+
+    private static void forEachSection(Layer layer, List<Section> sections, FrustumIntersection frustum, double[] wind,
                                        double camX, double camY, double camZ, float range, SectionConsumer consumer) {
         double span = layer.span();
         double cos = Math.cos(layer.windOffset);
@@ -200,6 +246,20 @@ public final class ElythiaCloudRenderer {
         int tileZ = Mth.floor(patternZ / span);
         float offsetY = (float) (layer.baseY - camY);
         double maxDistanceSq = (double) range * range;
+        float boundsMinX = Float.MAX_VALUE;
+        float boundsMinY = Float.MAX_VALUE;
+        float boundsMinZ = Float.MAX_VALUE;
+        float boundsMaxX = -Float.MAX_VALUE;
+        float boundsMaxY = -Float.MAX_VALUE;
+        float boundsMaxZ = -Float.MAX_VALUE;
+        for (Section section : sections) {
+            boundsMinX = Math.min(boundsMinX, section.minX());
+            boundsMinY = Math.min(boundsMinY, section.minY());
+            boundsMinZ = Math.min(boundsMinZ, section.minZ());
+            boundsMaxX = Math.max(boundsMaxX, section.maxX());
+            boundsMaxY = Math.max(boundsMaxY, section.maxY());
+            boundsMaxZ = Math.max(boundsMaxZ, section.maxZ());
+        }
 
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
@@ -208,6 +268,10 @@ public final class ElythiaCloudRenderer {
                 double tileNearX = Mth.clamp(0.0D, originX, originX + span);
                 double tileNearZ = Mth.clamp(0.0D, originZ, originZ + span);
                 if (tileNearX * tileNearX + tileNearZ * tileNearZ > maxDistanceSq) {
+                    continue;
+                }
+                if (!frustum.testAab((float) (originX + boundsMinX), offsetY + boundsMinY, (float) (originZ + boundsMinZ),
+                        (float) (originX + boundsMaxX), offsetY + boundsMaxY, (float) (originZ + boundsMaxZ))) {
                     continue;
                 }
                 for (Section section : sections) {
@@ -220,7 +284,7 @@ public final class ElythiaCloudRenderer {
                     if (nearX * nearX + nearZ * nearZ > maxDistanceSq) {
                         continue;
                     }
-                    if (!frustum.isVisible(new AABB(minX, offsetY + section.minY(), minZ, maxX, offsetY + section.maxY(), maxZ))) {
+                    if (!frustum.testAab((float) minX, offsetY + section.minY(), (float) minZ, (float) maxX, offsetY + section.maxY(), (float) maxZ)) {
                         continue;
                     }
                     consumer.accept(section, (float) originX, offsetY, (float) originZ);
@@ -229,8 +293,7 @@ public final class ElythiaCloudRenderer {
         }
     }
 
-    @Nullable
-    private static List<Section> buildSections(ElythiaCloudField field, float alpha, boolean soft) {
+    private static List<SectionMesh> buildSectionMeshes(ElythiaCloudField field, float alpha, boolean soft) {
         int n = field.size();
         float cellWidth = field.spec().cellWidth();
         float cellHeight = field.spec().cellHeight();
@@ -244,27 +307,64 @@ public final class ElythiaCloudRenderer {
         } else {
             horizontalPad = 0.0F;
             minY = -1.0F;
-            maxY = field.spec().kind() == ElythiaCloudField.Kind.WISP ? 1.0F : field.spec().maxHeight() * cellHeight + 1.0F;
+            maxY = field.spec().maxHeight() * cellHeight + 1.0F;
         }
-        List<Section> sections = new ArrayList<>();
+        List<SectionMesh> meshes = new ArrayList<>();
         try {
             for (int z0 = 0; z0 < n; z0 += SECTION_CELLS) {
                 for (int x0 = 0; x0 < n; x0 += SECTION_CELLS) {
                     int x1 = Math.min(n, x0 + SECTION_CELLS);
                     int z1 = Math.min(n, z0 + SECTION_CELLS);
-                    AntarchySkyDraw.StaticMesh buffer = soft ? buildSoftBuffer(field, x0, z0, x1, z1) : buildBuffer(field, alpha, x0, z0, x1, z1);
-                    if (buffer != null) {
-                        sections.add(new Section(buffer,
-                                x0 * cellWidth - horizontalPad, minY, z0 * cellWidth - horizontalPad,
-                                x1 * cellWidth + horizontalPad, maxY, z1 * cellWidth + horizontalPad));
+                    ByteBufferBuilder bytes = new ByteBufferBuilder(1 << 16);
+                    MeshData data;
+                    try {
+                        data = soft ? buildSoftMesh(bytes, field, x0, z0, x1, z1) : buildMesh(bytes, field, alpha, x0, z0, x1, z1);
+                    } catch (RuntimeException exception) {
+                        bytes.close();
+                        throw exception;
                     }
+                    if (data == null) {
+                        bytes.close();
+                        continue;
+                    }
+                    meshes.add(new SectionMesh(data, bytes,
+                            x0 * cellWidth - horizontalPad, minY, z0 * cellWidth - horizontalPad,
+                            x1 * cellWidth + horizontalPad, maxY, z1 * cellWidth + horizontalPad));
+                }
+            }
+        } catch (RuntimeException exception) {
+            releaseMeshes(meshes);
+            throw exception;
+        }
+        return meshes;
+    }
+
+    private static List<Section> uploadSections(List<SectionMesh> meshes) {
+        List<Section> sections = new ArrayList<>(meshes.size());
+        int uploaded = 0;
+        try {
+            for (SectionMesh mesh : meshes) {
+                uploaded++;
+                try {
+                    AntarchySkyDraw.StaticMesh buffer = AntarchySkyDraw.upload("Antarchy Elythia cloud section", mesh.data());
+                    sections.add(new Section(buffer, mesh.minX(), mesh.minY(), mesh.minZ(), mesh.maxX(), mesh.maxY(), mesh.maxZ()));
+                } finally {
+                    mesh.bytes().close();
                 }
             }
         } catch (RuntimeException exception) {
             closeSections(sections);
+            releaseMeshes(meshes.subList(uploaded, meshes.size()));
             throw exception;
         }
         return sections;
+    }
+
+    private static void releaseMeshes(List<SectionMesh> meshes) {
+        for (SectionMesh mesh : meshes) {
+            mesh.data().close();
+            mesh.bytes().close();
+        }
     }
 
     private static void closeSections(@Nullable List<Section> sections) {
@@ -277,11 +377,10 @@ public final class ElythiaCloudRenderer {
     }
 
     @Nullable
-    private static AntarchySkyDraw.StaticMesh buildBuffer(ElythiaCloudField field, float alpha, int startX, int startZ, int endX, int endZ) {
-        boolean wisp = field.spec().kind() == ElythiaCloudField.Kind.WISP;
+    private static MeshData buildMesh(ByteBufferBuilder bytes, ElythiaCloudField field, float alpha, int startX, int startZ, int endX, int endZ) {
         float cellWidth = field.spec().cellWidth();
         float cellHeight = field.spec().cellHeight();
-        BufferBuilder builder = beginBuilder();
+        BufferBuilder builder = beginBuilder(bytes);
 
             for (int z = startZ; z < endZ; z++) {
                 int x = startX;
@@ -299,71 +398,61 @@ public final class ElythiaCloudRenderer {
                     float x1 = (end + 1) * cellWidth;
                     float z0 = z * cellWidth;
                     float z1 = z0 + cellWidth;
-                    if (wisp) {
-                        quad(builder, 0.9F, alpha, 0.0F, -1.0F, 0.0F,
-                                x0, 0.0F, z0, x1, 0.0F, z0, x1, 0.0F, z1, x0, 0.0F, z1);
-                    } else {
-                        float top = height * cellHeight;
-                        quad(builder, 1.0F, alpha, 0.0F, 1.0F, 0.0F,
-                                x0, top, z0, x0, top, z1, x1, top, z1, x1, top, z0);
-                        quad(builder, 0.7F, alpha, 0.0F, -1.0F, 0.0F,
-                                x0, 0.0F, z0, x1, 0.0F, z0, x1, 0.0F, z1, x0, 0.0F, z1);
-                    }
+                    float top = height * cellHeight;
+                    quad(builder, 1.0F, alpha, 0.0F, 1.0F, 0.0F,
+                            x0, top, z0, x0, top, z1, x1, top, z1, x1, top, z0);
+                    quad(builder, 0.7F, alpha, 0.0F, -1.0F, 0.0F,
+                            x0, 0.0F, z0, x1, 0.0F, z0, x1, 0.0F, z1, x0, 0.0F, z1);
                     x = end + 1;
                 }
             }
 
-            if (!wisp) {
-                for (int z = startZ; z < endZ; z++) {
-                    for (int x = startX; x < endX; x++) {
-                        int height = field.height(x, z);
-                        if (height == 0) {
-                            continue;
-                        }
-                        float x0 = x * cellWidth;
-                        float x1 = x0 + cellWidth;
-                        float z0 = z * cellWidth;
-                        float z1 = z0 + cellWidth;
-                        float top = height * cellHeight;
+            for (int z = startZ; z < endZ; z++) {
+                for (int x = startX; x < endX; x++) {
+                    int height = field.height(x, z);
+                    if (height == 0) {
+                        continue;
+                    }
+                    float x0 = x * cellWidth;
+                    float x1 = x0 + cellWidth;
+                    float z0 = z * cellWidth;
+                    float z1 = z0 + cellWidth;
+                    float top = height * cellHeight;
 
-                        float west = field.height(x - 1, z) * cellHeight;
-                        if (west < top) {
-                            quad(builder, 0.9F, alpha, -1.0F, 0.0F, 0.0F,
-                                    x0, west, z0, x0, west, z1, x0, top, z1, x0, top, z0);
-                        }
-                        float east = field.height(x + 1, z) * cellHeight;
-                        if (east < top) {
-                            quad(builder, 0.9F, alpha, 1.0F, 0.0F, 0.0F,
-                                    x1, east, z0, x1, top, z0, x1, top, z1, x1, east, z1);
-                        }
-                        float north = field.height(x, z - 1) * cellHeight;
-                        if (north < top) {
-                            quad(builder, 0.8F, alpha, 0.0F, 0.0F, -1.0F,
-                                    x0, north, z0, x0, top, z0, x1, top, z0, x1, north, z0);
-                        }
-                        float south = field.height(x, z + 1) * cellHeight;
-                        if (south < top) {
-                            quad(builder, 0.8F, alpha, 0.0F, 0.0F, 1.0F,
-                                    x0, south, z1, x1, south, z1, x1, top, z1, x0, top, z1);
-                        }
+                    float west = field.height(x - 1, z) * cellHeight;
+                    if (west < top) {
+                        quad(builder, 0.9F, alpha, -1.0F, 0.0F, 0.0F,
+                                x0, west, z0, x0, west, z1, x0, top, z1, x0, top, z0);
+                    }
+                    float east = field.height(x + 1, z) * cellHeight;
+                    if (east < top) {
+                        quad(builder, 0.9F, alpha, 1.0F, 0.0F, 0.0F,
+                                x1, east, z0, x1, top, z0, x1, top, z1, x1, east, z1);
+                    }
+                    float north = field.height(x, z - 1) * cellHeight;
+                    if (north < top) {
+                        quad(builder, 0.8F, alpha, 0.0F, 0.0F, -1.0F,
+                                x0, north, z0, x0, top, z0, x1, top, z0, x1, north, z0);
+                    }
+                    float south = field.height(x, z + 1) * cellHeight;
+                    if (south < top) {
+                        quad(builder, 0.8F, alpha, 0.0F, 0.0F, 1.0F,
+                                x0, south, z1, x1, south, z1, x1, top, z1, x0, top, z1);
                     }
                 }
             }
 
-            MeshData mesh = builder.build();
-            if (mesh == null) {
-                return null;
-            }
-            return AntarchySkyDraw.upload("Antarchy Elythia cloud section", mesh);
+            return builder.build();
     }
 
     @Nullable
-    private static AntarchySkyDraw.StaticMesh buildSoftBuffer(ElythiaCloudField field, int startX, int startZ, int endX, int endZ) {
+    private static MeshData buildSoftMesh(ByteBufferBuilder bytes, ElythiaCloudField field, int startX, int startZ, int endX, int endZ) {
         float cellWidth = field.spec().cellWidth();
         float cellHeight = field.spec().cellHeight();
         float maxThickness = Math.max(1, field.spec().maxHeight()) * cellHeight * SOFT_VERTICAL_SPREAD;
         float puffScale = cellWidth / 6.0F;
-        BufferBuilder builder = beginBuilder();
+        float minShape = field.spec().kind() == ElythiaCloudField.Kind.WISP ? 0.7F : 0.0F;
+        BufferBuilder builder = beginBuilder(bytes);
             for (int z = startZ; z < endZ; z++) {
                 for (int x = startX; x < endX; x++) {
                     int height = field.height(x, z);
@@ -371,7 +460,7 @@ public final class ElythiaCloudRenderer {
                         continue;
                     }
                     float density = neighbourhoodDensity(field, x, z);
-                    float shapeScale = 0.45F + 0.75F * smoothstep(density);
+                    float shapeScale = Math.max(minShape, 0.45F + 0.75F * smoothstep(density));
                     float px = (x + cellHash(x, z, 0x51L)) * cellWidth;
                     float pz = (z + cellHash(x, z, 0x52L)) * cellWidth;
                     float column = height * cellHeight * SOFT_VERTICAL_SPREAD;
@@ -384,11 +473,7 @@ public final class ElythiaCloudRenderer {
                             px + halfWidth, py + halfHeight, pz + halfWidth, heightFactor);
                 }
             }
-            MeshData mesh = builder.build();
-            if (mesh == null) {
-                return null;
-            }
-            return AntarchySkyDraw.upload("Antarchy Elythia cloud section", mesh);
+            return builder.build();
     }
 
     private static void softCube(BufferBuilder builder, float x0, float y0, float z0, float x1, float y1, float z1, float height) {
@@ -479,6 +564,9 @@ public final class ElythiaCloudRenderer {
         private ElythiaCloudField field;
         @Nullable
         private List<Section> sections;
+        @Nullable
+        private CompletableFuture<List<SectionMesh>> pendingMeshes;
+        private boolean pendingMeshesSoft;
         private boolean built;
         private boolean builtSoft;
 
@@ -496,7 +584,7 @@ public final class ElythiaCloudRenderer {
         }
 
         private float thickness() {
-            return this.spec.kind() == ElythiaCloudField.Kind.WISP ? 0.0F : this.spec.maxHeight() * this.spec.cellHeight();
+            return this.spec.maxHeight() * this.spec.cellHeight();
         }
 
         private float visibility(float clearing) {
@@ -532,17 +620,51 @@ public final class ElythiaCloudRenderer {
                 }
                 this.pending = null;
             }
+            if (this.pendingMeshes == null || this.pendingMeshesSoft != wantSoft) {
+                this.discardPendingMeshes();
+                ElythiaCloudField field = this.field;
+                float alpha = this.alpha;
+                this.pendingMeshesSoft = wantSoft;
+                this.pendingMeshes = CompletableFuture.supplyAsync(() -> buildSectionMeshes(field, alpha, wantSoft));
+            }
+            if (!this.pendingMeshes.isDone()) {
+                return this.built ? this.sections : null;
+            }
+            List<SectionMesh> meshes;
+            try {
+                meshes = this.pendingMeshes.join();
+            } catch (RuntimeException exception) {
+                Antarchy.LOGGER.error("Failed to build Elythia cloud layer {}", this.spec.name(), exception);
+                meshes = null;
+            }
+            this.pendingMeshes = null;
             closeSections(this.sections);
             this.sections = null;
             this.built = true;
             this.builtSoft = wantSoft;
-            try {
-                this.sections = buildSections(this.field, this.alpha, wantSoft);
-            } catch (RuntimeException exception) {
-                Antarchy.LOGGER.error("Failed to build Elythia cloud layer {}", this.spec.name(), exception);
-                this.sections = null;
+            if (meshes != null) {
+                try {
+                    this.sections = uploadSections(meshes);
+                } catch (RuntimeException exception) {
+                    Antarchy.LOGGER.error("Failed to upload Elythia cloud layer {}", this.spec.name(), exception);
+                }
             }
             return this.sections;
+        }
+
+        private void discardPendingMeshes() {
+            if (this.pendingMeshes != null) {
+                this.pendingMeshes.thenAccept(ElythiaCloudRenderer::releaseMeshes);
+                this.pendingMeshes = null;
+            }
+        }
+
+        private void release() {
+            this.discardPendingMeshes();
+            closeSections(this.sections);
+            this.sections = null;
+            this.built = false;
+            this.builtSoft = false;
         }
     }
 }

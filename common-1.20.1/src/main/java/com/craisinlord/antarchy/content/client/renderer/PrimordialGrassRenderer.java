@@ -13,6 +13,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSets;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -21,11 +22,14 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -36,8 +40,8 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -45,12 +49,17 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 public final class PrimordialGrassRenderer {
-    private static final ResourceLocation TEXTURE = new ResourceLocation("antarchy", "block/primordial_grass");
+    private static final ResourceLocation[] TEXTURES = {
+            new ResourceLocation("antarchy", "block/primordial_grass"),
+            new ResourceLocation("antarchy", "block/primordial_grass_short"),
+            new ResourceLocation("antarchy", "block/primordial_grass_tall")
+    };
     private static final int SECTION_BLOCKS = 4096;
     private static final int EXPOSED_BIT = 1 << 12;
+    private static final int VARIANT_SHIFT = 13;
+    private static final int VARIANT_MASK = 3;
     private static final int HASH_SHIFT = PrimordialGrassLod.HASH_SHIFT;
-    private static final double DRAW_MARGIN_ENTER = 16.0D;
-    private static final double DRAW_MARGIN_KEEP = 32.0D;
+    private static final double DYNAMIC_HYSTERESIS = 8.0D;
     private static final double URGENT_NEAR_SQR = 48.0D * 48.0D;
     private static final double BEHIND_PENALTY = 4.0D;
     private static final long SWEEP_BUDGET_NANOS = 1_000_000L;
@@ -62,8 +71,14 @@ public final class PrimordialGrassRenderer {
     private static final Long2ObjectOpenHashMap<LevelChunk> SEEN_CHUNKS = new Long2ObjectOpenHashMap<>();
     private static final LongOpenHashSet DIRTY_CHUNKS = new LongOpenHashSet();
     private static final LongOpenHashSet DIRTY_SECTIONS = new LongOpenHashSet();
-    private static final LongOpenHashSet UPLOADS = new LongOpenHashSet();
+    private static final LongOpenHashSet DYNAMIC = new LongOpenHashSet();
+    private static final LongOpenHashSet DYNAMIC_REBUILDS = new LongOpenHashSet();
+    private static final TextureAtlasSprite[] SPRITES = new TextureAtlasSprite[TEXTURES.length];
+    private static final RandomSource MODEL_RANDOM = RandomSource.create();
     private static final List<GrassSection> DRAW_LIST = new ArrayList<>();
+    private static final int RESCAN_BATCH = 32;
+    private static final long[] RESCAN_KEYS = new long[RESCAN_BATCH];
+    private static final double[] RESCAN_SCORES = new double[RESCAN_BATCH];
     private static final Comparator<GrassSection> BY_DISTANCE = Comparator.comparingDouble(section -> section.sortDistance);
     private static final float[] GUST_TABLE = new float[PrimordialGrassWind.GUST_TABLE_ENTRIES * 2];
     private static final float[] TRAMPLE_POSITIONS = new float[PrimordialGrassTrample.MAX_POINTS * 4];
@@ -74,7 +89,9 @@ public final class PrimordialGrassRenderer {
 
     private static ClientLevel trackedLevel;
     private static ByteBuffer instanceBytes;
-    private static TextureAtlasSprite sprite;
+    private static boolean spritesReady;
+    private static boolean staticMode;
+    private static boolean dynamicChanged;
     private static int[] sweepOffsets = new int[0];
     private static int centerX = Integer.MIN_VALUE;
     private static int centerZ;
@@ -124,19 +141,23 @@ public final class PrimordialGrassRenderer {
     }
 
     public static void addDebugLines(List<String> lines) {
-        if (trackedLevel == null) return;
+        if (trackedLevel == null) {
+            return;
+        }
         if (staticReason != null) {
             lines.add("Primordial grass: static (" + staticReason + ")");
             return;
         }
-        if (SECTIONS.isEmpty()) return;
+        if (SECTIONS.isEmpty()) {
+            return;
+        }
         int tufts = 0;
         for (GrassSection section : SECTIONS.values()) tufts += section.count;
-        lines.add("Primordial grass: " + SECTIONS.size() + " sections, " + tufts + " tufts, "
+        lines.add("Primordial grass: " + SECTIONS.size() + " sections, " + DYNAMIC.size() + " dynamic, " + tufts + " tufts, "
                 + drawnSections + " drawn, " + occludedSections + " occluded, " + drawnVertices + " verts");
         lines.add(String.format(Locale.ROOT, "Grass time: cpu %.2f ms/frame, gpu %.2f ms, tick %.2f ms, work %.2f ms, %d queued",
                 frameNanos / 1_000_000.0D, PrimordialGrassGpuPass.gpuMillis(), tickNanos / 1_000_000.0D, workNanos / 1_000_000.0D,
-                DIRTY_CHUNKS.size() + DIRTY_SECTIONS.size() + UPLOADS.size()));
+                DIRTY_CHUNKS.size() + DIRTY_SECTIONS.size()));
     }
 
     public static void tick(Minecraft minecraft) {
@@ -144,14 +165,16 @@ public final class PrimordialGrassRenderer {
         ClientLevel level = minecraft.level;
         if (level != trackedLevel) resetLevel(minecraft, level);
         refreshMode(minecraft);
-        if (staticReason != null || level == null || minecraft.player == null || minecraft.isPaused() || tick == level.getGameTime()) return;
+        if (staticReason != null || level == null || minecraft.player == null || minecraft.isPaused() || tick == level.getGameTime()) {
+            return;
+        }
         tick = level.getGameTime();
         Camera camera = minecraft.gameRenderer.getMainCamera();
         lastEye = camera.isInitialized() ? camera.getPosition() : minecraft.player.position();
         int cx = minecraft.player.blockPosition().getX() >> 4;
         int cz = minecraft.player.blockPosition().getZ() >> 4;
         int drawDistance = AntarchySettings.primordialGrassDrawDistance();
-        int reach = Math.min(minecraft.options.getEffectiveRenderDistance() + 1, (int) Math.ceil((drawDistance + DRAW_MARGIN_KEEP) / 16.0D) + 1);
+        int reach = Math.min(minecraft.options.getEffectiveRenderDistance() + 1, (int) Math.ceil((drawDistance + DYNAMIC_HYSTERESIS) / 16.0D) + 1);
         if (cx != centerX || cz != centerZ || reach != radius) moveCenter(level, cx, cz, reach);
         long currentEyeSection = SectionPos.asLong(BlockPos.containing(lastEye));
         int quality = AntarchySettings.primordialGrassQuality();
@@ -163,6 +186,7 @@ public final class PrimordialGrassRenderer {
             updateLods();
         }
         sweep(level);
+        publishDynamic(minecraft);
         Vec3 player = minecraft.player.position();
         if (grassWithin(player, PrimordialGrassTrampleField.RANGE)) PrimordialGrassTrample.tick(level, player);
         else PrimordialGrassTrample.reset();
@@ -176,16 +200,22 @@ public final class PrimordialGrassRenderer {
         int sectionY = SectionPos.blockToSectionCoord(center.y) + random.nextInt(3) - 1;
         int sectionZ = SectionPos.blockToSectionCoord(center.z) + random.nextInt(5) - 2;
         GrassSection section = SECTIONS.get(SectionPos.asLong(sectionX, sectionY, sectionZ));
-        if (section == null || !section.exposed || section.count == 0) return false;
+        if (section == null || !section.exposed || section.count == 0) {
+            return false;
+        }
         int packed = section.packed[random.nextInt(section.count)];
-        if ((packed & EXPOSED_BIT) == 0) return false;
+        if ((packed & EXPOSED_BIT) == 0) {
+            return false;
+        }
         double x = section.sx * 16 + (packed & 15) + 0.5D;
         double y = section.sy * 16 + (packed >> 4 & 15);
         double z = section.sz * 16 + (packed >> 8 & 15) + 0.5D;
         double dx = x - center.x;
         double dy = y - center.y;
         double dz = z - center.z;
-        if (dx * dx + dy * dy + dz * dz > reach * reach) return false;
+        if (dx * dx + dy * dy + dz * dz > reach * reach) {
+            return false;
+        }
         out[0] = x;
         out[1] = y;
         out[2] = z;
@@ -206,7 +236,10 @@ public final class PrimordialGrassRenderer {
         SEEN_CHUNKS.clear();
         DIRTY_CHUNKS.clear();
         DIRTY_SECTIONS.clear();
-        UPLOADS.clear();
+        DYNAMIC.clear();
+        DYNAMIC_REBUILDS.clear();
+        dynamicChanged = false;
+        PrimordialGrassBlock.setDynamicSections(LongSets.EMPTY_SET);
         DRAW_LIST.clear();
         occludedSections = 0;
         drawnSections = 0;
@@ -224,18 +257,71 @@ public final class PrimordialGrassRenderer {
                 : PrimordialGrassGpuPass.shaderPackActive() ? "shader pack"
                 : !PrimordialGrassGpuPass.available() ? "unsupported" : null;
         staticReason = reason;
-        boolean chunkModel = reason != null;
-        if (chunkModel != PrimordialGrassBlock.usesChunkModel()) {
-            PrimordialGrassBlock.setUsesChunkModel(chunkModel);
+        boolean nowStatic = reason != null;
+        if (nowStatic != staticMode) {
+            staticMode = nowStatic;
+            dropDynamic(minecraft);
             clearSections(minecraft);
-            minecraft.levelRenderer.allChanged();
         }
-        if (chunkModel || minecraft.level == null) return;
-        TextureAtlasSprite current = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(TEXTURE);
-        if (current != sprite) {
-            sprite = current;
-            PrimordialGrassGpuPass.uploadMesh(current);
+        if (nowStatic || minecraft.level == null) {
+            return;
         }
+        refreshSprites(minecraft);
+    }
+
+    private static void refreshSprites(Minecraft minecraft) {
+        Function<ResourceLocation, TextureAtlasSprite> atlas = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
+        boolean changed = !spritesReady;
+        for (int i = 0; i < TEXTURES.length; i++) {
+            TextureAtlasSprite current = atlas.apply(TEXTURES[i]);
+            if (current != SPRITES[i]) {
+                SPRITES[i] = current;
+                changed = true;
+            }
+        }
+        if (!changed) {
+            return;
+        }
+        spritesReady = true;
+        PrimordialGrassGpuPass.setVariants(SPRITES);
+        DIRTY_SECTIONS.addAll(SECTIONS.keySet());
+    }
+
+    private static void setDynamic(GrassSection section, boolean dynamic) {
+        if (section.dynamic == dynamic) {
+            return;
+        }
+        section.dynamic = dynamic;
+        if (dynamic) DYNAMIC.add(section.key);
+        else DYNAMIC.remove(section.key);
+        DYNAMIC_REBUILDS.add(section.key);
+        dynamicChanged = true;
+    }
+
+    private static void publishDynamic(Minecraft minecraft) {
+        if (!dynamicChanged) {
+            return;
+        }
+        dynamicChanged = false;
+        PrimordialGrassBlock.setDynamicSections(DYNAMIC.isEmpty() ? LongSets.EMPTY_SET : new LongOpenHashSet(DYNAMIC));
+        LongIterator keys = DYNAMIC_REBUILDS.iterator();
+        while (keys.hasNext()) {
+            long key = keys.nextLong();
+            minecraft.levelRenderer.setSectionDirty(SectionPos.x(key), SectionPos.y(key), SectionPos.z(key));
+        }
+        DYNAMIC_REBUILDS.clear();
+    }
+
+    private static void dropDynamic(Minecraft minecraft) {
+        PrimordialGrassBlock.setDynamicSections(LongSets.EMPTY_SET);
+        LongIterator keys = DYNAMIC.iterator();
+        while (keys.hasNext()) {
+            long key = keys.nextLong();
+            minecraft.levelRenderer.setSectionDirty(SectionPos.x(key), SectionPos.y(key), SectionPos.z(key));
+        }
+        DYNAMIC.clear();
+        DYNAMIC_REBUILDS.clear();
+        dynamicChanged = false;
     }
 
     private static void moveCenter(ClientLevel level, int cx, int cz, int reach) {
@@ -276,29 +362,34 @@ public final class PrimordialGrassRenderer {
     private static void processFrameWork(ClientLevel level) {
         long start = System.nanoTime();
         workNanos = 0L;
-        boolean queued = radius >= 0 && !(DIRTY_CHUNKS.isEmpty() && DIRTY_SECTIONS.isEmpty() && UPLOADS.isEmpty());
+        boolean queued = radius >= 0 && !(DIRTY_CHUNKS.isEmpty() && DIRTY_SECTIONS.isEmpty());
         FRAME_BUDGET.refill(start, queued && urgentWorkQueued());
-        if (!queued) return;
+        if (!queued) {
+            return;
+        }
         long available = FRAME_BUDGET.available();
-        if (available <= 0L) return;
-        long deadline = start + available;
-        processUploads(deadline);
-        processRescans(level, deadline);
+        if (available <= 0L) {
+            return;
+        }
+        processRescans(level, start + available);
         workNanos = System.nanoTime() - start;
         FRAME_BUDGET.spend(workNanos);
     }
 
     private static boolean urgentWorkQueued() {
-        if (!UPLOADS.isEmpty()) return true;
         LongIterator chunks = DIRTY_CHUNKS.iterator();
         while (chunks.hasNext()) {
             long key = chunks.nextLong();
-            if (urgent(ChunkPos.getX(key), ChunkPos.getZ(key))) return true;
+            if (urgent(ChunkPos.getX(key), ChunkPos.getZ(key))) {
+                return true;
+            }
         }
         LongIterator sections = DIRTY_SECTIONS.iterator();
         while (sections.hasNext()) {
             long key = sections.nextLong();
-            if (urgent(SectionPos.x(key), SectionPos.z(key))) return true;
+            if (urgent(SectionPos.x(key), SectionPos.z(key))) {
+                return true;
+            }
         }
         return false;
     }
@@ -307,8 +398,10 @@ public final class PrimordialGrassRenderer {
         double dx = cx * 16 + 8 - lastEye.x;
         double dz = cz * 16 + 8 - lastEye.z;
         double distance = dx * dx + dz * dz;
-        if (distance < URGENT_NEAR_SQR) return true;
-        double limit = lastDrawDistance + DRAW_MARGIN_ENTER;
+        if (distance < URGENT_NEAR_SQR) {
+            return true;
+        }
+        double limit = lastDrawDistance + DYNAMIC_HYSTERESIS;
         return dx * lookX + dz * lookZ >= 0.0D && distance < limit * limit;
     }
 
@@ -319,68 +412,64 @@ public final class PrimordialGrassRenderer {
         return dx * lookX + dz * lookZ >= 0.0D || distance < URGENT_NEAR_SQR ? distance : distance * BEHIND_PENALTY;
     }
 
-    private static void processUploads(long deadline) {
-        LongIterator keys = UPLOADS.iterator();
-        while (keys.hasNext() && System.nanoTime() < deadline) {
-            GrassSection section = SECTIONS.get(keys.nextLong());
-            keys.remove();
-            if (section != null && section.tier >= 0) upload(section);
-        }
-    }
-
     private static void processRescans(ClientLevel level, long deadline) {
         while (!DIRTY_CHUNKS.isEmpty() && System.nanoTime() < deadline) {
-            long key = bestDirtyChunk();
-            DIRTY_CHUNKS.remove(key);
-            int cx = ChunkPos.getX(key);
-            int cz = ChunkPos.getZ(key);
-            if (Math.abs(cx - centerX) > radius || Math.abs(cz - centerZ) > radius) continue;
-            scanChunk(level, cx, cz);
+            int count = bestDirty(DIRTY_CHUNKS, true);
+            for (int i = 0; i < count && System.nanoTime() < deadline; i++) {
+                long key = RESCAN_KEYS[i];
+                DIRTY_CHUNKS.remove(key);
+                int cx = ChunkPos.getX(key);
+                int cz = ChunkPos.getZ(key);
+                if (Math.abs(cx - centerX) > radius || Math.abs(cz - centerZ) > radius) {
+                    continue;
+                }
+                scanChunk(level, cx, cz);
+            }
         }
         while (!DIRTY_SECTIONS.isEmpty() && System.nanoTime() < deadline) {
-            long key = bestDirtySection();
-            DIRTY_SECTIONS.remove(key);
-            int sx = SectionPos.x(key);
-            int sz = SectionPos.z(key);
-            if (Math.abs(sx - centerX) > radius || Math.abs(sz - centerZ) > radius) continue;
-            LevelChunk chunk = level.getChunkSource().getChunk(sx, sz, ChunkStatus.FULL, false);
-            if (chunk != null) scanSection(level, chunk, sx, SectionPos.y(key), sz);
-            else discardSection(key);
+            int count = bestDirty(DIRTY_SECTIONS, false);
+            for (int i = 0; i < count && System.nanoTime() < deadline; i++) {
+                long key = RESCAN_KEYS[i];
+                DIRTY_SECTIONS.remove(key);
+                int sx = SectionPos.x(key);
+                int sz = SectionPos.z(key);
+                if (Math.abs(sx - centerX) > radius || Math.abs(sz - centerZ) > radius) {
+                    continue;
+                }
+                LevelChunk chunk = level.getChunkSource().getChunk(sx, sz, ChunkStatus.FULL, false);
+                if (chunk != null) scanSection(level, chunk, sx, SectionPos.y(key), sz);
+                else discardSection(key);
+            }
         }
     }
 
-    private static long bestDirtyChunk() {
-        long best = 0L;
-        double bestScore = Double.MAX_VALUE;
-        LongIterator keys = DIRTY_CHUNKS.iterator();
+    private static int bestDirty(LongOpenHashSet dirty, boolean chunks) {
+        int count = 0;
+        LongIterator keys = dirty.iterator();
         while (keys.hasNext()) {
             long key = keys.nextLong();
-            double score = workScore(ChunkPos.getX(key), ChunkPos.getZ(key));
-            if (score < bestScore) {
-                bestScore = score;
-                best = key;
+            double score = chunks
+                    ? workScore(ChunkPos.getX(key), ChunkPos.getZ(key))
+                    : workScore(SectionPos.x(key), SectionPos.z(key));
+            if (count == RESCAN_BATCH && score >= RESCAN_SCORES[RESCAN_BATCH - 1]) {
+                continue;
             }
-        }
-        return best;
-    }
-
-    private static long bestDirtySection() {
-        long best = 0L;
-        double bestScore = Double.MAX_VALUE;
-        LongIterator keys = DIRTY_SECTIONS.iterator();
-        while (keys.hasNext()) {
-            long key = keys.nextLong();
-            double score = workScore(SectionPos.x(key), SectionPos.z(key));
-            if (score < bestScore) {
-                bestScore = score;
-                best = key;
+            int slot = count < RESCAN_BATCH ? count++ : RESCAN_BATCH - 1;
+            while (slot > 0 && RESCAN_SCORES[slot - 1] > score) {
+                RESCAN_SCORES[slot] = RESCAN_SCORES[slot - 1];
+                RESCAN_KEYS[slot] = RESCAN_KEYS[slot - 1];
+                slot--;
             }
+            RESCAN_SCORES[slot] = score;
+            RESCAN_KEYS[slot] = key;
         }
-        return best;
+        return count;
     }
 
     private static void sweep(ClientLevel level) {
-        if (sweepOffsets.length == 0) return;
+        if (sweepOffsets.length == 0) {
+            return;
+        }
         long deadline = System.nanoTime() + SWEEP_BUDGET_NANOS;
         int entries = sweepOffsets.length / 2;
         for (int i = 0; i < SWEEP_CHECKS && System.nanoTime() < deadline; i++) {
@@ -388,10 +477,14 @@ public final class PrimordialGrassRenderer {
             int cx = centerX + sweepOffsets[entry * 2];
             int cz = centerZ + sweepOffsets[entry * 2 + 1];
             long key = ChunkPos.asLong(cx, cz);
-            if (DIRTY_CHUNKS.contains(key)) continue;
+            if (DIRTY_CHUNKS.contains(key)) {
+                continue;
+            }
             LevelChunk chunk = level.getChunkSource().getChunk(cx, cz, ChunkStatus.FULL, false);
             LevelChunk known = SEEN_CHUNKS.get(key);
-            if (chunk == known) continue;
+            if (chunk == known) {
+                continue;
+            }
             if (chunk == null) {
                 SEEN_CHUNKS.remove(key);
                 removeChunkSections(level, cx, cz);
@@ -418,10 +511,14 @@ public final class PrimordialGrassRenderer {
     private static void discardSection(long key) {
         GrassSection section = SECTIONS.remove(key);
         if (section != null) {
+            setDynamic(section, false);
             section.close();
+            if (section.listed) {
+                DRAW_LIST.remove(section);
+                section.listed = false;
+            }
             lodDirty = true;
         }
-        UPLOADS.remove(key);
     }
 
     private static void scanSection(ClientLevel level, LevelChunk chunk, int sx, int sy, int sz) {
@@ -443,7 +540,9 @@ public final class PrimordialGrassRenderer {
         for (int y = 0; y < 16; y++) {
             for (int z = 0; z < 16; z++) {
                 for (int x = 0; x < 16; x++) {
-                    if (!(chunkSection.getBlockState(x, y, z).getBlock() instanceof PrimordialGrassBlock)) continue;
+                    if (!(chunkSection.getBlockState(x, y, z).getBlock() instanceof PrimordialGrassBlock)) {
+                        continue;
+                    }
                     int hash = Math.round(PrimordialGrassTrampleField.tuftHash(sx * 16 + x, sz * 16 + z) * 255.0F);
                     SCAN_PACKED[count++] = x | y << 4 | z << 8 | hash << HASH_SHIFT;
                     minY = Math.min(minY, y);
@@ -457,6 +556,7 @@ public final class PrimordialGrassRenderer {
         }
         Arrays.sort(SCAN_PACKED, 0, count);
         boolean exposed = false;
+        BlockRenderDispatcher blocks = Minecraft.getInstance().getBlockRenderer();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int i = 0; i < count; i++) {
             int packed = SCAN_PACKED[i];
@@ -466,9 +566,10 @@ public final class PrimordialGrassRenderer {
             pos.set(sx * 16 + x, sy * 16 + y, sz * 16 + z);
             BlockState state = chunkSection.getBlockState(x, y, z);
             if (level.canSeeSky(pos)) {
-                SCAN_PACKED[i] = packed | EXPOSED_BIT;
+                packed |= EXPOSED_BIT;
                 exposed = true;
             }
+            SCAN_PACKED[i] = packed | variantOf(blocks, state, pos) << VARIANT_SHIFT;
             Vec3 offset = state.getOffset(level, pos);
             SCAN_LIGHT[i] = LevelRenderer.getLightColor(level, pos);
             SCAN_OFFSETS[i * 3] = (float) offset.x;
@@ -476,7 +577,9 @@ public final class PrimordialGrassRenderer {
             SCAN_OFFSETS[i * 3 + 2] = (float) offset.z;
         }
         GrassSection section = SECTIONS.get(key);
-        if (section != null && section.matches(count)) return;
+        if (section != null && section.matches(count)) {
+            return;
+        }
         if (section == null) {
             section = new GrassSection(key, sx, sy, sz);
             SECTIONS.put(key, section);
@@ -489,14 +592,40 @@ public final class PrimordialGrassRenderer {
         section.exposed = exposed;
         section.bounds = new AABB(sx * 16 - 2, sy * 16 + minY - 1, sz * 16 - 2, sx * 16 + 18, sy * 16 + maxY + 3, sz * 16 + 18);
         lodDirty = true;
-        if (Math.sqrt(section.distanceSqr(lastEye)) <= AntarchySettings.primordialGrassDrawDistance() + DRAW_MARGIN_ENTER) {
-            assignTier(section, section.distanceSqr(lastEye));
+        double distanceSqr = section.distanceSqr(lastEye);
+        if (withinDynamic(section, distanceSqr)) {
+            setDynamic(section, true);
+            assignTier(section, distanceSqr);
             upload(section);
+            if (!section.listed) {
+                DRAW_LIST.add(section);
+                section.listed = true;
+            }
         } else {
+            setDynamic(section, false);
             section.tier = -1;
             section.releaseBuffers();
         }
-        UPLOADS.remove(key);
+    }
+
+    private static int variantOf(BlockRenderDispatcher blocks, BlockState state, BlockPos pos) {
+        MODEL_RANDOM.setSeed(state.getSeed(pos));
+        List<BakedQuad> quads = blocks.getBlockModel(state).getQuads(state, null, MODEL_RANDOM);
+        if (quads.isEmpty()) {
+            return 0;
+        }
+        TextureAtlasSprite used = quads.get(0).getSprite();
+        for (int i = 0; i < SPRITES.length; i++) {
+            if (SPRITES[i] == used) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private static boolean withinDynamic(GrassSection section, double distanceSqr) {
+        double limit = AntarchySettings.primordialGrassDrawDistance() + (section.dynamic ? DYNAMIC_HYSTERESIS : 0.0D);
+        return distanceSqr <= limit * limit;
     }
 
     private static void assignTier(GrassSection section, double distanceSqr) {
@@ -505,27 +634,34 @@ public final class PrimordialGrassRenderer {
         PrimordialGrassLod.Tier tier = tiers[section.tier];
         section.first = tier.first();
         section.vertices = tier.vertices();
-        section.instances = PrimordialGrassLod.visibleCount(section.packed, section.count, tier.keep());
+        section.instances = section.count;
     }
 
     private static void updateLods() {
-        DRAW_LIST.clear();
-        double drawDistance = AntarchySettings.primordialGrassDrawDistance();
+        clearDrawList();
         for (GrassSection section : SECTIONS.values()) {
             double distanceSqr = section.distanceSqr(lastEye);
-            double margin = section.vao != 0 ? DRAW_MARGIN_KEEP : DRAW_MARGIN_ENTER;
-            if (Math.sqrt(distanceSqr) > drawDistance + margin) {
+            if (!withinDynamic(section, distanceSqr)) {
+                setDynamic(section, false);
                 section.tier = -1;
                 section.releaseBuffers();
-                UPLOADS.remove(section.key);
                 continue;
             }
+            setDynamic(section, true);
             assignTier(section, distanceSqr);
+            if (section.vao == 0) upload(section);
             section.sortDistance = distanceSqr;
             DRAW_LIST.add(section);
-            if (section.vao == 0) UPLOADS.add(section.key);
+            section.listed = true;
         }
         DRAW_LIST.sort(BY_DISTANCE);
+    }
+
+    private static void clearDrawList() {
+        for (int i = 0; i < DRAW_LIST.size(); i++) {
+            DRAW_LIST.get(i).listed = false;
+        }
+        DRAW_LIST.clear();
     }
 
     private static void upload(GrassSection section) {
@@ -538,7 +674,7 @@ public final class PrimordialGrassRenderer {
             data.putFloat((packed & 15) + 0.5F + section.offsets[i * 3]);
             data.putFloat((packed >> 4 & 15) + section.offsets[i * 3 + 1]);
             data.putFloat((packed >> 8 & 15) + 0.5F + section.offsets[i * 3 + 2]);
-            data.put((byte) ((packed & EXPOSED_BIT) != 0 ? 255 : 0));
+            data.put((byte) (((packed & EXPOSED_BIT) != 0 ? 128 : 0) | packed >> VARIANT_SHIFT & VARIANT_MASK));
             data.put((byte) (packed >>> HASH_SHIFT));
             data.put((byte) Math.min(255, light & 0xFFFF));
             data.put((byte) Math.min(255, light >>> 16 & 0xFFFF));
@@ -554,7 +690,9 @@ public final class PrimordialGrassRenderer {
     private static boolean grassWithin(Vec3 center, double reach) {
         double limit = reach * reach;
         for (GrassSection section : SECTIONS.values()) {
-            if (section.distanceSqr(center) < limit) return true;
+            if (section.distanceSqr(center) < limit) {
+                return true;
+            }
         }
         return false;
     }
@@ -568,14 +706,20 @@ public final class PrimordialGrassRenderer {
             for (int y = sy - 2; y <= sy + 2; y++) {
                 for (int z = sz - 2; z <= sz + 2; z++) {
                     GrassSection section = SECTIONS.get(SectionPos.asLong(x, y, z));
-                    if (section == null || !section.exposed || section.distanceSqr(center) >= limit) continue;
+                    if (section == null || !section.exposed || section.distanceSqr(center) >= limit) {
+                        continue;
+                    }
                     for (int i = 0; i < section.count; i++) {
                         int packed = section.packed[i];
-                        if ((packed & EXPOSED_BIT) == 0) continue;
+                        if ((packed & EXPOSED_BIT) == 0) {
+                            continue;
+                        }
                         double dx = section.sx * 16 + (packed & 15) + 0.5D - center.x;
                         double dy = section.sy * 16 + (packed >> 4 & 15) - center.y;
                         double dz = section.sz * 16 + (packed >> 8 & 15) + 0.5D - center.z;
-                        if (dx * dx + dy * dy + dz * dz < limit) return true;
+                        if (dx * dx + dy * dy + dz * dz < limit) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -589,7 +733,9 @@ public final class PrimordialGrassRenderer {
         occludedSections = 0;
         Minecraft minecraft = Minecraft.getInstance();
         ClientLevel level = minecraft.level;
-        if (staticReason != null || level == null || level != trackedLevel) return;
+        if (staticReason != null || level == null || level != trackedLevel) {
+            return;
+        }
         long started = System.nanoTime();
         Vec3 eye = camera.getPosition();
         lastEye = eye;
@@ -597,7 +743,8 @@ public final class PrimordialGrassRenderer {
         lookX = look.x();
         lookZ = look.z();
         processFrameWork(level);
-        if (!DRAW_LIST.isEmpty() && sprite != null) {
+        publishDynamic(minecraft);
+        if (!DRAW_LIST.isEmpty() && spritesReady) {
             refreshVanillaVisibility();
             Frustum frustum = new Frustum(modelViewMatrix, projectionMatrix);
             frustum.prepare(eye.x, eye.y, eye.z);
@@ -607,8 +754,6 @@ public final class PrimordialGrassRenderer {
     }
 
     private static void drawSections(Minecraft minecraft, Vec3 eye, Frustum frustum, Matrix4f modelViewMatrix, double time, float partialTick) {
-        double drawDistance = AntarchySettings.primordialGrassDrawDistance();
-        double drawLimit = drawDistance * drawDistance;
         int trample = PrimordialGrassTrample.write(eye.x, eye.y, eye.z, partialTick, TRAMPLE_POSITIONS, TRAMPLE_MOTIONS);
         PrimordialGrassWind.ShaderFrame frame = PrimordialGrassWind.shaderFrame(time, eye.x, eye.z, GUST_TABLE);
         RenderType.cutout().setupRenderState();
@@ -617,7 +762,9 @@ public final class PrimordialGrassRenderer {
                 modelViewMatrix, minecraft.options.renderDebug);
         for (int i = 0; i < DRAW_LIST.size(); i++) {
             GrassSection section = DRAW_LIST.get(i);
-            if (section.vao == 0 || section.instances == 0 || section.distanceSqr(eye) > drawLimit || culled(section, frustum)) continue;
+            if (!section.dynamic || section.vao == 0 || section.instances == 0 || culled(section, frustum)) {
+                continue;
+            }
             PrimordialGrassGpuPass.draw(section.vao, section.first, section.vertices, section.instances,
                     (float) (section.sx * 16 - eye.x), (float) (section.sy * 16 - eye.y), (float) (section.sz * 16 - eye.z));
             drawnSections++;
@@ -638,7 +785,9 @@ public final class PrimordialGrassRenderer {
                 sodiumPresent = false;
             }
         }
-        if (!visibilityDirty || sodiumPresent || vanillaVisible == null) return;
+        if (!visibilityDirty || sodiumPresent || vanillaVisible == null) {
+            return;
+        }
         visibilityDirty = false;
         vanillaListKnown = !vanillaVisible.isEmpty();
         visibleStamp++;
@@ -679,6 +828,8 @@ public final class PrimordialGrassRenderer {
         private int instances;
         private int visibleStamp;
         private double sortDistance;
+        private boolean listed;
+        private boolean dynamic;
 
         private GrassSection(long key, int sx, int sy, int sz) {
             this.key = key;

@@ -2,13 +2,12 @@ package com.craisinlord.antarchy.content.dispenser;
 
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockSource;
+import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 
 public class VortexChargeDispenseBehavior extends DefaultDispenseItemBehavior {
     @Override

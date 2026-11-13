@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.item.ultimate;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.AntarchyItemProperties;
+import com.craisinlord.antarchy.mixins.AbstractArrowAccessor;
 import java.util.List;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.server.level.ServerLevel;
@@ -12,14 +13,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
-import com.craisinlord.antarchy.mixins.AccessorAbstractArrow;
 
 public class UltimateBowItem extends BowItem {
     private static final double VANILLA_FULL_DRAW_ARROW_DAMAGE = 6.0D;
@@ -84,7 +84,7 @@ public class UltimateBowItem extends BowItem {
 
     private static void scaleArrowDamage(AbstractArrow arrow) {
         double multiplier = AntarchySettings.ultimateBowAttackDamage() / VANILLA_FULL_DRAW_ARROW_DAMAGE;
-        arrow.setBaseDamage(((AccessorAbstractArrow) arrow).antarchy$getBaseDamage() * multiplier);
+        arrow.setBaseDamage(((AbstractArrowAccessor) arrow).antarchy$getBaseDamage() * multiplier);
     }
 
     @Override

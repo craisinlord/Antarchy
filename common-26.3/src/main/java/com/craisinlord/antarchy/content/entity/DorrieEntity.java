@@ -1,16 +1,22 @@
 package com.craisinlord.antarchy.content.entity;
 
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.menu.DorrieInventoryMenu;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -20,15 +26,21 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Entity.MoveFunction;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -37,9 +49,9 @@ import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.TryFindLiquidGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
@@ -47,20 +59,13 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
 
 public class DorrieEntity extends Animal implements GeoEntity {
     private static final Identifier CHEEP_ITEM_ID = Identifier.fromNamespaceAndPath("antarchy", "cheep");
@@ -165,7 +170,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.EntitySpawnReason spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnReason, SpawnGroupData spawnData) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.dorrieHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
@@ -418,7 +423,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
                 Vec3 mov = this.getDeltaMovement();
                 Vec3 localMotion = this.toLocal(mov);
                 this.setDeltaMovement(this.toWorld(localMotion.x * 0.91D, localMotion.y - 0.08D, localMotion.z * 0.91D));
-                this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
+                this.move(MoverType.SELF, this.getDeltaMovement());
                 return;
             }
 
@@ -439,7 +444,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
                         localMotion.y * 0.90D + vertical,
                         localMotion.z * 0.92D
                 ));
-                this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
+                this.move(MoverType.SELF, this.getDeltaMovement());
                 return;
             }
         }
@@ -448,8 +453,8 @@ public class DorrieEntity extends Animal implements GeoEntity {
     }
 
     public void applyJumpImpulseClient() {
-        float power = this.getJumpCharge() / 100f;
-        if (power > 0.05f) {
+        float power = this.getJumpCharge() / 100F;
+        if (power > 0.05F) {
             Vec3 look = this.getLookAngle();
             Vec3 flatLook = this.toLocalPlane(look).normalize();
             Vec3 current = this.toLocal(this.getDeltaMovement());
@@ -532,7 +537,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
             return;
         }
         player.openMenu(new SimpleMenuProvider(
-                (containerId, playerInventory, ignored) -> new com.craisinlord.antarchy.content.menu.DorrieInventoryMenu(containerId, playerInventory, this.inventory, this),
+                (containerId, playerInventory, ignored) -> new DorrieInventoryMenu(containerId, playerInventory, this.inventory, this),
                 this.getDisplayName()
         ));
     }

@@ -39,8 +39,8 @@
     ],
     [],
     [
-      "antarchy:primordial_plains_large_tuff_boulders",
-      "antarchy:primordial_plains_tuff_boulders",
+      "antarchy:cranberry_fields_large_tuff_boulders",
+      "antarchy:cranberry_fields_tuff_boulders",
       "antarchy:cranberry_groves",
       "antarchy:primordial_plains_flora",
       "antarchy:elythia_brown_ant_nests",
@@ -105,11 +105,6 @@
               },
               "type": "antarchy:ouranwood_deer",
               "weight": 60
-            },
-            {
-              "count": 1,
-              "type": "antarchy:caterpillar",
-              "weight": 24
             },
             {
               "count": {

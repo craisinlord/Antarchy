@@ -1,12 +1,10 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-import com.mojang.serialization.MapCodec;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,15 +13,16 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -363,7 +362,7 @@ public final class ElythiaGeologyFeature implements Feature {
     }
 
     private static boolean nearPeach(WorldGenLevel level, ChunkGenerator generator, int startX, int startZ) {
-        net.minecraft.world.level.biome.BiomeResolver resolver = generator.getBiomeSource().createUncachedResolver(level.getLevel().getChunkSource().randomState());
+        BiomeResolver resolver = generator.getBiomeSource().createUncachedResolver(level.getLevel().getChunkSource().randomState());
         int quartY = QuartPos.fromBlock(level.getSeaLevel());
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {

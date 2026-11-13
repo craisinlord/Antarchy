@@ -73,8 +73,8 @@
     ],
     [],
     [
-      "antarchy:primordial_plains_large_tuff_boulders",
-      "antarchy:primordial_plains_tuff_boulders",
+      "antarchy:cranberry_fields_large_tuff_boulders",
+      "antarchy:cranberry_fields_tuff_boulders",
       "antarchy:cranberry_groves",
       "antarchy:primordial_plains_flora",
       "antarchy:elythia_brown_ant_nests",
@@ -93,12 +93,6 @@
         "weight": 60,
         "minCount": 3,
         "maxCount": 6
-      },
-      {
-        "type": "antarchy:caterpillar",
-        "weight": 24,
-        "minCount": 1,
-        "maxCount": 1
       },
       {
         "type": "antarchy:apple_cow",

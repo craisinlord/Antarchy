@@ -2,7 +2,6 @@ package com.craisinlord.antarchy.content.command;
 
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalPunishmentType;
-import com.craisinlord.antarchy.content.entity.royal.decree.RoyalDecree;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;

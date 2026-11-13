@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.effect;
 
-import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;

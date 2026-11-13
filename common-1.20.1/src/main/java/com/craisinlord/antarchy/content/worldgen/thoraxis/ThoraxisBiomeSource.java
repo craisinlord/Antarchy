@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.stream.Stream;
@@ -208,7 +207,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     }
 
     @Override
-    public void addDebugInfo(java.util.List<String> debug, BlockPos pos, Climate.Sampler sampler) {
+    public void addDebugInfo(List<String> debug, BlockPos pos, Climate.Sampler sampler) {
         this.delegate.addDebugInfo(debug, pos, sampler);
         debug.add("Thoraxis selector: seeded vertical/region noise");
         debug.add("Thoraxis Lucid Pools: y>=" + this.lucidPoolsMinY);
@@ -237,7 +236,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
         }).toList();
     }
 
-    private record RegionalBiomeOverlay(ResourceLocation biome, double minNoise, double maxNoise) {
+    public record RegionalBiomeOverlay(ResourceLocation biome, double minNoise, double maxNoise) {
         private static final Codec<RegionalBiomeOverlay> CODEC = RecordCodecBuilder.<RegionalBiomeOverlay>create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("biome").forGetter(RegionalBiomeOverlay::biome),
                 Codec.DOUBLE.fieldOf("min_noise").forGetter(RegionalBiomeOverlay::minNoise),

@@ -4,9 +4,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Interval;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
+import net.minecraft.world.level.levelgen.densityfunction.DensityBuffer;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DensityVolume;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import net.minecraft.world.level.levelgen.synth.Noise;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public record ThoraxisTerrainFunction(DensityFunction regimeA, DensityFunction regimeB, Holder<NormalNoise> shape, Holder<NormalNoise> detail) implements DensityFunction {
     public static final MapCodec<ThoraxisTerrainFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -82,7 +87,6 @@ public record ThoraxisTerrainFunction(DensityFunction regimeA, DensityFunction r
     private static final double SPIRE_RADIUS_RANGE = 6.0D;
     private static final double FLARE_RADIUS = 5.0D;
     private static final double FLARE_HEIGHT = 16.0D;
-
 
     @Override
     public DensitySampler compileSampler(CompileContext context) {

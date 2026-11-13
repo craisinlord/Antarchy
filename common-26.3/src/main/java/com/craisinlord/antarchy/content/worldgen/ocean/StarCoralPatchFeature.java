@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -76,7 +77,7 @@ public record StarCoralPatchFeature() implements Feature {
         }
 
         List<Direction> directions = new ArrayList<>(List.of(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST));
-        Collections.shuffle(directions, new java.util.Random(random.nextLong()));
+        Collections.shuffle(directions, new Random(random.nextLong()));
 
         int branchCount = Math.min(directions.size(), 2 + random.nextInt(3));
         for (int b = 0; b < branchCount; b++) {

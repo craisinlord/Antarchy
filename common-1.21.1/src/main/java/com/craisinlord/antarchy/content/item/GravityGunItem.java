@@ -1,9 +1,10 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
@@ -14,22 +15,22 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -37,15 +38,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -55,8 +57,6 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DataTickets;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class GravityGunItem extends Item implements GeoItem {
@@ -187,11 +187,11 @@ public class GravityGunItem extends Item implements GeoItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<net.minecraft.network.chat.Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(net.minecraft.network.chat.Component.translatable("tooltip.antarchy.gravity_gun.primary").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(net.minecraft.network.chat.Component.translatable("tooltip.antarchy.gravity_gun.secondary").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(net.minecraft.network.chat.Component.translatable("tooltip.antarchy.gravity_gun.scroll").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(net.minecraft.network.chat.Component.translatable("tooltip.antarchy.gravity_gun.blacklist").withStyle(ChatFormatting.DARK_GRAY));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.gravity_gun.primary").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.gravity_gun.secondary").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.gravity_gun.scroll").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.gravity_gun.blacklist").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
@@ -229,7 +229,7 @@ public class GravityGunItem extends Item implements GeoItem {
             private AnimatedHeldItemRenderer<GravityGunItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+            public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
                 }
@@ -550,7 +550,7 @@ public class GravityGunItem extends Item implements GeoItem {
     }
 
     private static UUID getHeldTargetId(ItemStack stack) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return tag.hasUUID(HELD_TARGET_UUID_TAG) ? tag.getUUID(HELD_TARGET_UUID_TAG) : null;
     }
 
@@ -559,7 +559,7 @@ public class GravityGunItem extends Item implements GeoItem {
     }
 
     public static double getHeldDistance(ItemStack stack) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         double maxDistance = Math.max(MIN_HOLD_DISTANCE, AntarchySettings.gravityGunMaxHoldDistance());
         if (!tag.contains(HELD_DISTANCE_TAG)) {
             return Mth.clamp(DEFAULT_HOLD_DISTANCE, MIN_HOLD_DISTANCE, maxDistance);
@@ -569,17 +569,17 @@ public class GravityGunItem extends Item implements GeoItem {
     }
 
     private static void setHeldTarget(ItemStack stack, UUID targetId) {
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putUUID(HELD_TARGET_UUID_TAG, targetId));
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putUUID(HELD_TARGET_UUID_TAG, targetId));
     }
 
     private static void setHeldDistance(ItemStack stack, double distance) {
         double maxDistance = Math.max(MIN_HOLD_DISTANCE, AntarchySettings.gravityGunMaxHoldDistance());
         double clampedDistance = Mth.clamp(distance, MIN_HOLD_DISTANCE, maxDistance);
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putDouble(HELD_DISTANCE_TAG, clampedDistance));
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putDouble(HELD_DISTANCE_TAG, clampedDistance));
     }
 
     private static void clearHeldTarget(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.remove(HELD_TARGET_UUID_TAG);
             tag.remove(HELD_DISTANCE_TAG);
         });
@@ -681,14 +681,14 @@ public class GravityGunItem extends Item implements GeoItem {
     }
 
     private void clearLegacyAnimationData(ItemStack stack) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (!tag.contains("antarchy.gravity_gun_anim_active")
                 && !tag.contains("antarchy.gravity_gun_anim_target_active")
                 && !tag.contains("antarchy.gravity_gun_anim_transition_ticks")) {
             return;
         }
 
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, customData -> {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, customData -> {
             customData.remove("antarchy.gravity_gun_anim_active");
             customData.remove("antarchy.gravity_gun_anim_target_active");
             customData.remove("antarchy.gravity_gun_anim_transition_ticks");

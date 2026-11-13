@@ -3,14 +3,13 @@ package com.craisinlord.antarchy.fabric.client;
 import com.craisinlord.antarchy.fabric.AntarchyConfigModuleFabric;
 import com.craisinlord.antarchy.fabric.AntarchyConfigModuleFabric.ConfigSection;
 import com.craisinlord.antarchy.fabric.AntarchyConfigModuleFabric.SettingBinding;
+import java.util.EnumMap;
+import java.util.Map;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 public final class AntarchyClothConfigScreenBuilder {
     private AntarchyClothConfigScreenBuilder() {

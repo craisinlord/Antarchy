@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -23,8 +24,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 
-import java.util.function.Supplier;
-
 public class UpwardFallingBlockEntity extends Entity {
 
     public static Supplier<EntityType<UpwardFallingBlockEntity>> TYPE;
@@ -32,17 +31,17 @@ public class UpwardFallingBlockEntity extends Entity {
     private static final EntityDataAccessor<BlockState> DATA_BLOCK_STATE =
             SynchedEntityData.defineId(UpwardFallingBlockEntity.class, EntityDataSerializers.BLOCK_STATE);
 
-    private static final double RISE_ACCEL = 0.04;
-    private static final double DRAG       = 0.98;
+    private static final double RISE_ACCEL = 0.04D;
+    private static final double DRAG       = 0.98D;
     private static final int    MAX_TICKS  = 200;
     private static final int    MAX_LIVE_PER_LEVEL = 200;
-    private static final double MIN_TRAVEL_FOR_DAMAGE = 1.5;
+    private static final double MIN_TRAVEL_FOR_DAMAGE = 1.5D;
 
     private static final Object2IntOpenHashMap<ResourceKey<Level>> LIVE_COUNT = new Object2IntOpenHashMap<>();
 
     public int time = 0;
     private boolean breaksOnLeaves = true;
-    private double distanceTraveled = 0.0;
+    private double distanceTraveled = 0.0D;
     private boolean counted = false;
 
     public UpwardFallingBlockEntity(EntityType<UpwardFallingBlockEntity> type, Level level) {
@@ -91,7 +90,7 @@ public class UpwardFallingBlockEntity extends Entity {
         UpwardFallingBlockEntity entity = new UpwardFallingBlockEntity(TYPE.get(), serverLevel);
         entity.entityData.set(DATA_BLOCK_STATE, state);
         entity.breaksOnLeaves = breaksOnLeaves;
-        entity.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        entity.setPos(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
         if (serverLevel.addFreshEntity(entity)) {
             entity.counted = true;
             LIVE_COUNT.addTo(serverLevel.dimension(), 1);
@@ -125,12 +124,14 @@ public class UpwardFallingBlockEntity extends Entity {
         }
 
         double beforeY = getY();
-        setDeltaMovement(getDeltaMovement().add(0.0, getRiseAccel(), 0.0));
+        setDeltaMovement(getDeltaMovement().add(0.0D, getRiseAccel(), 0.0D));
         setPos(getX(), getY() + getDeltaMovement().y, getZ());
         setDeltaMovement(getDeltaMovement().scale(DRAG));
-        distanceTraveled += Math.max(0.0, getY() - beforeY);
+        distanceTraveled += Math.max(0.0D, getY() - beforeY);
 
-        if (level().isClientSide()) return;
+        if (level().isClientSide()) {
+            return;
+        }
 
         time++;
         if (time > MAX_TICKS || getY() >= level().getMaxY() + 1) {
@@ -235,6 +236,8 @@ public class UpwardFallingBlockEntity extends Entity {
         return false;
     }
 
-    @Override public boolean isPickable() { return false; }
+    @Override public boolean isPickable() {
+        return false;
+    }
     @Override public boolean isPushable()  { return false; }
 }

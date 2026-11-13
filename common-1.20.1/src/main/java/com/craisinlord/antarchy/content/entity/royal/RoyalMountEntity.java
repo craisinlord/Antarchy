@@ -1,11 +1,13 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
+import com.craisinlord.antarchy.compat.entity.EntityReach;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.anthology.beam.BeamController;
 import com.craisinlord.anthology.beam.BeamOwner;
 import com.craisinlord.anthology.beam.BeamSettings;
 import com.craisinlord.anthology.beam.BeamTerrainMode;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -50,6 +52,7 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
@@ -61,7 +64,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import java.util.UUID;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -72,8 +74,8 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntity, FlyingAnimal, BeamOwner {
@@ -637,7 +639,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     }
 
     @Override
-    public boolean canMate(net.minecraft.world.entity.animal.Animal other) {
+    public boolean canMate(Animal other) {
         return false;
     }
 
@@ -986,9 +988,15 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             return ACTION_NONE;
         }
         float roll = this.random.nextFloat() * total;
-        if ((roll -= signature) < 0.0F) return ACTION_SIGNATURE;
-        if ((roll -= beam) < 0.0F) return ACTION_BEAM;
-        if ((roll -= bite) < 0.0F) return ACTION_BITE;
+        if ((roll -= signature) < 0.0F) {
+            return ACTION_SIGNATURE;
+        }
+        if ((roll -= beam) < 0.0F) {
+            return ACTION_BEAM;
+        }
+        if ((roll -= bite) < 0.0F) {
+            return ACTION_BITE;
+        }
         return ACTION_SPIT;
     }
 
@@ -1143,13 +1151,21 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         return this.position().add(0.0D, 1.05D * scale, 0.0D).add(forward.scale(1.75D * scale)).add(side.scale((head - 1) * 0.85D * scale));
     }
 
-    public int getBeamHead() { return this.entityData.get(BEAM_HEAD); }
-    public boolean isFiringBeam() { return this.entityData.get(BEAM_ACTIVE); }
+    public int getBeamHead() {
+        return this.entityData.get(BEAM_HEAD);
+    }
+    public boolean isFiringBeam() {
+        return this.entityData.get(BEAM_ACTIVE);
+    }
     public Vec3 getBeamEndPosition() {
         return this.entityData.get(HAS_BEAM_END) ? new Vec3(this.entityData.get(BEAM_END_X), this.entityData.get(BEAM_END_Y), this.entityData.get(BEAM_END_Z)) : null;
     }
-    public RoyalBeamElement getBeamElement() { return RoyalBeamElement.GENERIC; }
-    public BeamController beamController() { return this.beamController; }
+    public RoyalBeamElement getBeamElement() {
+        return RoyalBeamElement.GENERIC;
+    }
+    public BeamController beamController() {
+        return this.beamController;
+    }
     private void setBeamEndPosition(@Nullable Vec3 position) {
         this.entityData.set(HAS_BEAM_END, position != null);
         if (position != null) {
@@ -1313,7 +1329,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             return null;
         }
         Vec3 eye = player.getEyePosition();
-        Vec3 end = eye.add(player.getViewVector(1.0F).scale(com.craisinlord.antarchy.compat.entity.EntityReach.entityInteractionRange(player) + extraReach));
+        Vec3 end = eye.add(player.getViewVector(1.0F).scale(EntityReach.entityInteractionRange(player) + extraReach));
         RoyalMountEntity best = null;
         double bestDistance = Double.MAX_VALUE;
         for (RoyalMountEntity mount : player.level().getEntitiesOfClass(RoyalMountEntity.class, player.getBoundingBox().inflate(40.0D),

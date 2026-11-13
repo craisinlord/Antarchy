@@ -3,10 +3,12 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.util.Mth;
 import net.minecraft.util.Interval;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
 
 public record ElythiaShelfLip(DensityFunction argument, DensityFunction mask, DensityFunction lift, DensityFunction phase, DensityFunction step, DensityFunction riser, DensityFunction warp, double tilt, double minOffset, double maxOffset, double minOverhang, double maxOverhang, double minThickness, double maxThickness, double minMask, double maxRiser) implements DensityFunction {
     public static final MapCodec<ElythiaShelfLip> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -68,12 +70,14 @@ public record ElythiaShelfLip(DensityFunction argument, DensityFunction mask, De
     }
 
     @Override
-    public int domainAxes() { return DensityFunction.ALL_AXES; }
+    public int domainAxes() {
+        return DensityFunction.ALL_AXES;
+    }
 
     @Override
-    public MapCodec<ElythiaShelfLip> codec() { return CODEC; }
-
-
+    public MapCodec<ElythiaShelfLip> codec() {
+        return CODEC;
+    }
 
     private static final class Runtime implements ElythiaField {
         private final ElythiaField argument;
@@ -115,7 +119,9 @@ public record ElythiaShelfLip(DensityFunction argument, DensityFunction mask, De
 
         public double compute(ElythiaField.Point context) {
             Column column = this.column(context);
-            if (column.gap() <= 0.0D) return 0.0D;
+            if (column.gap() <= 0.0D) {
+                return 0.0D;
+            }
             double weight = Mth.clamp((context.blockY() - (column.topY() - column.thickness())) / RAMP, 0.0D, 1.0D);
             return weight * column.gap();
         }
@@ -126,7 +132,9 @@ public record ElythiaShelfLip(DensityFunction argument, DensityFunction mask, De
             long key = ChunkPos.pack(x, z);
             int index = (x & MASK) << BITS | (z & MASK);
             Column column = this.columns[index];
-            if (column != null && column.key() == key) return column;
+            if (column != null && column.key() == key) {
+                return column;
+            }
             column = this.buildColumn(context, key);
             this.columns[index] = column;
             return column;
@@ -153,7 +161,9 @@ public record ElythiaShelfLip(DensityFunction argument, DensityFunction mask, De
             double overhang = (this.minOverhang + (this.maxOverhang - this.minOverhang) * stepScale) * fade;
             double anchor = top - ANCHOR_DROP / BLOCKS_PER_OFFSET;
             double distance = shelf.blended() >= anchor ? 0.0D : this.anchorDistance(context, overhang, anchor);
-            if (distance < 0.0D) return new Column(key, 0.0D, 0.0D, 0.0D);
+            if (distance < 0.0D) {
+                return new Column(key, 0.0D, 0.0D, 0.0D);
+            }
             double extent = overhang <= 0.0D ? 1.0D : 1.0D - distance / overhang;
             double taper = Mth.smoothstep((float) extent);
             double raised = gap * taper;
@@ -177,7 +187,9 @@ public record ElythiaShelfLip(DensityFunction argument, DensityFunction mask, De
         private boolean reaches(ElythiaField.Point context, double underside) {
             double offset = this.argument.compute(context);
             double mask = this.mask.compute(context);
-            if (mask <= 0.0D) return offset >= underside;
+            if (mask <= 0.0D) {
+                return offset >= underside;
+            }
             return ElythiaShelfTerrace.sample(context, offset, mask, this.lift, this.phase, this.step, this.riser, this.warp,
                     this.tilt, this.minOffset, this.maxOffset).blended() >= underside;
         }

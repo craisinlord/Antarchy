@@ -1,17 +1,22 @@
 package com.craisinlord.antarchy.content.item.ultimate;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.compat.item.WeaponAttributes;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import java.util.function.DoubleSupplier;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,11 +40,11 @@ public class UtlimateShovelItem extends ShovelItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
-        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot != EquipmentSlot.MAINHAND) {
             return super.getDefaultAttributeModifiers(slot);
         }
-        return com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (float) this.attackDamage.getAsDouble(), (float) AntarchySettings.ultimateShovelAttackSpeed()).build();
+        return WeaponAttributes.base(this.tier, (float) this.attackDamage.getAsDouble(), (float) AntarchySettings.ultimateShovelAttackSpeed()).build();
     }
 
     @Override
@@ -89,7 +94,6 @@ public class UtlimateShovelItem extends ShovelItem {
         }
         return result;
     }
-
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {

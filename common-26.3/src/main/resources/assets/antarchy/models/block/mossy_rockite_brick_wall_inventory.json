@@ -1,7 +1,7 @@
 {
-  "parent": "minecraft:block/wall_inventory",
+  "parent": "antarchy:block/tinted/wall_inventory_overlay",
   "textures": {
-    "wall": "antarchy:block/mossy_rockite_bricks"
+    "wall": "antarchy:block/mossy_rockite_bricks",
+    "overlay": "antarchy:block/mossy_rockite_bricks_overlay"
   }
 }
-

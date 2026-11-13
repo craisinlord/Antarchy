@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -131,7 +132,7 @@ public final class AntTransitClientState {
     }
 
     private static boolean loaded(Minecraft minecraft, LocalPlayer player) {
-        if (minecraft.screen instanceof net.minecraft.client.gui.screens.LevelLoadingScreen) {
+        if (minecraft.screen instanceof LevelLoadingScreen) {
             return false;
         }
         BlockPos pos = player.blockPosition();

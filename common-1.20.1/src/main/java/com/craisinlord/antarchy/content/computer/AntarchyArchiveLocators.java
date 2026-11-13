@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
 import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGrid;
 import com.craisinlord.antos.api.archive.ArchiveLocatorRegistry;
+import java.util.Comparator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -29,7 +30,7 @@ public final class AntarchyArchiveLocators {
             AABB searchArea = AABB.ofSize(origin.getCenter(), 1_024.0D, 1_024.0D, 1_024.0D);
             return level.getEntitiesOfClass(BrutalflyEntity.class, searchArea, BrutalflyEntity::isAlive)
                     .stream()
-                    .min(java.util.Comparator.comparingDouble(entity -> entity.distanceToSqr(origin.getCenter())))
+                    .min(Comparator.comparingDouble(entity -> entity.distanceToSqr(origin.getCenter())))
                     .map(entity -> entity.blockPosition())
                     .orElse(null);
         });

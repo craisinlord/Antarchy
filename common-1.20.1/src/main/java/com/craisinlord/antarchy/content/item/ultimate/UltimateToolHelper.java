@@ -248,7 +248,6 @@ public final class UltimateToolHelper {
         }
     }
 
-    
     public static void broadcastAreaMiningProgress(ServerPlayer player, ServerLevel level, BlockPos origin, int stage) {
         ItemStack stack = player.getMainHandItem();
         if (stack.getItem() instanceof GiantFryingPanItem) {
@@ -297,10 +296,18 @@ public final class UltimateToolHelper {
     }
 
     private static ToolKind toolKindOf(Item item) {
-        if (item instanceof UltimatePickaxeItem) return ToolKind.PICKAXE;
-        if (item instanceof UltimateAxeItem) return ToolKind.AXE;
-        if (item instanceof UtlimateShovelItem) return ToolKind.SHOVEL;
-        if (item instanceof UltimateHoeItem) return ToolKind.HOE;
+        if (item instanceof UltimatePickaxeItem) {
+            return ToolKind.PICKAXE;
+        }
+        if (item instanceof UltimateAxeItem) {
+            return ToolKind.AXE;
+        }
+        if (item instanceof UtlimateShovelItem) {
+            return ToolKind.SHOVEL;
+        }
+        if (item instanceof UltimateHoeItem) {
+            return ToolKind.HOE;
+        }
         return null;
     }
 
@@ -430,13 +437,12 @@ public final class UltimateToolHelper {
         };
     }
 
-    
     private static Direction resolveMiningFace(ServerPlayer player, BlockPos pos) {
         Vec3 eye = player.getEyePosition(1.0F);
         Vec3 blockCenter = Vec3.atCenterOf(pos);
         Vec3 delta = eye.subtract(blockCenter);
 
-        if (delta.lengthSqr() < 1.0E-4) {
+        if (delta.lengthSqr() < 1.0E-4D) {
             return player.getDirection().getOpposite();
         }
 

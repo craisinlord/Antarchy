@@ -22,7 +22,9 @@ public abstract class KingsTreeLocateCommandMixin {
             ResourceOrTagKeyArgument.Result<Structure> requestedStructure,
             CallbackInfoReturnable<Integer> callback) {
         boolean isKingsTree = requestedStructure.unwrap().map(KingsTreeGrid.STRUCTURE_KEY::equals, tag -> false);
-        if (!isKingsTree || !source.getLevel().dimension().equals(KingsTreeGrid.ELYTHIA)) return;
+        if (!isKingsTree || !source.getLevel().dimension().equals(KingsTreeGrid.ELYTHIA)) {
+            return;
+        }
         BlockPos origin = BlockPos.containing(source.getPosition());
         BlockPos target = KingsTreeGrid.nearestTreeCenter(origin);
         Holder.Reference<Structure> holder = source.getLevel().registryAccess().registryOrThrow(Registries.STRUCTURE)

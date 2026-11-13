@@ -2,14 +2,19 @@ package com.craisinlord.antarchy.content.item.ultimate;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.AntarchyItemProperties;
+import com.craisinlord.antarchy.mixins.AbstractArrowAccessor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,28 +22,22 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.component.ChargedProjectiles;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import com.craisinlord.antarchy.mixins.AccessorAbstractArrow;
 
 public class UltimateCrossbowItem extends CrossbowItem {
     private static final int MAX_ARROWS = 16;
@@ -82,22 +81,32 @@ public class UltimateCrossbowItem extends CrossbowItem {
 
     @Override
     public boolean releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeLeft) {
-        if (!(livingEntity instanceof Player player)) return false;
-        if (CrossbowItem.isCharged(stack)) return false;
+        if (!(livingEntity instanceof Player player)) {
+            return false;
+        }
+        if (CrossbowItem.isCharged(stack)) {
+            return false;
+        }
 
         int useTicks = getUseDuration(stack, livingEntity) - timeLeft;
         int maxTicks = getAdjustedChargeDuration(stack, livingEntity);
 
         int arrowsToLoad = Mth.clamp(
                 (int) Math.floor((double) useTicks / maxTicks * MAX_ARROWS), 0, MAX_ARROWS);
-        if (arrowsToLoad == 0) return false;
+        if (arrowsToLoad == 0) {
+            return false;
+        }
 
         ItemStack ammoType = player.getProjectile(stack);
-        if (ammoType.isEmpty()) return false;
+        if (ammoType.isEmpty()) {
+            return false;
+        }
 
         int available = player.isCreative() ? MAX_ARROWS : countMatchingArrows(player, ammoType);
         int toLoad = Math.min(arrowsToLoad, available);
-        if (toLoad == 0) return false;
+        if (toLoad == 0) {
+            return false;
+        }
 
         if (!player.isCreative()) {
             consumeArrows(player, ammoType, toLoad);
@@ -116,7 +125,9 @@ public class UltimateCrossbowItem extends CrossbowItem {
 
     private void fireOneShot(Level level, Player player, InteractionHand hand, ItemStack stack) {
         List<ItemStack> all = getLoadedProjectiles(stack, player.registryAccess());
-        if (all.isEmpty()) return;
+        if (all.isEmpty()) {
+            return;
+        }
 
         ItemStack arrow = all.remove(0);
         List<ItemStack> toFire = new ArrayList<>();
@@ -150,7 +161,7 @@ public class UltimateCrossbowItem extends CrossbowItem {
 
     private static void scaleArrowDamage(AbstractArrow arrow) {
         double multiplier = AntarchySettings.ultimateCrossbowAttackDamage() / VANILLA_CROSSBOW_ARROW_DAMAGE;
-        arrow.setBaseDamage(((AccessorAbstractArrow) arrow).antarchy$getBaseDamage() * multiplier);
+        arrow.setBaseDamage(((AbstractArrowAccessor) arrow).antarchy$getBaseDamage() * multiplier);
     }
 
     @Override
@@ -237,7 +248,9 @@ public class UltimateCrossbowItem extends CrossbowItem {
         }
         for (int i = 0; i < player.getInventory().getNonEquipmentItems().size() && remaining > 0; i++) {
             ItemStack slot = player.getInventory().getNonEquipmentItems().get(i);
-            if (remaining <= 0) break;
+            if (remaining <= 0) {
+                break;
+            }
             if (ItemStack.isSameItemSameComponents(slot, ammoType)) {
                 int take = Math.min(remaining, slot.getCount());
                 slot.shrink(take);

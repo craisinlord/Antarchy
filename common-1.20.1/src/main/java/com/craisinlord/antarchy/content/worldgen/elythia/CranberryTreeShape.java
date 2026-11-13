@@ -23,8 +23,8 @@ final class CranberryTreeShape {
         int forkY = 3 + random.nextInt(2);
         for (int y = 0; y <= height - 4; y++) {
             double t = y / (double) (height - 4);
-            int forward = (int) Math.round(Math.sin(t * Math.PI * 0.9) * 1.8);
-            int lateral = (int) Math.round(Math.sin(t * Math.PI * 1.6) * 0.9);
+            int forward = (int) Math.round(Math.sin(t * Math.PI * 0.9D) * 1.8D);
+            int lateral = (int) Math.round(Math.sin(t * Math.PI * 1.6D) * 0.9D);
             BlockPos pos = origin.above(y).relative(lean, forward).relative(side, lateral);
             connect(logs, previous, pos);
             if (y == forkY) fork = pos;
@@ -53,7 +53,9 @@ final class CranberryTreeShape {
         while (!frontier.isEmpty()) {
             BlockPos pos = frontier.removeFirst();
             int distance = distances.get(pos) + 1;
-            if (distance > 6) continue;
+            if (distance > 6) {
+                continue;
+            }
             for (Direction direction : Direction.values()) {
                 BlockPos next = pos.relative(direction);
                 if (leaves.contains(next) && !distances.containsKey(next)) {
@@ -85,13 +87,17 @@ final class CranberryTreeShape {
 
     private static void addFan(Set<BlockPos> leaves, BlockPos center, Direction forward, Direction side, int radius, int top, int minimumY) {
         for (int y = -1; y <= 2; y++) {
-            double length = radius - (y == 2 ? 1.3 : y == 1 ? 0.5 : y == -1 ? 0.7 : 0);
-            double width = y == 2 ? 1.4 : y == -1 ? 1.7 : 2.3;
+            double length = radius - (y == 2 ? 1.3D : y == 1 ? 0.5D : y == -1 ? 0.7D : 0);
+            double width = y == 2 ? 1.4D : y == -1 ? 1.7D : 2.3D;
             for (int u = -radius; u <= radius; u++) {
-                double sweep = Math.max(0, u) * 0.25;
+                double sweep = Math.max(0, u) * 0.25D;
                 for (int v = -3; v <= 3; v++) {
-                    if (u * u / (length * length) + (v - sweep) * (v - sweep) / (width * width) > 1.12) continue;
-                    if (u < -1 && v == 0 && y <= 0) continue;
+                    if (u * u / (length * length) + (v - sweep) * (v - sweep) / (width * width) > 1.12D) {
+                        continue;
+                    }
+                    if (u < -1 && v == 0 && y <= 0) {
+                        continue;
+                    }
                     BlockPos pos = center.relative(forward, u).relative(side, v).above(y);
                     if (pos.getY() <= top && pos.getY() >= minimumY) leaves.add(pos);
                 }
@@ -103,7 +109,9 @@ final class CranberryTreeShape {
         for (int sign : new int[] {-1, 1}) {
             BlockPos anchor = center.relative(forward, (sign < 0 ? 1 : 1 + random.nextInt(2))).relative(side, sign * 2);
             while (!leaves.contains(anchor) && anchor.getY() > center.getY() - 1) anchor = anchor.below();
-            if (!leaves.contains(anchor)) continue;
+            if (!leaves.contains(anchor)) {
+                continue;
+            }
             int length = sign < 0 ? 4 : 2 + random.nextInt(2);
             for (int down = 1; down <= length; down++) {
                 BlockPos pos = anchor.below(down);

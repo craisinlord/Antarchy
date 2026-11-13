@@ -4,8 +4,8 @@ import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.util.ARGB;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
@@ -22,12 +22,18 @@ public final class DorrieJumpHudRenderer {
     public static void render(GuiGraphicsExtractor guiGraphics) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null || mc.screen != null || player.isDeadOrDying()) return;
+        if (player == null || mc.screen != null || player.isDeadOrDying()) {
+            return;
+        }
 
-        if (!(player.getVehicle() instanceof DorrieEntity dorrie)) return;
+        if (!(player.getVehicle() instanceof DorrieEntity dorrie)) {
+            return;
+        }
 
         int charge = dorrie.getJumpCharge();
-        if (charge <= 0) return;
+        if (charge <= 0) {
+            return;
+        }
 
         int width = mc.getWindow().getGuiScaledWidth();
         int height = mc.getWindow().getGuiScaledHeight();

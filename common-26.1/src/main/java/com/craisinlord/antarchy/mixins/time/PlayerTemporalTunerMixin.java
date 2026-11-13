@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.mixins.time;
 
-import com.craisinlord.anthology.time.TimeDilationMath;
 import com.craisinlord.antarchy.content.item.TemporalTunerAccess;
+import com.craisinlord.anthology.time.TimeDilationMath;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

@@ -5,7 +5,6 @@ import com.craisinlord.antarchy.content.block.SeashellBlock;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -14,6 +13,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -255,7 +255,7 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         if (!this.trySaveLootTable(tag)) {
-            net.minecraft.world.ContainerHelper.saveAllItems(tag, this.items, registries);
+            ContainerHelper.saveAllItems(tag, this.items, registries);
         }
         tag.putBoolean("VisualOpen", this.visualOpen);
         tag.putBoolean("VisualInitialized", this.initializedVisualState);
@@ -279,7 +279,7 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
         super.loadAdditional(tag, registries);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         if (!this.tryLoadLootTable(tag) && tag.contains("Items")) {
-            net.minecraft.world.ContainerHelper.loadAllItems(tag, this.items, registries);
+            ContainerHelper.loadAllItems(tag, this.items, registries);
         }
         this.visualOpen = tag.getBoolean("VisualOpen");
         this.initializedVisualState = tag.getBoolean("VisualInitialized");

@@ -23,10 +23,10 @@ public record ElythiaRiverCarveFunction(
             ).apply(instance, ElythiaRiverCarveFunction::new)
     );
 
-    private static final double EROSION_THRESHOLD = 0.70;
-    private static final double CHANNEL_HALF_WIDTH = 0.08;
-    private static final double CHANNEL_DEPTH = 0.35;
-    private static final double BASE_EROSION_FACTOR = -0.06;
+    private static final double EROSION_THRESHOLD = 0.70D;
+    private static final double CHANNEL_HALF_WIDTH = 0.08D;
+    private static final double CHANNEL_DEPTH = 0.35D;
+    private static final double BASE_EROSION_FACTOR = -0.06D;
 
     private static double carve(double erosionVal, double ridgesVal) {
         double base = BASE_EROSION_FACTOR * erosionVal;
@@ -34,7 +34,7 @@ public record ElythiaRiverCarveFunction(
         if (erosionVal > EROSION_THRESHOLD) {
             double dist = Math.abs(ridgesVal);
             if (dist < CHANNEL_HALF_WIDTH) {
-                double t = 1.0 - (dist / CHANNEL_HALF_WIDTH);
+                double t = 1.0D - (dist / CHANNEL_HALF_WIDTH);
                 double channelness = t * t;
                 return base - channelness * CHANNEL_DEPTH;
             }

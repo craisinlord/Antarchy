@@ -1,35 +1,43 @@
 package com.craisinlord.antarchy.content.entity.glimmer;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
+import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
 import com.craisinlord.antarchy.content.weather.ElythiaEvent;
 import com.craisinlord.antarchy.content.weather.ElythiaEvents;
-import com.craisinlord.antarchy.Antarchy;
-import net.minecraft.network.chat.Component;
+import java.util.Locale;
+import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.SectionPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -41,13 +49,16 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import java.util.function.Predicate;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -450,7 +461,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new GlimmerFollowOwnerGoal(this, this.getVariant().getBehavior().followSpeedModifier()));
         this.getVariant().getBehavior().registerGoals(this);
     }
@@ -491,7 +502,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             return this.tameWithSpiritApple(player, hand, stack);
         }
 
-        if (this.isTame() && this.isOwnedBy(player) && stack.is(net.minecraft.world.item.Items.GLASS_BOTTLE)) {
+        if (this.isTame() && this.isOwnedBy(player) && stack.is(Items.GLASS_BOTTLE)) {
             return this.captureInBottle(player, hand, stack);
         }
 
@@ -527,9 +538,9 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         GlimmerParticles.tickBurst(this);
         GlimmerCompanionSavedData.setCompanion(serverLevel.getServer(), player.getUUID(), this.getUUID(), this.getVariant());
 
-        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             AntarchyAdvancements.award(serverPlayer, this.getVariant().tameAdvancementId());
-            AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, this.getVariant().name().toLowerCase(java.util.Locale.ROOT));
+            AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, this.getVariant().name().toLowerCase(Locale.ROOT));
         }
 
         return InteractionResult.SUCCESS;
@@ -559,7 +570,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     private static ItemStack findEmptyBottle(Player player) {
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             ItemStack candidate = player.getInventory().getItem(slot);
-            if (candidate.is(net.minecraft.world.item.Items.GLASS_BOTTLE)) {
+            if (candidate.is(Items.GLASS_BOTTLE)) {
                 return candidate;
             }
         }
@@ -571,18 +582,18 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             return InteractionResult.CONSUME;
         }
 
-        ItemStack result = net.minecraft.world.item.ItemUtils.createFilledResult(stack, player, this.toBottle());
+        ItemStack result = ItemUtils.createFilledResult(stack, player, this.toBottle());
         player.setItemInHand(hand, result);
-        this.playSound(net.minecraft.sounds.SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
+        this.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
         this.discard();
         return InteractionResult.SUCCESS;
     }
 
     public ItemStack toBottle() {
-        ItemStack bottle = com.craisinlord.antarchy.content.item.GlimmerBottleItem.create(
+        ItemStack bottle = GlimmerBottleItem.create(
                 this.getVariant(), this.abilityCooldownTicks, this.shearCooldownTicks, this.getGrowthScale());
         if (this.hasCustomName()) {
-            bottle.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, this.getCustomName());
+            bottle.set(DataComponents.CUSTOM_NAME, this.getCustomName());
         }
         return bottle;
     }
@@ -618,7 +629,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData) {
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
-        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.glimmerHealth());
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.glimmerHealth());
         if (!this.variantLocked) {
             this.setVariant(selectNaturalVariant(level, this.blockPosition()));
             this.variantLocked = true;
@@ -652,13 +663,18 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         return GlimmerVariant.random(this.random);
     }
 
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return !this.isTame() && !this.isLeashed();
+    }
+
     public static boolean checkGlimmerSpawnRules(EntityType<GlimmerEntity> type, ServerLevelAccessor level,
-                                                   MobSpawnType spawnType, BlockPos pos, net.minecraft.util.RandomSource random) {
+                                                   MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         Holder<Biome> biome = level.getBiome(pos);
         if (biome.is(ELYTHIA_RIVER)) {
             return level.getLevel().isNight() && isNearLumen(level, pos);
         }
-        if (!net.minecraft.world.entity.animal.Animal.checkAnimalSpawnRules(type, level, spawnType, pos, random)) {
+        if (!Animal.checkAnimalSpawnRules(type, level, spawnType, pos, random)) {
             return false;
         }
         if (biome.is(GLIMMERING_POOLS)) {
@@ -676,7 +692,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
                 }
                 for (int dy = -2; dy <= 0; dy++) {
                     cursor.setWithOffset(pos, dx, dy, dz);
-                    if (level.getFluidState(cursor).is(com.craisinlord.antarchy.content.AntarchyTags.Fluids.LUMEN)) {
+                    if (level.getFluidState(cursor).is(AntarchyTags.Fluids.LUMEN)) {
                         return true;
                     }
                 }
@@ -760,7 +776,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             if (this.abilityCooldownTicks == 0 && this.isTame()) {
                 GlimmerParticles.readyPulse(this);
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                        net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME, this.getSoundSource(), 0.7F, 1.6F);
+                        SoundEvents.AMETHYST_BLOCK_CHIME, this.getSoundSource(), 0.7F, 1.6F);
             }
         }
 

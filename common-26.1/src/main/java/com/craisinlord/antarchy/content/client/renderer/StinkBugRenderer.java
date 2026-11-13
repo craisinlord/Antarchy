@@ -2,9 +2,9 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.StinkBugModel;
 import com.craisinlord.antarchy.content.entity.StinkBugEntity;
+import com.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import com.geckolib.renderer.GeoEntityRenderer;
 
 public class StinkBugRenderer extends GeoEntityRenderer<StinkBugEntity, LivingEntityRenderState> {
     private static final float ADULT_SCALE = 0.95F;

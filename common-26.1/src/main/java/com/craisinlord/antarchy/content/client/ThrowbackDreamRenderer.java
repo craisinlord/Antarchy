@@ -7,15 +7,14 @@ import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.resource.CrossFrameResourcePool;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.nio.ByteOrder;
+import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-
-import java.nio.ByteOrder;
-import java.util.Map;
 
 public final class ThrowbackDreamRenderer {
     private static final Identifier DREAM_EFFECT = Identifier.fromNamespaceAndPath("antarchy", "throwback_dream");

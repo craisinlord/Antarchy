@@ -14,11 +14,11 @@ public final class CavarynRibcageGrid {
     private static final float SKELETON_CHANCE = 0.8F;
     private static final int START_ATTEMPTS = 4;
     private static final int HEADING_ATTEMPTS = 6;
-    private static final double MIN_LENGTH = 100.0;
-    private static final double SEGMENT_LENGTH = 12.0;
-    private static final double RIB_SPACING = 10.0;
+    private static final double MIN_LENGTH = 100.0D;
+    private static final double SEGMENT_LENGTH = 12.0D;
+    private static final double RIB_SPACING = 10.0D;
     private static final int RIB_SEGMENTS = 9;
-    private static final double CAP_SLOPE = 1.4;
+    private static final double CAP_SLOPE = 1.4D;
 
     private static final Map<Long, WeakReference<CavarynRibcageGrid>> BY_SALT = new ConcurrentHashMap<>();
 
@@ -50,12 +50,12 @@ public final class CavarynRibcageGrid {
 
     public double boneDistance(int x, int y, int z) {
         ColumnCache cache = this.candidates(x, z);
-        double py = y + 0.5;
+        double py = y + 0.5D;
         if (py < cache.boneMinY || py > cache.boneMaxY) {
             return Double.MAX_VALUE;
         }
-        double px = x + 0.5;
-        double pz = z + 0.5;
+        double px = x + 0.5D;
+        double pz = z + 0.5D;
         double best = Double.MAX_VALUE;
         for (Bone bone : cache.bones) {
             if (py < bone.minY || py > bone.maxY) {
@@ -71,12 +71,12 @@ public final class CavarynRibcageGrid {
 
     public double trenchDistance(int x, int y, int z) {
         ColumnCache cache = this.candidates(x, z);
-        double py = y + 0.5;
+        double py = y + 0.5D;
         if (cache.trenches.length == 0 || py < cache.trenchMinY) {
             return Double.MAX_VALUE;
         }
-        double px = x + 0.5;
-        double pz = z + 0.5;
+        double px = x + 0.5D;
+        double pz = z + 0.5D;
         double best = Double.MAX_VALUE;
         for (Trench trench : cache.trenches) {
             double value = trench.distance(px, py, pz);
@@ -102,10 +102,10 @@ public final class CavarynRibcageGrid {
         if (cache.valid && cache.qx == qx && cache.qz == qz) {
             return cache;
         }
-        double minX = qx * 4.0;
-        double minZ = qz * 4.0;
-        double maxX = minX + 4.0;
-        double maxZ = minZ + 4.0;
+        double minX = qx * 4.0D;
+        double minZ = qz * 4.0D;
+        double maxX = minX + 4.0D;
+        double maxZ = minZ + 4.0D;
         int cellX = Math.floorDiv(qx * 4, CELL_SIZE);
         int cellZ = Math.floorDiv(qz * 4, CELL_SIZE);
         List<Bone> bones = new ArrayList<>();
@@ -165,27 +165,27 @@ public final class CavarynRibcageGrid {
         if (random.nextFloat() >= SKELETON_CHANCE) {
             return new Skeleton[0];
         }
-        double y = 238.0 + random.nextDouble() * 10.0;
-        double length = 150.0 + random.nextDouble() * 90.0;
-        double ribWidth = 18.0 + random.nextDouble() * 8.0;
-        double ribHeight = 30.0 + random.nextDouble() * 10.0;
-        double sweep = 0.15 + random.nextDouble() * 0.2;
-        double bestX = 0.0;
-        double bestZ = 0.0;
-        double bestYaw = 0.0;
-        double bestInside = 0.0;
+        double y = 238.0D + random.nextDouble() * 10.0D;
+        double length = 150.0D + random.nextDouble() * 90.0D;
+        double ribWidth = 18.0D + random.nextDouble() * 8.0D;
+        double ribHeight = 30.0D + random.nextDouble() * 10.0D;
+        double sweep = 0.15D + random.nextDouble() * 0.2D;
+        double bestX = 0.0D;
+        double bestZ = 0.0D;
+        double bestYaw = 0.0D;
+        double bestInside = 0.0D;
         for (int attempt = 0; attempt < START_ATTEMPTS; attempt++) {
-            double x = cellX * (double) CELL_SIZE + CELL_SIZE * (0.2 + random.nextDouble() * 0.6);
-            double z = cellZ * (double) CELL_SIZE + CELL_SIZE * (0.2 + random.nextDouble() * 0.6);
+            double x = cellX * (double) CELL_SIZE + CELL_SIZE * (0.2D + random.nextDouble() * 0.6D);
+            double z = cellZ * (double) CELL_SIZE + CELL_SIZE * (0.2D + random.nextDouble() * 0.6D);
             if (!this.filter.accepts(x, z)) {
                 continue;
             }
-            double baseYaw = random.nextDouble() * Math.PI * 2.0;
+            double baseYaw = random.nextDouble() * Math.PI * 2.0D;
             for (int turn = 0; turn < HEADING_ATTEMPTS; turn++) {
-                double yaw = baseYaw + turn * Math.PI * 2.0 / HEADING_ATTEMPTS;
-                double inside = 0.0;
-                while (inside < length && this.filter.accepts(x + Math.cos(yaw) * (inside + 40.0), z + Math.sin(yaw) * (inside + 40.0))) {
-                    inside += 20.0;
+                double yaw = baseYaw + turn * Math.PI * 2.0D / HEADING_ATTEMPTS;
+                double inside = 0.0D;
+                while (inside < length && this.filter.accepts(x + Math.cos(yaw) * (inside + 40.0D), z + Math.sin(yaw) * (inside + 40.0D))) {
+                    inside += 20.0D;
                 }
                 if (inside > bestInside) {
                     bestInside = inside;
@@ -222,8 +222,8 @@ public final class CavarynRibcageGrid {
             double heading = yaw;
             spine[0] = new double[]{x, y, z, heading};
             for (int i = 1; i <= segments; i++) {
-                heading += this.random.nextGaussian() * 0.12;
-                double ny = y + Math.sin(i * 0.45) * 1.5;
+                heading += this.random.nextGaussian() * 0.12D;
+                double ny = y + Math.sin(i * 0.45D) * 1.5D;
                 x += Math.cos(heading) * SEGMENT_LENGTH;
                 z += Math.sin(heading) * SEGMENT_LENGTH;
                 spine[i] = new double[]{x, ny, z, heading};
@@ -232,39 +232,39 @@ public final class CavarynRibcageGrid {
                 double s = i / (double) segments;
                 double[] a = spine[i];
                 double[] b = spine[i + 1];
-                double radius = 4.2 * (1.0 - 0.55 * s);
-                this.bones.add(new Bone(a[0], a[1], a[2], b[0], b[1], b[2], radius, 4.2 * (1.0 - 0.55 * (i + 1) / (double) segments)));
-                double envelope = 0.55 + 0.45 * Math.pow(Math.sin(Math.PI * Math.min(1.0, s / 0.8)), 0.7);
-                this.trenches.add(new Trench(a[0], a[1] - 1.0, a[2], b[0], b[1] - 1.0, b[2],
-                        ribWidth * envelope * 1.3, ribHeight * envelope * 2.3, a[1] + ribHeight * envelope * 1.85));
+                double radius = 4.2D * (1.0D - 0.55D * s);
+                this.bones.add(new Bone(a[0], a[1], a[2], b[0], b[1], b[2], radius, 4.2D * (1.0D - 0.55D * (i + 1) / (double) segments)));
+                double envelope = 0.55D + 0.45D * Math.pow(Math.sin(Math.PI * Math.min(1.0D, s / 0.8D)), 0.7D);
+                this.trenches.add(new Trench(a[0], a[1] - 1.0D, a[2], b[0], b[1] - 1.0D, b[2],
+                        ribWidth * envelope * 1.3D, ribHeight * envelope * 2.3D, a[1] + ribHeight * envelope * 1.85D));
             }
-            for (double along = 0.0; along < length; along += 5.0) {
+            for (double along = 0.0D; along < length; along += 5.0D) {
                 double[] point = this.at(spine, along / SEGMENT_LENGTH);
-                double knob = 5.0 * (1.0 - 0.55 * along / length);
-                this.bones.add(new Bone(point[0], point[1] + 1.5, point[2], point[0], point[1] + 1.5 + knob * 0.6, point[2], knob, knob * 0.6));
+                double knob = 5.0D * (1.0D - 0.55D * along / length);
+                this.bones.add(new Bone(point[0], point[1] + 1.5D, point[2], point[0], point[1] + 1.5D + knob * 0.6D, point[2], knob, knob * 0.6D));
             }
-            double ribStart = length * 0.1;
-            double ribEnd = length * 0.82;
-            for (double along = ribStart; along < ribEnd; along += RIB_SPACING + this.random.nextDouble() * 2.0) {
+            double ribStart = length * 0.1D;
+            double ribEnd = length * 0.82D;
+            for (double along = ribStart; along < ribEnd; along += RIB_SPACING + this.random.nextDouble() * 2.0D) {
                 double s = (along - ribStart) / (ribEnd - ribStart);
-                double scale = 0.55 + 0.45 * Math.pow(Math.sin(Math.PI * s), 0.7);
+                double scale = 0.55D + 0.45D * Math.pow(Math.sin(Math.PI * s), 0.7D);
                 double[] point = this.at(spine, along / SEGMENT_LENGTH);
                 for (int side = -1; side <= 1; side += 2) {
-                    this.rib(point, side, ribWidth * scale * (0.92 + this.random.nextDouble() * 0.16), ribHeight * scale, sweep);
+                    this.rib(point, side, ribWidth * scale * (0.92D + this.random.nextDouble() * 0.16D), ribHeight * scale, sweep);
                 }
             }
             double[] head = spine[0];
-            double hx = head[0] - Math.cos(head[3]) * 10.0;
-            double hz = head[2] - Math.sin(head[3]) * 10.0;
-            this.bones.add(new Skull(hx, head[1] + 6.0, hz, head[3], 13.0 + this.random.nextDouble() * 3.0));
-            this.trenches.add(new Trench(head[0], head[1] - 1.0, head[2], hx - Math.cos(head[3]) * 8.0, head[1] - 1.0, hz - Math.sin(head[3]) * 8.0,
-                    ribWidth * 0.7, ribHeight, head[1] + ribHeight * 1.3));
+            double hx = head[0] - Math.cos(head[3]) * 10.0D;
+            double hz = head[2] - Math.sin(head[3]) * 10.0D;
+            this.bones.add(new Skull(hx, head[1] + 6.0D, hz, head[3], 13.0D + this.random.nextDouble() * 3.0D));
+            this.trenches.add(new Trench(head[0], head[1] - 1.0D, head[2], hx - Math.cos(head[3]) * 8.0D, head[1] - 1.0D, hz - Math.sin(head[3]) * 8.0D,
+                    ribWidth * 0.7D, ribHeight, head[1] + ribHeight * 1.3D));
             return new Skeleton(this.bones.toArray(new Bone[0]), this.trenches.toArray(new Trench[0]));
         }
 
         private double[] at(double[][] spine, double index) {
             int i = Mth.clamp((int) Math.floor(index), 0, spine.length - 2);
-            double f = Mth.clamp(index - i, 0.0, 1.0);
+            double f = Mth.clamp(index - i, 0.0D, 1.0D);
             double[] a = spine[i];
             double[] b = spine[i + 1];
             return new double[]{
@@ -281,21 +281,21 @@ public final class CavarynRibcageGrid {
             double tz = Math.sin(heading);
             double nx = -tz * side;
             double nz = tx * side;
-            double maxAngle = Math.toRadians(162.0 + this.random.nextDouble() * 12.0);
+            double maxAngle = Math.toRadians(162.0D + this.random.nextDouble() * 12.0D);
             double px = base[0];
             double py = base[1];
             double pz = base[2];
             for (int i = 1; i <= RIB_SEGMENTS; i++) {
                 double phi = maxAngle * i / RIB_SEGMENTS;
                 double out = width * Math.sin(phi);
-                double up = height * (1.0 - Math.cos(phi));
+                double up = height * (1.0D - Math.cos(phi));
                 double back = -sweep * up;
                 double qx = base[0] + nx * out + tx * back;
                 double qy = base[1] + up;
                 double qz = base[2] + nz * out + tz * back;
                 double t0 = (i - 1) / (double) RIB_SEGMENTS;
                 double t1 = i / (double) RIB_SEGMENTS;
-                this.bones.add(new Bone(px, py, pz, qx, qy, qz, 3.4 - 1.9 * t0, 3.4 - 1.9 * t1));
+                this.bones.add(new Bone(px, py, pz, qx, qy, qz, 3.4D - 1.9D * t0, 3.4D - 1.9D * t1));
                 px = qx;
                 py = qy;
                 pz = qz;
@@ -375,7 +375,7 @@ public final class CavarynRibcageGrid {
             this.lengthSq = this.dx * this.dx + this.dy * this.dy + this.dz * this.dz;
             this.ra = ra;
             this.rb = rb;
-            double reach = Math.max(ra, rb) + 1.0;
+            double reach = Math.max(ra, rb) + 1.0D;
             this.minX = Math.min(ax, bx) - reach;
             this.maxX = Math.max(ax, bx) + reach;
             this.minY = Math.min(ay, by) - reach;
@@ -388,7 +388,7 @@ public final class CavarynRibcageGrid {
             double rx = px - this.ax;
             double ry = py - this.ay;
             double rz = pz - this.az;
-            double t = this.lengthSq > 0.0 ? Mth.clamp((rx * this.dx + ry * this.dy + rz * this.dz) / this.lengthSq, 0.0, 1.0) : 0.0;
+            double t = this.lengthSq > 0.0D ? Mth.clamp((rx * this.dx + ry * this.dy + rz * this.dz) / this.lengthSq, 0.0D, 1.0D) : 0.0D;
             double cx = rx - this.dx * t;
             double cy = ry - this.dy * t;
             double cz = rz - this.dz * t;
@@ -412,7 +412,7 @@ public final class CavarynRibcageGrid {
             this.size = size;
             this.fx = -Math.cos(heading);
             this.fz = -Math.sin(heading);
-            double reach = size * 1.3 + 1.0;
+            double reach = size * 1.3D + 1.0D;
             this.minX = cx - reach;
             this.maxX = cx + reach;
             this.minY = cy - size;
@@ -428,17 +428,17 @@ public final class CavarynRibcageGrid {
             double rz = pz - this.cz;
             double forward = rx * this.fx + rz * this.fz;
             double side = rx * -this.fz + rz * this.fx;
-            double nf = forward / (this.size * 1.3);
-            double ns = side / (this.size * 0.95);
-            double nu = ry / (this.size * 0.8);
-            double shell = (Math.sqrt(nf * nf + ns * ns + nu * nu) - 1.0) * this.size * 0.8;
-            double hollow = -(shell + 3.0);
+            double nf = forward / (this.size * 1.3D);
+            double ns = side / (this.size * 0.95D);
+            double nu = ry / (this.size * 0.8D);
+            double shell = (Math.sqrt(nf * nf + ns * ns + nu * nu) - 1.0D) * this.size * 0.8D;
+            double hollow = -(shell + 3.0D);
             double socket = Double.MAX_VALUE;
             for (int s = -1; s <= 1; s += 2) {
-                double ex = forward - this.size * 0.75;
-                double ey = ry - this.size * 0.15;
-                double ez = side - s * this.size * 0.42;
-                socket = Math.min(socket, Math.sqrt(ex * ex + ey * ey + ez * ez) - this.size * 0.32);
+                double ex = forward - this.size * 0.75D;
+                double ey = ry - this.size * 0.15D;
+                double ez = side - s * this.size * 0.42D;
+                socket = Math.min(socket, Math.sqrt(ex * ex + ey * ey + ez * ez) - this.size * 0.32D);
             }
             return Math.max(Math.max(shell, hollow), -socket);
         }
@@ -471,7 +471,7 @@ public final class CavarynRibcageGrid {
             this.halfWidth = halfWidth;
             this.height = height;
             this.capY = capY;
-            double reach = halfWidth * 1.1 + Math.max(0.0, 384.0 - capY) / CAP_SLOPE;
+            double reach = halfWidth * 1.1D + Math.max(0.0D, 384.0D - capY) / CAP_SLOPE;
             this.minX = Math.min(ax, bx) - reach;
             this.maxX = Math.max(ax, bx) + reach;
             this.minZ = Math.min(az, bz) - reach;
@@ -481,16 +481,16 @@ public final class CavarynRibcageGrid {
         double distance(double px, double py, double pz) {
             double rx = px - this.ax;
             double rz = pz - this.az;
-            double t = this.lengthSq > 0.0 ? Mth.clamp((rx * this.dx + rz * this.dz) / this.lengthSq, 0.0, 1.0) : 0.0;
+            double t = this.lengthSq > 0.0D ? Mth.clamp((rx * this.dx + rz * this.dz) / this.lengthSq, 0.0D, 1.0D) : 0.0D;
             double cx = rx - this.dx * t;
             double cz = rz - this.dz * t;
             double horizontal = Math.sqrt(cx * cx + cz * cz);
             double floor = Mth.lerp(t, this.ay, this.by);
-            double halfHeight = this.height * 0.5;
+            double halfHeight = this.height * 0.5D;
             double nx = horizontal / this.halfWidth;
             double ny = (py - floor - halfHeight) / halfHeight;
-            double hollow = (Math.sqrt(nx * nx + ny * ny) - 1.0) * Math.min(this.halfWidth, halfHeight);
-            double cap = this.capY + CAP_SLOPE * Math.max(0.0, horizontal - this.halfWidth * 1.1) - py;
+            double hollow = (Math.sqrt(nx * nx + ny * ny) - 1.0D) * Math.min(this.halfWidth, halfHeight);
+            double cap = this.capY + CAP_SLOPE * Math.max(0.0D, horizontal - this.halfWidth * 1.1D) - py;
             return Math.min(hollow, cap);
         }
     }

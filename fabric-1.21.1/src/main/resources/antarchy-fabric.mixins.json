@@ -20,14 +20,10 @@
     "SpringyBootsFallDamageMixin",
     "ThoraxisWaterBucketMixin",
     "entity.ParalyzedMobFreezeMixin",
-    "WoodTypeInvoker",
-    "infinity.PortalCreatorMixin",
-    "infinity.WarpLogicMixin",
-    "infinity.AmendmentRareOresMixin"
+    "WoodTypeInvoker"
   ],
   "client": [
     "client.OuranwoodLeavesCullingMixin",
-    "client.SodiumOuranwoodLeavesCullingMixin",
     "client.SeparateLargeItemModelsMixin",
     "client.SeparateLargeItemGuiLightingMixin",
     "client.BrutalflyElytraExperienceBarMixin",
@@ -36,7 +32,6 @@
     "client.GravityGunMouseScrollMixin",
     "client.KeybindingConflictFixMixin",
     "client.CrossbowArmPoseMixin",
-    "client.AppleSkinOverlayMixin",
     "client.GroundMistRenderOrderMixin"
   ],
   "injectors": {

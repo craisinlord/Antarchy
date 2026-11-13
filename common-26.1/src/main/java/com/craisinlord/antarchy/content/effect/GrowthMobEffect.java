@@ -21,7 +21,9 @@ public final class GrowthMobEffect extends MobEffect {
     @Override
     public void addAttributeModifiers(AttributeMap attributeMap, int amplifier) {
         AttributeInstance instance = attributeMap.getInstance(Attributes.SCALE);
-        if (instance == null) return;
+        if (instance == null) {
+            return;
+        }
         double amount = AntarchySettings.growthPotionDelta() * (amplifier + 1);
         instance.addOrUpdateTransientModifier(
                 new AttributeModifier(MODIFIER_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
@@ -31,7 +33,9 @@ public final class GrowthMobEffect extends MobEffect {
     @Override
     public void removeAttributeModifiers(AttributeMap attributeMap) {
         AttributeInstance instance = attributeMap.getInstance(Attributes.SCALE);
-        if (instance == null) return;
+        if (instance == null) {
+            return;
+        }
         instance.removeModifier(MODIFIER_ID);
     }
 }

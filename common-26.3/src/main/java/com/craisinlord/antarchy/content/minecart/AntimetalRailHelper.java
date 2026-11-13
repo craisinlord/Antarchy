@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.content.minecart;
 
 import com.craisinlord.antarchy.content.block.AbstractAntimetalRailBlock;
 import com.mojang.datafixers.util.Pair;
+import java.util.EnumMap;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -11,9 +13,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 public final class AntimetalRailHelper {
     public static final double RAIL_TOP_OFFSET = 0.0625D;
@@ -63,27 +62,59 @@ public final class AntimetalRailHelper {
         boolean west = isRail(level, pos.west()) || isRail(level, pos.west().above()) || westDown;
 
         if (block.isStraight()) {
-            if (northDown) return RailShape.ASCENDING_SOUTH;
-            if (southDown) return RailShape.ASCENDING_NORTH;
-            if (eastDown) return RailShape.ASCENDING_WEST;
-            if (westDown) return RailShape.ASCENDING_EAST;
-            if ((east || west) && !(north || south)) return RailShape.EAST_WEST;
-            if ((north || south) && !(east || west)) return RailShape.NORTH_SOUTH;
+            if (northDown) {
+                return RailShape.ASCENDING_SOUTH;
+            }
+            if (southDown) {
+                return RailShape.ASCENDING_NORTH;
+            }
+            if (eastDown) {
+                return RailShape.ASCENDING_WEST;
+            }
+            if (westDown) {
+                return RailShape.ASCENDING_EAST;
+            }
+            if ((east || west) && !(north || south)) {
+                return RailShape.EAST_WEST;
+            }
+            if ((north || south) && !(east || west)) {
+                return RailShape.NORTH_SOUTH;
+            }
             return fallbackAxis == Direction.Axis.X ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH;
         }
 
-        if (northDown) return RailShape.ASCENDING_SOUTH;
-        if (southDown) return RailShape.ASCENDING_NORTH;
-        if (eastDown) return RailShape.ASCENDING_WEST;
-        if (westDown) return RailShape.ASCENDING_EAST;
+        if (northDown) {
+            return RailShape.ASCENDING_SOUTH;
+        }
+        if (southDown) {
+            return RailShape.ASCENDING_NORTH;
+        }
+        if (eastDown) {
+            return RailShape.ASCENDING_WEST;
+        }
+        if (westDown) {
+            return RailShape.ASCENDING_EAST;
+        }
 
-        if (south && east && !north && !west) return RailShape.SOUTH_EAST;
-        if (south && west && !north && !east) return RailShape.SOUTH_WEST;
-        if (north && west && !south && !east) return RailShape.NORTH_WEST;
-        if (north && east && !south && !west) return RailShape.NORTH_EAST;
+        if (south && east && !north && !west) {
+            return RailShape.SOUTH_EAST;
+        }
+        if (south && west && !north && !east) {
+            return RailShape.SOUTH_WEST;
+        }
+        if (north && west && !south && !east) {
+            return RailShape.NORTH_WEST;
+        }
+        if (north && east && !south && !west) {
+            return RailShape.NORTH_EAST;
+        }
 
-        if ((east || west) && !(north || south)) return RailShape.EAST_WEST;
-        if ((north || south) && !(east || west)) return RailShape.NORTH_SOUTH;
+        if ((east || west) && !(north || south)) {
+            return RailShape.EAST_WEST;
+        }
+        if ((north || south) && !(east || west)) {
+            return RailShape.NORTH_SOUTH;
+        }
         return fallbackAxis == Direction.Axis.X ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH;
     }
 

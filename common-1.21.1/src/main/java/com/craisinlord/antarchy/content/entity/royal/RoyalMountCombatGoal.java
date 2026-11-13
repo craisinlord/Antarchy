@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.entity.royal;
 import java.util.EnumSet;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
 
@@ -42,7 +43,7 @@ public class RoyalMountCombatGoal extends Goal {
         if (current != this.target || !this.isValid(current)) {
             return false;
         }
-        double range = this.mount.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE) * 1.2D;
+        double range = this.mount.getAttributeValue(Attributes.FOLLOW_RANGE) * 1.2D;
         return this.mount.distanceToSqr(current) < range * range && this.unseenTicks < 200;
     }
 

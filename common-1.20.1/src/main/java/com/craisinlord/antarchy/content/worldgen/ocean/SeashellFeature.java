@@ -6,13 +6,11 @@ import com.craisinlord.antarchy.content.block.SeashellBlock;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -43,7 +41,7 @@ public final class SeashellFeature extends Feature<NoneFeatureConfiguration> {
             }
 
             BlockState state = AntarchyObjects.SEASHELL.get().defaultBlockState()
-                    .setValue(SeashellBlock.FACING, net.minecraft.core.Direction.Plane.HORIZONTAL.getRandomDirection(random))
+                    .setValue(SeashellBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(random))
                     .setValue(SeashellBlock.WATERLOGGED, true)
                     .setValue(SeashellBlock.POWERED, false);
             if (!state.canSurvive(level, shellPos)) {

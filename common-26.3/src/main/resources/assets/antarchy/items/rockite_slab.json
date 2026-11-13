@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "antarchy:item/rockite_slab"
+    "model": "antarchy:item/rockite_slab",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -10788493
+      }
+    ]
   }
 }

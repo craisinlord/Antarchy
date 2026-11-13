@@ -5,11 +5,10 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManag
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -64,7 +63,7 @@ public interface GlimmerSite {
 
         @Override
         public Optional<Match> find(ServerLevel level, BlockPos pos) {
-            net.minecraft.core.HolderLookup.RegistryLookup<Structure> registry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
+            HolderLookup.RegistryLookup<Structure> registry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
             for (StructureStart start : level.structureManager().startsForStructure(
                     pos.getX() >> 4, pos.getZ() >> 4,
                     structure -> registry.listElements().anyMatch(holder -> holder.value() == structure && holder.is(this.tag)))) {

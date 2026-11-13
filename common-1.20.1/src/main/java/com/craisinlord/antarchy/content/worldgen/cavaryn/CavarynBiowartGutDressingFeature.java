@@ -28,7 +28,7 @@ public final class CavarynBiowartGutDressingFeature extends Feature<NoneFeatureC
             new ResourceLocation(Antarchy.MODID, "loam")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double LINING_DEPTH = 1.4;
+    private static final double LINING_DEPTH = 1.4D;
     private static final ResourceLocation BIOMITE_ID = new ResourceLocation(Antarchy.MODID, "biomite");
     private static final ResourceLocation BIOMITE_TURF_ID = new ResourceLocation(Antarchy.MODID, "biomite_turf");
 
@@ -41,8 +41,8 @@ public final class CavarynBiowartGutDressingFeature extends Feature<NoneFeatureC
         WorldGenLevel level = context.level();
         NormalNoise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(GUT_NOISE);
         CavarynCavityGrid grid = CavarynCavityGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.getValue(1234.567, 89.123, -456.789),
-                noise.getValue(-987.654, 12.345, 654.321)
+                noise.getValue(1234.567D, 89.123D, -456.789D),
+                noise.getValue(-987.654D, 12.345D, 654.321D)
         ));
         Block biomite = block(BIOMITE_ID);
         Block turf = block(BIOMITE_TURF_ID);
@@ -75,7 +75,7 @@ public final class CavarynBiowartGutDressingFeature extends Feature<NoneFeatureC
                 for (int y = minY; y <= maxY; y++) {
                     double distance = next;
                     next = grid.signedDistance(x, y + 1, z);
-                    if (distance <= 0.0 || distance > LINING_DEPTH) {
+                    if (distance <= 0.0D || distance > LINING_DEPTH) {
                         continue;
                     }
                     pos.set(x, y, z);
@@ -83,7 +83,7 @@ public final class CavarynBiowartGutDressingFeature extends Feature<NoneFeatureC
                         continue;
                     }
                     above.set(x, y + 1, z);
-                    boolean floor = next <= 0.0 && level.getBlockState(above).isAir();
+                    boolean floor = next <= 0.0D && level.getBlockState(above).isAir();
                     level.setBlock(pos, floor ? turf.defaultBlockState() : biomite.defaultBlockState(), 2);
                     placed = true;
                 }

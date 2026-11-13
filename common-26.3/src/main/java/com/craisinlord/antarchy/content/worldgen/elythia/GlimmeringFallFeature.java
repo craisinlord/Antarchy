@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.ElythiaPalette;
 import com.mojang.serialization.MapCodec;
@@ -12,6 +11,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -19,7 +19,9 @@ public final class GlimmeringFallFeature implements Feature {
     public static final MapCodec<GlimmeringFallFeature> CODEC = MapCodec.unit(GlimmeringFallFeature::new);
 
     @Override
-    public MapCodec<GlimmeringFallFeature> codec() { return CODEC; }
+    public MapCodec<GlimmeringFallFeature> codec() {
+        return CODEC;
+    }
     private static final float FALL_CHANCE = 0.3F;
     private static final int SCAN_STRIDE = 2;
     private static final int DROP_PROBE = 6;
@@ -31,7 +33,6 @@ public final class GlimmeringFallFeature implements Feature {
     private static final int STAIN_REACH = 2;
     private static final int MAX_RIM_FOOTING = 32;
     private static final float OUTER_STAIN_CHANCE = 0.6F;
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -160,16 +161,22 @@ public final class GlimmeringFallFeature implements Feature {
     }
 
     private static void stain(WorldGenLevel level, RandomSource random, Bounds bounds, BlockPos pos, Direction direction, boolean outer) {
-        if (outer && random.nextFloat() >= OUTER_STAIN_CHANCE) return;
+        if (outer && random.nextFloat() >= OUTER_STAIN_CHANCE) {
+            return;
+        }
         for (int reach = 1; reach <= STAIN_REACH; reach++) {
             BlockPos wall = pos.relative(direction, -reach);
-            if (!bounds.contains(wall)) return;
+            if (!bounds.contains(wall)) {
+                return;
+            }
             BlockState state = level.getBlockState(wall);
             if (state.is(ElythiaGeologyFeature.NATURAL_STONE)) {
                 level.setBlock(wall, ElythiaPalette.TIDESTONE.get().defaultBlockState(), 2);
                 return;
             }
-            if (state.isSolid()) return;
+            if (state.isSolid()) {
+                return;
+            }
         }
     }
 
@@ -219,7 +226,9 @@ public final class GlimmeringFallFeature implements Feature {
                     for (int y = waterline - 4; y > waterline - 4 - MAX_RIM_FOOTING; y--) {
                         pos.set(x, y, z);
                         BlockState state = level.getBlockState(pos);
-                        if (state.isSolid() || !state.getFluidState().isEmpty()) break;
+                        if (state.isSolid() || !state.getFluidState().isEmpty()) {
+                            break;
+                        }
                         level.setBlock(pos, bankState(random), 2);
                     }
                 }

@@ -53,7 +53,7 @@ public final class ElythiaCloudField {
             0, 18.0D, 26.0D, 10, 3, 4, 2, 28, 1.0D, 6.0F, 4.0F);
     public static final Spec MID = new Spec("mid", 0x2D7F00A3L, Kind.VOXEL, 256, 16, 0.04D, 3, 1.0D,
             3, 18.0D, 26.0D, 5, 2, 3, 1, 15, 1.0D, 8.0F, 4.0F);
-    public static final Spec HIGH = new Spec("high", 0x71C3E9B5L, Kind.WISP, 256, 64, 0.12D, 1, 1.0D,
+    public static final Spec HIGH = new Spec("high", 0x71C3E9B5L, Kind.WISP, 256, 64, 0.085D, 1, 1.0D,
             1, 60.0D, 75.0D, 0, 0, 0, 0, 0, 1.0D, 8.0F, 4.0F);
 
     private final Spec spec;

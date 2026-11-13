@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -69,7 +70,7 @@ public final class ThoraxisUndersideSkyRenderer {
     private static final float SKY_GREEN = 0.0F;
     private static final float SKY_BLUE = 0.035F;
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     private static VertexBuffer[] eyeStarBuffers = null;
 
     private ThoraxisUndersideSkyRenderer() {

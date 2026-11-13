@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.util;
 
-import net.minecraft.core.BlockPos;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
@@ -8,9 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class WormHookRope {
     private static final double BEND_OFFSET = 0.05D;

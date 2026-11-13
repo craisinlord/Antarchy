@@ -1,13 +1,15 @@
 package com.craisinlord.antarchy.config;
 
-import net.minecraft.resources.ResourceKey;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import net.minecraft.resources.ResourceKey;
 
 public final class AntarchyConfigCatalog {
     public enum Section {
@@ -56,7 +58,7 @@ public final class AntarchyConfigCatalog {
                 .filter(AntarchyConfigCatalog::isPublicStatic)
                 .filter(method -> method.getParameterCount() == 0)
                 .filter(method -> method.getReturnType() != Void.TYPE)
-                .collect(java.util.stream.Collectors.toMap(
+                .collect(Collectors.toMap(
                         Method::getName,
                         method -> method,
                         (first, ignored) -> first,
@@ -66,9 +68,9 @@ public final class AntarchyConfigCatalog {
                 .filter(AntarchyConfigCatalog::isPublicStatic)
                 .filter(method -> method.getName().startsWith("set"))
                 .filter(method -> method.getParameterCount() == 1)
-                .sorted(java.util.Comparator.comparing(Method::getName))
+                .sorted(Comparator.comparing(Method::getName))
                 .map(setter -> definitionFor(setter, getters))
-                .filter(java.util.Objects::nonNull)
+                .filter(Objects::nonNull)
                 .toList();
     }
 

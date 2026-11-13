@@ -1,94 +1,133 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
-import com.craisinlord.antarchy.content.worldgen.elythia.RiverLogBridgeFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.RiverSteppingStonesFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.TruffaloSpireFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringFallFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaButteFunction;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShelfLip;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShelfTerrace;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverFlatten;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaColumnCache;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBasinFill;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverCoastFade;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverSpan;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverProject;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShared;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideMountainsFunction;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTerrainFunction;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiowartGutDressingFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBroodNestDressingFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCarapaceRiftDressingFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynGlowcapGrottoDressingFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynMolewormWarrenDressingFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreDressingFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreFunction;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityFunction;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityUnionFunction;
-import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserBaseParticleOptions;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOptions;
-import com.craisinlord.antarchy.content.effect.DreadMobEffect;
 import com.craisinlord.antarchy.content.effect.BleedingMobEffect;
 import com.craisinlord.antarchy.content.effect.BloodMoonMobEffect;
+import com.craisinlord.antarchy.content.effect.BloodglassWardEffect;
+import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
+import com.craisinlord.antarchy.content.effect.DreadMobEffect;
+import com.craisinlord.antarchy.content.effect.GlimmeringMobEffect;
 import com.craisinlord.antarchy.content.effect.GoopedMobEffect;
 import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
-import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
+import com.craisinlord.antarchy.content.effect.RemembranceMobEffect;
+import com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect;
+import com.craisinlord.antarchy.content.effect.SaucedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
+import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
+import com.craisinlord.antarchy.content.menu.DorrieInventoryMenu;
+import com.craisinlord.antarchy.content.menu.GiantFryingPanMenu;
+import com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu;
 import com.craisinlord.antarchy.content.recipe.AmericanizeRecipe;
+import com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe;
+import com.craisinlord.antarchy.content.recipe.FossilCookingRecipes;
+import com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe;
 import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.TermiteNestFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileCystFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileVeinFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiowartGutDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBroodNestDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCarapaceRiftDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityFunction;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityUnionFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCreepvineFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynEggPatchFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynGlowcapGrottoDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynMolewormWarrenDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageFunction;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWallAmberMossFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.HangingCreeprootsFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.FossilOreFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.HangingCreeprootsFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.MoltingVinesFeature;
-import com.craisinlord.antarchy.content.worldgen.ocean.SeashellFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.SpringbugEggCeilingFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.*;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBasinFill;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaButteFunction;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaColumnCache;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverCoastFade;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverFlatten;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverProject;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverSpan;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShared;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShelfLip;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShelfTerrace;
+import com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringFallFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.RiverLogBridgeFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.RiverSteppingStonesFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.TruffaloSpireFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.reef.ElythiaReefFeature;
+import com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomFeature;
+import com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature;
+import com.craisinlord.antarchy.content.worldgen.ocean.SeashellFeature;
+import com.craisinlord.antarchy.content.worldgen.ocean.StarCoralPatchFeature;
+import com.craisinlord.antarchy.content.worldgen.royal.*;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.*;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTerrainFunction;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideMountainsFunction;
+import com.craisinlord.antarchy.content.worldgen.truffalo.*;
+import com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes;
+import com.craisinlord.antarchy.neoforge.content.fluid.AntiwaterFluid;
 import com.craisinlord.antarchy.neoforge.worldgen.CornPatchFeature;
 import com.craisinlord.antarchy.neoforge.worldgen.LumenLilyPadFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.*;
-import com.craisinlord.antarchy.content.worldgen.truffalo.*;
-import com.craisinlord.antarchy.content.worldgen.royal.*;
-import com.craisinlord.antarchy.neoforge.content.fluid.AntiwaterFluid;
+import com.craisinlord.anthology.effect.AnthologyEffects;
+import com.craisinlord.antos.neoforge.AntOSNeoForgeContent;
+import com.google.common.collect.ImmutableSet;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import java.util.Set;
+import java.util.function.Function;
 import net.minecraft.advancements.predicates.entity.EntitySubPredicate;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.material.rule.MaterialRule;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
-import java.util.function.Function;
 
 public final class AntarchyNeoforgeMisc {
     private static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, Antarchy.MODID);
@@ -96,7 +135,7 @@ public final class AntarchyNeoforgeMisc {
 
     public static final DeferredHolder<PoiType, PoiType> COMPUTER_POI = POI_TYPES.register("computer",
             () -> new PoiType(
-                    java.util.Set.copyOf(com.craisinlord.antos.neoforge.AntOSNeoForgeContent.COMPUTER.get().getStateDefinition().getPossibleStates()),
+                    Set.copyOf(AntOSNeoForgeContent.COMPUTER.get().getStateDefinition().getPossibleStates()),
                     1,
                     1));
 
@@ -105,26 +144,26 @@ public final class AntarchyNeoforgeMisc {
                     Component.translatable("entity.minecraft.villager.computer_scientist"),
                     holder -> holder.value() == COMPUTER_POI.get(),
                     holder -> holder.value() == COMPUTER_POI.get(),
-                    com.google.common.collect.ImmutableSet.of(),
-                    com.google.common.collect.ImmutableSet.of(),
-                    net.minecraft.sounds.SoundEvents.VILLAGER_WORK_LIBRARIAN,
+                    ImmutableSet.of(),
+                    ImmutableSet.of(),
+                    SoundEvents.VILLAGER_WORK_LIBRARIAN,
                     new Int2ObjectOpenHashMap<>()));
 
     public static final DeferredHolder<PoiType, PoiType> PEST_CONTROL_POI = POI_TYPES.register("pest_control",
-            () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.ANT_TRAP.get().getStateDefinition().getPossibleStates()), 1, 1));
+            () -> new PoiType(Set.copyOf(AntarchyNeoforgeBlocks.ANT_TRAP.get().getStateDefinition().getPossibleStates()), 1, 1));
 
     public static final DeferredHolder<PoiType, PoiType> ELYTHIA_PORTAL_POI = POI_TYPES.register("elythia_portal",
-            () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+            () -> new PoiType(Set.copyOf(AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
 
     public static final DeferredHolder<PoiType, PoiType> THORAXIS_PORTAL_POI = POI_TYPES.register("thoraxis_portal",
-            () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.THORAXIS_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+            () -> new PoiType(Set.copyOf(AntarchyNeoforgeBlocks.THORAXIS_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
 
     public static final DeferredHolder<PoiType, PoiType> CAVARYN_PORTAL_POI = POI_TYPES.register("cavaryn_portal",
-            () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.CAVARYN_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+            () -> new PoiType(Set.copyOf(AntarchyNeoforgeBlocks.CAVARYN_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
 
     public static final DeferredHolder<VillagerProfession, VillagerProfession> PEST_CONTROL = VILLAGER_PROFESSIONS.register("pest_control",
             () -> new VillagerProfession(Component.translatable("entity.minecraft.villager.pest_control"), holder -> holder.value() == PEST_CONTROL_POI.get(),
-                    holder -> holder.value() == PEST_CONTROL_POI.get(), com.google.common.collect.ImmutableSet.of(), com.google.common.collect.ImmutableSet.of(), net.minecraft.sounds.SoundEvents.VILLAGER_WORK_FLETCHER,
+                    holder -> holder.value() == PEST_CONTROL_POI.get(), ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_FLETCHER,
                     new Int2ObjectOpenHashMap<>()));
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Antarchy.MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, Antarchy.MODID);
@@ -133,89 +172,90 @@ public final class AntarchyNeoforgeMisc {
     private static final DeferredRegister<MapCodec<? extends Feature>> FEATURES = DeferredRegister.create(Registries.FEATURE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends BiomeSource>> BIOME_SOURCES = DeferredRegister.create(Registries.BIOME_SOURCE, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Antarchy.MODID);
-    private static final DeferredRegister<MapCodec<? extends net.minecraft.world.level.levelgen.material.rule.MaterialRule>> MATERIAL_RULES = DeferredRegister.create(Registries.MATERIAL_RULE_TYPE, Antarchy.MODID);
-    private static final DeferredRegister<com.mojang.serialization.Codec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Antarchy.MODID);
+    private static final DeferredRegister<MapCodec<? extends StructurePlacement>> STRUCTURE_PLACEMENTS = DeferredRegister.create(Registries.STRUCTURE_PLACEMENT, Antarchy.MODID);
+    private static final DeferredRegister<MapCodec<? extends MaterialRule>> MATERIAL_RULES = DeferredRegister.create(Registries.MATERIAL_RULE_TYPE, Antarchy.MODID);
+    private static final DeferredRegister<Codec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, Antarchy.MODID);
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, Antarchy.MODID);
-    private static final DeferredRegister<net.minecraft.core.component.DataComponentType<?>> DATA_COMPONENT_TYPES =
+    private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
             DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Antarchy.MODID);
-    private static final DeferredRegister<net.minecraft.world.item.crafting.RecipeSerializer<?>> RECIPE_SERIALIZERS =
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, Antarchy.MODID);
 
-    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>> GLIMMER_VARIANT =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlimmerVariant>> GLIMMER_VARIANT =
             DATA_COMPONENT_TYPES.register("glimmer_variant",
-                    () -> net.minecraft.core.component.DataComponentType.<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>builder()
-                            .persistent(com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant.CODEC)
-                            .networkSynchronized(com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant.STREAM_CODEC)
+                    () -> DataComponentType.<GlimmerVariant>builder()
+                            .persistent(GlimmerVariant.CODEC)
+                            .networkSynchronized(GlimmerVariant.STREAM_CODEC)
                             .build());
-    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> AMERICAN =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> AMERICAN =
             DATA_COMPONENT_TYPES.register("american",
-                    () -> net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder()
-                            .persistent(net.minecraft.util.Unit.CODEC)
-                            .networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE))
+                    () -> DataComponentType.<Unit>builder()
+                            .persistent(Unit.CODEC)
+                            .networkSynchronized(StreamCodec.unit(Unit.INSTANCE))
                             .build());
-    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> CRITTER_CAGE_ENTITY_TYPE_COMPONENT =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Identifier>> CRITTER_CAGE_ENTITY_TYPE_COMPONENT =
             DATA_COMPONENT_TYPES.register("critter_cage_entity_type",
-                    () -> net.minecraft.core.component.DataComponentType.<net.minecraft.resources.Identifier>builder()
-                            .persistent(net.minecraft.resources.Identifier.CODEC)
-                            .networkSynchronized(net.minecraft.resources.Identifier.STREAM_CODEC)
+                    () -> DataComponentType.<Identifier>builder()
+                            .persistent(Identifier.CODEC)
+                            .networkSynchronized(Identifier.STREAM_CODEC)
                             .build());
-    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<Integer>> CRITTER_CAGE_PRIMARY_COLOR_COMPONENT =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> CRITTER_CAGE_PRIMARY_COLOR_COMPONENT =
             DATA_COMPONENT_TYPES.register("critter_cage_primary_color",
-                    () -> net.minecraft.core.component.DataComponentType.<Integer>builder()
-                            .persistent(com.mojang.serialization.Codec.INT)
-                            .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.INT)
+                    () -> DataComponentType.<Integer>builder()
+                            .persistent(Codec.INT)
+                            .networkSynchronized(ByteBufCodecs.INT)
                             .build());
-    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<Integer>> CRITTER_CAGE_SECONDARY_COLOR_COMPONENT =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> CRITTER_CAGE_SECONDARY_COLOR_COMPONENT =
             DATA_COMPONENT_TYPES.register("critter_cage_secondary_color",
-                    () -> net.minecraft.core.component.DataComponentType.<Integer>builder()
-                            .persistent(com.mojang.serialization.Codec.INT)
-                            .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.INT)
+                    () -> DataComponentType.<Integer>builder()
+                            .persistent(Codec.INT)
+                            .networkSynchronized(ByteBufCodecs.INT)
                             .build());
-    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<AmericanizeRecipe>> AMERICANIZE_SERIALIZER =
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AmericanizeRecipe>> AMERICANIZE_SERIALIZER =
             RECIPE_SERIALIZERS.register("americanize", () -> AmericanizeRecipe.SERIALIZER);
-    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> FOSSIL_ENTITY_COMPONENT = DATA_COMPONENT_TYPES.register("fossil_entity", () -> net.minecraft.core.component.DataComponentType.<net.minecraft.resources.Identifier>builder().persistent(net.minecraft.resources.Identifier.CODEC).networkSynchronized(net.minecraft.resources.Identifier.STREAM_CODEC).build());
-    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.Smelting>> FOSSIL_SMELTING_SERIALIZER = RECIPE_SERIALIZERS.register("fossil_smelting", () -> com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.SMELTING_SERIALIZER);
-    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.Blasting>> FOSSIL_BLASTING_SERIALIZER = RECIPE_SERIALIZERS.register("fossil_blasting", () -> com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.BLASTING_SERIALIZER);
-    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe>> PORTAL_GUN_VARIANT_SERIALIZER =
-            RECIPE_SERIALIZERS.register("portal_gun_variant", () -> com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe.SERIALIZER);
-    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe>> BIG_BERTHA_VARIANT_SERIALIZER =
-            RECIPE_SERIALIZERS.register("big_bertha_variant", () -> com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe.SERIALIZER);
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Identifier>> FOSSIL_ENTITY_COMPONENT = DATA_COMPONENT_TYPES.register("fossil_entity", () -> DataComponentType.<Identifier>builder().persistent(Identifier.CODEC).networkSynchronized(Identifier.STREAM_CODEC).build());
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FossilCookingRecipes.Smelting>> FOSSIL_SMELTING_SERIALIZER = RECIPE_SERIALIZERS.register("fossil_smelting", () -> FossilCookingRecipes.SMELTING_SERIALIZER);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FossilCookingRecipes.Blasting>> FOSSIL_BLASTING_SERIALIZER = RECIPE_SERIALIZERS.register("fossil_blasting", () -> FossilCookingRecipes.BLASTING_SERIALIZER);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PortalGunVariantRecipe>> PORTAL_GUN_VARIANT_SERIALIZER =
+            RECIPE_SERIALIZERS.register("portal_gun_variant", () -> PortalGunVariantRecipe.SERIALIZER);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BigBerthaVariantRecipe>> BIG_BERTHA_VARIANT_SERIALIZER =
+            RECIPE_SERIALIZERS.register("big_bertha_variant", () -> BigBerthaVariantRecipe.SERIALIZER);
 
     public static final DeferredHolder<Attribute, Attribute> DOUBLE_DAMAGE_CHANCE = ATTRIBUTES.register(
             "double_damage_chance",
-            () -> new net.minecraft.world.entity.ai.attributes.RangedAttribute("attribute.antarchy.double_damage_chance", 0.0, 0.0, 1.0).setSyncable(true)
+            () -> new RangedAttribute("attribute.antarchy.double_damage_chance", 0.0D, 0.0D, 1.0D).setSyncable(true)
     );
     public static final DeferredHolder<Attribute, Attribute> BLOODGLASS_MAX_HEARTS = ATTRIBUTES.register(
             "bloodglass_max_hearts",
-            () -> new net.minecraft.world.entity.ai.attributes.RangedAttribute("attribute.antarchy.bloodglass_max_hearts", 0.0, 0.0, 8.0).setSyncable(true)
+            () -> new RangedAttribute("attribute.antarchy.bloodglass_max_hearts", 0.0D, 0.0D, 8.0D).setSyncable(true)
     );
-    public static final DeferredHolder<MenuType<?>, MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> DORRIE_INVENTORY_MENU = MENU_TYPES.register(
+    public static final DeferredHolder<MenuType<?>, MenuType<DorrieInventoryMenu>> DORRIE_INVENTORY_MENU = MENU_TYPES.register(
             "dorrie_inventory",
-            () -> new MenuType<>(com.craisinlord.antarchy.content.menu.DorrieInventoryMenu::new, FeatureFlags.DEFAULT_FLAGS)
+            () -> new MenuType<>(DorrieInventoryMenu::new, FeatureFlags.DEFAULT_FLAGS)
     );
-    public static final DeferredHolder<MenuType<?>, MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU = MENU_TYPES.register(
+    public static final DeferredHolder<MenuType<?>, MenuType<RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU = MENU_TYPES.register(
             "royal_judgment",
-            () -> new MenuType<>(com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu::new, FeatureFlags.DEFAULT_FLAGS)
+            () -> new MenuType<>(RoyalJudgmentMenu::new, FeatureFlags.DEFAULT_FLAGS)
     );
-    public static final DeferredHolder<MenuType<?>, MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> GIANT_FRYING_PAN_MENU = MENU_TYPES.register(
+    public static final DeferredHolder<MenuType<?>, MenuType<GiantFryingPanMenu>> GIANT_FRYING_PAN_MENU = MENU_TYPES.register(
             "giant_frying_pan",
-            () -> new MenuType<>(com.craisinlord.antarchy.content.menu.GiantFryingPanMenu::new, FeatureFlags.DEFAULT_FLAGS)
+            () -> new MenuType<>(GiantFryingPanMenu::new, FeatureFlags.DEFAULT_FLAGS)
     );
 
     public static final DeferredHolder<MobEffect, DreadMobEffect> DREAD = MOB_EFFECTS.register("dread", DreadMobEffect::new);
     public static final DeferredHolder<MobEffect, BleedingMobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
     public static final DeferredHolder<MobEffect, BloodMoonMobEffect> BLOOD_MOON = MOB_EFFECTS.register("blood_moon", BloodMoonMobEffect::new);
-    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.SaucedMobEffect> SAUCED = MOB_EFFECTS.register("sauced", com.craisinlord.antarchy.content.effect.SaucedMobEffect::new);
+    public static final DeferredHolder<MobEffect, SaucedMobEffect> SAUCED = MOB_EFFECTS.register("sauced", SaucedMobEffect::new);
     public static final DeferredHolder<MobEffect, ParalyzedMobEffect> PARALYZED = MOB_EFFECTS.register("paralyzed", ParalyzedMobEffect::new);
     public static final DeferredHolder<MobEffect, CommandedMobEffect> COMMANDED = MOB_EFFECTS.register("commanded", CommandedMobEffect::new);
     public static final DeferredHolder<MobEffect, StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
     public static final DeferredHolder<MobEffect, GoopedMobEffect> GOOPED = MOB_EFFECTS.register("gooped", GoopedMobEffect::new);
-    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.BloodglassWardEffect> BLOODGLASS_WARD = MOB_EFFECTS.register("bloodglass_ward", com.craisinlord.antarchy.content.effect.BloodglassWardEffect::new);
+    public static final DeferredHolder<MobEffect, BloodglassWardEffect> BLOODGLASS_WARD = MOB_EFFECTS.register("bloodglass_ward", BloodglassWardEffect::new);
 
-    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.GlimmeringMobEffect> GLIMMERING = MOB_EFFECTS.register("glimmering", com.craisinlord.antarchy.content.effect.GlimmeringMobEffect::new);
-    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.RemembranceMobEffect> REMEMBRANCE = MOB_EFFECTS.register("remembrance", com.craisinlord.antarchy.content.effect.RemembranceMobEffect::new);
-    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect> ROYAL_VITALITY_PENALTY = MOB_EFFECTS.register("royal_vitality_penalty", com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect::new);
+    public static final DeferredHolder<MobEffect, GlimmeringMobEffect> GLIMMERING = MOB_EFFECTS.register("glimmering", GlimmeringMobEffect::new);
+    public static final DeferredHolder<MobEffect, RemembranceMobEffect> REMEMBRANCE = MOB_EFFECTS.register("remembrance", RemembranceMobEffect::new);
+    public static final DeferredHolder<MobEffect, RoyalVitalityPenaltyEffect> ROYAL_VITALITY_PENALTY = MOB_EFFECTS.register("royal_vitality_penalty", RoyalVitalityPenaltyEffect::new);
     public static final DeferredHolder<MobEffect, ShrinkMobEffect> SHRINKING_EFFECT = MOB_EFFECTS.register("shrinking", ShrinkMobEffect::new);
     public static final DeferredHolder<MobEffect, GrowthMobEffect> GROWTH_EFFECT = MOB_EFFECTS.register("growth", GrowthMobEffect::new);
 
@@ -376,8 +416,8 @@ public final class AntarchyNeoforgeMisc {
             () -> ElythiaFloraFeature.FLOWER_FOREST_MILKWEED_CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CornPatchFeature>> CORN_PATCH = FEATURES.register("corn_patch",
             () -> CornPatchFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.ocean.StarCoralPatchFeature>> STAR_CORAL_PATCH = FEATURES.register("star_coral_patch",
-            () -> com.craisinlord.antarchy.content.worldgen.ocean.StarCoralPatchFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<StarCoralPatchFeature>> STAR_CORAL_PATCH = FEATURES.register("star_coral_patch",
+            () -> StarCoralPatchFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<SeashellFeature>> SEASHELL_PATCH = FEATURES.register("seashell_patch",
             () -> SeashellFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaFloraFeature>> ELYTHIA_BUTTERFLY_FIELDS_FLORA = FEATURES.register("butterfly_fields_flora",
@@ -404,30 +444,30 @@ public final class AntarchyNeoforgeMisc {
             () -> LumenPoolFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<LumenLilyPadFeature>> LUMEN_LILY_PADS = FEATURES.register("lumen_lily_pads",
             () -> LumenLilyPadFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature>> GLIMMERING_REEDS = FEATURES.register("glimmering_reeds",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<GlimmeringReedFeature>> GLIMMERING_REEDS = FEATURES.register("glimmering_reeds",
+            () -> GlimmeringReedFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<NaturalDirectionalVineFeature>> SPIRALING_VINES = FEATURES.register("spiraling_vines",
             () -> NaturalDirectionalVineFeature.SPIRALING_VINES_CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<NaturalDirectionalVineFeature>> GOREVINE = FEATURES.register("gorevine",
             () -> NaturalDirectionalVineFeature.GOREVINE_CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature>> GIANT_LILY_PAD_PATCH = FEATURES.register("giant_lily_pad_patch",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature>> GIANT_LILY_PAD_PATCH_PEACH_FOREST = FEATURES.register("giant_lily_pad_patch_peach_forest",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature.PEACH_FOREST_CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<GiantLilyPadPatchFeature>> GIANT_LILY_PAD_PATCH = FEATURES.register("giant_lily_pad_patch",
+            () -> GiantLilyPadPatchFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<GiantLilyPadPatchFeature>> GIANT_LILY_PAD_PATCH_PEACH_FOREST = FEATURES.register("giant_lily_pad_patch_peach_forest",
+            () -> GiantLilyPadPatchFeature.PEACH_FOREST_CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<LumenStreamFeature>> LUMEN_STREAM = FEATURES.register("lumen_streams",
             () -> LumenStreamFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<LumenSpireFeature>> LUMEN_SPIRE = FEATURES.register("lumen_spires",
             () -> LumenSpireFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature>> ELYTHIA_GEOLOGY = FEATURES.register("elythia_geology",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature>> ELYTHIA_MOUNTAIN_SCREE = FEATURES.register("elythia_mountain_scree",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRockFormationFeature>> ELYTHIA_ROCK_FORMATION = FEATURES.register("elythia_rock_formation",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRockFormationFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneTorFeature>> ELYTHIA_STONE_TOR = FEATURES.register("elythia_stone_tor",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneTorFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneRuinFeature>> ELYTHIA_STONE_RUIN = FEATURES.register("elythia_stone_ruin",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneRuinFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaGeologyFeature>> ELYTHIA_GEOLOGY = FEATURES.register("elythia_geology",
+            () -> ElythiaGeologyFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaMountainScreeFeature>> ELYTHIA_MOUNTAIN_SCREE = FEATURES.register("elythia_mountain_scree",
+            () -> ElythiaMountainScreeFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaRockFormationFeature>> ELYTHIA_ROCK_FORMATION = FEATURES.register("elythia_rock_formation",
+            () -> ElythiaRockFormationFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaStoneTorFeature>> ELYTHIA_STONE_TOR = FEATURES.register("elythia_stone_tor",
+            () -> ElythiaStoneTorFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaStoneRuinFeature>> ELYTHIA_STONE_RUIN = FEATURES.register("elythia_stone_ruin",
+            () -> ElythiaStoneRuinFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaTuffBoulderFeature>> ELYTHIA_TUFF_BOULDER = FEATURES.register("elythia_tuff_boulder",
             () -> ElythiaTuffBoulderFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaLargeTuffBoulderFeature>> ELYTHIA_LARGE_TUFF_BOULDER = FEATURES.register("elythia_large_tuff_boulder",
@@ -458,7 +498,7 @@ public final class AntarchyNeoforgeMisc {
             () -> TyphoniteSwirlFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ChitinSpikeFeature>> CAVARYN_CHITIN_SPIKES = FEATURES.register("cavaryn_chitin_spikes",
             () -> ChitinSpikeFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.FossilOreFeature>> FOSSIL_ORE = FEATURES.register("fossil_ore", () -> com.craisinlord.antarchy.content.worldgen.cavaryn.FossilOreFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<FossilOreFeature>> FOSSIL_ORE = FEATURES.register("fossil_ore", () -> FossilOreFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynBileVeinFeature>> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",
             () -> CavarynBileVeinFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynBileCystFeature>> CAVARYN_BILE_CYSTS = FEATURES.register("cavaryn_bile_cysts",
@@ -471,14 +511,14 @@ public final class AntarchyNeoforgeMisc {
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<MoltingVinesFeature>> MOLTING_VINES = FEATURES.register("molting_vines",
             () -> MoltingVinesFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature>> GROUND_MOLTING_VINES = FEATURES.register("ground_molting_vines",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.SpringbugEggCeilingFeature>> SPRINGBUG_EGG_CEILING = FEATURES.register("springbug_egg_ceiling",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.SpringbugEggCeilingFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature>> SPIT_BUG_EGG_PATCH = FEATURES.register("spit_bug_egg_patch",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature>> ROLLY_CAVES_GIANT_CAVERN = FEATURES.register("rolly_caves_giant_cavern",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<GroundMoltingVinesFeature>> GROUND_MOLTING_VINES = FEATURES.register("ground_molting_vines",
+            () -> GroundMoltingVinesFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<SpringbugEggCeilingFeature>> SPRINGBUG_EGG_CEILING = FEATURES.register("springbug_egg_ceiling",
+            () -> SpringbugEggCeilingFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<SpitBugEggPatchFeature>> SPIT_BUG_EGG_PATCH = FEATURES.register("spit_bug_egg_patch",
+            () -> SpitBugEggPatchFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<RollyCavesGiantCavernFeature>> ROLLY_CAVES_GIANT_CAVERN = FEATURES.register("rolly_caves_giant_cavern",
+            () -> RollyCavesGiantCavernFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynWallAmberMossFeature>> CAVARYN_WALL_AMBER_MOSS = FEATURES.register("cavaryn_wall_amber_moss",
             () -> CavarynWallAmberMossFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<AntiwaterSpringsFeature>> ANTIWATER_SPRINGS = FEATURES.register("antiwater_springs",
@@ -489,16 +529,20 @@ public final class AntarchyNeoforgeMisc {
             () -> ThoraxisBloodCrystalFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaCloudFeature>> ELYTHIA_CLOUDS = FEATURES.register("elythia_clouds",
             () -> ElythiaCloudFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<SkyIsleTerrainFeature>> SKY_ISLE_TERRAIN = FEATURES.register("sky_isle_terrain",
+            () -> SkyIsleTerrainFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<SkyIsleFeature>> SKY_ISLE = FEATURES.register("sky_isle",
+            () -> SkyIsleFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<BedBugNestFeature>> BED_BUG_NEST = FEATURES.register("bed_bug_nest",
             () -> BedBugNestFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<BedBugSurfaceClusterFeature>> BED_BUG_SURFACE_CLUSTER = FEATURES.register("bed_bug_surface_cluster",
             () -> BedBugSurfaceClusterFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynEggPatchFeature>> CAVARYN_TERROR_EGG_PATCH = FEATURES.register("cavaryn_terror_egg_patch",
             () -> CavarynEggPatchFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomFeature>> HUGE_GLOWCAP_MUSHROOM = FEATURES.register("huge_glowcap_mushroom",
-            () -> com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature>> HUGE_GLOWCAP_MUSHROOM_WORLDGEN = FEATURES.register("huge_glowcap_mushroom_worldgen",
-            () -> com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<GlowcapHugeMushroomFeature>> HUGE_GLOWCAP_MUSHROOM = FEATURES.register("huge_glowcap_mushroom",
+            () -> GlowcapHugeMushroomFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<GlowcapHugeMushroomWorldgenFeature>> HUGE_GLOWCAP_MUSHROOM_WORLDGEN = FEATURES.register("huge_glowcap_mushroom_worldgen",
+            () -> GlowcapHugeMushroomWorldgenFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<LucidAntiwaterPoolFeature>> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
             () -> LucidAntiwaterPoolFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<DimensionalTearFeature>> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
@@ -511,8 +555,8 @@ public final class AntarchyNeoforgeMisc {
             () -> ElythiaBiomeSource.CODEC);
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<ThoraxisBiomeSource>> THORAXIS_BIOME_SOURCE = BIOME_SOURCES.register("thoraxis_biome_source",
             () -> ThoraxisBiomeSource.CODEC);
-    public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource>> CAVARYN_BIOME_SOURCE = BIOME_SOURCES.register("cavaryn_biome_source",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource.CODEC);
+    public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<CavarynBiomeSource>> CAVARYN_BIOME_SOURCE = BIOME_SOURCES.register("cavaryn_biome_source",
+            () -> CavarynBiomeSource.CODEC);
 
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
             () -> ElythiaRiverCarveFunction.CODEC);
@@ -532,6 +576,7 @@ public final class AntarchyNeoforgeMisc {
         FEATURES.register(modEventBus);
         BIOME_SOURCES.register(modEventBus);
         DENSITY_FUNCTION_TYPES.register(modEventBus);
+        STRUCTURE_PLACEMENTS.register(modEventBus);
         MATERIAL_RULES.register(modEventBus);
         ENTITY_SUB_PREDICATES.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
@@ -541,7 +586,7 @@ public final class AntarchyNeoforgeMisc {
     }
 
     static BaseFlowingFluid.Properties ichorProperties() {
-        return new BaseFlowingFluid.Properties(com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes.ICHOR_TYPE, ICHOR, FLOWING_ICHOR)
+        return new BaseFlowingFluid.Properties(AntarchyNeoForgeFluidTypes.ICHOR_TYPE, ICHOR, FLOWING_ICHOR)
                 .bucket(() -> AntarchyNeoforgeItems.ICHOR_BUCKET.get())
                 .block(() -> AntarchyNeoforgeBlocks.ICHOR_BLOCK.get())
                 .slopeFindDistance(4)
@@ -550,7 +595,7 @@ public final class AntarchyNeoforgeMisc {
     }
 
     static BaseFlowingFluid.Properties bileProperties() {
-        return new BaseFlowingFluid.Properties(com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes.BILE_TYPE, BILE, FLOWING_BILE)
+        return new BaseFlowingFluid.Properties(AntarchyNeoForgeFluidTypes.BILE_TYPE, BILE, FLOWING_BILE)
                 .bucket(() -> AntarchyNeoforgeItems.BILE_BUCKET.get())
                 .block(() -> AntarchyNeoforgeBlocks.BILE_BLOCK.get())
                 .slopeFindDistance(4)
@@ -559,7 +604,7 @@ public final class AntarchyNeoforgeMisc {
     }
 
     static BaseFlowingFluid.Properties antiwaterProperties() {
-        return new BaseFlowingFluid.Properties(com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes.ANTIWATER_TYPE, ANTIWATER, FLOWING_ANTIWATER)
+        return new BaseFlowingFluid.Properties(AntarchyNeoForgeFluidTypes.ANTIWATER_TYPE, ANTIWATER, FLOWING_ANTIWATER)
                 .bucket(() -> AntarchyNeoforgeItems.ANTIWATER_BUCKET.get())
                 .block(() -> AntarchyNeoforgeBlocks.ANTIWATER_BLOCK.get())
                 .slopeFindDistance(4)
@@ -568,7 +613,7 @@ public final class AntarchyNeoforgeMisc {
     }
 
     static BaseFlowingFluid.Properties lumenProperties() {
-        return new BaseFlowingFluid.Properties(com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes.LUMEN_TYPE, LUMEN, FLOWING_LUMEN)
+        return new BaseFlowingFluid.Properties(AntarchyNeoForgeFluidTypes.LUMEN_TYPE, LUMEN, FLOWING_LUMEN)
                 .bucket(() -> AntarchyNeoforgeItems.LUMEN_BUCKET.get())
                 .block(() -> AntarchyNeoforgeBlocks.LUMEN_BLOCK.get())
                 .slopeFindDistance(4)
@@ -576,18 +621,18 @@ public final class AntarchyNeoforgeMisc {
                 .tickRate(5);
     }
 
-    private static <T extends net.minecraft.core.particles.ParticleOptions> ParticleType<T> particleType(
-            Function<ParticleType<T>, com.mojang.serialization.MapCodec<T>> codecFactory,
-            Function<ParticleType<T>, StreamCodec<? super io.netty.buffer.ByteBuf, T>> streamCodecFactory
+    private static <T extends ParticleOptions> ParticleType<T> particleType(
+            Function<ParticleType<T>, MapCodec<T>> codecFactory,
+            Function<ParticleType<T>, StreamCodec<? super ByteBuf, T>> streamCodecFactory
     ) {
         return new ParticleType<T>(false) {
             @Override
-            public com.mojang.serialization.MapCodec<T> codec() {
+            public MapCodec<T> codec() {
                 return codecFactory.apply(this);
             }
 
             @Override
-            public StreamCodec<? super io.netty.buffer.ByteBuf, T> streamCodec() {
+            public StreamCodec<? super ByteBuf, T> streamCodec() {
                 return streamCodecFactory.apply(this);
             }
         };
@@ -597,10 +642,10 @@ public final class AntarchyNeoforgeMisc {
             () -> CavarynWormBoreFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynCavityFunction>> CAVARYN_CAVITY = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity",
             () -> CavarynCavityFunction.CODEC);
-    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireFunction>> CAVARYN_SPIRES = DENSITY_FUNCTION_TYPES.register("cavaryn_spires",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireFunction.CODEC);
-    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageFunction>> CAVARYN_RIBCAGE = DENSITY_FUNCTION_TYPES.register("cavaryn_ribcage",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynSpireFunction>> CAVARYN_SPIRES = DENSITY_FUNCTION_TYPES.register("cavaryn_spires",
+            () -> CavarynSpireFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynRibcageFunction>> CAVARYN_RIBCAGE = DENSITY_FUNCTION_TYPES.register("cavaryn_ribcage",
+            () -> CavarynRibcageFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynCavityUnionFunction>> CAVARYN_CAVITY_UNION = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity_union",
             () -> CavarynCavityUnionFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynWormBoreDressingFeature>> CAVARYN_WORM_BORE_DRESSING = FEATURES.register("cavaryn_worm_bore_dressing",
@@ -615,27 +660,24 @@ public final class AntarchyNeoforgeMisc {
             () -> CavarynMolewormWarrenDressingFeature.CODEC);;
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynCarapaceRiftDressingFeature>> CAVARYN_CARAPACE_RIFT_DRESSING = FEATURES.register("cavaryn_carapace_rift_dressing",
             () -> CavarynCarapaceRiftDressingFeature.CODEC);;
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature>> CAVARYN_SPIRE_DRESSING = FEATURES.register("cavaryn_spire_dressing",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature>> CAVARYN_RIBCAGE_DRESSING = FEATURES.register("cavaryn_ribcage_dressing",
-            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynSpireDressingFeature>> CAVARYN_SPIRE_DRESSING = FEATURES.register("cavaryn_spire_dressing",
+            () -> CavarynSpireDressingFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynRibcageDressingFeature>> CAVARYN_RIBCAGE_DRESSING = FEATURES.register("cavaryn_ribcage_dressing",
+            () -> CavarynRibcageDressingFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CavarynBiowartGutDressingFeature>> CAVARYN_BIOWART_GUT_DRESSING = FEATURES.register("cavaryn_biowart_gut_dressing",
             () -> CavarynBiowartGutDressingFeature.CODEC);;
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.reef.ElythiaReefFeature>> ELYTHIA_REEF = FEATURES.register("elythia_reef",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.reef.ElythiaReefFeature.CODEC);
-
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaReefFeature>> ELYTHIA_REEF = FEATURES.register("elythia_reef",
+            () -> ElythiaReefFeature.CODEC);
 
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ThoraxisTerrainFunction>> THORAXIS_TERRAIN = DENSITY_FUNCTION_TYPES.register("thoraxis_terrain",
             () -> ThoraxisTerrainFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ThoraxisUndersideMountainsFunction>> THORAXIS_UNDERSIDE_MOUNTAINS = DENSITY_FUNCTION_TYPES.register("thoraxis_underside_mountains",
             () -> ThoraxisUndersideMountainsFunction.CODEC);
 
-
-
-    public static final DeferredHolder<MapCodec<? extends net.minecraft.world.level.levelgen.material.rule.MaterialRule>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeDispatchRule.Source>> ELYTHIA_BIOME_DISPATCH = MATERIAL_RULES.register("elythia_biome_dispatch",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeDispatchRule.Source.CODEC);
-    public static final DeferredHolder<MapCodec<? extends net.minecraft.world.level.levelgen.material.rule.MaterialRule>, MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.ElythiaSurfaceBuilder.Root>> ELYTHIA_SURFACE_ROOT = MATERIAL_RULES.register("elythia_surface_root",
-            () -> com.craisinlord.antarchy.content.worldgen.elythia.ElythiaSurfaceBuilder.Root.CODEC);
+    public static final DeferredHolder<MapCodec<? extends MaterialRule>, MapCodec<ElythiaBiomeDispatchRule.Source>> ELYTHIA_BIOME_DISPATCH = MATERIAL_RULES.register("elythia_biome_dispatch",
+            () -> ElythiaBiomeDispatchRule.Source.CODEC);
+    public static final DeferredHolder<MapCodec<? extends MaterialRule>, MapCodec<ElythiaSurfaceBuilder.Root>> ELYTHIA_SURFACE_ROOT = MATERIAL_RULES.register("elythia_surface_root",
+            () -> ElythiaSurfaceBuilder.Root.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaShared>> ELYTHIA_SHARED = DENSITY_FUNCTION_TYPES.register("elythia_shared",
             () -> ElythiaShared.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverProject>> ELYTHIA_RIVER_PROJECT = DENSITY_FUNCTION_TYPES.register("elythia_river_project",
@@ -656,6 +698,10 @@ public final class AntarchyNeoforgeMisc {
             () -> ElythiaShelfLip.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaButteFunction>> ELYTHIA_BUTTE = DENSITY_FUNCTION_TYPES.register("elythia_butte",
             () -> ElythiaButteFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<SkyIsleBiomeFunction>> ELYTHIA_SKY_ISLE = DENSITY_FUNCTION_TYPES.register("elythia_sky_isle",
+            () -> SkyIsleBiomeFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends StructurePlacement>, MapCodec<SkyIslePlacement>> SKY_ISLE_CROWN = STRUCTURE_PLACEMENTS.register("sky_isle_crown",
+            () -> SkyIslePlacement.CODEC);
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ThrowbackNerdPoleFeature>> THROWBACK_NERD_POLE = FEATURES.register("throwback_nerd_pole", () -> ThrowbackNerdPoleFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<GlimmeringFallFeature>> GLIMMERING_FALL = FEATURES.register("glimmering_fall", () -> GlimmeringFallFeature.CODEC);
@@ -664,7 +710,7 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<RiverLogBridgeFeature>> RIVER_LOG_BRIDGE = FEATURES.register("river_log_bridge", () -> RiverLogBridgeFeature.CODEC);
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> GROUND_MIST = PARTICLE_TYPES.register("ground_mist", () -> new SimpleParticleType(true) {});
 
-    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature>> TRUFFLED_LOAM_FEATURE = FEATURES.register("truffled_loam", () -> com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature.CODEC);
-    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.PrimordialBorderBlendFeature>> PRIMORDIAL_BORDER_BLEND = FEATURES.register("primordial_border_blend", () -> com.craisinlord.antarchy.content.worldgen.elythia.PrimordialBorderBlendFeature.CODEC);
-    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature>> CRANBERRY_TREE_FEATURE = FEATURES.register("cranberry_tree", () -> com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature.CODEC);
-    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends Feature>, com.mojang.serialization.MapCodec<com.craisinlord.antarchy.content.worldgen.elythia.CranberryGroveFeature>> CRANBERRY_GROVE_FEATURE = FEATURES.register("cranberry_grove", () -> com.craisinlord.antarchy.content.worldgen.elythia.CranberryGroveFeature.CODEC);}
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<TruffledLoamFeature>> TRUFFLED_LOAM_FEATURE = FEATURES.register("truffled_loam", () -> TruffledLoamFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<PrimordialBorderBlendFeature>> PRIMORDIAL_BORDER_BLEND = FEATURES.register("primordial_border_blend", () -> PrimordialBorderBlendFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CranberryTreeFeature>> CRANBERRY_TREE_FEATURE = FEATURES.register("cranberry_tree", () -> CranberryTreeFeature.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CranberryGroveFeature>> CRANBERRY_GROVE_FEATURE = FEATURES.register("cranberry_grove", () -> CranberryGroveFeature.CODEC);}

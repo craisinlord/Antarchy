@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.anthology.portal.PortalTransforms;
 import com.craisinlord.anthology.portal.PortalShape;
+import com.craisinlord.anthology.portal.PortalTransforms;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;

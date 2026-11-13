@@ -16,6 +16,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public final class GiantLilyPadItem extends BlockItem {
     public GiantLilyPadItem(Block block, Properties properties) {
@@ -26,7 +27,7 @@ public final class GiantLilyPadItem extends BlockItem {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         BlockHitResult hitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hitResult.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) {
+        if (hitResult.getType() != HitResult.Type.BLOCK) {
             return InteractionResult.PASS;
         }
 

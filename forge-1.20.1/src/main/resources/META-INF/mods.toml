@@ -19,6 +19,12 @@ displayTest="MATCH_VERSION"
 [[mixins]]
     config="antarchy-forge.mixins.json"
 
+[[mixins]]
+    config="antarchy-compat.mixins.json"
+
+[[mixins]]
+    config="antarchy-forge-compat.mixins.json"
+
 [[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true
@@ -36,21 +42,21 @@ displayTest="MATCH_VERSION"
 [[dependencies.${mod_id}]]
     modId="anthology"
     mandatory=true
-    versionRange="[1.0.5,)"
+    versionRange="[1.0.7,)"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
     modId="antos"
     mandatory=true
-    versionRange="[1.6.4,)"
+    versionRange="[1.6.5,)"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
     modId="integrated_api"
     mandatory=true
-    versionRange="[1.8.1,)"
+    versionRange="[1.9.2,)"
     ordering="AFTER"
     side="BOTH"
 

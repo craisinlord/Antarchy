@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
+import java.util.Comparator;
+import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
@@ -9,9 +11,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-
-import java.util.Comparator;
-import java.util.function.Supplier;
 
 public final class QueenMusicHandler {
     private static final double START_RADIUS = 256.0D;

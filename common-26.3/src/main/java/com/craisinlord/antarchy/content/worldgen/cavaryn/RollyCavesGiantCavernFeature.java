@@ -10,10 +10,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CaveVinesBlock;
@@ -21,7 +22,6 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Tilt;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -49,7 +49,7 @@ public record RollyCavesGiantCavernFeature() implements Feature {
     private static final int CHAMBER_RADIUS_MIN = 8;
     private static final int CHAMBER_RADIUS_MAX = 12;
     private static final int BLOB_LAYER_COUNT = 9;
-    private static final double MAX_DRIFT_FROM_CENTER = 6.0;
+    private static final double MAX_DRIFT_FROM_CENTER = 6.0D;
 
     private static final int MAX_PROCESSED_POSITIONS = 60000;
 
@@ -160,7 +160,7 @@ public record RollyCavesGiantCavernFeature() implements Feature {
 
         double span = upper.y() - lower.y();
         double t = span == 0 ? 0 : (y - lower.y()) / span;
-        t = Math.max(0.0, Math.min(1.0, t));
+        t = Math.max(0.0D, Math.min(1.0D, t));
 
         double x = lower.x() + (upper.x() - lower.x()) * t;
         double z = lower.z() + (upper.z() - lower.z()) * t;
@@ -242,12 +242,12 @@ public record RollyCavesGiantCavernFeature() implements Feature {
             int layerY = baseY + (int) Math.round(t * chamberHeight);
 
             double baseRadius = CHAMBER_RADIUS_MIN + (CHAMBER_RADIUS_MAX - CHAMBER_RADIUS_MIN) * taper;
-            double jitter = 0.85 + random.nextDouble() * 0.3;
-            double horizontalRadius = Math.max(2.5, baseRadius * jitter);
-            double verticalRadius = Math.max(3.0, chamberHeight / (double) BLOB_LAYER_COUNT * 1.6);
+            double jitter = 0.85D + random.nextDouble() * 0.3D;
+            double horizontalRadius = Math.max(2.5D, baseRadius * jitter);
+            double verticalRadius = Math.max(3.0D, chamberHeight / (double) BLOB_LAYER_COUNT * 1.6D);
 
-            driftX = clampDrift(driftX + (random.nextDouble() - 0.5) * 3.0, center.getX());
-            driftZ = clampDrift(driftZ + (random.nextDouble() - 0.5) * 3.0, center.getZ());
+            driftX = clampDrift(driftX + (random.nextDouble() - 0.5D) * 3.0D, center.getX());
+            driftZ = clampDrift(driftZ + (random.nextDouble() - 0.5D) * 3.0D, center.getZ());
 
             blobs.add(new Blob(driftX, layerY, driftZ, horizontalRadius, verticalRadius));
         }
@@ -316,10 +316,10 @@ public record RollyCavesGiantCavernFeature() implements Feature {
 
     private static boolean insideAnyBlob(List<Blob> blobs, int x, int y, int z) {
         for (Blob blob : blobs) {
-            double dx = (x + 0.5 - blob.x()) / blob.horizontalRadius();
-            double dy = (y + 0.5 - blob.y()) / blob.verticalRadius();
-            double dz = (z + 0.5 - blob.z()) / blob.horizontalRadius();
-            if (dx * dx + dy * dy + dz * dz <= 1.0) {
+            double dx = (x + 0.5D - blob.x()) / blob.horizontalRadius();
+            double dy = (y + 0.5D - blob.y()) / blob.verticalRadius();
+            double dz = (z + 0.5D - blob.z()) / blob.horizontalRadius();
+            if (dx * dx + dy * dy + dz * dz <= 1.0D) {
                 return true;
             }
         }

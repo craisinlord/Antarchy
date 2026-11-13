@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.forge.client;
 
 import com.craisinlord.antarchy.forge.registry.AntarchyForgeBlocks;
+import com.craisinlord.antarchy.forge.registry.AntarchyForgeItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,7 @@ public final class FallenKingCrownArmorStandLayer extends RenderLayer<ArmorStand
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, ArmorStand armorStand, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
         ItemStack headStack = armorStand.getItemBySlot(EquipmentSlot.HEAD);
-        if (!headStack.is(com.craisinlord.antarchy.forge.registry.AntarchyForgeItems.FALLEN_KING_CROWN.get()) || armorStand.isInvisible()) {
+        if (!headStack.is(AntarchyForgeItems.FALLEN_KING_CROWN.get()) || armorStand.isInvisible()) {
             return;
         }
 

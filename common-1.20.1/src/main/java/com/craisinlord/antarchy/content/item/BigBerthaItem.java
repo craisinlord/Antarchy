@@ -1,37 +1,52 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.entity.EntityReach;
+import com.craisinlord.antarchy.compat.item.WeaponAttributes;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItem;
+import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
+import com.craisinlord.antarchy.content.component.AntarchyItemTag;
+import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.anthology.gravity.GravityApi;
-import com.craisinlord.antarchy.config.AntarchySettings;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -40,16 +55,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoItem;
-import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord.antarchy.content.client.AntarchyGeoItem {
+public class BigBerthaItem extends SwordItem implements GeoItem, AntarchyGeoItem {
     private static final ResourceLocation MODEL_LOCATION = new ResourceLocation("antarchy", "geo/big_bertha.geo.json");
     private static final ResourceLocation DEFAULT_TEXTURE_LOCATION = new ResourceLocation("antarchy", "textures/item/big_bertha/big_bertha.png");
     private static final ResourceLocation ANIMATION_LOCATION = new ResourceLocation("antarchy", "animations/static_item.animation.json");
@@ -83,13 +96,13 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     }
 
     @Override
-    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
-        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot != EquipmentSlot.MAINHAND) {
             return super.getDefaultAttributeModifiers(slot);
         }
-        com.google.common.collect.ImmutableMultimap.Builder<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> builder =
-                com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (int) Math.round(AntarchySettings.bigBerthaAttackDamage()), (float) AntarchySettings.bigBerthaAttackSpeed());
-        com.craisinlord.antarchy.compat.entity.EntityReach.addModifier(builder, ATTACK_RANGE_MODIFIER_ID, AntarchySettings.bigBerthaReachBonus());
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
+                WeaponAttributes.base(this.tier, (int) Math.round(AntarchySettings.bigBerthaAttackDamage()), (float) AntarchySettings.bigBerthaAttackSpeed());
+        EntityReach.addModifier(builder, ATTACK_RANGE_MODIFIER_ID, AntarchySettings.bigBerthaReachBonus());
         return builder.build();
     }
 
@@ -179,10 +192,10 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
             player.fallDistance = 0.0F;
             boolean launched = readInt(stack, TORETERROR_LAUNCHED_TAG) == 1;
             if (!launched && !player.onGround()) {
-                com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> tag.putInt(TORETERROR_LAUNCHED_TAG, 1));
+                AntarchyItemTag.update(stack, tag -> tag.putInt(TORETERROR_LAUNCHED_TAG, 1));
             }
             if (launched && player.onGround()) {
-                com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> {
+                AntarchyItemTag.update(stack, tag -> {
                     tag.remove(TORETERROR_JUMPING_TAG);
                     tag.remove(TORETERROR_LAUNCHED_TAG);
                 });
@@ -219,11 +232,11 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
 
     private void applyBasiliskRightClick(Level level, Player player, ItemStack stack) {
         if (!level.isClientSide) {
-            double range = com.craisinlord.antarchy.compat.entity.EntityReach.entityInteractionRange(player) + 1.0;
+            double range = EntityReach.entityInteractionRange(player) + 1.0D;
             Vec3 eyePos = player.getEyePosition();
             Vec3 lookDir = player.getLookAngle();
             Vec3 endPos = eyePos.add(lookDir.scale(range));
-            AABB searchBox = player.getBoundingBox().expandTowards(lookDir.scale(range)).inflate(1.0);
+            AABB searchBox = player.getBoundingBox().expandTowards(lookDir.scale(range)).inflate(1.0D);
             EntityHitResult hit = ProjectileUtil.getEntityHitResult(
                     player, eyePos, endPos, searchBox,
                     e -> e != player && !e.isSpectator() && e instanceof LivingEntity,
@@ -340,7 +353,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
             target.hurtMarked = true;
         }
 
-        LightningBolt lightningBolt = new LightningBolt(net.minecraft.world.entity.EntityType.LIGHTNING_BOLT, level);
+        LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
         lightningBolt.moveTo(target.getX(), target.getY(), target.getZ());
         lightningBolt.setVisualOnly(true);
         level.addFreshEntity(lightningBolt);
@@ -349,7 +362,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
         target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, AntarchySettings.bigBerthaKrakenSlowTicks(), 1));
         level.sendParticles(ParticleTypes.SPLASH, target.getX(), target.getY(0.7D), target.getZ(), 16, 0.35D, 0.3D, 0.35D, 0.08D);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY(0.7D), target.getZ(), 10, 0.25D, 0.25D, 0.25D, 0.02D);
-        com.craisinlord.antarchy.content.entity.kraken.TentacleEntity.spawnAt(level, target.position(), attacker);
+        TentacleEntity.spawnAt(level, target.position(), attacker);
     }
 
     private void applyHerculesHit(Player attacker, LivingEntity target, ServerLevel level) {
@@ -415,7 +428,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
         }
 
         Vec3 normalized = direction.normalize();
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> {
+        AntarchyItemTag.update(stack, tag -> {
             tag.putInt(SPIN_TICKS_TAG, AntarchySettings.molevoreSpinTicks());
             tag.putDouble(SPIN_DIRECTION_X_TAG, normalized.x);
             tag.putDouble(SPIN_DIRECTION_Z_TAG, normalized.z);
@@ -430,7 +443,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     }
 
     private void startToreterrorJump(Level level, Player player, ItemStack stack) {
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> {
+        AntarchyItemTag.update(stack, tag -> {
             tag.putInt(TORETERROR_JUMPING_TAG, 1);
             tag.remove(TORETERROR_LAUNCHED_TAG);
         });
@@ -578,7 +591,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     }
 
     private static void setMode(ItemStack stack, BossMode mode) {
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> {
+        AntarchyItemTag.update(stack, tag -> {
             if (mode == BossMode.NONE) {
                 tag.remove(MODE_TAG);
             } else {
@@ -592,7 +605,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     }
 
     private static void setSpinTicks(ItemStack stack, int ticks) {
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> {
+        AntarchyItemTag.update(stack, tag -> {
             if (ticks <= 0) {
                 tag.remove(SPIN_TICKS_TAG);
             } else {
@@ -609,7 +622,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     }
 
     private static void clearSpinState(ItemStack stack) {
-        com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> {
+        AntarchyItemTag.update(stack, tag -> {
             tag.remove(SPIN_TICKS_TAG);
             tag.remove(SPIN_DIRECTION_X_TAG);
             tag.remove(SPIN_DIRECTION_Z_TAG);
@@ -617,11 +630,11 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     }
 
     private static int readInt(ItemStack stack, String tagName) {
-        return com.craisinlord.antarchy.content.component.AntarchyItemTag.getOrEmpty(stack).getInt(tagName);
+        return AntarchyItemTag.getOrEmpty(stack).getInt(tagName);
     }
 
     private static double readDouble(ItemStack stack, String tagName) {
-        return com.craisinlord.antarchy.content.component.AntarchyItemTag.getOrEmpty(stack).getDouble(tagName);
+        return AntarchyItemTag.getOrEmpty(stack).getDouble(tagName);
     }
 
     @Override
@@ -638,7 +651,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
             private AnimatedHeldItemRenderer<BigBerthaItem> renderer;
 
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, BigBerthaItem.this.textureLocation, ANIMATION_LOCATION));
                 }
@@ -648,18 +661,18 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
         });
     }
 
-    private final java.util.function.Supplier<Object> renderProvider = com.google.common.base.Suppliers.memoize(() -> {
+    private final Supplier<Object> renderProvider = Suppliers.memoize(() -> {
         Object[] holder = new Object[1];
         createRenderer(o -> holder[0] = o);
         return holder[0];
     });
 
     @Override
-    public java.util.function.Supplier<Object> getRenderProvider() {
+    public Supplier<Object> getRenderProvider() {
         return this.renderProvider;
     }
 
-    private enum BossMode {
+    public enum BossMode {
         NONE(0, "tooltip.antarchy.big_bertha.mode.none", "message.antarchy.big_bertha.mode.none"),
         BASILISK(7, "tooltip.antarchy.big_bertha.mode.basilisk", "message.antarchy.big_bertha.mode.basilisk"),
         NIGHTMARE(1, "tooltip.antarchy.big_bertha.mode.nightmare", "message.antarchy.big_bertha.mode.nightmare"),
@@ -705,7 +718,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
         }
 
         private static boolean alexsCavesEntityPresent(String path) {
-            return net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.containsKey(new ResourceLocation("alexscaves", path));
+            return BuiltInRegistries.ENTITY_TYPE.containsKey(new ResourceLocation("alexscaves", path));
         }
 
         private static BossMode fromId(int id) {

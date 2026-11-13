@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
+import com.geckolib.animation.RawAnimation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animation.RawAnimation;
 
 public class GlimmerAntBehavior implements GlimmerVariantBehavior {
     private static final Identifier REACH_BOOST_ID =

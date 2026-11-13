@@ -1,17 +1,16 @@
 package com.craisinlord.antarchy.neoforge.mixins.infinity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import net.codexarchonic.infinity.util.teleport.PortalCreator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.codexarchonic.infinity.util.teleport.PortalCreator;
-import net.minecraft.server.level.ServerLevel;
 
 @Mixin(value = PortalCreator.class, remap = false)
 public interface PortalCreatorMixin {

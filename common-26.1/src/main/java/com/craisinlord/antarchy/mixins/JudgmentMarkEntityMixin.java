@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.content.effect.JudgmentMarkAccess;
+import com.craisinlord.antarchy.content.effect.JudgmentMarkManager;
 import com.craisinlord.antarchy.content.util.SyncedEntityFlags;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class JudgmentMarkEntityMixin implements JudgmentMarkAccess {
     @Inject(method = "tick", at = @At("TAIL"))
     private void antarchy$tickJudgmentState(CallbackInfo ci) {
-        com.craisinlord.antarchy.content.effect.JudgmentMarkManager.tickTarget((LivingEntity) (Object) this);
+        JudgmentMarkManager.tickTarget((LivingEntity) (Object) this);
     }
 
     @Override

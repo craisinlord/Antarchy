@@ -20,7 +20,7 @@ public final class ParalyzedStonePlayerLayer extends RenderLayer<AvatarRenderSta
         }
 
         poseStack.pushPose();
-        poseStack.scale(1.05f, 1.05f, 1.05f);
+        poseStack.scale(1.05F, 1.05F, 1.05F);
         submitNodeCollector.order(1).submitModel(
                 this.getParentModel(),
                 state,

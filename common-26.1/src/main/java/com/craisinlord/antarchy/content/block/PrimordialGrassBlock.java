@@ -1,12 +1,16 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.longs.LongSets;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,14 +21,20 @@ public class PrimordialGrassBlock extends VegetationBlock {
     public static final MapCodec<PrimordialGrassBlock> CODEC = simpleCodec(PrimordialGrassBlock::new);
     private static final TagKey<Block> GROUND = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("antarchy", "primordial_ground"));
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 18, 14);
-    private static volatile boolean chunkModel;
+    private static final ThreadLocal<boolean[]> MESHING_DYNAMIC = ThreadLocal.withInitial(() -> new boolean[1]);
+    private static volatile LongSet dynamicSections = LongSets.EMPTY_SET;
 
-    public static boolean usesChunkModel() {
-        return chunkModel;
+    public static void setDynamicSections(LongSet sections) {
+        dynamicSections = sections;
     }
 
-    public static void setUsesChunkModel(boolean value) {
-        chunkModel = value;
+    public static void beginMeshing(int sectionX, int sectionY, int sectionZ) {
+        LongSet sections = dynamicSections;
+        MESHING_DYNAMIC.get()[0] = !sections.isEmpty() && sections.contains(SectionPos.asLong(sectionX, sectionY, sectionZ));
+    }
+
+    public static void endMeshing() {
+        MESHING_DYNAMIC.get()[0] = false;
     }
 
     public PrimordialGrassBlock(BlockBehaviour.Properties properties) {
@@ -42,8 +52,8 @@ public class PrimordialGrassBlock extends VegetationBlock {
     }
 
     @Override
-    protected net.minecraft.world.level.block.RenderShape getRenderShape(BlockState state) {
-        return chunkModel ? net.minecraft.world.level.block.RenderShape.MODEL : net.minecraft.world.level.block.RenderShape.INVISIBLE;
+    protected RenderShape getRenderShape(BlockState state) {
+        return MESHING_DYNAMIC.get()[0] ? RenderShape.INVISIBLE : RenderShape.MODEL;
     }
 
     @Override

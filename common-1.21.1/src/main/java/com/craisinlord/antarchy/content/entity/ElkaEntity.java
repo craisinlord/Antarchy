@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import java.util.EnumSet;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -12,6 +14,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,7 +35,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -92,7 +95,7 @@ public class ElkaEntity extends Animal implements GeoEntity {
     private int sitCooldownTicks;
     private int idleAnimationCycleTicks;
 
-    public ElkaEntity(EntityType<? extends ElkaEntity> entityType, net.minecraft.world.level.Level level) {
+    public ElkaEntity(EntityType<? extends ElkaEntity> entityType, Level level) {
         super(entityType, level);
         this.sitCooldownTicks = SIT_COOLDOWN_TICKS;
     }
@@ -269,7 +272,7 @@ public class ElkaEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(Entity target) {
         boolean hurt = super.doHurtTarget(target);
         if (hurt) {
             this.triggerAttackAnim();
@@ -398,7 +401,7 @@ public class ElkaEntity extends Animal implements GeoEntity {
 
     private final class ElkaSitGoal extends Goal {
         private ElkaSitGoal() {
-            this.setFlags(java.util.EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
         }
 
         @Override

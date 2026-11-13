@@ -3,9 +3,11 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
 import com.craisinlord.antarchy.content.client.model.SeashellModel;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -23,9 +25,9 @@ public final class SeashellRenderer extends GeoBlockRenderer<SeashellBlockEntity
             PoseStack poseStack,
             SeashellBlockEntity animatable,
             BakedGeoModel model,
-            net.minecraft.client.renderer.RenderType renderType,
+            RenderType renderType,
             MultiBufferSource bufferSource,
-            com.mojang.blaze3d.vertex.VertexConsumer buffer,
+            VertexConsumer buffer,
             boolean isReRender,
             float partialTick,
             int packedLight,

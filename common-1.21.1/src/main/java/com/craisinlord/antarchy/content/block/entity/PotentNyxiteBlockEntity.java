@@ -5,11 +5,11 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
 import com.craisinlord.antarchy.content.block.state.PotentNyxiteState;
+import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOptions;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOptions;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -17,12 +17,14 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
@@ -40,10 +42,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 public class PotentNyxiteBlockEntity extends BlockEntity {
     public static final long GEYSER_SALT = -904011478L;
@@ -95,7 +99,7 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
                 BuiltInRegistries.SOUND_EVENT.get(
                         stateValue == PotentNyxiteState.CONTINUOUS ? GEYSER_CONTINUOUS_START_SOUND_ID : GEYSER_ERUPTION_START_SOUND_ID
                 ),
-                net.minecraft.sounds.SoundSource.BLOCKS,
+                SoundSource.BLOCKS,
                 2.5F,
                 1.0F
         );
@@ -114,14 +118,14 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("countdown", this.waitingCountdown);
         tag.putLong("eruption_tick", this.eruptionTick);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.waitingCountdown = tag.getInt("countdown");
         this.eruptionTick = tag.getLong("eruption_tick");
@@ -277,7 +281,7 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
                         BuiltInRegistries.SOUND_EVENT.get(
                                 stateValue == PotentNyxiteState.CONTINUOUS ? GEYSER_CONTINUOUS_ACTIVE_SOUND_ID : GEYSER_ERUPTION_ACTIVE_SOUND_ID
                         ),
-                        net.minecraft.sounds.SoundSource.BLOCKS,
+                        SoundSource.BLOCKS,
                         1.0F,
                         1.0F,
                         false
@@ -363,7 +367,7 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
     }
 
     public static RandomSource geyserPositional(ServerLevel level, BlockPos pos) {
-        return new net.minecraft.world.level.levelgen.XoroshiroRandomSource(level.getSeed() ^ GEYSER_SALT).forkPositional().at(pos);
+        return new XoroshiroRandomSource(level.getSeed() ^ GEYSER_SALT).forkPositional().at(pos);
     }
 
     public static BlockPos findHypnoticGasSourceBlock(LevelAccessor level, BlockPos origin, Direction direction) {
@@ -507,7 +511,7 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
     }
 
     private static boolean haveLineOfSight(Level level, Vec3 from, Vec3 to) {
-        HitResult hitResult = level.clip(new ClipContext(from, to, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, net.minecraft.world.phys.shapes.CollisionContext.empty()));
+        HitResult hitResult = level.clip(new ClipContext(from, to, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, CollisionContext.empty()));
         return hitResult.getType() != HitResult.Type.BLOCK;
     }
 

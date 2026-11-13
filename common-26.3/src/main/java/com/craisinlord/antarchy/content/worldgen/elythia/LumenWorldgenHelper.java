@@ -3,7 +3,9 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -13,17 +15,17 @@ final class LumenWorldgenHelper {
     }
 
     static boolean isNaturalFloor(BlockState state) {
-        return state.is(net.minecraft.tags.BlockTags.DIRT)
-                || state.is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
-                || state.is(net.minecraft.world.level.block.Blocks.MOSS_BLOCK)
-                || state.is(net.minecraft.world.level.block.Blocks.ROOTED_DIRT)
+        return state.is(BlockTags.DIRT)
+                || state.is(Blocks.GRASS_BLOCK)
+                || state.is(Blocks.MOSS_BLOCK)
+                || state.is(Blocks.ROOTED_DIRT)
                 || state.is(AntarchyObjects.SHELLSTONE.get())
-                || state.is(net.minecraft.world.level.block.Blocks.TUFF);
+                || state.is(Blocks.TUFF);
     }
 
     static boolean isSolidSupport(BlockState state) {
         return !state.isAir()
-                && (state.isSolid() && !state.is(net.minecraft.world.level.block.Blocks.COBWEB) && !state.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING))
+                && (state.isSolid() && !state.is(Blocks.COBWEB) && !state.is(Blocks.BAMBOO_SAPLING))
                 && state.getFluidState().isEmpty()
                 && !state.is(BlockTags.LOGS)
                 && !state.is(BlockTags.LEAVES);
@@ -40,7 +42,7 @@ final class LumenWorldgenHelper {
             if (state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES)) {
                 continue;
             }
-            if (!state.isAir() && (state.isSolid() && !state.is(net.minecraft.world.level.block.Blocks.COBWEB) && !state.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING))) {
+            if (!state.isAir() && (state.isSolid() && !state.is(Blocks.COBWEB) && !state.is(Blocks.BAMBOO_SAPLING))) {
                 break;
             }
         }
@@ -59,7 +61,7 @@ final class LumenWorldgenHelper {
         if (!lumenBlockState.hasProperty(LiquidBlock.LEVEL)) {
             return lumenBlockState;
         }
-        return lumenBlockState.setValue(LiquidBlock.LEVEL, net.minecraft.util.Mth.clamp(level, 0, 15));
+        return lumenBlockState.setValue(LiquidBlock.LEVEL, Mth.clamp(level, 0, 15));
     }
 
     static void scheduleFluidTick(WorldGenLevel level, BlockPos pos) {

@@ -27,7 +27,7 @@ public class AntiwaterFluidType extends FluidType {
 
         Vec3 motion = entity.getDeltaMovement();
         if (entity.horizontalCollision && entity.onClimbable()) {
-            motion = new Vec3(motion.x, 0.2, motion.z);
+            motion = new Vec3(motion.x, 0.2D, motion.z);
         }
 
         GravityDirection gravityDirection = GravityApi.getGravityDirection(entity);
@@ -35,7 +35,7 @@ public class AntiwaterFluidType extends FluidType {
                 ? GravityRotationUtil.vecPlayerToWorld(motion, gravityDirection)
                 : motion;
 
-        double drag = entity.isSwimming() ? 0.9 : 0.8;
+        double drag = entity.isSwimming() ? 0.9D : 0.8D;
         worldMotion = worldMotion.scale(drag);
         boolean isFlying = entity instanceof Player p && p.getAbilities().flying;
         if (!isFlying) {
@@ -49,7 +49,7 @@ public class AntiwaterFluidType extends FluidType {
         );
         if (entity.horizontalCollision && entity.isFree(
                 worldMotion.x,
-                worldMotion.y + 0.6 - entity.getY() + prevY,
+                worldMotion.y + 0.6D - entity.getY() + prevY,
                 worldMotion.z)) {
             Vec3 boostedWorldMotion = new Vec3(worldMotion.x, 0.3D, worldMotion.z);
             entity.setDeltaMovement(
@@ -66,9 +66,9 @@ public class AntiwaterFluidType extends FluidType {
     public void setItemMovement(ItemEntity entity) {
         Vec3 vec3 = entity.getDeltaMovement();
         entity.setDeltaMovement(
-                vec3.x * 0.99,
-                vec3.y + (vec3.y < 0.06 ? 5.0E-4 : 0.0),
-                vec3.z * 0.99
+                vec3.x * 0.99D,
+                vec3.y + (vec3.y < 0.06D ? 5.0E-4D : 0.0D),
+                vec3.z * 0.99D
         );
     }
 }

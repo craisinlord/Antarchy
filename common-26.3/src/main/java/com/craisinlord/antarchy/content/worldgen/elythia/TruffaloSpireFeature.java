@@ -8,6 +8,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -26,11 +27,12 @@ public final class TruffaloSpireFeature implements Feature {
     public static final MapCodec<TruffaloSpireFeature> CODEC = MapCodec.unit(TruffaloSpireFeature::new);
 
     @Override
-    public MapCodec<TruffaloSpireFeature> codec() { return CODEC; }
+    public MapCodec<TruffaloSpireFeature> codec() {
+        return CODEC;
+    }
     private static final int REACH = 16;
     private static final int BURY_DEPTH = 3;
     private static final int MAX_FILL_DOWN = 10;
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -335,7 +337,7 @@ public final class TruffaloSpireFeature implements Feature {
         return state.isAir()
                 || state.canBeReplaced()
                 || LumenWorldgenHelper.isNaturalFloor(state)
-                || state.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD);
+                || state.is(BlockTags.BASE_STONE_OVERWORLD);
     }
 
     private static boolean isSpireBlock(BlockState state) {

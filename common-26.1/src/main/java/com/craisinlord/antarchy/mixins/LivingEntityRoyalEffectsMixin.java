@@ -1,19 +1,23 @@
 package com.craisinlord.antarchy.mixins;
 
+import com.craisinlord.antarchy.content.effect.CommandedBehavior;
 import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
+import java.util.Collection;
 import java.util.UUID;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
@@ -65,26 +69,26 @@ public abstract class LivingEntityRoyalEffectsMixin {
     }
 
     @Inject(method = "onEffectsRemoved", at = @At("HEAD"))
-    private void antarchy$clearCommandedState(java.util.Collection<MobEffectInstance> effects, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+    private void antarchy$clearCommandedState(Collection<MobEffectInstance> effects, CallbackInfo ci) {
         if (!((Object) this instanceof Mob mob)) {
             return;
         }
         for (MobEffectInstance instance : effects) {
             if (RoyalEffectEligibility.isCommanded(instance)) {
-                com.craisinlord.antarchy.content.effect.CommandedBehavior.clear(mob);
+                CommandedBehavior.clear(mob);
             }
         }
     }
 
     @Unique
     private Entity antarchy$resolveCommander(Entity source) {
-        if (source instanceof net.minecraft.world.entity.player.Player player) {
+        if (source instanceof Player player) {
             return player;
         }
-        if (source instanceof Projectile projectile && projectile.getOwner() instanceof net.minecraft.world.entity.player.Player player) {
+        if (source instanceof Projectile projectile && projectile.getOwner() instanceof Player player) {
             return player;
         }
-        if (source instanceof AreaEffectCloud cloud && cloud.getOwner() instanceof net.minecraft.world.entity.player.Player player) {
+        if (source instanceof AreaEffectCloud cloud && cloud.getOwner() instanceof Player player) {
             return player;
         }
         return source instanceof RoyalBossEntity ? source : null;

@@ -1,10 +1,8 @@
 package com.craisinlord.antarchy.fabric.client;
 
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundSource;
 
 public final class StinkySoundHandler {

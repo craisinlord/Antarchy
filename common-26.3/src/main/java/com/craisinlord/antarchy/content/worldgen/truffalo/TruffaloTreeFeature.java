@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.truffalo;
 
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -12,6 +11,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class TruffaloTreeFeature implements Feature {
@@ -19,12 +19,18 @@ public class TruffaloTreeFeature implements Feature {
 
     private final TruffaloTreeConfiguration config;
 
-    public TruffaloTreeFeature(TruffaloTreeConfiguration config) { this.config = config; }
+    public TruffaloTreeFeature(TruffaloTreeConfiguration config) {
+        this.config = config;
+    }
 
-    public TruffaloTreeConfiguration config() { return this.config; }
+    public TruffaloTreeConfiguration config() {
+        return this.config;
+    }
 
     @Override
-    public MapCodec<TruffaloTreeFeature> codec() { return CODEC; }
+    public MapCodec<TruffaloTreeFeature> codec() {
+        return CODEC;
+    }
     private static final DyeColor[] TUFT_COLORS = {
             DyeColor.MAGENTA,
             DyeColor.ORANGE,
@@ -38,7 +44,6 @@ public class TruffaloTreeFeature implements Feature {
             DyeColor.PINK,
             DyeColor.PURPLE
     };
-
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

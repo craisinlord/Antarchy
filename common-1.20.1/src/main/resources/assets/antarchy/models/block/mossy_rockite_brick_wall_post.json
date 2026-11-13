@@ -1,7 +1,7 @@
 {
-  "parent": "minecraft:block/template_wall_post",
+  "parent": "antarchy:block/tinted/wall_post_overlay",
   "textures": {
-    "wall": "antarchy:block/mossy_rockite_bricks"
+    "wall": "antarchy:block/mossy_rockite_bricks",
+    "overlay": "antarchy:block/mossy_rockite_bricks_overlay"
   }
 }
-

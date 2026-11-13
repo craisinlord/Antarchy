@@ -1,10 +1,5 @@
 package com.craisinlord.antarchy.content.portalgun;
 
-import com.craisinlord.anthology.portal.PortalAppearance;
-import com.craisinlord.anthology.portal.PortalEntity;
-import com.craisinlord.anthology.portal.PortalShape;
-import com.craisinlord.anthology.portal.PortalSounds;
-import com.craisinlord.anthology.portal.PortalTransitMath;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
@@ -13,6 +8,13 @@ import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.entity.BlockSuction;
+import com.craisinlord.anthology.portal.PortalAppearance;
+import com.craisinlord.anthology.portal.PortalEntity;
+import com.craisinlord.anthology.portal.PortalShape;
+import com.craisinlord.anthology.portal.PortalSounds;
+import com.craisinlord.anthology.portal.PortalTransitMath;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,6 +51,7 @@ import net.minecraft.world.entity.vehicle.VehicleEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
@@ -143,7 +146,7 @@ public class PortalGunPortalEntity extends PortalEntity {
         this.supportOrigin = placement.supportOrigin().immutable();
         this.masterPos = placement.masterPos().immutable();
         this.basePos = placement.basePos().immutable();
-        this.portalSpots = java.util.Arrays.stream(placement.portalSpots()).map(BlockPos::immutable).toArray(BlockPos[]::new);
+        this.portalSpots = Arrays.stream(placement.portalSpots()).map(BlockPos::immutable).toArray(BlockPos[]::new);
         this.compensatedSpots = Set.copyOf(placement.compensatedSpots());
     }
 
@@ -444,7 +447,7 @@ public class PortalGunPortalEntity extends PortalEntity {
     }
 
     private static BlockState loadedState(ServerLevel level, BlockPos pos) {
-        net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunkSource()
+        LevelChunk chunk = level.getChunkSource()
                 .getChunkNow(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
         return chunk == null ? null : chunk.getBlockState(pos);
     }
@@ -531,7 +534,7 @@ public class PortalGunPortalEntity extends PortalEntity {
         tag.putInt("BaseX", this.basePos.getX());
         tag.putInt("BaseY", this.basePos.getY());
         tag.putInt("BaseZ", this.basePos.getZ());
-        writeSpots(tag.list("PortalSpots", CompoundTag.CODEC), java.util.Arrays.asList(this.portalSpots));
+        writeSpots(tag.list("PortalSpots", CompoundTag.CODEC), Arrays.asList(this.portalSpots));
         writeSpots(tag.list("CompensatedSpots", CompoundTag.CODEC), this.compensatedSpots);
     }
 
@@ -571,7 +574,7 @@ public class PortalGunPortalEntity extends PortalEntity {
     }
 
     private static List<BlockPos> readSpots(Iterable<CompoundTag> list) {
-        List<BlockPos> positions = new java.util.ArrayList<>();
+        List<BlockPos> positions = new ArrayList<>();
         for (CompoundTag spot : list) {
             positions.add(new BlockPos(spot.getIntOr("X", 0), spot.getIntOr("Y", 0), spot.getIntOr("Z", 0)));
         }

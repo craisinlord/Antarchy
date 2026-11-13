@@ -1,45 +1,48 @@
 package com.craisinlord.antarchy.content.block.entity;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.UndertrialSpawnerBlock;
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.anthology.effect.AnthologyEffects;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.trialspawner.TrialSpawner;
-import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerConfig;
-import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerState;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.random.WeightedList;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerStateData;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.random.WeightedList;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.trialspawner.PlayerDetector;
+import net.minecraft.world.level.block.entity.trialspawner.TrialSpawner;
+import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerConfig;
+import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerState;
+import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerStateData;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public final class UndertrialSpawnerBlockEntity extends BlockEntity implements TrialSpawner.StateAccessor {
     private static final String SPAWNER_TAG = "trial_spawner";
@@ -54,10 +57,10 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
     private boolean hasNormalLootTablesTag;
     private boolean hasOminousLootTablesTag;
 
-    public UndertrialSpawnerBlockEntity(BlockPos pos, BlockState state, Supplier<? extends net.minecraft.world.level.block.entity.BlockEntityType<UndertrialSpawnerBlockEntity>> type) {
+    public UndertrialSpawnerBlockEntity(BlockPos pos, BlockState state, Supplier<? extends BlockEntityType<UndertrialSpawnerBlockEntity>> type) {
         super(type.get(), pos, state);
-        this.trialSpawner = new TrialSpawner(TrialSpawner.FullConfig.DEFAULT, this, net.minecraft.world.level.block.entity.trialspawner.PlayerDetector.INCLUDING_CREATIVE_PLAYERS,
-                net.minecraft.world.level.block.entity.trialspawner.PlayerDetector.EntitySelector.SELECT_FROM_LEVEL);
+        this.trialSpawner = new TrialSpawner(TrialSpawner.FullConfig.DEFAULT, this, PlayerDetector.INCLUDING_CREATIVE_PLAYERS,
+                PlayerDetector.EntitySelector.SELECT_FROM_LEVEL);
         this.trialSpawner.overridePeacefulAndMobSpawnRule();
         this.previousClientState = state.getValue(UndertrialSpawnerBlock.STATE);
     }
@@ -100,7 +103,7 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
             Identifier detectionSound = Identifier.fromNamespaceAndPath(Antarchy.MODID,
                     level.getRandom().nextBoolean() ? "undertrial_detect_player1" : "undertrial_detect_player2");
             level.playSound(null, pos, BuiltInRegistries.SOUND_EVENT.getValue(detectionSound),
-                    net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
+                    SoundSource.BLOCKS, 1.0F, 1.0F);
             for (int i = 0; i < 12; i++) {
                 level.addParticle(blockEntity.particle("undertrial_spawner_detection"), pos.getX() + 0.5D + (level.getRandom().nextDouble() - 0.5D) * 1.4D,
                         pos.getY() + 0.15D + level.getRandom().nextDouble() * 0.7D,
@@ -126,7 +129,7 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
         }
     }
 
-    private static net.minecraft.core.Holder<MobEffect> effect(String path) {
+    private static Holder<MobEffect> effect(String path) {
         return BuiltInRegistries.MOB_EFFECT.getOrThrow(ResourceKey.create(Registries.MOB_EFFECT,
                 Identifier.fromNamespaceAndPath(Antarchy.MODID, path)));
     }
@@ -142,7 +145,7 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
     }
 
     @Override
-    public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.trialSpawner.getStateData().getUpdateTag(this.getState());
     }
 

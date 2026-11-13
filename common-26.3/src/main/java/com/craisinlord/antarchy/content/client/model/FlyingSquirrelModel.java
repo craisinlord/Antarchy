@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.client.model;
 
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
-import net.minecraft.resources.Identifier;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class FlyingSquirrelModel extends GeoModel<FlyingSquirrelEntity> {
     public static final DataTicket<String> TEXTURE_VARIANT = DataTicket.create("antarchy_flying_squirrel_texture_variant", String.class);

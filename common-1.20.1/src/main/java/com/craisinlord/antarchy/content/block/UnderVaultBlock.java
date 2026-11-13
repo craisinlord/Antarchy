@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.block.entity.UnderVaultBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.undervault.UnderVaultEffects;
 import com.craisinlord.antarchy.content.block.entity.undervault.UnderVaultLogic;
 import com.craisinlord.antarchy.content.block.entity.undervault.UnderVaultState;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -29,8 +30,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
-
-import java.util.function.Supplier;
 
 public final class UnderVaultBlock extends BaseEntityBlock {
     public static final EnumProperty<UnderVaultState> STATE = EnumProperty.create("vault_state", UnderVaultState.class);

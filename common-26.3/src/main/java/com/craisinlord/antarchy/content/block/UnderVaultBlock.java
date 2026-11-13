@@ -1,27 +1,30 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.block.entity.UnderVaultBlockEntity;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.VaultBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.vault.VaultBlockEntity;
+import net.minecraft.world.level.block.entity.vault.VaultState;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
-
-import java.util.function.Supplier;
 
 public final class UnderVaultBlock extends VaultBlock {
     public static final EnumProperty<Direction> UNDER_FACING = EnumProperty.create("under_facing", Direction.class, Direction.values());
@@ -34,7 +37,7 @@ public final class UnderVaultBlock extends VaultBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(UNDER_FACING);
     }
@@ -66,14 +69,14 @@ public final class UnderVaultBlock extends VaultBlock {
 
     @Override
     public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
-                                           net.minecraft.world.entity.player.Player player, InteractionHand hand,
+                                           Player player, InteractionHand hand,
                                            BlockHitResult hitResult) {
-        if (stack.isEmpty() || state.getValue(STATE) != net.minecraft.world.level.block.entity.vault.VaultState.ACTIVE) {
+        if (stack.isEmpty() || state.getValue(STATE) != VaultState.ACTIVE) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (level instanceof ServerLevel serverLevel
                 && level.getBlockEntity(pos) instanceof UnderVaultBlockEntity underVault) {
-            net.minecraft.world.level.block.entity.vault.VaultBlockEntity.Server.tryInsertKey(
+            VaultBlockEntity.Server.tryInsertKey(
                     serverLevel, pos, state, underVault.getVaultData().getConfig(),
                     underVault.getVaultData().getServerData(), underVault.getVaultData().getSharedData(),
                     player, stack);

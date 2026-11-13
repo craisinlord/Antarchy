@@ -23,7 +23,7 @@ public class CrawlingBlightRenderer extends GeoEntityRenderer<CrawlingBlightEnti
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
         if (animatable.isWallClimbing()) {
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-            poseStack.translate(0, -0.5, 0.5);
+            poseStack.translate(0, -0.5D, 0.5D);
         }
     }
 }

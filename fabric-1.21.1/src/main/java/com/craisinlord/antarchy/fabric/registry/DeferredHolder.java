@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.fabric.registry;
 
 import java.util.function.Supplier;
-
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

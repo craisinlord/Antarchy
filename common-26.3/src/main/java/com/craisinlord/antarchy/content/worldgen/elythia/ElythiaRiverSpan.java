@@ -4,7 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Interval;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
 
 public record ElythiaRiverSpan(DensityFunction argument, double scale) implements DensityFunction {
     public static final MapCodec<ElythiaRiverSpan> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -34,12 +36,14 @@ public record ElythiaRiverSpan(DensityFunction argument, double scale) implement
     }
 
     @Override
-    public int domainAxes() { return ElythiaField.planarAxes(); }
+    public int domainAxes() {
+        return ElythiaField.planarAxes();
+    }
 
     @Override
-    public MapCodec<ElythiaRiverSpan> codec() { return CODEC; }
-
-
+    public MapCodec<ElythiaRiverSpan> codec() {
+        return CODEC;
+    }
 
     private static final class Runtime implements ElythiaField {
         private final ElythiaField argument;

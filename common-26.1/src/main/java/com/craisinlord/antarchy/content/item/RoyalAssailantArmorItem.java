@@ -91,7 +91,7 @@ public class RoyalAssailantArmorItem extends Item {
         }
 
         double doubleDamageChance = resolveDoubleDamageChance(type);
-        if (doubleDamageChance > 0.0) {
+        if (doubleDamageChance > 0.0D) {
             builder.add(AntarchyObjects.DOUBLE_DAMAGE_CHANCE.get(),
                     new AttributeModifier(Identifier.fromNamespaceAndPath("antarchy", prefix + "_double_damage_chance"), doubleDamageChance, AttributeModifier.Operation.ADD_VALUE),
                     slot);

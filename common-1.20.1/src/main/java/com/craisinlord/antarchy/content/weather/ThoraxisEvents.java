@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.weather;
 
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload;
 import com.craisinlord.antarchy.content.network.ThoraxisEventPayload;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;

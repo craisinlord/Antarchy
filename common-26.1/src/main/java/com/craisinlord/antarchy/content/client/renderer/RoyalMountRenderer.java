@@ -67,7 +67,9 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity, Livi
 
     private static RoyalBossRenderer.BeamSlot extractBeam(RoyalMountEntity entity, float partialTick) {
         Vec3 end = entity.getBeamEndPosition();
-        if (!entity.isFiringBeam() || end == null) return null;
+        if (!entity.isFiringBeam() || end == null) {
+            return null;
+        }
         double x = Mth.lerp(partialTick, entity.xo, entity.getX());
         double y = Mth.lerp(partialTick, entity.yo, entity.getY());
         double z = Mth.lerp(partialTick, entity.zo, entity.getZ());

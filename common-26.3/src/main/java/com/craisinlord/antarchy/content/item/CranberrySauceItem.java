@@ -4,14 +4,15 @@ import com.craisinlord.antarchy.content.effect.SaucedMeals;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
-import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
 
 public class CranberrySauceItem extends Item {
@@ -31,7 +32,7 @@ public class CranberrySauceItem extends Item {
         if (livingEntity instanceof Player player && !player.getAbilities().instabuild) {
             ItemStack bottle = new ItemStack(Items.GLASS_BOTTLE);
             if (!player.getInventory().add(bottle)) {
-                player.drop(bottle, false, net.minecraft.util.Prediction.SERVER_ONLY);
+                player.drop(bottle, false, Prediction.SERVER_ONLY);
             }
         }
         return result;

@@ -29,9 +29,9 @@ public final class CavarynCarapaceRiftDressingFeature extends Feature<NoneFeatur
             new ResourceLocation(Antarchy.MODID, "biomite")
     );
     private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
-    private static final double LINING_DEPTH = 1.5;
-    private static final double BAND_SPACING = 9.0;
-    private static final double BAND_THICKNESS = 2.5;
+    private static final double LINING_DEPTH = 1.5D;
+    private static final double BAND_SPACING = 9.0D;
+    private static final double BAND_THICKNESS = 2.5D;
 
     public CavarynCarapaceRiftDressingFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -42,8 +42,8 @@ public final class CavarynCarapaceRiftDressingFeature extends Feature<NoneFeatur
         WorldGenLevel level = context.level();
         NormalNoise noise = level.getLevel().getChunkSource().randomState().getOrCreateNoise(RIFT_NOISE);
         CavarynCavityGrid grid = CavarynCavityGrid.forSalt(CavarynWormBoreFunction.saltFor(
-                noise.getValue(1234.567, 89.123, -456.789),
-                noise.getValue(-987.654, 12.345, 654.321)
+                noise.getValue(1234.567D, 89.123D, -456.789D),
+                noise.getValue(-987.654D, 12.345D, 654.321D)
         ));
         Block chitin = block(CHITIN_ID);
         if (grid == null || chitin == null) {
@@ -70,14 +70,14 @@ public final class CavarynCarapaceRiftDressingFeature extends Feature<NoneFeatur
                 }
                 int minY = Math.max(minBuild, range[0]);
                 int maxY = Math.min(maxBuild, range[1]);
-                double warp = 2.5 * Math.sin(x * 0.05) + 2.5 * Math.sin(z * 0.043);
+                double warp = 2.5D * Math.sin(x * 0.05D) + 2.5D * Math.sin(z * 0.043D);
                 for (int y = minY; y <= maxY; y++) {
-                    double band = Math.floorMod((long) Math.floor((y + warp) * 4.0), (long) (BAND_SPACING * 4.0)) / 4.0;
+                    double band = Math.floorMod((long) Math.floor((y + warp) * 4.0D), (long) (BAND_SPACING * 4.0D)) / 4.0D;
                     if (band >= BAND_THICKNESS) {
                         continue;
                     }
                     double distance = grid.signedDistance(x, y, z);
-                    if (distance <= 0.0 || distance > LINING_DEPTH) {
+                    if (distance <= 0.0D || distance > LINING_DEPTH) {
                         continue;
                     }
                     pos.set(x, y, z);

@@ -1,11 +1,12 @@
 package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
 import com.craisinlord.antarchy.content.portalgun.PortalGunVariant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -24,12 +26,10 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -77,7 +77,7 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         this.facing = facing;
         this.upAxis = upAxis;
         this.basePos = basePos.immutable();
-        this.portalSpots = java.util.Arrays.stream(portalSpots).map(BlockPos::immutable).toArray(BlockPos[]::new);
+        this.portalSpots = Arrays.stream(portalSpots).map(BlockPos::immutable).toArray(BlockPos[]::new);
         this.portalWidth = portalWidth;
         this.portalHeight = portalHeight;
         this.compensatedSpots = new HashSet<>(compensatedSpots);
@@ -394,8 +394,8 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
             CompoundTag spot = spots.getCompound(i);
             this.portalSpots[i] = new BlockPos(spot.getInt("X"), spot.getInt("Y"), spot.getInt("Z"));
         }
-        this.portalWidth = net.minecraft.util.Mth.clamp(tag.getInt("PortalWidth"), 1, 16);
-        this.portalHeight = net.minecraft.util.Mth.clamp(tag.getInt("PortalHeight"), 2, 16);
+        this.portalWidth = Mth.clamp(tag.getInt("PortalWidth"), 1, 16);
+        this.portalHeight = Mth.clamp(tag.getInt("PortalHeight"), 2, 16);
         ListTag compensated = tag.getList("CompensatedSpots", Tag.TAG_COMPOUND);
         Set<BlockPos> compensatedSpots = new HashSet<>();
         for (int i = 0; i < compensated.size(); i++) {

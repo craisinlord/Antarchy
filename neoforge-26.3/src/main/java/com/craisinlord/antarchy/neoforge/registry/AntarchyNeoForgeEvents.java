@@ -1,61 +1,90 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
-import net.minecraft.world.entity.EntityTypes;
-import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
+import com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.dispenser.AntimetalMinecartDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.AnvilCannonDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
-import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
-import com.craisinlord.antarchy.content.dispenser.AntimetalMinecartDispenseBehavior;
-import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
-import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
+import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.entity.*;
+import com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler;
 import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
+import com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
+import com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner;
+import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
+import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
+import com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
-import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
-import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
+import com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
-import com.craisinlord.antarchy.content.loot.AntarchyLootInjections;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
-import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.loot.AntarchyLootInjections;
+import com.craisinlord.antarchy.content.network.BloodglassStatePayload;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
+import com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
+import com.craisinlord.antarchy.content.transit.AntTransit;
+import com.craisinlord.antarchy.content.weather.ElythiaEvents;
+import com.craisinlord.antarchy.content.weather.ElythiaRainGrowth;
+import com.craisinlord.antarchy.content.weather.ThoraxisEvents;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes;
+import com.craisinlord.anthology.effect.AnthologyEffects;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.MountedGravityHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.rabbit.Rabbit;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
@@ -63,14 +92,15 @@ import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 public final class AntarchyNeoForgeEvents {
     private static final double OVERHEAD_INVERSION_WARN_MS = 10.0D;
@@ -145,16 +175,24 @@ public final class AntarchyNeoForgeEvents {
 
     public static void onMissileSquidDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof MissileSquidEntity missileSquid) {
-            if (missileSquid.isSpawnedByKraken()) return;
+            if (missileSquid.isSpawnedByKraken()) {
+                return;
+            }
         } else if (event.getEntity().getType() != EntityTypes.SQUID) {
             return;
         }
-        if (!(event.getEntity().level() instanceof ServerLevel serverLevel)) return;
-        if (!(event.getEntity().getKillCredit() instanceof Player killer)) return;
+        if (!(event.getEntity().level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        if (!(event.getEntity().getKillCredit() instanceof Player killer)) {
+            return;
+        }
 
         boolean requireBadOmen = AntarchySettings.krakenRequireBadOmenToSummon();
         int badOmenLevel = badOmenLevel(killer);
-        if (requireBadOmen && badOmenLevel <= 0) return;
+        if (requireBadOmen && badOmenLevel <= 0) {
+            return;
+        }
 
         BlockPos deathPos = event.getEntity().blockPosition();
 
@@ -185,27 +223,27 @@ public final class AntarchyNeoForgeEvents {
     static void tickCavarynHordes(ServerTickEvent.Post event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
-            com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tick(level);
-            com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
-            com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
-            com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
-            com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
+            KrakenRitualManager.tick(level);
+            CavarynCreatureSpawner.tick(level);
+            GlimmerNightSpawner.tick(level);
+            StratosharkSkySpawner.tick(level);
+            KingsTreeGridFeature.tickPendingSpawns(level);
         }
     }
 
     static void tickThoraxisUnderside(ServerTickEvent.Post event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             ThoraxisUndersideManager.tick(level);
-            com.craisinlord.antarchy.content.weather.ThoraxisEvents.tick(level);
-                com.craisinlord.antarchy.content.weather.ElythiaEvents.tick(level);
-                com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
-                com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
+            ThoraxisEvents.tick(level);
+                ElythiaEvents.tick(level);
+                ThrowbackZoneTracker.tick(level);
+                ElythiaRainGrowth.tick(level);
         }
     }
 
     static void tickAntArrivals(ServerTickEvent.Post event) {
-        com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(event.getServer());
-        com.craisinlord.antarchy.content.transit.AntTransit.tick(event.getServer());
+        AntArrivalScheduler.tick(event.getServer());
+        AntTransit.tick(event.getServer());
     }
 
     private static int badOmenLevel(Player player) {
@@ -242,7 +280,9 @@ public final class AntarchyNeoForgeEvents {
         for (int i = 0; i < count; i++) {
             BlockPos spawnPos = findKrakenSpawnPos(level, origin);
             KrakenEntity kraken = AntarchyObjects.KRAKEN.get().create(level, EntitySpawnReason.EVENT);
-            if (kraken == null) continue;
+            if (kraken == null) {
+                continue;
+            }
             kraken.snapTo(spawnPos.getX() + 0.5D, spawnPos.getY() + 1.0D, spawnPos.getZ() + 0.5D,
                     level.getRandom().nextFloat() * 360.0F, 0.0F);
             kraken.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), EntitySpawnReason.EVENT, null);
@@ -267,7 +307,7 @@ public final class AntarchyNeoForgeEvents {
     static void registerReloadListeners(AddServerReloadListenersEvent event) {
         event.addListener(Identifier.fromNamespaceAndPath(Antarchy.MODID, "dr_trayaurus_trades"), new DrTrayaurusTradeManager());
         event.addListener(Identifier.fromNamespaceAndPath(Antarchy.MODID, "computer_scientist_trades"), new ComputerScientistTradeManager());
-        event.addListener(Identifier.fromNamespaceAndPath(Antarchy.MODID, "pest_control_trades"), new com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager());
+        event.addListener(Identifier.fromNamespaceAndPath(Antarchy.MODID, "pest_control_trades"), new PestControlTradeManager());
     }
     static void handleStartTracking(PlayerEvent.StartTracking event) {
         if (event.getTarget().level().isClientSide()) {
@@ -320,16 +360,16 @@ public final class AntarchyNeoForgeEvents {
 
     private static final String DREAD_BED_BUG_NEXT_SPAWN_KEY = Antarchy.MODID + ":dread_bed_bug_next_spawn";
     private static final int DREAD_BED_BUG_SPAWN_COOLDOWN_TICKS = 6000;
-    static void handleDreadBedSleep(net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent event) {
+    static void handleDreadBedSleep(CanPlayerSleepEvent event) {
         if (!event.getEntity().hasEffect(AntarchyNeoforgeMisc.DREAD)) {
             return;
         }
         if (event.getEntity() instanceof Player player) {
-            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.dread_too_scared_to_sleep"));
+            player.sendOverlayMessage(Component.translatable("message.antarchy.dread_too_scared_to_sleep"));
         }
-        event.setProblem(net.minecraft.world.entity.player.Player.BedSleepingProblem.OTHER_PROBLEM);
+        event.setProblem(Player.BedSleepingProblem.OTHER_PROBLEM);
 
-        net.minecraft.server.level.ServerLevel level = (net.minecraft.server.level.ServerLevel) event.getLevel();
+        ServerLevel level = (ServerLevel) event.getLevel();
         Player player = event.getEntity();
         long gameTime = level.getGameTime();
         long nextSpawnTime = player.getPersistentData().getLongOr(DREAD_BED_BUG_NEXT_SPAWN_KEY, 0L);
@@ -337,8 +377,8 @@ public final class AntarchyNeoForgeEvents {
             return;
         }
 
-        net.minecraft.core.BlockPos bedPos = event.getPos();
-        com.craisinlord.antarchy.content.entity.BedBugEntity bedBug = AntarchyObjects.BED_BUG.get().create(level, EntitySpawnReason.EVENT);
+        BlockPos bedPos = event.getPos();
+        BedBugEntity bedBug = AntarchyObjects.BED_BUG.get().create(level, EntitySpawnReason.EVENT);
         if (bedBug == null) {
             return;
         }
@@ -398,7 +438,7 @@ public final class AntarchyNeoForgeEvents {
             return;
         }
 
-        if (!player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).is(AntarchyNeoforgeItems.FALLEN_KING_CROWN.get())) {
+        if (!player.getItemBySlot(EquipmentSlot.HEAD).is(AntarchyNeoforgeItems.FALLEN_KING_CROWN.get())) {
             return;
         }
 
@@ -437,8 +477,8 @@ public final class AntarchyNeoForgeEvents {
                     "[antarchy-gravity] slow overhead antimetal scan targetType={} uuid={} pos=({}, {}, {}) dim={} elapsedMs={} inverted={} forced={} gameTime={}",
                     livingEntity.getType(), livingEntity.getUUID(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(),
                     livingEntity.level().dimension().identifier(), elapsedMs,
-                    com.craisinlord.anthology.gravity.GravityApi.isGravityInverted(livingEntity),
-                    com.craisinlord.anthology.gravity.GravityApi.isGravityForced(livingEntity),
+                    GravityApi.isGravityInverted(livingEntity),
+                    GravityApi.isGravityForced(livingEntity),
                     gameTime
             );
         }
@@ -464,17 +504,17 @@ public final class AntarchyNeoForgeEvents {
     private static boolean isDirectlyBelowAntimetal(LivingEntity entity) {
         AABB bounds = entity.getBoundingBox().deflate(1.0E-3D);
 
-        int minX = net.minecraft.util.Mth.floor(bounds.minX);
-        int maxX = net.minecraft.util.Mth.floor(bounds.maxX);
-        int maxY = net.minecraft.util.Mth.floor(bounds.maxY);
-        int minZ = net.minecraft.util.Mth.floor(bounds.minZ);
-        int maxZ = net.minecraft.util.Mth.floor(bounds.maxZ);
+        int minX = Mth.floor(bounds.minX);
+        int maxX = Mth.floor(bounds.maxX);
+        int maxY = Mth.floor(bounds.maxY);
+        int minZ = Mth.floor(bounds.minZ);
+        int maxZ = Mth.floor(bounds.maxZ);
 
-        net.minecraft.core.BlockPos.MutableBlockPos crystalPos = new net.minecraft.core.BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos crystalPos = new BlockPos.MutableBlockPos();
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
                 crystalPos.set(x, maxY + 1, z);
-                if (entity.level().getBlockState(crystalPos).is(com.craisinlord.antarchy.content.AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
+                if (entity.level().getBlockState(crystalPos).is(AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
                     return true;
                 }
             }
@@ -492,7 +532,7 @@ public final class AntarchyNeoForgeEvents {
         double y = entity.getBoundingBox().maxY + 0.1D;
         double z = entity.getZ();
         serverLevel.sendParticles(
-                new net.minecraft.core.particles.DustParticleOptions(dustColor(1.0F, 0.1F, 0.1F), 1.0F),
+                new DustParticleOptions(dustColor(1.0F, 0.1F, 0.1F), 1.0F),
                 x,
                 y,
                 z,
@@ -505,7 +545,7 @@ public final class AntarchyNeoForgeEvents {
     }
 
     private static int dustColor(float red, float green, float blue) {
-        return net.minecraft.util.ARGB.colorFromFloat(1.0F, red, green, blue) & 0xFFFFFF;
+        return ARGB.colorFromFloat(1.0F, red, green, blue) & 0xFFFFFF;
     }
 
     static void modifyEntityAttributes(EntityAttributeModificationEvent event) {
@@ -514,7 +554,9 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handleBloodglassPlayerDeath(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer sp)) return;
+        if (!(event.getEntity() instanceof ServerPlayer sp)) {
+            return;
+        }
         BloodglassAccess access = (BloodglassAccess) sp;
         access.antarchy$setArmorShieldsActive(0);
         access.antarchy$setArmorShieldLostCount(0);
@@ -526,14 +568,16 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handleBloodglassRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer sp)) return;
+        if (!(event.getEntity() instanceof ServerPlayer sp)) {
+            return;
+        }
         BloodglassAccess access = (BloodglassAccess) sp;
         int bcCount = 0;
-        for (net.minecraft.world.entity.EquipmentSlot slot : new net.minecraft.world.entity.EquipmentSlot[]{
-                net.minecraft.world.entity.EquipmentSlot.HEAD,
-                net.minecraft.world.entity.EquipmentSlot.CHEST,
-                net.minecraft.world.entity.EquipmentSlot.LEGS,
-                net.minecraft.world.entity.EquipmentSlot.FEET}) {
+        for (EquipmentSlot slot : new EquipmentSlot[]{
+                EquipmentSlot.HEAD,
+                EquipmentSlot.CHEST,
+                EquipmentSlot.LEGS,
+                EquipmentSlot.FEET}) {
             if (sp.getItemBySlot(slot).getItem() instanceof BloodCrystalArmorItem) bcCount++;
         }
         int shields = Math.min(bcCount, AntarchySettings.bloodCrystalHardMaxShields());
@@ -544,10 +588,12 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handleBloodglassLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer sp)) return;
+        if (!(event.getEntity() instanceof ServerPlayer sp)) {
+            return;
+        }
         BloodglassAccess access = (BloodglassAccess) sp;
         if (sp.hasEffect(AntarchyNeoforgeMisc.BLOODGLASS_WARD)) {
-            net.minecraft.world.effect.MobEffectInstance effect = sp.getEffect(AntarchyNeoforgeMisc.BLOODGLASS_WARD);
+            MobEffectInstance effect = sp.getEffect(AntarchyNeoforgeMisc.BLOODGLASS_WARD);
             if (effect != null) {
                 int cap = Math.max(0, AntarchySettings.bloodCrystalHardMaxShields()
                         - access.antarchy$getArmorShieldsActive()
@@ -564,7 +610,7 @@ public final class AntarchyNeoForgeEvents {
     private static void syncBloodglass(ServerPlayer player) {
         BloodglassAccess access = (BloodglassAccess) player;
         PacketDistributor.sendToPlayer(player,
-                new com.craisinlord.antarchy.content.network.BloodglassStatePayload(
+                new BloodglassStatePayload(
                         access.antarchy$getTotalShieldsActive(),
                         access.antarchy$getTotalShieldsMax()
                 )
@@ -572,9 +618,15 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handleBloodglassWardApplied(MobEffectEvent.Added event) {
-        if (!event.getEffectInstance().is(AntarchyNeoforgeMisc.BLOODGLASS_WARD)) return;
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (player.level().isClientSide()) return;
+        if (!event.getEffectInstance().is(AntarchyNeoforgeMisc.BLOODGLASS_WARD)) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (player.level().isClientSide()) {
+            return;
+        }
 
         BloodglassAccess access = (BloodglassAccess) player;
         int targetCap = Math.min(
@@ -598,22 +650,36 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handleBloodglassWardRemoved(MobEffectEvent.Remove event) {
-        if (!event.getEffect().is(AntarchyNeoforgeMisc.BLOODGLASS_WARD)) return;
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (player.level().isClientSide()) return;
+        if (!event.getEffect().is(AntarchyNeoforgeMisc.BLOODGLASS_WARD)) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (player.level().isClientSide()) {
+            return;
+        }
         clearAppleShields(player);
     }
 
     static void handleBloodglassWardExpired(MobEffectEvent.Expired event) {
-        if (!event.getEffectInstance().is(AntarchyNeoforgeMisc.BLOODGLASS_WARD)) return;
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (player.level().isClientSide()) return;
+        if (!event.getEffectInstance().is(AntarchyNeoforgeMisc.BLOODGLASS_WARD)) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (player.level().isClientSide()) {
+            return;
+        }
         clearAppleShields(player);
     }
 
     static void tickBloodglassRecharge(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        if (player.level().isClientSide()) return;
+        if (player.level().isClientSide()) {
+            return;
+        }
 
         BloodglassAccess access = (BloodglassAccess) player;
         boolean changed = false;
@@ -659,20 +725,24 @@ public final class AntarchyNeoForgeEvents {
 
         if (changed && player instanceof ServerPlayer sp) {
             syncBloodglass(sp);
-            sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSoundPacket(
+            sp.connection.send(new ClientboundSoundPacket(
                     BuiltInRegistries.SOUND_EVENT.wrapAsHolder(AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get()),
-                    net.minecraft.sounds.SoundSource.PLAYERS, sp.getX(), sp.getY(), sp.getZ(), 1.0f, 1.0f, sp.getRandom().nextLong()));
+                    SoundSource.PLAYERS, sp.getX(), sp.getY(), sp.getZ(), 1.0F, 1.0F, sp.getRandom().nextLong()));
         }
     }
     static void handleBloodCrystalArmorEquip(LivingEquipmentChangeEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (player.level().isClientSide()) return;
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (player.level().isClientSide()) {
+            return;
+        }
 
-        net.minecraft.world.entity.EquipmentSlot slot = event.getSlot();
-        if (slot != net.minecraft.world.entity.EquipmentSlot.HEAD
-                && slot != net.minecraft.world.entity.EquipmentSlot.CHEST
-                && slot != net.minecraft.world.entity.EquipmentSlot.LEGS
-                && slot != net.minecraft.world.entity.EquipmentSlot.FEET) return;
+        EquipmentSlot slot = event.getSlot();
+        if (slot != EquipmentSlot.HEAD
+                && slot != EquipmentSlot.CHEST
+                && slot != EquipmentSlot.LEGS
+                && slot != EquipmentSlot.FEET) return;
 
         boolean fromIsBC = event.getFrom().getItem() instanceof BloodCrystalArmorItem;
         boolean toIsBC = event.getTo().getItem() instanceof BloodCrystalArmorItem;
@@ -710,34 +780,50 @@ public final class AntarchyNeoForgeEvents {
 
     private static int countBCArmorPieces(Player player) {
         int count = 0;
-        for (net.minecraft.world.entity.EquipmentSlot slot : new net.minecraft.world.entity.EquipmentSlot[]{
-                net.minecraft.world.entity.EquipmentSlot.HEAD,
-                net.minecraft.world.entity.EquipmentSlot.CHEST,
-                net.minecraft.world.entity.EquipmentSlot.LEGS,
-                net.minecraft.world.entity.EquipmentSlot.FEET}) {
+        for (EquipmentSlot slot : new EquipmentSlot[]{
+                EquipmentSlot.HEAD,
+                EquipmentSlot.CHEST,
+                EquipmentSlot.LEGS,
+                EquipmentSlot.FEET}) {
             if (player.getItemBySlot(slot).getItem() instanceof BloodCrystalArmorItem) count++;
         }
         return count;
     }
 
     static void handleBloodCrystalBootsFall(LivingFallEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (!com.craisinlord.anthology.gravity.GravityApi.isGravityInverted(player)) return;
-        if (com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments.featherRisingLevel(player) <= 0) return;
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (!GravityApi.isGravityInverted(player)) {
+            return;
+        }
+        if (AntarchyEnchantments.featherRisingLevel(player) <= 0) {
+            return;
+        }
         event.setCanceled(true);
     }
 
     static void handleBloodglassShield(LivingIncomingDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (player.level().isClientSide()) return;
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (player.level().isClientSide()) {
+            return;
+        }
 
-        if (event.getAmount() <= 1.0f) return;
+        if (event.getAmount() <= 1.0F) {
+            return;
+        }
 
-        if (event.getSource().is(AntarchyTags.DamageType.BYPASSES_BLOODGLASS)) return;
+        if (event.getSource().is(AntarchyTags.DamageType.BYPASSES_BLOODGLASS)) {
+            return;
+        }
 
         BloodglassAccess access = (BloodglassAccess) player;
         int totalActive = access.antarchy$getTotalShieldsActive();
-        if (totalActive <= 0) return;
+        if (totalActive <= 0) {
+            return;
+        }
 
         if (access.antarchy$getAppleShieldsActive() > 0) {
             access.antarchy$setAppleShieldsActive(access.antarchy$getAppleShieldsActive() - 1);
@@ -755,19 +841,19 @@ public final class AntarchyNeoForgeEvents {
 
         event.setCanceled(true);
 
-        net.minecraft.server.level.ServerLevel serverLevel = (net.minecraft.server.level.ServerLevel) player.level();
+        ServerLevel serverLevel = (ServerLevel) player.level();
 
         serverLevel.broadcastEntityEvent(player, (byte) 2);
 
         serverLevel.playSound(null, player.blockPosition(),
                 AntarchySoundEvents.BLOODGLASS_WARD_HEART_BREAK.get(),
-                net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
+                SoundSource.PLAYERS, 1.0F, 1.0F);
 
         serverLevel.sendParticles(
-                new net.minecraft.core.particles.DustParticleOptions(
-                        dustColor(0.85f, 0.18f, 0.38f), 1.2f),
+                new DustParticleOptions(
+                        dustColor(0.85F, 0.18F, 0.38F), 1.2F),
                 player.getX(), player.getEyeY(), player.getZ(),
-                35, 0.35, 0.55, 0.35, 0.12);
+                35, 0.35D, 0.55D, 0.35D, 0.12D);
 
         syncBloodglass((ServerPlayer) player);
     }
@@ -794,31 +880,43 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handleNightmareArmorDoubleDamage(LivingIncomingDamageEvent event) {
-        if (com.craisinlord.antarchy.content.item.RoyalGuardianSwordAbilities.isApplyingSecondaryDamage()) return;
-        net.minecraft.world.damagesource.DamageSource source = event.getSource();
-        if (!(source.getEntity() instanceof net.minecraft.world.entity.LivingEntity attacker)) return;
-        if (!attacker.getAttributes().hasAttribute(AntarchyNeoforgeMisc.DOUBLE_DAMAGE_CHANCE)) return;
+        if (RoyalGuardianSwordAbilities.isApplyingSecondaryDamage()) {
+            return;
+        }
+        DamageSource source = event.getSource();
+        if (!(source.getEntity() instanceof LivingEntity attacker)) {
+            return;
+        }
+        if (!attacker.getAttributes().hasAttribute(AntarchyNeoforgeMisc.DOUBLE_DAMAGE_CHANCE)) {
+            return;
+        }
         double chance = attacker.getAttributeValue(AntarchyNeoforgeMisc.DOUBLE_DAMAGE_CHANCE);
-        if (chance <= 0.0) return;
+        if (chance <= 0.0D) {
+            return;
+        }
         if (attacker.getRandom().nextDouble() < chance) {
             event.setAmount(event.getAmount() * 2.0F);
             LivingEntity victim = event.getEntity();
             if (victim.level() instanceof ServerLevel serverLevel) {
                 serverLevel.playSound(null, victim.blockPosition(),
                         AntarchySoundEvents.NIGHTMARE_BITE.get(),
-                        net.minecraft.sounds.SoundSource.PLAYERS, 0.9f, 0.85f + victim.getRandom().nextFloat() * 0.3f);
+                        SoundSource.PLAYERS, 0.9F, 0.85F + victim.getRandom().nextFloat() * 0.3F);
                 serverLevel.sendParticles(
-                        new net.minecraft.core.particles.DustParticleOptions(dustColor(0.55f, 0.0f, 0.05f), 1.4f),
-                        victim.getX(), victim.getY() + victim.getBbHeight() * 0.5, victim.getZ(),
-                        30, 0.4, 0.5, 0.4, 0.15);
+                        new DustParticleOptions(dustColor(0.55F, 0.0F, 0.05F), 1.4F),
+                        victim.getX(), victim.getY() + victim.getBbHeight() * 0.5D, victim.getZ(),
+                        30, 0.4D, 0.5D, 0.4D, 0.15D);
             }
         }
     }
 
     static void handleBossMagicBurstMitigation(LivingIncomingDamageEvent event) {
         LivingEntity boss = event.getEntity();
-        if (!boss.is(AntarchyTags.Entities.SPELL_RESISTANT_BOSS)) return;
-        if (!com.craisinlord.antarchy.content.boss.BossCombatUtil.isMagicBurstSource(event.getSource())) return;
+        if (!boss.is(AntarchyTags.Entities.SPELL_RESISTANT_BOSS)) {
+            return;
+        }
+        if (!BossCombatUtil.isMagicBurstSource(event.getSource())) {
+            return;
+        }
 
         float maxHealth = boss.getMaxHealth();
         float amount = event.getAmount();
@@ -829,18 +927,18 @@ public final class AntarchyNeoForgeEvents {
         }
 
         float windowCap = maxHealth * (float) AntarchySettings.bossMagicWindowCapFraction();
-        float remainingBudget = com.craisinlord.antarchy.content.boss.BossCombatUtil.remainingWindowBudget(boss, windowCap);
+        float remainingBudget = BossCombatUtil.remainingWindowBudget(boss, windowCap);
         boolean breachedWindow = amount > remainingBudget;
         if (breachedWindow) {
             amount = Math.max(0.0F, remainingBudget);
         }
 
-        com.craisinlord.antarchy.content.boss.BossCombatUtil.trackMagicBurstWindow(boss, amount, AntarchySettings.bossMagicWindowTicks());
+        BossCombatUtil.trackMagicBurstWindow(boss, amount, AntarchySettings.bossMagicWindowTicks());
 
         if (breachedWindow) {
-            int breaches = com.craisinlord.antarchy.content.boss.BossCombatUtil.recordMagicWindowBreach(boss);
+            int breaches = BossCombatUtil.recordMagicWindowBreach(boss);
             if (breaches >= AntarchySettings.bossMagicWardTriggerBreaches()) {
-                com.craisinlord.antarchy.content.boss.BossCombatUtil.triggerMagicWard(boss, AntarchySettings.bossMagicWardDurationTicks());
+                BossCombatUtil.triggerMagicWard(boss, AntarchySettings.bossMagicWardDurationTicks());
             }
         }
 
@@ -888,8 +986,8 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handlePortalGunAttackEntity(AttackEntityEvent event) {
-        if (event.getEntity().getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem
-                || event.getEntity().getOffhandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
+        if (event.getEntity().getMainHandItem().getItem() instanceof PortalGunItem
+                || event.getEntity().getOffhandItem().getItem() instanceof PortalGunItem) {
             event.setCanceled(true);
         }
     }
@@ -905,14 +1003,14 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handlePortalGunLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        if (!(event.getEntity().getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem)) {
+        if (!(event.getEntity().getMainHandItem().getItem() instanceof PortalGunItem)) {
             return;
         }
         event.setCanceled(true);
     }
 
     static void handleKrakenRitualRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        InteractionResult result = com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager.tryStart(event.getEntity(), event.getLevel(), event.getHand(), event.getPos());
+        InteractionResult result = KrakenRitualManager.tryStart(event.getEntity(), event.getLevel(), event.getHand(), event.getPos());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -936,7 +1034,7 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handleGiantFryingPanRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        InteractionResult result = com.craisinlord.antarchy.content.item.GiantFryingPanItem.handleMainHandUse(event.getLevel(), event.getEntity(), event.getHand());
+        InteractionResult result = GiantFryingPanItem.handleMainHandUse(event.getLevel(), event.getEntity(), event.getHand());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -1014,7 +1112,7 @@ public final class AntarchyNeoForgeEvents {
 
     static void tickWormHooks(PlayerTickEvent.Post event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.item.WormHookTetherManager.tick(player);
+            WormHookTetherManager.tick(player);
         }
     }
 
@@ -1050,11 +1148,15 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void onInvertedEffectExpired(MobEffectEvent.Expired event) {
-        if (event.getEffectInstance() == null) return;
-        if (!event.getEffectInstance().is(AnthologyEffects.inverted())) return;
+        if (event.getEffectInstance() == null) {
+            return;
+        }
+        if (!event.getEffectInstance().is(AnthologyEffects.inverted())) {
+            return;
+        }
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.anthology.gravity.MountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
+            MountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }
@@ -1106,10 +1208,12 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void onInvertedEffectRemoved(MobEffectEvent.Remove event) {
-        if (!event.getEffect().is(AnthologyEffects.inverted())) return;
+        if (!event.getEffect().is(AnthologyEffects.inverted())) {
+            return;
+        }
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.anthology.gravity.MountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
+            MountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }
@@ -1118,8 +1222,8 @@ public final class AntarchyNeoForgeEvents {
 
     static void onCommonSetup(FMLCommonSetupEvent event) {
         BloodCrystalShardItem.setBloodglassSync(AntarchyNeoForgeEvents::syncBloodglass);
-        if (com.craisinlord.antarchy.compat.infinity.InfinityCompat.get().isAvailable()) {
-            com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh.refreshIfStale(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get());
+        if (InfinityCompat.get().isAvailable()) {
+            InfinityConfigRefresh.refreshIfStale(FMLPaths.CONFIGDIR.get());
         }
         event.enqueueWork(() -> {
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
@@ -1128,8 +1232,8 @@ public final class AntarchyNeoForgeEvents {
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.ANVIL_CANNON.get(), new AnvilCannonDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
-            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
-            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.VORTEX_CHARGE.get(), new VortexChargeDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.EYE_OF_THE_STORM.get(), new EyeOfTheStormDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.BUG_SPRAY.get(), new BugSprayDispenseBehavior());
             AntimetalMinecartDispenseBehavior antimetalMinecartDispenseBehavior = new AntimetalMinecartDispenseBehavior();
             DispenserBlock.registerBehavior(Items.MINECART, antimetalMinecartDispenseBehavior);

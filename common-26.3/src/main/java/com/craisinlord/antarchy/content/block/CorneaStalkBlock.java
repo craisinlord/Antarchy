@@ -1,43 +1,47 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import java.util.Optional;
-import com.craisinlord.antarchy.content.AntarchyTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.VegetationBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.core.registries.Registries;
 
 public class CorneaStalkBlock extends VegetationBlock implements BonemealableBlock {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
@@ -80,8 +84,8 @@ public class CorneaStalkBlock extends VegetationBlock implements BonemealableBlo
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, net.minecraft.core.Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
-        return state.canSurvive(level, pos) ? super.updateShape(state, level, tickAccess, pos, direction, neighborPos, neighborState, random) : net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        return state.canSurvive(level, pos) ? super.updateShape(state, level, tickAccess, pos, direction, neighborPos, neighborState, random) : Blocks.AIR.defaultBlockState();
     }
 
     @Override
@@ -135,8 +139,8 @@ public class CorneaStalkBlock extends VegetationBlock implements BonemealableBlo
             Level level,
             BlockPos pos,
             Player player,
-            net.minecraft.world.InteractionHand hand,
-            net.minecraft.world.phys.BlockHitResult hitResult
+            InteractionHand hand,
+            BlockHitResult hitResult
     ) {
         if (!state.is(this) || state.getValue(AGE) < RIPE_AGE) {
             return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
@@ -159,7 +163,7 @@ public class CorneaStalkBlock extends VegetationBlock implements BonemealableBlo
     }
 
     @Override
-    public void playerDestroy(ServerLevel level, ServerPlayer player, BlockPos pos, BlockState state, net.minecraft.world.level.block.entity.BlockEntity blockEntity, ItemStack stack) {
+    public void playerDestroy(ServerLevel level, ServerPlayer player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack stack) {
         super.playerDestroy(level, player, pos, state, blockEntity, stack);
         var silkTouch = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH);
         if (EnchantmentHelper.getItemEnchantmentLevel(silkTouch, stack) > 0) {

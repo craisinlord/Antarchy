@@ -2,6 +2,10 @@ package com.craisinlord.antarchy.content.client.renderer.clouds;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.renderer.AntarchySkyDraw;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.pipeline.TextureTarget;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.renderpearl.api.GpuFormat;
 import com.mojang.renderpearl.api.buffers.GpuBuffer;
 import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
@@ -14,19 +18,13 @@ import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import com.mojang.renderpearl.api.pipeline.UniformType;
 import com.mojang.renderpearl.api.textures.FilterMode;
-import net.minecraft.client.renderer.BindGroupLayouts;
-import org.joml.Vector4fc;
-import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.pipeline.TextureTarget;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalDouble;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
@@ -35,6 +33,7 @@ import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.joml.Vector4fc;
 import org.lwjgl.BufferUtils;
 
 final class ElythiaSoftCloudPass {
@@ -65,6 +64,7 @@ final class ElythiaSoftCloudPass {
             .withVertexShader("core/screenquad")
             .withFragmentShader(Identifier.fromNamespaceAndPath("antarchy", "core/elythia_soft_cloud_composite"))
             .withBindGroupLayout(BindGroupLayouts.IN_SAMPLER)
+            .withBindGroupLayout(BindGroupLayouts.SAMPLER0)
             .withBindGroupLayout(BindGroupLayout.builder().withUniform("ElythiaSoftComposite", UniformType.UNIFORM_BUFFER).build())
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .withDepthStencilState(Optional.empty())
@@ -185,6 +185,7 @@ final class ElythiaSoftCloudPass {
             pass.setPipeline(RenderSystem.getCompiledPipeline(COMPOSITE_PIPELINE));
             RenderSystem.bindDefaultUniforms(pass);
             pass.setUniform("InSampler", coverage.getColorTextureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
+            pass.setUniform("Sampler0", main.getDepthTextureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
             pass.setUniform("ElythiaSoftComposite", compositeBuffer.slice());
             pass.draw(3, 1, 0, 0);
         }

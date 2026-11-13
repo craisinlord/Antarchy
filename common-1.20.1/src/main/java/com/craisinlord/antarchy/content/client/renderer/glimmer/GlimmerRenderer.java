@@ -1,9 +1,5 @@
 package com.craisinlord.antarchy.content.client.renderer.glimmer;
 
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.client.Minecraft;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.client.model.glimmer.GlimmerFrogModel;
 import com.craisinlord.antarchy.content.client.model.glimmer.GlimmerModel;
@@ -12,6 +8,7 @@ import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,8 +17,12 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -118,9 +119,9 @@ public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity> {
     }
 
     @Override
-    public software.bernie.geckolib.core.object.Color getRenderColor(GlimmerEntity animatable, float partialTick, int packedLight) {
+    public Color getRenderColor(GlimmerEntity animatable, float partialTick, int packedLight) {
         float brightness = brightnessFor(animatable, partialTick);
-        return software.bernie.geckolib.core.object.Color.ofRGBA(brightness, brightness, brightness, animatable.getFadeAlpha(partialTick));
+        return Color.ofRGBA(brightness, brightness, brightness, animatable.getFadeAlpha(partialTick));
     }
 
     @Override

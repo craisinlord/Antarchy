@@ -2,6 +2,9 @@ package com.craisinlord.antarchy.content.block.entity.undervault;
 
 import com.craisinlord.antarchy.content.block.UnderVaultBlock;
 import com.craisinlord.antarchy.content.block.entity.undertrial.UndertrialSounds;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,10 +26,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public final class UnderVaultLogic {
     private UnderVaultLogic() {

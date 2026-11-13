@@ -1,12 +1,11 @@
 package com.craisinlord.antarchy.content.block.entity.undervault;
 
 import com.craisinlord.antarchy.content.block.entity.undertrial.UndertrialPlayerDetector;
+import java.util.Optional;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Optional;
 
 public record UnderVaultConfig(
         ResourceLocation lootTable,

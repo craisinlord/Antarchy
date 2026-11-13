@@ -3,13 +3,14 @@ package com.craisinlord.antarchy.content.effect;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.RoyalGuardianArmorItem;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -56,11 +57,15 @@ public final class JudgmentMarkManager {
     }
 
     public static LivingEntity markedTarget(Player owner) {
-        if (!(owner instanceof ServerPlayer serverPlayer) || !(owner.level() instanceof ServerLevel level)) return null;
+        if (!(owner instanceof ServerPlayer serverPlayer) || !(owner.level() instanceof ServerLevel level)) {
+            return null;
+        }
         MarkBook book = MARKS.get(level);
         Mark mark = book == null ? null : book.byOwner.get(owner.getUUID());
-        if (mark == null || mark.expiresAt <= level.getGameTime() || !hasGuardianArmor(owner)) return null;
-        net.minecraft.world.entity.Entity entity = level.getEntity(mark.targetId);
+        if (mark == null || mark.expiresAt <= level.getGameTime() || !hasGuardianArmor(owner)) {
+            return null;
+        }
+        Entity entity = level.getEntity(mark.targetId);
         return entity instanceof LivingEntity living && living.isAlive() ? living : null;
     }
 
@@ -104,7 +109,7 @@ public final class JudgmentMarkManager {
     }
 
     private static void refreshVisibleState(ServerLevel level, UUID targetId) {
-        net.minecraft.world.entity.Entity entity = level.getEntity(targetId);
+        Entity entity = level.getEntity(targetId);
         if (entity instanceof LivingEntity target && target instanceof JudgmentMarkAccess access) {
             MarkBook book = MARKS.get(level);
             boolean stillMarked = book != null && !book.ownersByTarget.getOrDefault(targetId, Set.of()).isEmpty();
@@ -127,7 +132,7 @@ public final class JudgmentMarkManager {
                 || player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof RoyalGuardianArmorItem;
     }
 
-    private record Mark(UUID targetId, long expiresAt) {
+    public record Mark(UUID targetId, long expiresAt) {
     }
 
     private static final class MarkBook {

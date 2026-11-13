@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.function.Supplier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +26,7 @@ public final class EntityReach {
 
     @Nullable
     public static Attribute attribute() {
-        java.util.function.Supplier<Attribute> supplier = AntarchyObjects.ENTITY_REACH;
+        Supplier<Attribute> supplier = AntarchyObjects.ENTITY_REACH;
         return supplier == null ? null : supplier.get();
     }
 

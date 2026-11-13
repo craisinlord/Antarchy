@@ -3,8 +3,8 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 import net.minecraft.util.Mth;
 
 interface CavarynColumn {
-    double SCALE = 0.35;
-    double FLOOR = -1.0 / SCALE - 1.0E-9;
+    double SCALE = 0.35D;
+    double FLOOR = -1.0D / SCALE - 1.0E-9D;
 
     void load(int qx, int qz);
 
@@ -17,7 +17,7 @@ interface CavarynColumn {
     double signedDistance(int x, int y, int z, double floor);
 
     static double density(double distance) {
-        return Mth.clamp(distance * SCALE, -1.0, 1.0);
+        return Mth.clamp(distance * SCALE, -1.0D, 1.0D);
     }
 
     interface Source {

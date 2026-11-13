@@ -7,6 +7,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import java.util.Arrays;
+import java.util.Locale;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -42,7 +43,7 @@ public final class ThoraxisCommand {
         }
         ThoraxisEvents events = ThoraxisEvents.get(level);
         String detail = events.event() == ThoraxisEvent.NONE ? ""
-                : " (" + events.phase().name().toLowerCase(java.util.Locale.ROOT) + ", " + events.remainingTicks(level) / 20L + "s left)";
+                : " (" + events.phase().name().toLowerCase(Locale.ROOT) + ", " + events.remainingTicks(level) / 20L + "s left)";
         context.getSource().sendSuccess(() -> Component.literal("Current Thoraxis event: " + events.event().id() + detail), false);
         return 1;
     }

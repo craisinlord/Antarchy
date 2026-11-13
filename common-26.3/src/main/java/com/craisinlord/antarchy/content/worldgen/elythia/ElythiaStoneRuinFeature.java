@@ -1,23 +1,22 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -39,10 +38,9 @@ public final class ElythiaStoneRuinFeature implements Feature {
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        
+
         StoneRuinConfiguration config = this.configuration;
-        
-        
+
         int halfX = 2 + random.nextInt(MAX_HALF_WIDTH - 1);
         int halfZ = 2 + random.nextInt(MAX_HALF_WIDTH - 1);
         BlockPos center = groundAt(level, config, origin.getX(), origin.getZ());
@@ -159,7 +157,7 @@ public final class ElythiaStoneRuinFeature implements Feature {
                     state(config.wall()));
         }
 
-        private static BlockState state(net.minecraft.resources.Identifier id) {
+        private static BlockState state(Identifier id) {
             return StoneTorConfiguration.resolve(id).defaultBlockState();
         }
 

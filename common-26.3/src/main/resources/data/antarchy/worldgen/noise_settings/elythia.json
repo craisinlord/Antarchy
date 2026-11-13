@@ -38,7 +38,7 @@
         "y_scale": 0.0
       }
     },
-    "continents": "antarchy:elythia_biome_continents",
+    "continents": "antarchy:elythia_climate_continents",
     "erosion": {
       "type": "minecraft:cache",
       "input": "antarchy:elythia_erosion"

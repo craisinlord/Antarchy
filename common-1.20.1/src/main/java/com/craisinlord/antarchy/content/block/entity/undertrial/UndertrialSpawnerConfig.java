@@ -1,13 +1,12 @@
 package com.craisinlord.antarchy.content.block.entity.undertrial;
 
+import java.util.Optional;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.random.WeightedEntry;
-
-import java.util.Optional;
 
 public record UndertrialSpawnerConfig(
         int spawnRange,

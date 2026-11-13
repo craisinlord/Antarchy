@@ -6,7 +6,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.ChunkPos;
@@ -22,9 +24,13 @@ public final class ElythiaBiomeSource extends BiomeSource {
 
     private static final int COLUMN_SLOTS = 16;
     private static final int NO_BIOME = -1;
+    private static final long OVERRIDE_CONTINENTALNESS = Climate.quantizeCoord(1.5F);
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
-    private final MultiNoiseBiomeSource delegate;
+    private final Climate.ParameterList<Holder<Biome>> climate;
+    private final long[] overrideMin;
+    private final long[] overrideMax;
+    private final Holder<Biome>[] overrides;
     private final boolean columnCached;
     private final Holder<Biome>[] biomeTable;
     private final Reference2IntMap<Holder<Biome>> biomeIds = new Reference2IntOpenHashMap<>();
@@ -38,7 +44,24 @@ public final class ElythiaBiomeSource extends BiomeSource {
         for (int id = 0; id < this.biomeTable.length; id++) {
             this.biomeIds.put(this.biomeTable[id], id);
         }
-        this.delegate = MultiNoiseBiomeSource.createFromList(parameters);
+        List<Pair<Climate.ParameterPoint, Holder<Biome>>> regular = new ArrayList<>();
+        List<Pair<Climate.ParameterPoint, Holder<Biome>>> special = new ArrayList<>();
+        for (Pair<Climate.ParameterPoint, Holder<Biome>> entry : parameters.values()) {
+            if (entry.getFirst().continentalness().min() >= OVERRIDE_CONTINENTALNESS) {
+                special.add(entry);
+            } else {
+                regular.add(entry);
+            }
+        }
+        this.climate = new Climate.ParameterList<>(regular);
+        this.overrideMin = new long[special.size()];
+        this.overrideMax = new long[special.size()];
+        this.overrides = new Holder[special.size()];
+        for (int i = 0; i < special.size(); i++) {
+            this.overrideMin[i] = special.get(i).getFirst().continentalness().min();
+            this.overrideMax[i] = special.get(i).getFirst().continentalness().max();
+            this.overrides[i] = special.get(i).getSecond();
+        }
         this.columnCached = sharesDepth(parameters);
     }
 
@@ -59,7 +82,7 @@ public final class ElythiaBiomeSource extends BiomeSource {
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
         if (!this.columnCached) {
-            return this.delegate.getNoiseBiome(x, y, z, sampler);
+            return this.pick(x, y, z, sampler);
         }
         ColumnCache cache = this.columns.get();
         cache.select(sampler);
@@ -68,10 +91,29 @@ public final class ElythiaBiomeSource extends BiomeSource {
         if (cache.ids[slot] != NO_BIOME && cache.keys[slot] == key) {
             return this.biomeTable[cache.ids[slot]];
         }
-        Holder<Biome> biome = this.delegate.getNoiseBiome(x, y, z, sampler);
+        Holder<Biome> biome = this.pick(x, y, z, sampler);
         cache.keys[slot] = key;
         cache.ids[slot] = this.biomeIds.getInt(biome);
         return biome;
+    }
+
+    private Holder<Biome> pick(int x, int y, int z, Climate.Sampler sampler) {
+        Climate.TargetPoint target = sampler.sample(x, y, z);
+        long continentalness = target.continentalness();
+        if (continentalness >= OVERRIDE_CONTINENTALNESS && this.overrides.length > 0) {
+            Holder<Biome> nearest = this.overrides[0];
+            long nearestDistance = Long.MAX_VALUE;
+            for (int i = 0; i < this.overrides.length; i++) {
+                long distance = continentalness < this.overrideMin[i] ? this.overrideMin[i] - continentalness
+                        : continentalness > this.overrideMax[i] ? continentalness - this.overrideMax[i] : 0L;
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearest = this.overrides[i];
+                }
+            }
+            return nearest;
+        }
+        return this.climate.findValue(target);
     }
 
     private static boolean sharesDepth(Climate.ParameterList<Holder<Biome>> parameters) {

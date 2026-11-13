@@ -50,7 +50,7 @@ public class FallenOuranwoodFeature extends Feature<NoneFeatureConfiguration> {
         for (int i = 0; i < length; i++) damage[i] = random.nextFloat();
         for (int pass = 0; pass < 4; pass++) {
             for (int i = 1; i < length - 1; i++) {
-                damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4f;
+                damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4F;
             }
         }
         for (int i = 0; i < length; i++) damage[i] = damage[i] * damage[i];
@@ -64,7 +64,9 @@ public class FallenOuranwoodFeature extends Feature<NoneFeatureConfiguration> {
 
             float dmg = damage[step];
 
-            if (dmg > 0.78f) continue;
+            if (dmg > 0.78F) {
+                continue;
+            }
 
             int surfaceY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, bx, bz);
             int centerY = Math.max(anchorY, Math.min(anchorY + 2, surfaceY)) + outerRadius;
@@ -72,30 +74,42 @@ public class FallenOuranwoodFeature extends Feature<NoneFeatureConfiguration> {
             for (int dy = -outerRadius; dy <= outerRadius; dy++) {
                 for (int dp = -outerRadius; dp <= outerRadius; dp++) {
                     double dist = Math.sqrt(dy * dy + dp * dp);
-                    if (dist > outerRadius + 0.5) continue;
+                    if (dist > outerRadius + 0.5D) {
+                        continue;
+                    }
 
-                    boolean isShell = dist >= outerRadius - 0.5;
+                    boolean isShell = dist >= outerRadius - 0.5D;
 
-                    if (hollow && dist < outerRadius - 0.5) continue;
+                    if (hollow && dist < outerRadius - 0.5D) {
+                        continue;
+                    }
 
-                    if (dmg > 0.55f && !isShell) continue;
-                    if (dmg > 0.55f && random.nextFloat() < (dmg - 0.55f) * 3.5f) continue;
+                    if (dmg > 0.55F && !isShell) {
+                        continue;
+                    }
+                    if (dmg > 0.55F && random.nextFloat() < (dmg - 0.55F) * 3.5F) {
+                        continue;
+                    }
 
-                    if (isShell && random.nextFloat() < dmg * 0.4f) continue;
+                    if (isShell && random.nextFloat() < dmg * 0.4F) {
+                        continue;
+                    }
 
                     int px = axis == Direction.Axis.X ? bx : bx + dp;
                     int pz = axis == Direction.Axis.Z ? bz : bz + dp;
                     BlockPos pos = new BlockPos(px, centerY + dy, pz);
 
-                    if (!canReplace(level.getBlockState(pos))) continue;
+                    if (!canReplace(level.getBlockState(pos))) {
+                        continue;
+                    }
 
                     float r = random.nextFloat();
                     BlockState toPlace;
-                    if (r < 0.08f) {
+                    if (r < 0.08F) {
                         toPlace = Blocks.MOSS_BLOCK.defaultBlockState();
-                    } else if (r < 0.22f) {
+                    } else if (r < 0.22F) {
                         toPlace = freshLogState;
-                    } else if (r < 0.32f) {
+                    } else if (r < 0.32F) {
                         toPlace = woodState;
                     } else {
                         toPlace = mossyLogState;
@@ -116,12 +130,16 @@ public class FallenOuranwoodFeature extends Feature<NoneFeatureConfiguration> {
             int my = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, mx, mz);
             BlockPos mossPos = new BlockPos(mx, my, mz);
 
-            if (!canReplace(level.getBlockState(mossPos))) continue;
+            if (!canReplace(level.getBlockState(mossPos))) {
+                continue;
+            }
             BlockState below = level.getBlockState(mossPos.below());
-            if (!below.isFaceSturdy(level, mossPos.below(), Direction.UP)) continue;
+            if (!below.isFaceSturdy(level, mossPos.below(), Direction.UP)) {
+                continue;
+            }
 
             level.setBlock(mossPos,
-                    random.nextFloat() < 0.35f
+                    random.nextFloat() < 0.35F
                             ? Blocks.MOSS_BLOCK.defaultBlockState()
                             : Blocks.MOSS_CARPET.defaultBlockState(),
                     2);

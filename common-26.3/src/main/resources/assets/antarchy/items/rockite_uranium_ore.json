@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "antarchy:item/rockite_uranium_ore"
+    "model": "antarchy:item/rockite_uranium_ore",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -10788493
+      }
+    ]
   }
 }

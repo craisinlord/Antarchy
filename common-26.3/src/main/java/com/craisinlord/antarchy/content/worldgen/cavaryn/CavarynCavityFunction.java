@@ -5,9 +5,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Interval;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
+import net.minecraft.world.level.levelgen.densityfunction.DensityBuffer;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DensityVolume;
+import net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import net.minecraft.world.level.levelgen.synth.Noise;
-import net.minecraft.world.level.levelgen.densityfunction.*;
+import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction humidity, DensityFunction weirdness, DensityFunction depth, Holder<NormalNoise> noise) implements DensityFunction {
     public static final MapCodec<CavarynCavityFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -29,7 +34,7 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
         DensitySampler weirdnessSampler = this.weirdness.compileSampler(context);
         DensitySampler depthSampler = this.depth.compileSampler(context);
         Noise noiseSampler = context.createNoiseSampler(this.noise);
-        long salt = saltFor(noiseSampler.get(1234.567, 89.123, -456.789), noiseSampler.get(-987.654, 12.345, 654.321));
+        long salt = saltFor(noiseSampler.get(1234.567D, 89.123D, -456.789D), noiseSampler.get(-987.654D, 12.345D, 654.321D));
         String biome = this.kind.biome();
         CavarynCavityGrid grid = CavarynCavityGrid.create(this.kind, salt, biome == null ? (x, y, z) -> true : (x, y, z) -> {
             int bx = Mth.floor(x);

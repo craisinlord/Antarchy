@@ -6,10 +6,18 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
 import com.craisinlord.antarchy.content.entity.NearestFirstTargetGoal;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.craisinlord.anthology.shake.client.CameraShake;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,7 +33,9 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -35,6 +45,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -52,6 +63,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -64,12 +76,6 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public class NightmareEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.INT);
@@ -341,9 +347,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
-        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.nightmareHealth());
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+            MobSpawnType spawnReason, SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.nightmareHealth());
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
 
@@ -439,7 +445,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
             this.clientBodyPitchO = this.clientBodyPitch;
             this.clientBodyPitch = Mth.approachDegrees(this.clientBodyPitch, this.entityData.get(BODY_PITCH), 2.5F);
             if (this.isRoaring()) {
-                com.craisinlord.anthology.shake.client.CameraShake.register(
+                CameraShake.register(
                         this,
                         32.0D,
                         1.35F,
@@ -647,7 +653,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        if (!(target instanceof LivingEntity livingTarget)) return false;
+        if (!(target instanceof LivingEntity livingTarget)) {
+            return false;
+        }
         boolean hurt = this.level() instanceof ServerLevel serverLevel
                 ? livingTarget.hurt(AntarchyDamageSources.nightmareMauling(serverLevel, this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))
                 : super.doHurtTarget(target);
@@ -674,7 +682,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        return source.is(net.minecraft.world.damagesource.DamageTypes.DROWN) || super.isInvulnerableTo(source);
+        return source.is(DamageTypes.DROWN) || super.isInvulnerableTo(source);
     }
 
     @Override
@@ -686,7 +694,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    protected void checkFallDamage(double y, boolean onGround, net.minecraft.world.level.block.state.BlockState state, BlockPos pos) {
+    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
     }
 
     @Override
@@ -854,10 +862,16 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean shouldStartRoar(LivingEntity target) {
-        if (!this.onGround() || this.roarCooldown > 0) return false;
-        if (this.unreachablePressure) return this.hasLineOfSight(target);
+        if (!this.onGround() || this.roarCooldown > 0) {
+            return false;
+        }
+        if (this.unreachablePressure) {
+            return this.hasLineOfSight(target);
+        }
         double distanceSqr = this.distanceToSqr(target);
-        if (distanceSqr > ROAR_RETRY_DISTANCE_SQR || !this.isInFront(target.position(), -0.1D)) return false;
+        if (distanceSqr > ROAR_RETRY_DISTANCE_SQR || !this.isInFront(target.position(), -0.1D)) {
+            return false;
+        }
         return (distanceSqr > ATTACK_START_RANGE_SQR || this.isPhaseTwo()) && this.hasLineOfSight(target);
     }
 
@@ -1240,12 +1254,22 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean canStartPortalAttack(LivingEntity target) {
-        if (!this.isPhaseTwo() || this.isCombatLocked() || this.portalCooldown > 0 || this.portalSearchRetryTicks > 0 || this.isAttackBusy() || this.roarTicks > 0) return false;
-        if (this.distanceToSqr(target) > PORTAL_RANGE * PORTAL_RANGE) return false;
-        if (this.portalAttackTicks > 0) return false;
+        if (!this.isPhaseTwo() || this.isCombatLocked() || this.portalCooldown > 0 || this.portalSearchRetryTicks > 0 || this.isAttackBusy() || this.roarTicks > 0) {
+            return false;
+        }
+        if (this.distanceToSqr(target) > PORTAL_RANGE * PORTAL_RANGE) {
+            return false;
+        }
+        if (this.portalAttackTicks > 0) {
+            return false;
+        }
         boolean seen = this.unseenTargetTicks == 0;
-        if (seen && this.horizontalDistanceToSqr(target) < PORTAL_MIN_RANGE_SQR) return false;
-        if (!seen && this.unseenTargetTicks < PORTAL_UNSEEN_TICKS) return false;
+        if (seen && this.horizontalDistanceToSqr(target) < PORTAL_MIN_RANGE_SQR) {
+            return false;
+        }
+        if (!seen && this.unseenTargetTicks < PORTAL_UNSEEN_TICKS) {
+            return false;
+        }
         if (this.findPortalExitPos(target, this.getPortalEntryPosition()) == null) {
             this.portalSearchRetryTicks = PORTAL_SEARCH_RETRY_TICKS;
             return false;
@@ -1255,7 +1279,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
     private void startPortalAttack(LivingEntity target) {
         Vec3 entryPos = this.getPortalEntryPosition();
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
         this.clearNightmarePortals();
         this.portalExitPos = null;
         this.portalAttackTicks = PORTAL_TOTAL_TICKS;
@@ -1375,7 +1401,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private void executePortalTeleport(@Nullable LivingEntity target) {
-        if (this.portalExitPos == null) return;
+        if (this.portalExitPos == null) {
+            return;
+        }
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PORTAL_TRAVEL, SoundSource.HOSTILE, 0.22F, 0.96F + this.random.nextFloat() * 0.08F);
         this.portalTravelTicks = PORTAL_TRAVEL_INVULNERABLE_TICKS;
         this.setPortalCooldown();
@@ -1421,7 +1449,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
         double knockback = this.ambushAttack ? 1.35D : 1.15D;
         boolean connected = false;
         for (LivingEntity victim : victims) {
-            if (!this.canConnectAttackTo(victim, forward, hitBox)) continue;
+            if (!this.canConnectAttackTo(victim, forward, hitBox)) {
+                continue;
+            }
             if (victim.hurt(this.nightmareDamageSource(), damage)) {
                 connected = true;
                 this.applyNightmareStrikeEffects(victim);
@@ -1575,8 +1605,12 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean canTargetEntity(@Nullable LivingEntity entity) {
-        if (entity == null || !entity.isAlive() || entity == this || entity.getType() == this.getType() || entity.level() != this.level()) return false;
-        if (entity.getType().is(AntarchyTags.Entities.NIGHTMARE_NO_ATTACK)) return false;
+        if (entity == null || !entity.isAlive() || entity == this || entity.getType() == this.getType() || entity.level() != this.level()) {
+            return false;
+        }
+        if (entity.getType().is(AntarchyTags.Entities.NIGHTMARE_NO_ATTACK)) {
+            return false;
+        }
         if (entity instanceof Player player) {
             return !player.isCreative() && !player.isSpectator() && this.level().getDifficulty() != Difficulty.PEACEFUL;
         }
@@ -1584,11 +1618,19 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean canStartAttackOn(LivingEntity target) {
-        if (this.distanceToSqr(target) > ATTACK_START_RANGE_SQR) return false;
-        if (this.horizontalDistanceToSqr(target) > ATTACK_COMMIT_HORIZONTAL_RANGE_SQR) return false;
-        if (!this.isInFront(target.position(), ATTACK_START_ARC_DOT)) return false;
+        if (this.distanceToSqr(target) > ATTACK_START_RANGE_SQR) {
+            return false;
+        }
+        if (this.horizontalDistanceToSqr(target) > ATTACK_COMMIT_HORIZONTAL_RANGE_SQR) {
+            return false;
+        }
+        if (!this.isInFront(target.position(), ATTACK_START_ARC_DOT)) {
+            return false;
+        }
         double verticalOffset = this.verticalOffsetTo(target);
-        if (verticalOffset > ATTACK_MAX_OFFSET_ABOVE) return false;
+        if (verticalOffset > ATTACK_MAX_OFFSET_ABOVE) {
+            return false;
+        }
         if (this.shouldUseFlyingLocomotion()) {
             return this.overheadGapTo(target) <= FLYING_ATTACK_MAX_OVERHEAD_COMMIT_HEIGHT && this.hasLineOfSight(target);
         }
@@ -1698,7 +1740,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private boolean isInFront(Vec3 position, double minimumDot) {
         Vec3 forward = this.toLocalPlane(this.getViewVector(1.0F));
         Vec3 toTarget = this.toLocalPlane(position.subtract(this.position()));
-        if (forward.lengthSqr() < 1.0E-4D || toTarget.lengthSqr() < 1.0E-4D) return true;
+        if (forward.lengthSqr() < 1.0E-4D || toTarget.lengthSqr() < 1.0E-4D) {
+            return true;
+        }
         return forward.normalize().dot(toTarget.normalize()) >= minimumDot;
     }
 
@@ -1866,13 +1910,17 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private void tickWingFlapSound() {
-        if (!(this.level() instanceof ServerLevel)) return;
+        if (!(this.level() instanceof ServerLevel)) {
+            return;
+        }
         if (this.onGround() || this.isRoaring() || this.isDeadOrDying()) {
             this.wingFlapCooldown = 0;
             return;
         }
         Vec3 movement = this.getDeltaMovement();
-        if (movement.lengthSqr() < 0.01D) return;
+        if (movement.lengthSqr() < 0.01D) {
+            return;
+        }
         if (this.wingFlapCooldown > 0) {
             this.wingFlapCooldown--;
             return;
@@ -2090,7 +2138,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
             NightmareEntity nightmare = NightmareEntity.this;
             nightmare.flightGoalTick = nightmare.tickCount;
             LivingEntity target = nightmare.getTarget();
-            if (target == null || nightmare.isAttackBusy()) return;
+            if (target == null || nightmare.isAttackBusy()) {
+                return;
+            }
             if (nightmare.isTooCloseToCeiling()) {
                 nightmare.flyingToTarget = false;
                 nightmare.getNavigation().stop();
@@ -2230,8 +2280,12 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            if (NightmareEntity.this.getTarget() != null || NightmareEntity.this.isDeadOrDying() || NightmareEntity.this.isCombatLocked() || NightmareEntity.this.portalAttackTicks > 0) return false;
-            if (NightmareEntity.this.random.nextInt(40) != 0) return false;
+            if (NightmareEntity.this.getTarget() != null || NightmareEntity.this.isDeadOrDying() || NightmareEntity.this.isCombatLocked() || NightmareEntity.this.portalAttackTicks > 0) {
+                return false;
+            }
+            if (NightmareEntity.this.random.nextInt(40) != 0) {
+                return false;
+            }
             double angle = NightmareEntity.this.random.nextDouble() * Math.PI * 2;
             double dist = 4 + NightmareEntity.this.random.nextDouble() * 10;
             Vec3 localOffset = new Vec3(Math.cos(angle) * dist, 0.0D, Math.sin(angle) * dist);
@@ -2248,7 +2302,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
                     && NightmareEntity.this.getTarget() == null
                     && !NightmareEntity.this.isDeadOrDying()
                     && !NightmareEntity.this.getNavigation().isDone()
-                    && NightmareEntity.this.distanceToSqr(this.x, this.y, this.z) > 2.25;
+                    && NightmareEntity.this.distanceToSqr(this.x, this.y, this.z) > 2.25D;
         }
 
         @Override

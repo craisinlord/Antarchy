@@ -13,6 +13,7 @@ import com.craisinlord.anthology.portal.PortalEntity;
 import com.craisinlord.anthology.portal.PortalShape;
 import com.craisinlord.anthology.portal.PortalSounds;
 import com.craisinlord.anthology.portal.PortalTransitMath;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,6 +52,7 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -127,7 +129,7 @@ public class PortalGunPortalEntity extends PortalEntity {
         this.supportOrigin = placement.supportOrigin().immutable();
         this.masterPos = placement.masterPos().immutable();
         this.basePos = placement.basePos().immutable();
-        this.portalSpots = java.util.Arrays.stream(placement.portalSpots()).map(BlockPos::immutable).toArray(BlockPos[]::new);
+        this.portalSpots = Arrays.stream(placement.portalSpots()).map(BlockPos::immutable).toArray(BlockPos[]::new);
         this.compensatedSpots = Set.copyOf(placement.compensatedSpots());
     }
 
@@ -428,7 +430,7 @@ public class PortalGunPortalEntity extends PortalEntity {
     }
 
     private static BlockState loadedState(ServerLevel level, BlockPos pos) {
-        net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunkSource()
+        LevelChunk chunk = level.getChunkSource()
                 .getChunkNow(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
         return chunk == null ? null : chunk.getBlockState(pos);
     }
@@ -516,7 +518,7 @@ public class PortalGunPortalEntity extends PortalEntity {
         tag.putInt("BaseX", this.basePos.getX());
         tag.putInt("BaseY", this.basePos.getY());
         tag.putInt("BaseZ", this.basePos.getZ());
-        tag.put("PortalSpots", writeSpots(java.util.Arrays.asList(this.portalSpots)));
+        tag.put("PortalSpots", writeSpots(Arrays.asList(this.portalSpots)));
         tag.put("CompensatedSpots", writeSpots(this.compensatedSpots));
     }
 
@@ -544,7 +546,7 @@ public class PortalGunPortalEntity extends PortalEntity {
         if (spots.length > 0) {
             this.portalSpots = spots;
         }
-        this.compensatedSpots = new HashSet<>(java.util.Arrays.asList(readSpotList(tag.getList("CompensatedSpots", Tag.TAG_COMPOUND))));
+        this.compensatedSpots = new HashSet<>(Arrays.asList(readSpotList(tag.getList("CompensatedSpots", Tag.TAG_COMPOUND))));
     }
 
     private static ListTag writeSpots(Iterable<BlockPos> positions) {

@@ -5,15 +5,16 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityTransition;
+import java.util.Collection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import java.util.Collection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,9 +28,15 @@ public abstract class AntimetalInversionMixin {
     @Inject(method = "tick", at = @At("TAIL"))
     private void antarchy$tickOverheadInversion(CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (entity.level().isClientSide()) return;
-        if (entity instanceof Player player && player.isSpectator()) return;
-        if (!antarchy$isDirectlyBelowAntimetal(entity)) return;
+        if (entity.level().isClientSide()) {
+            return;
+        }
+        if (entity instanceof Player player && player.isSpectator()) {
+            return;
+        }
+        if (!antarchy$isDirectlyBelowAntimetal(entity)) {
+            return;
+        }
 
         MobEffectInstance existing = entity.getEffect(AntarchyObjects.INVERTED_EFFECT.get());
         if (existing == null || existing.getDuration() <= 5) {
@@ -63,20 +70,26 @@ public abstract class AntimetalInversionMixin {
     @Inject(method = "onEffectsRemoved", at = @At("HEAD"))
     private void antarchy$onInvertedRemoved(Collection<MobEffectInstance> effects, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (entity.level().isClientSide()) return;
+        if (entity.level().isClientSide()) {
+            return;
+        }
         for (MobEffectInstance effectInstance : effects) {
-            if (!effectInstance.is(AntarchyObjects.INVERTED_EFFECT.get())) continue;
+            if (!effectInstance.is(AntarchyObjects.INVERTED_EFFECT.get())) {
+                continue;
+            }
             GravityApi.setGravityDirection(entity, GravityDirection.DOWN, new GravityTransition(12));
         }
     }
 
     private static void antarchy$spawnInversionParticles(LivingEntity entity) {
-        if (!(entity.level() instanceof ServerLevel serverLevel)) return;
+        if (!(entity.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
         double x = entity.getX();
         double y = entity.getBoundingBox().maxY + 0.1D;
         double z = entity.getZ();
         serverLevel.sendParticles(
-                new DustParticleOptions(net.minecraft.util.ARGB.colorFromFloat(1.0F, 1.0F, 0.1F, 0.1F), 1.0F),
+                new DustParticleOptions(ARGB.colorFromFloat(1.0F, 1.0F, 0.1F, 0.1F), 1.0F),
                 x, y, z, 6, 0.2D, 0.05D, 0.2D, 0.0D
         );
     }

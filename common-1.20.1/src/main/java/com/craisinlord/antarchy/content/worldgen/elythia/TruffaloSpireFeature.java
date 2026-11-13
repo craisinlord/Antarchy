@@ -8,6 +8,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -340,7 +341,7 @@ public final class TruffaloSpireFeature extends Feature<NoneFeatureConfiguration
         return state.isAir()
                 || state.canBeReplaced()
                 || LumenWorldgenHelper.isNaturalFloor(state)
-                || state.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD);
+                || state.is(BlockTags.BASE_STONE_OVERWORLD);
     }
 
     private static boolean isSpireBlock(BlockState state) {

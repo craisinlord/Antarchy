@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -33,7 +35,7 @@ public final class PortalGunSavedData extends SavedData {
 
     public static PortalGunSavedData load(CompoundTag tag) {
         PortalGunSavedData data = new PortalGunSavedData();
-        for (net.minecraft.nbt.Tag rawEntry : tag.getList(ENTRIES_KEY, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+        for (Tag rawEntry : tag.getList(ENTRIES_KEY, Tag.TAG_COMPOUND)) {
             CompoundTag entryTag = (CompoundTag) rawEntry;
             ResourceLocation dimension = ResourceLocation.tryParse(entryTag.getString(DIMENSION_KEY));
             if (dimension == null || !entryTag.hasUUID(GUN_KEY)) {
@@ -226,7 +228,7 @@ public final class PortalGunSavedData extends SavedData {
         return clearMatching(server, record -> true);
     }
 
-    private static int clearMatching(MinecraftServer server, java.util.function.Predicate<PairRecord> filter) {
+    private static int clearMatching(MinecraftServer server, Predicate<PairRecord> filter) {
         PortalGunSavedData data = get(server);
         Set<UUID> portalIds = new HashSet<>();
         boolean removed = data.pairs.values().removeIf(record -> {
@@ -284,6 +286,6 @@ public final class PortalGunSavedData extends SavedData {
     private record PairKey(ResourceLocation dimension, UUID gunId) {
     }
 
-    private record PairRecord(UUID bluePortalId, UUID orangePortalId, UUID ownerId) {
+    public record PairRecord(UUID bluePortalId, UUID orangePortalId, UUID ownerId) {
     }
 }

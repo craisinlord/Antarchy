@@ -15,6 +15,7 @@ layout(std140) uniform LightmapInfo {
 
 layout(std140) uniform AntarchyDreamInfo {
     float Strength;
+    float FungalDim;
 } antarchyDreamInfo;
 
 in vec2 texCoord;
@@ -74,6 +75,7 @@ void main() {
     float dreamFloor = dreamDarkness * dreamDarkness * dreamDarkness * antarchyDreamInfo.Strength;
     vec3 dreamShifted = mix(dreamRgb, dreamLuminance * vec3(1.30, 0.78, 2.05), dreamHue);
     color = clamp(dreamShifted + vec3(0.070, 0.035, 0.140) * dreamFloor, 0.0, 1.0);
+    color *= 1.0 - antarchyDreamInfo.FungalDim * dreamTorchlight;
     color = floor(color * 255.0 + 0.5) / 255.0;
 
     fragColor = vec4(color, 1.0);

@@ -1,11 +1,12 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.item.ArmorDurability;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import com.craisinlord.antarchy.compat.item.ArmorDurability;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,7 +19,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -34,7 +34,7 @@ public class PrimordialArmorItem extends ArmorItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         if (slot != this.armorType.getSlot()) {
             return super.getDefaultAttributeModifiers(slot);
         }

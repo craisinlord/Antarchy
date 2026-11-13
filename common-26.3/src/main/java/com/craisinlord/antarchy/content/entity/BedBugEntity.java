@@ -1,16 +1,26 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.block.BedBugEggBlock;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -19,11 +29,11 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -43,24 +53,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
-
-import java.util.Comparator;
-import java.util.EnumSet;
 
 public class BedBugEntity extends Animal implements GeoEntity {
     private static final byte BITE_ANIM_EVENT = 18;
@@ -213,7 +214,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         if (!(target instanceof LivingEntity livingTarget)) {
             return false;
         }
@@ -292,9 +293,9 @@ public class BedBugEntity extends Animal implements GeoEntity {
         this.biteAnimationTicks = Math.max(0, tag.getIntOr(BITE_TICKS_KEY, 0));
         this.hasPendingEggs = tag.getBooleanOr(HAS_PENDING_EGGS_KEY, false);
         this.layEggCooldown = tag.getIntOr(LAY_EGG_COOLDOWN_KEY, 0);
-        java.util.Optional<Integer> nestX = tag.getInt(EGG_NEST_X_KEY);
-        java.util.Optional<Integer> nestY = tag.getInt(EGG_NEST_Y_KEY);
-        java.util.Optional<Integer> nestZ = tag.getInt(EGG_NEST_Z_KEY);
+        Optional<Integer> nestX = tag.getInt(EGG_NEST_X_KEY);
+        Optional<Integer> nestY = tag.getInt(EGG_NEST_Y_KEY);
+        Optional<Integer> nestZ = tag.getInt(EGG_NEST_Z_KEY);
         if (nestX.isPresent() && nestY.isPresent() && nestZ.isPresent()) {
             this.eggNestPos = new BlockPos(nestX.get(), nestY.get(), nestZ.get());
         } else {
@@ -531,7 +532,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
         for (int attempt = 0; attempt < 12; attempt++) {
             BlockPos candidate = origin.offset(this.random.nextInt(9) - 4, 0, this.random.nextInt(9) - 4);
             BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
-            if (!level.isEmptyBlock(surface) || !level.getBlockState(surface.below()).isFaceSturdy(level, surface.below(), net.minecraft.core.Direction.UP)) {
+            if (!level.isEmptyBlock(surface) || !level.getBlockState(surface.below()).isFaceSturdy(level, surface.below(), Direction.UP)) {
                 continue;
             }
 
@@ -563,7 +564,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
 
     @Nullable
     private BlockPos findEggLayPos() {
-        if (this.eggNestPos != null && this.level().getBlockState(this.eggNestPos).isAir() && this.level().getBlockState(this.eggNestPos.below()).isFaceSturdy(this.level(), this.eggNestPos.below(), net.minecraft.core.Direction.UP)) {
+        if (this.eggNestPos != null && this.level().getBlockState(this.eggNestPos).isAir() && this.level().getBlockState(this.eggNestPos.below()).isFaceSturdy(this.level(), this.eggNestPos.below(), Direction.UP)) {
             return this.eggNestPos;
         }
 
@@ -571,7 +572,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
         for (int attempt = 0; attempt < 12; attempt++) {
             BlockPos candidate = origin.offset(this.random.nextInt(7) - 3, 0, this.random.nextInt(7) - 3);
             BlockPos surface = this.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
-            if (this.level().isEmptyBlock(surface) && this.level().getBlockState(surface.below()).isFaceSturdy(this.level(), surface.below(), net.minecraft.core.Direction.UP)) {
+            if (this.level().isEmptyBlock(surface) && this.level().getBlockState(surface.below()).isFaceSturdy(this.level(), surface.below(), Direction.UP)) {
                 return surface.immutable();
             }
         }

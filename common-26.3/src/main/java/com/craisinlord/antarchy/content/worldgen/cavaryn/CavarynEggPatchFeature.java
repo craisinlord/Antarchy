@@ -96,7 +96,7 @@ public record CavarynEggPatchFeature() implements Feature {
                     double norm = (double)(dx * dx) / (rx * rx)
                                 + (double)(dy * dy) / (ry * ry)
                                 + (double)(dz * dz) / (rz * rz);
-                    if (norm > 1.0) {
+                    if (norm > 1.0D) {
                         continue;
                     }
                     BlockPos pos = center.offset(dx, dy, dz);
@@ -131,7 +131,7 @@ public record CavarynEggPatchFeature() implements Feature {
 
         boolean placedAny = false;
         for (BlockPos eggPos : eggPositions) {
-            if (random.nextFloat() > 0.65f) {
+            if (random.nextFloat() > 0.65F) {
                 continue;
             }
 

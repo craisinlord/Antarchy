@@ -1,22 +1,37 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
-import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
-import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalCellAccess;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import com.craisinlord.anthology.gravity.GravityApi;
-import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
-import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
+import com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync;
 import com.craisinlord.antarchy.content.portalgun.PortalGunMoonMath;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
 import com.craisinlord.antarchy.content.portalgun.PortalGunVariant;
-import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
-import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.LoopType;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.renderer.GeoItemRenderer;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.util.GeckoLibUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,18 +39,21 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.attribute.EnvironmentAttributes;
@@ -48,28 +66,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.Mth;
-import com.geckolib.animatable.GeoItem;
-import com.geckolib.animatable.client.GeoRenderProvider;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.animation.object.LoopType;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.constant.dataticket.DataTicket;
-import com.geckolib.util.GeckoLibUtil;
 
 public class PortalGunItem extends Item implements GeoItem {
     private static final String LED_CONTROLLER = "led_controller";
@@ -118,7 +124,7 @@ public class PortalGunItem extends Item implements GeoItem {
         ItemStack stack = player.getItemInHand(usedHand);
         if (level.isClientSide()) {
             if (!player.isShiftKeyDown()) {
-                com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.reportFromClient();
+                PortalGunMoonAimSync.reportFromClient();
             }
             return InteractionResult.CONSUME;
         }
@@ -265,8 +271,8 @@ public class PortalGunItem extends Item implements GeoItem {
                 || !portal.getMasterPos().equals(placement.masterPos())) {
             return false;
         }
-        return new HashSet<>(java.util.Arrays.asList(portal.getPortalSpots()))
-                .equals(new HashSet<>(java.util.Arrays.asList(placement.portalSpots())));
+        return new HashSet<>(Arrays.asList(portal.getPortalSpots()))
+                .equals(new HashSet<>(Arrays.asList(placement.portalSpots())));
     }
 
     public ItemStack findMatchingGunStack(Player player, UUID gunId) {
@@ -319,7 +325,7 @@ public class PortalGunItem extends Item implements GeoItem {
         if (!level.dimensionType().hasSkyLight() || level.dimensionType().hasCeiling()) {
             return false;
         }
-        Boolean clientAim = player instanceof ServerPlayer serverPlayer ? com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clientAim(serverPlayer) : null;
+        Boolean clientAim = player instanceof ServerPlayer serverPlayer ? PortalGunMoonAimSync.clientAim(serverPlayer) : null;
         if (clientAim != null) {
             return clientAim;
         }
@@ -331,7 +337,7 @@ public class PortalGunItem extends Item implements GeoItem {
         Vec3 delta = endPos.subtract(start);
         double length = delta.length();
         int steps = (int) Math.max(4.0D, Math.min(48.0D, length * 2.0D));
-        net.minecraft.core.particles.ParticleOptions particle = side == PortalGunPortalEntity.PortalSide.BLUE ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
+        ParticleOptions particle = side == PortalGunPortalEntity.PortalSide.BLUE ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
         for (int i = 0; i <= steps; i++) {
             double t = (double) i / steps;
             Vec3 point = start.add(delta.scale(t));
@@ -354,12 +360,12 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     public static int getPortalWidth(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
         return Mth.clamp(data == null ? 1 : data.copyTag().getIntOr(PORTAL_WIDTH_TAG, 0), 1, MAX_PORTAL_WIDTH);
     }
 
     public static int getPortalHeight(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
         return Mth.clamp(data == null || !data.copyTag().contains(PORTAL_HEIGHT_TAG) ? 2 : data.copyTag().getIntOr(PORTAL_HEIGHT_TAG, 0), 2, MAX_PORTAL_HEIGHT);
     }
 
@@ -395,7 +401,7 @@ public class PortalGunItem extends Item implements GeoItem {
     private Vec3 worldLook(LivingEntity entity) {
         Vec3 look = entity.getLookAngle();
         return GravityApi.isGravityInverted(entity)
-                ? com.craisinlord.anthology.gravity.GravityRotationUtil.vecPlayerToWorld(
+                ? GravityRotationUtil.vecPlayerToWorld(
                         look, GravityApi.getGravityDirection(entity))
                 : look;
     }
@@ -425,7 +431,7 @@ public class PortalGunItem extends Item implements GeoItem {
         float yaw = PortalGunPlacement.yawFor(facing, heightAxis);
         BlockPos hitPos = hitResult.getBlockPos();
         int maxRadius = Math.max(width, height);
-        List<Integer> radiusOrder = new java.util.ArrayList<>(maxRadius);
+        List<Integer> radiusOrder = new ArrayList<>(maxRadius);
         for (int radius = 0; radius < maxRadius; radius++) {
             radiusOrder.add(radius);
         }
@@ -435,7 +441,7 @@ public class PortalGunItem extends Item implements GeoItem {
         for (int radius : radiusOrder) {
             for (int horizontalOffset = radius; horizontalOffset >= 0; horizontalOffset--) {
                 for (int verticalOffset = radius; verticalOffset >= 0; verticalOffset--) {
-                    List<BlockPos> supports = new java.util.ArrayList<>(width * height);
+                    List<BlockPos> supports = new ArrayList<>(width * height);
                     for (int widthCell = 1 - width; widthCell <= 0; widthCell++) {
                         for (int heightCell = 1 - height; heightCell <= 0; heightCell++) {
                             supports.add(this.referenceSupportPosition(hitPos, facing, heightAxis, horizontalOffset, verticalOffset, widthCell, heightCell));
@@ -606,7 +612,7 @@ public class PortalGunItem extends Item implements GeoItem {
                     placement.upAxis(),
                     placement.masterPos(),
                     placement.basePos(),
-                    java.util.Arrays.asList(placement.portalSpots()),
+                    Arrays.asList(placement.portalSpots()),
                     placement.compensatedSpots(),
                     pairTime,
                     placement.width(),
@@ -641,22 +647,22 @@ public class PortalGunItem extends Item implements GeoItem {
 
     private void setLastSide(ItemStack stack, PortalGunPortalEntity.PortalSide side) {
         if (side == null) {
-            net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.remove(LAST_SIDE_TAG));
+            CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.remove(LAST_SIDE_TAG));
             return;
         }
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString(LAST_SIDE_TAG, side.name()));
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString(LAST_SIDE_TAG, side.name()));
     }
 
     private void setMoonSide(ItemStack stack, PortalGunPortalEntity.PortalSide side) {
         if (side == null) {
-            net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.remove(MOON_SIDE_TAG));
+            CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.remove(MOON_SIDE_TAG));
             return;
         }
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString(MOON_SIDE_TAG, side.name()));
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString(MOON_SIDE_TAG, side.name()));
     }
 
     private PortalGunPortalEntity.PortalSide getLastSide(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         if (customData == null) {
             return null;
         }
@@ -675,7 +681,7 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     public static PortalGunPortalEntity.PortalSide getMoonSide(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         if (customData == null) {
             return null;
         }
@@ -689,7 +695,7 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     public static UUID getGunId(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         if (customData == null) {
             return null;
         }
@@ -697,13 +703,13 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     private UUID ensureGunId(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         UUID gunId = customData == null ? null : customData.copyTag().read(GUN_ID_TAG, UUIDUtil.CODEC).orElse(null);
         if (gunId == null) {
             gunId = UUID.randomUUID();
         }
         UUID resolvedGunId = gunId;
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.store(GUN_ID_TAG, UUIDUtil.CODEC, resolvedGunId);
             if (!tag.contains(LAST_SIDE_TAG)) {
                 tag.putString(LAST_SIDE_TAG, PortalGunPortalEntity.PortalSide.BLUE.name());
@@ -714,7 +720,7 @@ public class PortalGunItem extends Item implements GeoItem {
 
     private UUID ensureGunId(ItemStack stack, UUID ownerId) {
         UUID gunId = this.ensureGunId(stack);
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             if (!tag.contains(OWNER_ID_TAG)) {
                 tag.putString(OWNER_ID_TAG, ownerId.toString());
             }
@@ -737,7 +743,7 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     public static UUID getPortalOwnerId(ItemStack stack, UUID fallback) {
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         if (customData == null) {
             return fallback;
         }
@@ -753,7 +759,7 @@ public class PortalGunItem extends Item implements GeoItem {
         if (stack.isEmpty() || stack.getItem() != this) {
             return false;
         }
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         return customData != null && customData.copyTag().read(GUN_ID_TAG, UUIDUtil.CODEC).map(gunId::equals).orElse(false);
     }
 
@@ -769,7 +775,7 @@ public class PortalGunItem extends Item implements GeoItem {
 
     private Component portalColorName(PortalGunPortalEntity.PortalSide side) {
         return Component.translatable(this.variant.colorTranslationKey(side))
-                .withStyle(style -> style.withColor(net.minecraft.network.chat.TextColor.fromRgb(this.variant.color(side))));
+                .withStyle(style -> style.withColor(TextColor.fromRgb(this.variant.color(side))));
     }
 
     @Override
@@ -801,11 +807,11 @@ public class PortalGunItem extends Item implements GeoItem {
             private AnimatedHeldItemRenderer<PortalGunItem> renderer;
 
             @Override
-            public com.geckolib.renderer.GeoItemRenderer<?> getGeoItemRenderer() {
+            public GeoItemRenderer<?> getGeoItemRenderer() {
                 if (this.renderer == null) {
                     this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, PortalGunItem.this.variant.modelTexture(), ANIMATION_LOCATION)) {
                         @Override
-                        public void addRenderData(PortalGunItem animatable, com.geckolib.renderer.GeoItemRenderer.RenderData relatedObject, com.geckolib.renderer.base.GeoRenderState renderState, float partialTick) {
+                        public void addRenderData(PortalGunItem animatable, GeoItemRenderer.RenderData relatedObject, GeoRenderState renderState, float partialTick) {
                             super.addRenderData(animatable, relatedObject, renderState, partialTick);
                             PortalGunPortalEntity.PortalSide side = relatedObject.itemStack() == null ? null : animatable.getLastSide(relatedObject.itemStack());
                             if (side != null) {

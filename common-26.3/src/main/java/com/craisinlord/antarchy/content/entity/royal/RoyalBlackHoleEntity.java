@@ -1,23 +1,32 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
-import com.craisinlord.anthology.time.TimeDilationAnchor;
-import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.anthology.time.TimeDilationApi;
-import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.BlockSuction;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.time.TimeDilationAnchor;
+import com.craisinlord.anthology.time.TimeDilationApi;
 import com.craisinlord.anthology.time.TimeDilationEntityAccess;
+import com.craisinlord.anthology.time.TimeDilationFieldEntity;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
+import com.mojang.serialization.Codec;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -32,20 +41,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.util.GeckoLibUtil;
 
 public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilationAnchor, GlimmerEcho {
     private record PendingPush(long gameTime, Vec3 impulse) {
@@ -456,7 +459,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
     }
 
     private void spawnRing(ServerLevel level, double y, double radius, int count,
-                           net.minecraft.core.particles.ParticleOptions particle) {
+                           ParticleOptions particle) {
         for (int index = 0; index < count; index++) {
             double angle = Mth.TWO_PI * index / count;
             level.sendParticles(GlimmerEchoes.particle(this, particle),
@@ -656,12 +659,12 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
         }
         LivingEntity owner = this.ownerEntity();
         if (owner instanceof QueenEntity) {
-            return entity.is(com.craisinlord.antarchy.content.AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK);
+            return entity.is(AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK);
         }
         if (entity instanceof RoyalBossEntity) {
             return true;
         }
-        return entity.is(com.craisinlord.antarchy.content.AntarchyTags.Entities.TIME_DILATION_IMMUNE);
+        return entity.is(AntarchyTags.Entities.TIME_DILATION_IMMUNE);
     }
 
     @Nullable
@@ -716,11 +719,11 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
         this.setGravityInverted(tag.getBooleanOr(INVERTED_KEY, false));
         this.entityData.set(COLLAPSING, tag.getBooleanOr(COLLAPSING_KEY, false));
         if (this.isCollapsing()) {
-            tag.read(EFFECT_RADIUS_KEY, com.mojang.serialization.Codec.FLOAT).ifPresent(radius -> this.entityData.set(EFFECT_RADIUS, radius));
+            tag.read(EFFECT_RADIUS_KEY, Codec.FLOAT).ifPresent(radius -> this.entityData.set(EFFECT_RADIUS, radius));
         }
         this.dilationFieldId = tag.read(DILATION_FIELD_KEY, UUIDUtil.CODEC).orElse(null);
         this.travelTicksRemaining = Math.max(0, tag.getIntOr(TRAVEL_TICKS_KEY, 0));
-        if (this.travelTicksRemaining > 0 && tag.read(DESTINATION_X_KEY, com.mojang.serialization.Codec.DOUBLE).isPresent()) {
+        if (this.travelTicksRemaining > 0 && tag.read(DESTINATION_X_KEY, Codec.DOUBLE).isPresent()) {
             this.destination = new Vec3(tag.getDoubleOr(DESTINATION_X_KEY, 0.0D), tag.getDoubleOr(DESTINATION_Y_KEY, 0.0D),
                     tag.getDoubleOr(DESTINATION_Z_KEY, 0.0D));
             float progress = 1.0F - this.travelTicksRemaining / (float) QUEEN_PROJECTILE_TRAVEL_TICKS;

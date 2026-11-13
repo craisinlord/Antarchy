@@ -2,15 +2,25 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.ElythiaEventClient;
 import com.craisinlord.antarchy.content.weather.ElythiaEvent;
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.DestFactor;
+import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import java.util.Optional;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public final class ElythiaNightSkyRenderer {
     private static final float RADIUS = 99.0F;
@@ -107,7 +117,7 @@ public final class ElythiaNightSkyRenderer {
         }
         float constellationBrightness = Math.min(1.0F, starBrightness * 2.0F);
         AntarchySkyDraw.draw("Antarchy Elythia constellations", CONSTELLATION_PIPELINE, constellationStars, modelViewMatrix,
-                new org.joml.Vector4f(constellationBrightness, constellationBrightness, constellationBrightness, constellationBrightness), null);
+                new Vector4f(constellationBrightness, constellationBrightness, constellationBrightness, constellationBrightness), null);
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         renderAurora(buffer, timeOfDay, time, night, partialTick);
         renderMeteors(buffer, time, night, partialTick);
@@ -285,25 +295,25 @@ public final class ElythiaNightSkyRenderer {
         return upload(buffer.buildOrThrow());
     }
 
-    private static final com.mojang.blaze3d.pipeline.RenderPipeline CONSTELLATION_PIPELINE = pipeline(false);
-    private static final com.mojang.blaze3d.pipeline.RenderPipeline ADDITIVE_PIPELINE = pipeline(true);
+    private static final RenderPipeline CONSTELLATION_PIPELINE = pipeline(false);
+    private static final RenderPipeline ADDITIVE_PIPELINE = pipeline(true);
 
-    private static com.mojang.blaze3d.pipeline.RenderPipeline pipeline(boolean additive) {
-        var original = net.minecraft.client.renderer.RenderPipelines.DEBUG_QUADS;
+    private static RenderPipeline pipeline(boolean additive) {
+        var original = RenderPipelines.DEBUG_QUADS;
         var blend = additive
-                ? new com.mojang.blaze3d.pipeline.BlendFunction(com.mojang.blaze3d.platform.SourceFactor.SRC_ALPHA, com.mojang.blaze3d.platform.DestFactor.ONE,
-                        com.mojang.blaze3d.platform.SourceFactor.SRC_ALPHA, com.mojang.blaze3d.platform.DestFactor.ONE)
-                : new com.mojang.blaze3d.pipeline.BlendFunction(com.mojang.blaze3d.platform.SourceFactor.SRC_ALPHA, com.mojang.blaze3d.platform.DestFactor.ONE_MINUS_SRC_ALPHA,
-                        com.mojang.blaze3d.platform.SourceFactor.ONE, com.mojang.blaze3d.platform.DestFactor.ZERO);
-        var builder = com.mojang.blaze3d.pipeline.RenderPipeline.builder()
-                .withLocation(net.minecraft.resources.Identifier.fromNamespaceAndPath("antarchy", additive ? "pipeline/elythia_night_additive" : "pipeline/elythia_constellations"))
+                ? new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE,
+                        SourceFactor.SRC_ALPHA, DestFactor.ONE)
+                : new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA,
+                        SourceFactor.ONE, DestFactor.ZERO);
+        var builder = RenderPipeline.builder()
+                .withLocation(Identifier.fromNamespaceAndPath("antarchy", additive ? "pipeline/elythia_night_additive" : "pipeline/elythia_constellations"))
                 .withCull(false)
                 .withPolygonMode(original.getPolygonMode())
-                .withDepthStencilState(java.util.Optional.ofNullable(original.getDepthStencilState()).map(state ->
-                        new com.mojang.blaze3d.pipeline.DepthStencilState(state.depthTest(), false, state.depthBiasScaleFactor(), state.depthBiasConstant())));
+                .withDepthStencilState(Optional.ofNullable(original.getDepthStencilState()).map(state ->
+                        new DepthStencilState(state.depthTest(), false, state.depthBiasScaleFactor(), state.depthBiasConstant())));
         builder.withVertexShader(original.getVertexShader()).withFragmentShader(original.getFragmentShader())
                 .withVertexFormat(original.getVertexFormat(), original.getVertexFormatMode())
-                .withColorTargetState(new com.mojang.blaze3d.pipeline.ColorTargetState(java.util.Optional.of(blend), original.getColorTargetState().writeMask()));
+                .withColorTargetState(new ColorTargetState(Optional.of(blend), original.getColorTargetState().writeMask()));
         for (var uniform : original.getUniforms()) {
             if (uniform.textureFormat() == null) {
                 builder.withUniform(uniform.name(), uniform.type());

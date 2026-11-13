@@ -1,12 +1,12 @@
 package com.craisinlord.antarchy.content.item;
 
-import com.craisinlord.antarchy.content.network.WormHookTetherPayload;
-import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
+import com.craisinlord.antarchy.content.network.AntarchyNetwork;
+import com.craisinlord.antarchy.content.network.WormHookTetherPayload;
+import com.craisinlord.antarchy.content.util.WormHookRope;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.content.util.WormHookRope;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
