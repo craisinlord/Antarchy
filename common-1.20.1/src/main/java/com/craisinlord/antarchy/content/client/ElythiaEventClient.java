@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.client;
 
+import com.craisinlord.antarchy.content.client.renderer.clouds.ElythiaCloudRenderer;
 import com.craisinlord.antarchy.content.network.ElythiaEventPayload;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.craisinlord.antarchy.content.weather.ElythiaEvent;
@@ -30,6 +31,9 @@ public final class ElythiaEventClient {
         Minecraft minecraft = Minecraft.getInstance();
         ClientLevel level = minecraft.level;
         if (level != trackedLevel) {
+            if (trackedLevel != null && trackedLevel.dimension().equals(ThrowbackZones.ELYTHIA)) {
+                ElythiaCloudRenderer.releaseAll();
+            }
             trackedLevel = level;
             active = ElythiaEvent.NONE;
             shown = ElythiaEvent.NONE;

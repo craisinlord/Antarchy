@@ -60,6 +60,7 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     private static final EntityDataAccessor<Integer> VARIANT =
             SynchedEntityData.defineId(OuranwoodDeerEntity.class, EntityDataSerializers.INT);
     private static final String VARIANT_KEY = "Variant";
+    private static final String MIGRANT_KEY = "Migrant";
 
     private static final float ADULT_HITBOX_WIDTH = 1.0F;
     private static final float ADULT_HITBOX_HEIGHT = 2.0F;
@@ -82,6 +83,7 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     private int quirkCooldown = createQuirkCooldown();
+    private boolean migrant;
 
     public OuranwoodDeerEntity(EntityType<? extends OuranwoodDeerEntity> entityType, Level level) {
         super(entityType, level);
@@ -122,6 +124,15 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
     }
 
+    public void markMigrant() {
+        this.migrant = true;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return this.migrant && !this.isLeashed();
+    }
+
     @Override
     public boolean isFood(ItemStack stack) {
         return stack.is(AntarchyTags.Items.OURANWOOD_DEER_FOOD);
@@ -149,11 +160,15 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     public void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
         output.putString(VARIANT_KEY, this.getVariant().name());
+        if (this.migrant) {
+            output.putBoolean(MIGRANT_KEY, true);
+        }
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
+        this.migrant = input.getBooleanOr(MIGRANT_KEY, false);
         input.getString(VARIANT_KEY).ifPresent(name -> {
             try {
                 this.setVariant(Variant.valueOf(name));

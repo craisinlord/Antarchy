@@ -268,6 +268,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private Vec3 aerialCombatAnchor;
     private int aerialCombatAnchorTicks;
     private int recoveryWindowTicks;
+    private int beamVolleyGapTicks;
     @Nullable
     private Phase trackedPhase;
     private int phaseTransitionTicks;
@@ -921,6 +922,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (this.recoveryWindowTicks > 0) {
             this.recoveryWindowTicks--;
         }
+        if (this.beamVolleyGapTicks > 0) {
+            this.beamVolleyGapTicks--;
+        }
 
         if (this.isRoyalFlying() && this.tickCount % 40 == 0 && this.royalFlyLoopSound() != null) {
             this.playRoyalSound(this.royalFlyLoopSound(), 0.92F + this.random.nextFloat() * 0.12F);
@@ -1077,9 +1081,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 continue;
             }
         }
-        if (!allowScheduling || this.recoveryWindowTicks > 0) {
+        if (!allowScheduling || this.recoveryWindowTicks > 0 || this.beamVolleyGapTicks > 0) {
             return;
         }
+        boolean volleyStarted = false;
         int firstHead = this.nextBeamHeadIndex;
         for (int offset = 0; offset < this.heads.length; offset++) {
             RoyalHead head = this.heads[(firstHead + offset) % this.heads.length];
@@ -1137,6 +1142,15 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             head.setBeamActive(true);
             activeBeams++;
             this.nextBeamHeadIndex = (index + 1) % this.heads.length;
+            if (!volleyStarted) {
+                volleyStarted = true;
+                int gap = this.royalBeamVolleyGapTicks();
+                if (gap > 0) {
+                    // Shared across heads: the gap only starts counting once this volley has fired.
+                    this.beamVolleyGapTicks = windup + duration + RECOVERY_AFTER_BEAM_TICKS
+                            + Math.max(1, Mth.floor(gap * phase.cooldownScale()));
+                }
+            }
         }
     }
 
@@ -1203,6 +1217,15 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 living.hasImpulse = true;
             }
         }
+    }
+
+    /** Quiet ticks shared by every head after a beam volley. 0 keeps per-head cooldowns only. */
+    protected int royalBeamVolleyGapTicks() {
+        return 0;
+    }
+
+    protected final boolean royalBeamVolleyGapActive() {
+        return this.beamVolleyGapTicks > 0;
     }
 
     protected int selectBeamVolleyLimit(Phase phase) {

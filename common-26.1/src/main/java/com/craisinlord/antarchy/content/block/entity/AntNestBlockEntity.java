@@ -26,6 +26,7 @@ import net.minecraft.world.phys.Vec3;
 public class AntNestBlockEntity extends BlockEntity {
     private static final String STORED_ANTS = "StoredAnts";
     private static final String NBT_INITIALIZED = "Initialized";
+    private static final String NBT_PLAYER_PLACED = "PlayerPlaced";
     private static final String NBT_REBROOD_COOLDOWN = "RebroodCooldown";
     private static final int RELEASE_COOLDOWN_MIN = 80;
     private static final int RELEASE_COOLDOWN_RANGE = 100;
@@ -41,6 +42,7 @@ public class AntNestBlockEntity extends BlockEntity {
     private int releaseCooldown = RELEASE_COOLDOWN_MIN;
     private int rebroodCooldown = REBROOD_COOLDOWN_TICKS;
     private boolean initialized = false;
+    private boolean playerPlaced = false;
 
     public AntNestBlockEntity(BlockPos pos, BlockState blockState) {
         super(AntarchyObjects.ANT_NEST_BLOCK_ENTITY.get(), pos, blockState);
@@ -121,6 +123,15 @@ public class AntNestBlockEntity extends BlockEntity {
             this.storedAnts.add(this.createStoredAnt(level, antType));
         }
         this.rebroodCooldown = REBROOD_COOLDOWN_TICKS;
+        this.setChanged();
+    }
+
+    public boolean isPlayerPlaced() {
+        return this.playerPlaced;
+    }
+
+    public void setPlayerPlaced() {
+        this.playerPlaced = true;
         this.setChanged();
     }
 
@@ -237,6 +248,7 @@ public class AntNestBlockEntity extends BlockEntity {
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.putBoolean(NBT_INITIALIZED, this.initialized);
+        output.putBoolean(NBT_PLAYER_PLACED, this.playerPlaced);
         output.putInt(NBT_REBROOD_COOLDOWN, this.rebroodCooldown);
         ValueOutput.TypedOutputList<CompoundTag> listTag = output.list(STORED_ANTS, CompoundTag.CODEC);
         for (StoredAnt storedAnt : this.storedAnts) {
@@ -248,6 +260,7 @@ public class AntNestBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         this.initialized = input.getBooleanOr(NBT_INITIALIZED, false);
+        this.playerPlaced = input.getBooleanOr(NBT_PLAYER_PLACED, false);
         this.rebroodCooldown = input.getIntOr(NBT_REBROOD_COOLDOWN, REBROOD_COOLDOWN_TICKS);
         this.storedAnts.clear();
         for (CompoundTag antTag : input.listOrEmpty(STORED_ANTS, CompoundTag.CODEC)) {

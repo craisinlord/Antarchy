@@ -181,6 +181,8 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKingBeamWindupTicks(AntarchyMobsConfig.kingBeamWindupTicks());
         AntarchySettings.setKingBeamTravelTicks(AntarchyMobsConfig.kingBeamTravelTicks());
         AntarchySettings.setKingBeamCooldownTicks(AntarchyMobsConfig.kingBeamCooldownTicks());
+        AntarchySettings.setKingBeamVolleyGapTicks(AntarchyMobsConfig.kingBeamVolleyGapTicks());
+        AntarchySettings.setQueenBeamVolleyGapTicks(AntarchyMobsConfig.queenBeamVolleyGapTicks());
         AntarchySettings.setKingBeamTracking(AntarchyMobsConfig.kingBeamTracking());
         AntarchySettings.setKingBeamTerrainRadius(AntarchyMobsConfig.kingBeamTerrainRadius());
         AntarchySettings.setKingBeamTerrainCap(AntarchyMobsConfig.kingBeamTerrainCap());

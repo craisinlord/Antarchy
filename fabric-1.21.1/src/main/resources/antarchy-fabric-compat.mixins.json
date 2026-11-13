@@ -1,0 +1,21 @@
+{
+  "required": false,
+  "package": "com.craisinlord.antarchy.fabric.mixin",
+  "refmap": "antarchy.mixins.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "infinity.InfinityBiomeCheckMixin",
+    "infinity.InfinityVillageSpacingMixin",
+    "infinity.PortalCreatorMixin",
+    "infinity.WarpLogicMixin",
+    "infinity.AmendmentRareOresMixin"
+  ],
+  "client": [
+    "client.SodiumOuranwoodLeavesCullingMixin",
+    "client.AppleSkinOverlayMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "minVersion": "0.8"
+}

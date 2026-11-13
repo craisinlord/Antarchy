@@ -23,9 +23,7 @@
     "WoodTypeInvoker"
   ],
   "client": [
-    "client.SodiumOuranwoodLeavesCullingMixin",
     "client.OuranwoodLeavesCullingMixin",
-    "client.AppleSkinOverlayMixin",
     "client.BrutalflyElytraExperienceBarMixin",
     "client.BloodglassChatOrderMixin",
     "client.LiquidFogMixin",

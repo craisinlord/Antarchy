@@ -96,6 +96,7 @@ public final class OuranwoodDeerMigration {
                 if (i >= adults) {
                     deer.setAge(-24000);
                 }
+                deer.markMigrant();
                 level.addFreshEntity(deer);
                 break;
             }

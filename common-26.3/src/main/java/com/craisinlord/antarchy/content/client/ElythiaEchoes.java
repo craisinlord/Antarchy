@@ -66,12 +66,12 @@ public final class ElythiaEchoes {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         ClientLevel level = minecraft.level;
-        if (player == null || level == null || minecraft.isPaused()) {
-            return;
-        }
         if (level != trackedLevel) {
             reset();
             trackedLevel = level;
+        }
+        if (player == null || level == null || minecraft.isPaused()) {
+            return;
         }
         if (!AntarchySettings.elythiaEchoes() || !level.dimension().equals(ThrowbackZones.ELYTHIA)) {
             replay = null;

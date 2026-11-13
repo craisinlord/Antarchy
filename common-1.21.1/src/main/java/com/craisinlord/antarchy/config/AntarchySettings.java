@@ -698,6 +698,7 @@ public final class AntarchySettings {
     private static int kingBeamTravelTicks = 12;
     private static int kingBeamCooldownTicks = 90;
     private static int kingBeamVolleyGapTicks = 140;
+    private static int queenBeamVolleyGapTicks = 140;
     private static double kingBeamTracking = 0.1D;
     private static double kingBeamTerrainRadius = 5.0D;
     private static int kingBeamTerrainCap = 192;
@@ -3392,6 +3393,8 @@ public final class AntarchySettings {
     public static void setKingBeamCooldownTicks(int v) { kingBeamCooldownTicks = v; }
     public static int kingBeamVolleyGapTicks() { return kingBeamVolleyGapTicks; }
     public static void setKingBeamVolleyGapTicks(int v) { kingBeamVolleyGapTicks = v; }
+    public static int queenBeamVolleyGapTicks() { return queenBeamVolleyGapTicks; }
+    public static void setQueenBeamVolleyGapTicks(int v) { queenBeamVolleyGapTicks = v; }
     public static double kingBeamTracking() { return kingBeamTracking; }
     public static void setKingBeamTracking(double v) { kingBeamTracking = v; }
     public static double kingBeamTerrainRadius() { return kingBeamTerrainRadius; }

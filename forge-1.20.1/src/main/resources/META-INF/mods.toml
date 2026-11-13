@@ -19,6 +19,12 @@ displayTest="MATCH_VERSION"
 [[mixins]]
     config="antarchy-forge.mixins.json"
 
+[[mixins]]
+    config="antarchy-compat.mixins.json"
+
+[[mixins]]
+    config="antarchy-forge-compat.mixins.json"
+
 [[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true

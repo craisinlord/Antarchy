@@ -663,6 +663,11 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         return GlimmerVariant.random(this.random);
     }
 
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return !this.isTame() && !this.isLeashed();
+    }
+
     public static boolean checkGlimmerSpawnRules(EntityType<GlimmerEntity> type, ServerLevelAccessor level,
                                                    MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         Holder<Biome> biome = level.getBiome(pos);

@@ -38,7 +38,8 @@ public abstract class ElythiaAquiferMixin {
             int height,
             Aquifer.FluidPicker fluidPicker,
             Operation<Aquifer> original,
-            @Local(argsOnly = true) RandomState randomState
+            @Local(argsOnly = true) RandomState randomState,
+            @Local(argsOnly = true, ordinal = 0) int cellCountXZ
     ) {
         Aquifer aquifer = original.call(noiseChunk, chunkPos, router, random, minY, height, fluidPicker);
         ElythiaHydrology captured = ((ElythiaHydrologyHolder) (Object) randomState).antarchy$hydrology();
@@ -48,6 +49,6 @@ public abstract class ElythiaAquiferMixin {
         } else {
             hydrology = ElythiaHydrology.find(router.veinToggle());
         }
-        return hydrology != null ? new ElythiaAquifer(aquifer, noiseChunk, hydrology) : aquifer;
+        return hydrology != null ? new ElythiaAquifer(aquifer, noiseChunk, hydrology, cellCountXZ == 1) : aquifer;
     }
 }

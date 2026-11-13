@@ -5,21 +5,12 @@
   "refmap": "antarchy-forge.mixins.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "compat.DroneFakePlayerConstructionMixin",
-    "compat.SablePhysicsColliderBlockGetterMixin",
     "item.BucketItemThoraxisWaterMixin",
-    "entity.ParalyzedMobFreezeMixin",
-    "infinity.AmendmentRareOresMixin",
-    "infinity.ConfigGenInvocationMixin",
-    "infinity.ConfigGeneratorPatchMixin",
-    "infinity.PortalCreatorPatchMixin",
-    "infinity.WarpLogicPatchMixin"
+    "entity.ParalyzedMobFreezeMixin"
   ],
   "client": [
-    "infinity.ShaderPayloadRepeatSkipMixin",
     "client.LiquidBlockRendererMixin",
-    "client.ThrowbackHungerBarMixin",
-    "compat.AppleSkinOverlayMixin"
+    "client.ThrowbackHungerBarMixin"
   ],
   "injectors": {
     "defaultRequire": 1

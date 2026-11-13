@@ -8,8 +8,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,8 +43,13 @@ public final class KingsTreeGridFeature implements Feature {
     public static final MapCodec<KingsTreeGridFeature> CODEC = MapCodec.unit(KingsTreeGridFeature::new);
 
     private static final Map<ServerLevel, Set<Long>> CLAIMED_TREE_KINGS = new WeakHashMap<>();
-    private static final int CACHED_TILES = 64;
-    private static final Map<StructureTemplateManager, Set<Identifier>> RECENT_TILES = new WeakHashMap<>();
+    private static final int TILE_CACHE_SIZE = 16;
+    private static final Map<Identifier, Optional<StructureTemplate>> TILE_CACHE = new LinkedHashMap<>(32, 0.75F, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Identifier, Optional<StructureTemplate>> eldest) {
+            return this.size() > TILE_CACHE_SIZE;
+        }
+    };
     private static final Map<ServerLevel, Map<Long, Integer>> TREE_BASE_HEIGHTS = new WeakHashMap<>();
     private static final ConcurrentLinkedQueue<PendingKingSpawn> PENDING_KING_SPAWNS = new ConcurrentLinkedQueue<>();
     private static final int SPAWN_RETRY_TICKS = 100;
@@ -110,8 +114,7 @@ public final class KingsTreeGridFeature implements Feature {
 
         for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
             for (int tileZ = minTileZ; tileZ <= maxTileZ; tileZ++) {
-                var location = tileLocation(tileX, tileZ);
-                Optional<StructureTemplate> template = templates.get(location);
+                Optional<StructureTemplate> template = tile(templates, tileLocation(tileX, tileZ));
                 if (template.isEmpty()) {
                     continue;
                 }
@@ -119,13 +122,33 @@ public final class KingsTreeGridFeature implements Feature {
                 boolean tilePlaced = template.get().placeInWorld(level, tileOrigin, tileOrigin, settings, random, 2);
                 placed |= tilePlaced;
                 centralTilePlaced |= tileX == 0 && tileZ == 0 && tilePlaced;
-                retainTile(templates, location);
             }
         }
         if (centralTilePlaced) {
             queueTreeKing(level.getLevel(), centerX, centerZ, baseY);
         }
         return placed;
+    }
+
+    private static Optional<StructureTemplate> tile(StructureTemplateManager templates, Identifier location) {
+        synchronized (TILE_CACHE) {
+            Optional<StructureTemplate> cached = TILE_CACHE.get(location);
+            if (cached != null) {
+                return cached;
+            }
+        }
+        Optional<StructureTemplate> loaded = templates.get(location);
+        templates.remove(location);
+        synchronized (TILE_CACHE) {
+            Optional<StructureTemplate> raced = TILE_CACHE.putIfAbsent(location, loaded);
+            return raced != null ? raced : loaded;
+        }
+    }
+
+    public static void clearTileCache() {
+        synchronized (TILE_CACHE) {
+            TILE_CACHE.clear();
+        }
     }
 
     public static int treeBaseY(ServerLevel level, int centerX, int centerZ) {
@@ -176,23 +199,6 @@ public final class KingsTreeGridFeature implements Feature {
         return radius == 0 ? 1 : Math.max(8, radius / 12);
     }
 
-    private static void retainTile(StructureTemplateManager templates, Identifier location) {
-        Identifier evicted = null;
-        synchronized (RECENT_TILES) {
-            Set<Identifier> recent = RECENT_TILES.computeIfAbsent(templates, ignored -> new LinkedHashSet<>());
-            recent.remove(location);
-            recent.add(location);
-            if (recent.size() > CACHED_TILES) {
-                Iterator<Identifier> oldest = recent.iterator();
-                evicted = oldest.next();
-                oldest.remove();
-            }
-        }
-        if (evicted != null) {
-            templates.remove(evicted);
-        }
-    }
-
     private static void queueTreeKing(ServerLevel serverLevel, int centerX, int centerZ, int baseY) {
         long treeKey = KingsTreeSavedData.treeKey(centerX, centerZ);
         synchronized (CLAIMED_TREE_KINGS) {
@@ -225,6 +231,9 @@ public final class KingsTreeGridFeature implements Feature {
     }
 
     public static void tickPendingSpawns(ServerLevel level) {
+        if (!level.dimension().equals(KingsTreeGrid.ELYTHIA)) {
+            return;
+        }
         KingsTreeSavedData saved = KingsTreeSavedData.get(level);
         restoreSavedTrees(level, saved);
         int pendingCount = PENDING_KING_SPAWNS.size();

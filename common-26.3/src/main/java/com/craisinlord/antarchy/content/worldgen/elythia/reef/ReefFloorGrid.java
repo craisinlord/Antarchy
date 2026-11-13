@@ -120,7 +120,11 @@ final class ReefFloorGrid {
                     this.fetched[index] = this.sample(sampler, index);
                 }
             } finally {
-                active.decrementAndGet();
+                if (active.decrementAndGet() == 0) {
+                    synchronized (active) {
+                        active.notifyAll();
+                    }
+                }
             }
         };
         int helpers = Math.min(MAX_FETCH_HELPERS, Math.min(count - 1, Runtime.getRuntime().availableProcessors() - 1));
@@ -128,8 +132,18 @@ final class ReefFloorGrid {
             Util.backgroundExecutor().execute(worker);
         }
         worker.run();
-        while (active.get() > 0) {
-            Thread.onSpinWait();
+        synchronized (active) {
+            boolean interrupted = false;
+            while (active.get() > 0) {
+                try {
+                    active.wait();
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 

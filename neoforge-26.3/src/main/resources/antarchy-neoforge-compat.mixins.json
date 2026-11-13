@@ -1,0 +1,15 @@
+{
+  "required": false,
+  "package": "com.craisinlord.antarchy.neoforge.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "compat.SablePhysicsColliderBlockGetterMixin"
+  ],
+  "client": [
+    "compat.AppleSkinOverlayMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "minVersion": "0.8"
+}

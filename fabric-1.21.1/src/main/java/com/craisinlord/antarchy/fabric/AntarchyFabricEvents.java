@@ -24,6 +24,7 @@ import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenRitualManager;
+import com.craisinlord.antarchy.content.entity.stratoshark.SharknadoManager;
 import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager;
@@ -100,6 +101,8 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(PortalGunResetManager::clear);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> AntArrivalScheduler.clear());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> AntTransit.clear());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> SharknadoManager.clearAll());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> KingsTreeGridFeature.clearTileCache());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunMoonAimSync.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             PortalGunSavedData.clearMissingGuns(handler.player);

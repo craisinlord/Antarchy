@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "net.minecraft.client.renderer.chunk.ChunkRenderDispatcher$RenderChunk$RebuildTask")
 public abstract class PrimordialGrassMeshingMixin {
-    @ModifyExpressionValue(method = "compile", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;immutable()Lnet/minecraft/core/BlockPos;", ordinal = 0))
+    @ModifyExpressionValue(method = "compile", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos$MutableBlockPos;immutable()Lnet/minecraft/core/BlockPos;", ordinal = 0))
     private BlockPos antarchy$beginGrassMeshing(BlockPos origin) {
         PrimordialGrassBlock.beginMeshing(origin.getX() >> 4, origin.getY() >> 4, origin.getZ() >> 4);
         return origin;

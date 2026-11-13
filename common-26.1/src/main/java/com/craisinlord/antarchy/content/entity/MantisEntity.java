@@ -99,6 +99,8 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(MantisEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ATTACK_SERIAL =
+            SynchedEntityData.defineId(MantisEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
             SynchedEntityData.defineId(MantisEntity.class, EntityDataSerializers.BOOLEAN);
     private static final int BASE_XP_REWARD = 12;
@@ -123,6 +125,9 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     private AlphaMantisEntity cachedAlpha;
     private int airborneTicks;
     private int lastControllerState = ANIM_IDLE;
+    private int lastAttackSerial;
+    private boolean attackResetPending;
+    private boolean attackAnimSettled;
     private int missingOwnerTicks;
 
     public MantisEntity(EntityType<? extends MantisEntity> entityType, Level level) {
@@ -207,6 +212,7 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
+        builder.define(ATTACK_SERIAL, 0);
         builder.define(GLIMMER_ECHO, false);
     }
 
@@ -254,14 +260,28 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
         int animationState = this.getAnimationState();
         AnimationController<MantisEntity> controller = state.controller();
         controller.setAnimationSpeed(animationState == ANIM_CATCH ? CATCH_ANIM_SPEED : 1.0D);
-        if (this.lastControllerState == ANIM_CATCH && animationState == ANIM_ATTACK) {
+        boolean attackClip = animationState == ANIM_ATTACK || animationState == ANIM_CATCH;
+        boolean replayable = attackClip || animationState == ANIM_FLY_ATTACK;
+        if (animationState != this.lastControllerState) {
+            this.attackAnimSettled = false;
+        }
+        int attackSerial = this.entityData.get(ATTACK_SERIAL);
+        if (attackSerial != this.lastAttackSerial) {
+            this.lastAttackSerial = attackSerial;
+            this.attackResetPending = true;
+        }
+        if (replayable && (this.attackResetPending || (this.lastControllerState == ANIM_CATCH && animationState == ANIM_ATTACK))) {
+            this.attackResetPending = false;
+            this.attackAnimSettled = false;
             controller.reset();
+        } else if (attackClip && controller.hasAnimationFinished()) {
+            this.attackAnimSettled = true;
         }
         this.lastControllerState = animationState;
         return switch (animationState) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_FLY -> state.setAndContinue(FLY_ANIM);
-            case ANIM_ATTACK, ANIM_CATCH -> state.setAndContinue(ATTACK_ANIM);
+            case ANIM_ATTACK, ANIM_CATCH -> state.setAndContinue(this.attackAnimSettled ? IDLE_ANIM : ATTACK_ANIM);
             case ANIM_FLY_ATTACK -> state.setAndContinue(FLY_ATTACK_ANIM);
             default -> state.setAndContinue(IDLE_ANIM);
         };
@@ -560,7 +580,12 @@ public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
         this.attackStartedInFlight = this.isFlyingNow();
         this.getNavigation().stop();
         this.setAggressive(true);
+        this.markAttackAnimationStart();
         this.playSound(AntarchySoundEvents.MANTIS_ATTACK.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
+    }
+
+    protected void markAttackAnimationStart() {
+        this.entityData.set(ATTACK_SERIAL, this.entityData.get(ATTACK_SERIAL) + 1);
     }
 
     protected int committedAttackCooldownTicks() {

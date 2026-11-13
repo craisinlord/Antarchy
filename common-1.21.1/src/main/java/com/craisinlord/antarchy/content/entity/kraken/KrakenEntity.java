@@ -196,6 +196,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     private static final double WATER_ACQUIRE_RANGE = 56.0D;
     private static final double PATROL_RETURN_RANGE = 32.0D;
     private static final int WATER_SAMPLE_INTERVAL = 40;
+    private static final int FLUID_REFRESH_INTERVAL = 5;
     private static final int[] WATER_SAMPLE_RADII = {16, 32};
     private static final double FOLLOW_RANGE_LEEWAY = 1.25D;
 
@@ -628,6 +629,27 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         }
 
         super.travel(travelVector);
+    }
+
+    // The 11.4 x 39 hitbox makes vanilla's per-tick block scans read ~5-6k blocks each (fluid
+    // heights + getFlow on every water block, plus entityInside on every block). The Kraken drives
+    // its own movement and ignores currents, so skip the push, refresh water state every few ticks,
+    // and skip inside-block callbacks entirely.
+    @Override
+    public boolean isPushedByFluid() {
+        return false;
+    }
+
+    @Override
+    protected boolean updateInWaterStateAndDoFluidPushing() {
+        if (!this.firstTick && (this.tickCount + this.getId()) % FLUID_REFRESH_INTERVAL != 0) {
+            return this.isInWater();
+        }
+        return super.updateInWaterStateAndDoFluidPushing();
+    }
+
+    @Override
+    protected void checkInsideBlocks() {
     }
 
     @Override

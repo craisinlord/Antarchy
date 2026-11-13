@@ -10,8 +10,10 @@ import com.craisinlord.antarchy.content.command.PortalGunCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.command.RoyalCommand;
 import com.craisinlord.antarchy.content.command.ThoraxisCommand;
+import com.craisinlord.antarchy.content.entity.stratoshark.SharknadoManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
 import com.craisinlord.antarchy.content.transit.AntTransit;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -38,6 +40,8 @@ public final class AntarchyNeoforgeServerEvents {
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         AntTransit.clear();
+        SharknadoManager.clearAll();
+        KingsTreeGridFeature.clearTileCache();
         PortalGunProjectileEntity.releaseAllProjectileTickets();
     }
 }

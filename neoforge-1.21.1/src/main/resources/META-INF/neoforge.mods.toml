@@ -20,6 +20,12 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
 [[mixins]]
     config = "antarchy-neoforge.mixins.json"
 
+[[mixins]]
+    config = "antarchy-compat.mixins.json"
+
+[[mixins]]
+    config = "antarchy-neoforge-compat.mixins.json"
+
 [[dependencies.antarchy]]
     modId="minecraft"
     type="required"

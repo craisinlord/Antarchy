@@ -2,11 +2,13 @@ package com.craisinlord.antarchy.neoforge.registry;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler;
+import com.craisinlord.antarchy.content.entity.stratoshark.SharknadoManager;
 import com.craisinlord.antarchy.content.migration.DimensionResetManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync;
 import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
 import com.craisinlord.antarchy.content.transit.AntTransit;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -23,6 +25,8 @@ public final class PortalGunServerEvents {
         PortalGunResetManager.clear(event.getServer());
         AntArrivalScheduler.clear();
         AntTransit.clear();
+        SharknadoManager.clearAll();
+        KingsTreeGridFeature.clearTileCache();
         PortalGunMoonAimSync.clear();
     }
 

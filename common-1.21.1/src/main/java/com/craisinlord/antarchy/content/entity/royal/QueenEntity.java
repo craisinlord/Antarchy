@@ -349,6 +349,11 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     @Override
+    protected int royalBeamVolleyGapTicks() {
+        return AntarchySettings.queenBeamVolleyGapTicks();
+    }
+
+    @Override
     protected boolean blocksRoyalBeamScheduling() {
         return this.directedFireballVolleyTicks > 0 || this.royalEffects.active("momentum_lock");
     }

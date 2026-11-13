@@ -130,6 +130,8 @@ mixin {
     add sourceSets.main, "${mod_id}-forge.mixins.refmap.json"
     config "${mod_id}-common.mixins.json"
     config "${mod_id}-forge.mixins.json"
+    config "${mod_id}-compat.mixins.json"
+    config "${mod_id}-forge-compat.mixins.json"
 }
 
 tasks.named('processResources', ProcessResources).configure {

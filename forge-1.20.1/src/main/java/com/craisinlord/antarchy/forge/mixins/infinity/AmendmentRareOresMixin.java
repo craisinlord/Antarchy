@@ -29,5 +29,16 @@ public class AmendmentRareOresMixin {
                 new Amendment.MatchingSelector("antarchy:paralyzed"),
                 new Amendment.SetValue(0.0D)
         ));
+        data.computeIfAbsent(ConfigType.BIOMES, k -> new ArrayList<>()).add(new Amendment(
+                ConfigType.BIOMES,
+                new Amendment.MatchingModSelector("antarchy"),
+                new Amendment.MatchingAnySelector(List.of(
+                        "antarchy:biowart_caves",
+                        "antarchy:brooding_tunnels",
+                        "antarchy:cavaryn",
+                        "antarchy:cavaryn_moleworm_caves",
+                        "antarchy:glowcap_caves")),
+                new Amendment.SetValue(0.0D)
+        ));
     }
 }

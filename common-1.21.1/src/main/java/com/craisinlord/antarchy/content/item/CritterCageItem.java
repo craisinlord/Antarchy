@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
+import com.craisinlord.antarchy.content.entity.ant.BaseAntEntity;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
@@ -264,6 +265,9 @@ public class CritterCageItem extends Item {
         Entity entity = EntityType.loadEntityRecursive(savedData, level, loaded -> loaded);
         if (entity == null) {
             return false;
+        }
+        if (entity instanceof BaseAntEntity ant) {
+            ant.markPlayerTended();
         }
 
         entity.setUUID(UUID.randomUUID());

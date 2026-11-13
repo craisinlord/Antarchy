@@ -30,6 +30,7 @@ public class AntarchyNeoforge {
     public AntarchyNeoforge(IEventBus modEventBus, ModContainer modContainer) {
         modEventBusTempHolder = modEventBus;
         com.craisinlord.antarchy.neoforge.dev.DimFuzz.initIfEnabled();
+        com.craisinlord.antarchy.neoforge.dev.StructureUpgrade.initIfEnabled();
         modEventBus.addListener(AntarchyNeoforge::registerAdvancementTriggers);
         bootstrapGameRules();
         AntarchyConfigModuleNeoforge.init(modContainer);

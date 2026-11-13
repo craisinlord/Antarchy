@@ -907,6 +907,7 @@ public class AlphaMantisEntity extends MantisEntity {
             case FEINT_RAISE -> {
                 this.action = AlphaAction.FEINT_RAISE;
                 this.actionTicks = 0;
+                this.markAttackAnimationStart();
                 this.feintCooldownTicks = this.scaledCooldown(FEINT_COOLDOWN_TICKS);
                 this.getNavigation().stop();
                 this.playSound(AntarchySoundEvents.MANTIS_ATTACK.get(), 1.0F, 0.8F);
@@ -926,6 +927,7 @@ public class AlphaMantisEntity extends MantisEntity {
             case CATCH -> {
                 this.action = AlphaAction.CATCH;
                 this.actionTicks = 0;
+                this.markAttackAnimationStart();
                 this.catchReady = false;
                 this.catchFlanked = false;
                 this.shieldTicks = 0;

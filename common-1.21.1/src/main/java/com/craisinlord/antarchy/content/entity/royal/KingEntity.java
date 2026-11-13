@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1388,10 +1389,27 @@ public class KingEntity extends RoyalBossEntity {
         return this.clearTreePatrolPath(risen) ? risen : null;
     }
 
+    @Override
+    protected int royalBeamVolleyGapTicks() {
+        return AntarchySettings.kingBeamVolleyGapTicks();
+    }
+
     private boolean kingBeamReady() {
+        if (this.royalBeamVolleyGapActive() && !this.anyKingHeadShooting()) {
+            return false;
+        }
         for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
             RoyalHead head = this.royalHead(slot);
             if (head.shooting() || this.attackScheduler.cooldown("beam_" + slot.name()) <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean anyKingHeadShooting() {
+        for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
+            if (this.royalHead(slot).shooting()) {
                 return true;
             }
         }
@@ -2877,7 +2895,18 @@ public class KingEntity extends RoyalBossEntity {
         if (target.level().isClientSide || NO_RESPITE_KINGS.isEmpty()) {
             return false;
         }
-        return !target.level().getEntitiesOfClass(KingEntity.class, target.getBoundingBox().inflate(128.0D),
-                king -> king.isAlive() && king.blocksHealing()).isEmpty();
+        AABB area = target.getBoundingBox().inflate(128.0D);
+        Iterator<KingEntity> kings = NO_RESPITE_KINGS.iterator();
+        while (kings.hasNext()) {
+            KingEntity king = kings.next();
+            if (king.isRemoved() || !king.blocksHealing()) {
+                kings.remove();
+                continue;
+            }
+            if (king.level() == target.level() && king.isAlive() && king.getBoundingBox().intersects(area)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

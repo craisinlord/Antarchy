@@ -3,13 +3,10 @@
   "package": "com.craisinlord.antarchy.neoforge.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "compat.SablePhysicsColliderBlockGetterMixin",
     "item.BucketItemThoraxisWaterMixin",
     "entity.ParalyzedMobFreezeMixin"
   ],
-  "client": [
-    "compat.AppleSkinOverlayMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   },

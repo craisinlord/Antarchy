@@ -31,7 +31,9 @@
   },
   "mixins": [
     "antarchy-common.mixins.json",
-    "antarchy-fabric.mixins.json"
+    "antarchy-fabric.mixins.json",
+    "antarchy-compat.mixins.json",
+    "antarchy-fabric-compat.mixins.json"
   ],
   "depends": {
     "antos": ">=${antos_version}",

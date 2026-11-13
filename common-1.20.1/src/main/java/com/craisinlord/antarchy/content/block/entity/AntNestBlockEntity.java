@@ -22,6 +22,7 @@ import net.minecraft.world.phys.Vec3;
 public class AntNestBlockEntity extends BlockEntity {
     private static final String STORED_ANTS = "StoredAnts";
     private static final String NBT_INITIALIZED = "Initialized";
+    private static final String NBT_PLAYER_PLACED = "PlayerPlaced";
     private static final String NBT_REBROOD_COOLDOWN = "RebroodCooldown";
     private static final int RELEASE_COOLDOWN_MIN = 80;
     private static final int RELEASE_COOLDOWN_RANGE = 100;
@@ -37,6 +38,7 @@ public class AntNestBlockEntity extends BlockEntity {
     private int releaseCooldown = RELEASE_COOLDOWN_MIN;
     private int rebroodCooldown = REBROOD_COOLDOWN_TICKS;
     private boolean initialized = false;
+    private boolean playerPlaced = false;
 
     public AntNestBlockEntity(BlockPos pos, BlockState blockState) {
         super(AntarchyObjects.ANT_NEST_BLOCK_ENTITY.get(), pos, blockState);
@@ -117,6 +119,15 @@ public class AntNestBlockEntity extends BlockEntity {
             this.storedAnts.add(this.createStoredAnt(level, antType));
         }
         this.rebroodCooldown = REBROOD_COOLDOWN_TICKS;
+        this.setChanged();
+    }
+
+    public boolean isPlayerPlaced() {
+        return this.playerPlaced;
+    }
+
+    public void setPlayerPlaced() {
+        this.playerPlaced = true;
         this.setChanged();
     }
 
@@ -221,6 +232,7 @@ public class AntNestBlockEntity extends BlockEntity {
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putBoolean(NBT_INITIALIZED, this.initialized);
+        tag.putBoolean(NBT_PLAYER_PLACED, this.playerPlaced);
         tag.putInt(NBT_REBROOD_COOLDOWN, this.rebroodCooldown);
         ListTag listTag = new ListTag();
         for (StoredAnt storedAnt : this.storedAnts) {
@@ -233,6 +245,7 @@ public class AntNestBlockEntity extends BlockEntity {
     public void load(CompoundTag tag) {
         super.load(tag);
         this.initialized = tag.getBoolean(NBT_INITIALIZED);
+        this.playerPlaced = tag.getBoolean(NBT_PLAYER_PLACED);
         this.rebroodCooldown = tag.contains(NBT_REBROOD_COOLDOWN) ? tag.getInt(NBT_REBROOD_COOLDOWN) : REBROOD_COOLDOWN_TICKS;
         this.storedAnts.clear();
         ListTag listTag = tag.getList(STORED_ANTS, Tag.TAG_COMPOUND);

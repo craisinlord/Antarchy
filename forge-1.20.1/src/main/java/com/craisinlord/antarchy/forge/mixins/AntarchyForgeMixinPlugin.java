@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.forge.mixins;
 
+import com.craisinlord.antarchy.forge.InfinityInterfacePatcher;
 import java.util.List;
 import java.util.Set;
 import org.objectweb.asm.tree.ClassNode;

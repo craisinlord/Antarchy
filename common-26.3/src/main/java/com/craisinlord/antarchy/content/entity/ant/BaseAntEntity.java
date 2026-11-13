@@ -92,6 +92,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private static final String NEST_Y = "NestY";
     private static final String NEST_Z = "NestZ";
     private static final String TELEPORT_ACTIVATED = "TeleportActivated";
+    private static final String PLAYER_TENDED = "PlayerTended";
     private static final String MARCH_LEADER_UUID = "MarchLeaderUuid";
     private static final String MARCH_ORDER_KEY = "MarchOrder";
     private static final int MIN_OUTSIDE_NEST_TICKS = 20 * 30;
@@ -141,6 +142,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private BlockPos jukeboxPos;
     private int outsideNestTicks;
     private boolean teleportActivated;
+    private boolean playerTended;
     @Nullable
     private UUID marchLeaderUuid;
     private int marchOrder = -1;
@@ -318,7 +320,11 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (this.isFood(itemStack)) {
-            return super.mobInteract(player, hand);
+            InteractionResult result = super.mobInteract(player, hand);
+            if (result.consumesAction()) {
+                this.markPlayerTended();
+            }
+            return result;
         }
 
         return AntTeleportHelper.handleInteraction(this, player, itemStack);
@@ -354,6 +360,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
         output.putInt(OUTSIDE_NEST_TICKS_KEY, this.outsideNestTicks);
         output.putBoolean(TELEPORT_ACTIVATED, this.teleportActivated);
+        output.putBoolean(PLAYER_TENDED, this.playerTended);
         if (this.marchLeaderUuid != null) {
             output.store(MARCH_LEADER_UUID, UUIDUtil.CODEC, this.marchLeaderUuid);
             output.putInt(MARCH_ORDER_KEY, this.marchOrder);
@@ -378,6 +385,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
         this.outsideNestTicks = input.getIntOr(OUTSIDE_NEST_TICKS_KEY, 0);
         this.teleportActivated = input.getBooleanOr(TELEPORT_ACTIVATED, false);
+        this.playerTended = input.getBooleanOr(PLAYER_TENDED, false);
         Optional<UUID> marchLeader = input.read(MARCH_LEADER_UUID, UUIDUtil.CODEC);
         if (marchLeader.isPresent()) {
             this.marchLeaderUuid = marchLeader.get();
@@ -409,6 +417,24 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         this.markNestCacheDirty();
     }
 
+    public boolean isPlayerTended() {
+        return this.playerTended;
+    }
+
+    public void markPlayerTended() {
+        this.playerTended = true;
+        this.markNestCacheDirty();
+    }
+
+    @Override
+    public boolean requiresCustomPersistence() {
+        return this.playerTended || super.requiresCustomPersistence();
+    }
+
+    private boolean canAdoptNest(AntNestBlockEntity nestBlockEntity) {
+        return nestBlockEntity.canAccept(this.getType()) && (!this.playerTended || nestBlockEntity.isPlayerPlaced());
+    }
+
     public void onEnterNest() {
         this.clearCarriedFood();
         this.outsideNestTicks = 0;
@@ -435,6 +461,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         BaseAntEntity child = this.getType().create(level, EntitySpawnReason.BREEDING) instanceof BaseAntEntity antChild ? antChild : null;
         if (child != null) {
             child.setNestPos(this.nestPos);
+            child.markPlayerTended();
         }
         return child;
     }
@@ -599,7 +626,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
                 LevelChunk chunk = serverLevel.getChunk(chunkX, chunkZ);
                 for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-                    if (!(blockEntity instanceof AntNestBlockEntity nestBlockEntity) || !nestBlockEntity.canAccept(this.getType())) {
+                    if (!(blockEntity instanceof AntNestBlockEntity nestBlockEntity) || !this.canAdoptNest(nestBlockEntity)) {
                         continue;
                     }
 
@@ -632,7 +659,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
                 origin.offset(-NEST_SEARCH_RADIUS_HORIZONTAL, -NEST_SEARCH_RADIUS_VERTICAL, -NEST_SEARCH_RADIUS_HORIZONTAL),
                 origin.offset(NEST_SEARCH_RADIUS_HORIZONTAL, NEST_SEARCH_RADIUS_VERTICAL, NEST_SEARCH_RADIUS_HORIZONTAL))) {
             BlockEntity blockEntity = this.level().getBlockEntity(pos);
-            if (!(blockEntity instanceof AntNestBlockEntity nestBlockEntity) || !nestBlockEntity.canAccept(this.getType())) {
+            if (!(blockEntity instanceof AntNestBlockEntity nestBlockEntity) || !this.canAdoptNest(nestBlockEntity)) {
                 continue;
             }
 
@@ -1078,6 +1105,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         if (this.nestPos == null
                 || this.tickCount % 5 != 0
                 || !this.canEnterNest()
+                || !this.hasUsableNest()
                 || !this.isNearNestEntrance()) {
             return false;
         }
@@ -1145,7 +1173,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
                 this.cachedHasUsableNest = false;
             } else if (this.level().isLoaded(this.nestPos)) {
                 this.cachedHasUsableNest = this.level().getBlockEntity(this.nestPos) instanceof AntNestBlockEntity nestBlockEntity
-                        && nestBlockEntity.canAccept(this.getType());
+                        && this.canAdoptNest(nestBlockEntity);
             } else if (this.nestCacheDirty) {
                 this.cachedHasUsableNest = true;
             }

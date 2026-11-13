@@ -121,7 +121,7 @@ public final class AntarchyMobsConfig {
             QUEEN_BEAM_PHASE_ONE_CAP, QUEEN_BEAM_PHASE_TWO_CAP, QUEEN_BEAM_PHASE_THREE_CAP;
     private static final ModConfigSpec.DoubleValue QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE;
     private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_MINIMUM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
-    private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
+    private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_VOLLEY_GAP_TICKS, KING_BEAM_TERRAIN_CAP, QUEEN_BEAM_VOLLEY_GAP_TICKS;
     private static final ModConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
     private static final ModConfigSpec.DoubleValue KING_ROYAL_MUSTER_RADIUS;
     private static final ModConfigSpec.IntValue KING_ROYAL_MUSTER_COOLDOWN_TICKS, KING_ROYAL_MUSTER_WINDUP_TICKS,
@@ -588,6 +588,7 @@ public final class AntarchyMobsConfig {
         QUEEN_BEAM_TRACKING = b.defineInRange("queenBeamTracking", 0.1D, 0.0D, 1.0D);
         QUEEN_BEAM_TERRAIN_RADIUS = b.defineInRange("queenBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         QUEEN_BEAM_TERRAIN_CAP = b.defineInRange("queenBeamTerrainCap", 192, 0, 4096);
+        QUEEN_BEAM_VOLLEY_GAP_TICKS = b.comment("Quiet time shared by all three heads after a Queen beam volley ends, before any head may beam again. Scaled down in later phases.").defineInRange("queenBeamVolleyGapTicks", 140, 0, 2400);
         QUEEN_BEAM_PHASE_ONE_CAP = b.comment("Maximum simultaneous Queen beams in phase one.").defineInRange("queenBeamPhaseOneCap", 1, 1, 3);
         QUEEN_BEAM_PHASE_TWO_CAP = b.comment("Maximum simultaneous Queen beams in phase two.").defineInRange("queenBeamPhaseTwoCap", 2, 1, 3);
         QUEEN_BEAM_PHASE_THREE_CAP = b.comment("Maximum simultaneous Queen beams when phase three rolls a full volley.").defineInRange("queenBeamPhaseThreeCap", 3, 1, 3);
@@ -599,6 +600,7 @@ public final class AntarchyMobsConfig {
         KING_BEAM_WINDUP_TICKS = b.comment("Charge time before the King beam actually fires.").defineInRange("kingBeamWindupTicks", 20, 0, 1200);
         KING_BEAM_TRAVEL_TICKS = b.comment("Time for the King beam to extend from its head to its committed range.").defineInRange("kingBeamTravelTicks", 12, 1, 1200);
         KING_BEAM_COOLDOWN_TICKS = b.defineInRange("kingBeamCooldownTicks", 90, 1, 2400);
+        KING_BEAM_VOLLEY_GAP_TICKS = b.comment("Quiet time shared by all three heads after a King beam volley ends, before any head may beam again. Scaled down in later phases. During the gap he closes in instead of holding beam range.").defineInRange("kingBeamVolleyGapTicks", 140, 0, 2400);
         KING_BEAM_TRACKING = b.defineInRange("kingBeamTracking", 0.1D, 0.0D, 1.0D);
         KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
@@ -1205,6 +1207,8 @@ public final class AntarchyMobsConfig {
     static int     kingBeamWindupTicks()                    { return KING_BEAM_WINDUP_TICKS.get(); }
     static int     kingBeamTravelTicks()                    { return KING_BEAM_TRAVEL_TICKS.get(); }
     static int     kingBeamCooldownTicks()                  { return KING_BEAM_COOLDOWN_TICKS.get(); }
+    static int     kingBeamVolleyGapTicks()                 { return KING_BEAM_VOLLEY_GAP_TICKS.get(); }
+    static int     queenBeamVolleyGapTicks()                { return QUEEN_BEAM_VOLLEY_GAP_TICKS.get(); }
     static double  kingBeamTracking()                       { return KING_BEAM_TRACKING.get(); }
     static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
     static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }

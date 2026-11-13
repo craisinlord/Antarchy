@@ -44,6 +44,10 @@ public final class SharknadoManager {
         return INSTANCES.computeIfAbsent(level, l -> new SharknadoManager());
     }
 
+    public static void clearAll() {
+        INSTANCES.clear();
+    }
+
     public boolean tryFormOrJoin(StratosharkEntity shark, ServerLevel level) {
         if (tryJoinExisting(shark)) {
             return true;
