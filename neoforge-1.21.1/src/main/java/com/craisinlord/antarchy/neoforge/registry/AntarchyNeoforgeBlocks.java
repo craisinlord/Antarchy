@@ -1017,8 +1017,8 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new AntigravelBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)));
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)));
-    public static final DeferredBlock<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
-            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD).sound(primordialLoamSoundType())));
+    public static final DeferredBlock<PrimordialLoamBlock> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
+            () -> new PrimordialLoamBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD).sound(primordialLoamSoundType())));
     public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.PACKED_MUD)));
     public static final DeferredBlock<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",

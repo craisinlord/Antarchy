@@ -9,7 +9,8 @@
   "client": [
     "compat.stellarview.StellarViewLunaDirectionMixin",
     "compat.jei.JeiFloppyDiskModGroupMixin",
-    "client.PrimordialGrassSodiumMeshingMixin"
+    "client.PrimordialGrassSodiumMeshingMixin",
+    "compat.iris.IrisPrimordialGrassBlockIdMixin"
   ],
   "injectors": {
     "defaultRequire": 0
