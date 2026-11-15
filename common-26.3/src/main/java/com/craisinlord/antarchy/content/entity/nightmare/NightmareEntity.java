@@ -42,6 +42,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.CombatRules;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -638,7 +639,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
         if (!bypassesProtection && !this.isPhaseTwo() && amount > 0.0F) {
             float threshold = (float) (this.getMaxHealth() * PHASE_TWO_HEALTH_FRACTION);
-            float mitigated = this.getDamageAfterMagicAbsorb(source, this.getDamageAfterArmorAbsorb(source, amount));
+            float mitigated = this.estimateMitigatedDamage(source, amount);
             if (this.getHealth() > threshold && this.getHealth() - mitigated <= threshold) {
                 float clampedAmount = this.getHealth() - threshold;
                 boolean hurt = clampedAmount > 0.0F && super.hurtServer(level, source, clampedAmount);
@@ -651,6 +652,21 @@ public class NightmareEntity extends Monster implements GeoEntity {
             }
         }
         return super.hurtServer(level, source, amount);
+    }
+
+    private float estimateMitigatedDamage(DamageSource source, float amount) {
+        float result = amount;
+        if (!source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+            result = CombatRules.getDamageAfterAbsorb(this, result, source, (float) this.getArmorValue(), (float) this.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
+        }
+        if (source.is(DamageTypeTags.BYPASSES_EFFECTS) || source.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
+            return result;
+        }
+        MobEffectInstance resistance = this.getEffect(MobEffects.RESISTANCE);
+        if (resistance != null) {
+            result = Math.max(result * (1.0F - (resistance.getAmplifier() + 1) * 0.2F), 0.0F);
+        }
+        return result;
     }
 
     @Override

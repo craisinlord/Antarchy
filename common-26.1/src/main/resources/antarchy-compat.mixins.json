@@ -8,6 +8,7 @@
   ],
   "client": [
     "client.PrimordialGrassSodiumMeshingMixin",
+    "compat.iris.IrisPrimordialGrassBlockIdMixin",
     "compat.stellarview.StellarViewLunaDirectionMixin",
     "compat.jei.JeiFloppyDiskModGroupMixin"
   ],

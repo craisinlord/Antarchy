@@ -974,8 +974,8 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
             () -> new AntigravelBlock(BlockBehaviour.Properties.copy(Blocks.GRAVEL)));
     public static final RegistryObject<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
-    public static final RegistryObject<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
-            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD).sound(primordialLoamSoundType())));
+    public static final RegistryObject<PrimordialLoamBlock> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
+            () -> new PrimordialLoamBlock(BlockBehaviour.Properties.copy(Blocks.MUD).sound(primordialLoamSoundType())));
     public static final RegistryObject<PrimordialGrassBlock> PRIMORDIAL_GRASS = BLOCKS.register("primordial_grass",
             () -> new PrimordialGrassBlock(BlockBehaviour.Properties.copy(Blocks.GRASS)));
     public static final RegistryObject<PrimordialMossBlock> PRIMORDIAL_MOSS_BLOCK = BLOCKS.register("primordial_moss_block", () -> new PrimordialMossBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK)));

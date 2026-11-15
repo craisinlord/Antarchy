@@ -270,6 +270,9 @@ public final class AntarchyObjects {
     public static final Supplier<Block> LOTUS = lookup(Registries.BLOCK, "lotus");
     public static final Supplier<Block> SEASHELL = lookup(Registries.BLOCK, "seashell");
     public static final Supplier<Block> CRITTER_CAGE_BLOCK = lookup(Registries.BLOCK, "critter_cage_block");
+    public static final Supplier<Block> LOAM = lookup(Registries.BLOCK, "loam");
+    public static final Supplier<Block> PRIMORDIAL_LOAM = lookup(Registries.BLOCK, "primordial_loam");
+    public static final Supplier<Block> PRIMORDIAL_GRASS = lookup(Registries.BLOCK, "primordial_grass");
     public static final Supplier<Block> LUCID_ANCHOR = lookup(Registries.BLOCK, "lucid_anchor");
     public static final Supplier<Block> MYRMITE_FOSSIL = lookup(Registries.BLOCK, "myrmite_fossil");
     public static final Supplier<Block> BROODSTONE_FOSSIL = lookup(Registries.BLOCK, "broodstone_fossil");
