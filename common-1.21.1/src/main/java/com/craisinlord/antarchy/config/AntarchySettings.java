@@ -703,6 +703,16 @@ public final class AntarchySettings {
     private static double kingBeamTerrainRadius = 5.0D;
     private static int kingBeamTerrainCap = 192;
     private static int royalDecreeCooldownTicks = 700;
+    private static int royalDecreeViolationPenaltyTicks = 300;
+    private static double royalDecreeWarningDamage = 4.0D;
+    private static int royalFavorTicks = 160;
+    private static double royalFavorDamageMultiplier = 1.25D;
+    private static int kingStompWindupTicks = 22;
+    private static double kingStompRadius = 18.0D;
+    private static double royalDecreeDurationMultiplier = 1.0D;
+    private static double royalCloseQuartersRadius = 22.0D;
+    private static double royalComeNoCloserRadius = 16.0D;
+    private static double royalStandYourGroundDrift = 10.0D;
     private static int kingRoyalMusterCooldownTicks = 500;
     private static int kingRoyalMusterWindupTicks = 30;
     private static int kingRoyalMusterDurationTicks = 600;
@@ -3403,6 +3413,26 @@ public final class AntarchySettings {
     public static void setKingBeamTerrainCap(int v) { kingBeamTerrainCap = v; }
     public static int royalDecreeCooldownTicks() { return royalDecreeCooldownTicks; }
     public static void setRoyalDecreeCooldownTicks(int v) { royalDecreeCooldownTicks = v; }
+    public static int royalDecreeViolationPenaltyTicks() { return royalDecreeViolationPenaltyTicks; }
+    public static void setRoyalDecreeViolationPenaltyTicks(int v) { royalDecreeViolationPenaltyTicks = v; }
+    public static double royalDecreeWarningDamage() { return royalDecreeWarningDamage; }
+    public static void setRoyalDecreeWarningDamage(double v) { royalDecreeWarningDamage = v; }
+    public static int royalFavorTicks() { return royalFavorTicks; }
+    public static void setRoyalFavorTicks(int v) { royalFavorTicks = v; }
+    public static double royalFavorDamageMultiplier() { return royalFavorDamageMultiplier; }
+    public static void setRoyalFavorDamageMultiplier(double v) { royalFavorDamageMultiplier = v; }
+    public static int kingStompWindupTicks() { return kingStompWindupTicks; }
+    public static void setKingStompWindupTicks(int v) { kingStompWindupTicks = v; }
+    public static double kingStompRadius() { return kingStompRadius; }
+    public static void setKingStompRadius(double v) { kingStompRadius = v; }
+    public static double royalDecreeDurationMultiplier() { return royalDecreeDurationMultiplier; }
+    public static void setRoyalDecreeDurationMultiplier(double v) { royalDecreeDurationMultiplier = v; }
+    public static double royalCloseQuartersRadius() { return royalCloseQuartersRadius; }
+    public static void setRoyalCloseQuartersRadius(double v) { royalCloseQuartersRadius = v; }
+    public static double royalComeNoCloserRadius() { return royalComeNoCloserRadius; }
+    public static void setRoyalComeNoCloserRadius(double v) { royalComeNoCloserRadius = v; }
+    public static double royalStandYourGroundDrift() { return royalStandYourGroundDrift; }
+    public static void setRoyalStandYourGroundDrift(double v) { royalStandYourGroundDrift = v; }
     public static int kingRoyalMusterCooldownTicks() { return kingRoyalMusterCooldownTicks; }
     public static void setKingRoyalMusterCooldownTicks(int v) { kingRoyalMusterCooldownTicks = v; }
     public static int kingRoyalMusterWindupTicks() { return kingRoyalMusterWindupTicks; }

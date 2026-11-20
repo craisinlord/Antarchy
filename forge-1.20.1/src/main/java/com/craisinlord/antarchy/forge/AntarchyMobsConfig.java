@@ -123,6 +123,16 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_MINIMUM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
     private static final ForgeConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
     private static final ForgeConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
+    private static final ForgeConfigSpec.IntValue ROYAL_DECREE_VIOLATION_PENALTY_TICKS;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_DECREE_WARNING_DAMAGE;
+    private static final ForgeConfigSpec.IntValue ROYAL_FAVOR_TICKS;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_FAVOR_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.IntValue KING_STOMP_WINDUP_TICKS;
+    private static final ForgeConfigSpec.DoubleValue KING_STOMP_RADIUS;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_DECREE_DURATION_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_CLOSE_QUARTERS_RADIUS;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_COME_NO_CLOSER_RADIUS;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_STAND_YOUR_GROUND_DRIFT;
     private static final ForgeConfigSpec.DoubleValue KING_ROYAL_MUSTER_RADIUS;
     private static final ForgeConfigSpec.IntValue KING_ROYAL_MUSTER_COOLDOWN_TICKS, KING_ROYAL_MUSTER_WINDUP_TICKS,
             KING_ROYAL_MUSTER_DURATION_TICKS, KING_ROYAL_MUSTER_CAP;
@@ -603,6 +613,16 @@ public final class AntarchyMobsConfig {
         KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
         ROYAL_DECREE_COOLDOWN_TICKS = b.comment("Cooldown in ticks between the end of one King decree and the next.").defineInRange("royalDecreeCooldownTicks", 700, 1, 72000);
+        ROYAL_DECREE_VIOLATION_PENALTY_TICKS = b.comment("Ticks a second decree breach halves the player's max health.").defineInRange("royalDecreeViolationPenaltyTicks", 300, 20, 72000);
+        ROYAL_DECREE_WARNING_DAMAGE = b.comment("Magic damage dealt by the warning on a first decree breach, before royal damage scaling.").defineInRange("royalDecreeWarningDamage", 4.0D, 0.0D, 100.0D);
+        ROYAL_FAVOR_TICKS = b.comment("Ticks of Royal Favor granted to players who finish a decree without a breach.").defineInRange("royalFavorTicks", 160, 0, 72000);
+        ROYAL_FAVOR_DAMAGE_MULTIPLIER = b.comment("Damage multiplier against the King while a player has Royal Favor.").defineInRange("royalFavorDamageMultiplier", 1.25D, 1.0D, 10.0D);
+        KING_STOMP_WINDUP_TICKS = b.comment("Ticks between the King's stomp telegraph and impact.").defineInRange("kingStompWindupTicks", 22, 1, 100);
+        KING_STOMP_RADIUS = b.comment("Radius in blocks of the King's stomp shockwave. Airborne players are not hit.").defineInRange("kingStompRadius", 18.0D, 4.0D, 64.0D);
+        ROYAL_DECREE_DURATION_MULTIPLIER = b.comment("Multiplier on each King decree's active duration.").defineInRange("royalDecreeDurationMultiplier", 1.0D, 0.25D, 4.0D);
+        ROYAL_CLOSE_QUARTERS_RADIUS = b.comment("Radius in blocks of the circle players must reach during Close Quarters.").defineInRange("royalCloseQuartersRadius", 22.0D, 8.0D, 64.0D);
+        ROYAL_COME_NO_CLOSER_RADIUS = b.comment("Radius in blocks players must stay outside during Come No Closer.").defineInRange("royalComeNoCloserRadius", 16.0D, 4.0D, 64.0D);
+        ROYAL_STAND_YOUR_GROUND_DRIFT = b.comment("Blocks a player may drift from their anchor during Stand Your Ground.").defineInRange("royalStandYourGroundDrift", 10.0D, 2.0D, 64.0D);
         KING_ROYAL_MUSTER_COOLDOWN_TICKS = b.comment("Cooldown in ticks between King's command pulses.").defineInRange("kingRoyalMusterCooldownTicks", 500, 1, 72000);
         KING_ROYAL_MUSTER_WINDUP_TICKS = b.comment("Warning time before the King commands nearby hostile mobs.").defineInRange("kingRoyalMusterWindupTicks", 30, 0, 1200);
         KING_ROYAL_MUSTER_DURATION_TICKS = b.comment("Duration of Commanded applied by the King's muster.").defineInRange("kingRoyalMusterDurationTicks", 600, 1, 72000);
@@ -1209,6 +1229,16 @@ public final class AntarchyMobsConfig {
     static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
     static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
     static int     royalDecreeCooldownTicks()                { return ROYAL_DECREE_COOLDOWN_TICKS.get(); }
+    static int     royalDecreeViolationPenaltyTicks()        { return ROYAL_DECREE_VIOLATION_PENALTY_TICKS.get(); }
+    static double  royalDecreeWarningDamage()                { return ROYAL_DECREE_WARNING_DAMAGE.get(); }
+    static int     royalFavorTicks()                         { return ROYAL_FAVOR_TICKS.get(); }
+    static double  royalFavorDamageMultiplier()              { return ROYAL_FAVOR_DAMAGE_MULTIPLIER.get(); }
+    static int     kingStompWindupTicks()                   { return KING_STOMP_WINDUP_TICKS.get(); }
+    static double  kingStompRadius()                        { return KING_STOMP_RADIUS.get(); }
+    static double  royalDecreeDurationMultiplier()          { return ROYAL_DECREE_DURATION_MULTIPLIER.get(); }
+    static double  royalCloseQuartersRadius()               { return ROYAL_CLOSE_QUARTERS_RADIUS.get(); }
+    static double  royalComeNoCloserRadius()                { return ROYAL_COME_NO_CLOSER_RADIUS.get(); }
+    static double  royalStandYourGroundDrift()              { return ROYAL_STAND_YOUR_GROUND_DRIFT.get(); }
     static int     kingRoyalMusterCooldownTicks()             { return KING_ROYAL_MUSTER_COOLDOWN_TICKS.get(); }
     static int     kingRoyalMusterWindupTicks()                { return KING_ROYAL_MUSTER_WINDUP_TICKS.get(); }
     static int     kingRoyalMusterDurationTicks()              { return KING_ROYAL_MUSTER_DURATION_TICKS.get(); }

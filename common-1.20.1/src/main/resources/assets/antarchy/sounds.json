@@ -1923,6 +1923,37 @@
       }
     ]
   },
+  "loam_place": {
+    "subtitle": "subtitles.block.generic.place",
+    "sounds": [
+      "antarchy:block/loam/place1",
+      "antarchy:block/loam/place2",
+      "antarchy:block/loam/place3",
+      "antarchy:block/loam/place4"
+    ]
+  },
+  "primordial_loam_place": {
+    "subtitle": "subtitles.block.generic.place",
+    "sounds": [
+      "antarchy:block/primordial_loam/place1",
+      "antarchy:block/primordial_loam/place2",
+      "antarchy:block/primordial_loam/place3",
+      "antarchy:block/primordial_loam/place4"
+    ]
+  },
+  "primordial_loam_step": {
+    "subtitle": "subtitles.block.generic.footsteps",
+    "sounds": [
+      "antarchy:block/primordial_loam/step1",
+      "antarchy:block/primordial_loam/step2",
+      "antarchy:block/primordial_loam/step3",
+      "antarchy:block/primordial_loam/step4",
+      "antarchy:block/primordial_loam/step5",
+      "antarchy:block/primordial_loam/step6",
+      "antarchy:block/primordial_loam/step7",
+      "antarchy:block/primordial_loam/step8"
+    ]
+  },
   "portal_gun_fire_blue": {
     "subtitle": "subtitles.antarchy.portal_gun_fire_blue",
     "sounds": [

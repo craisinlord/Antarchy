@@ -973,7 +973,7 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
     public static final RegistryObject<AntigravelBlock> ANTIGRAVEL = BLOCKS.register("antigravel",
             () -> new AntigravelBlock(BlockBehaviour.Properties.copy(Blocks.GRAVEL)));
     public static final RegistryObject<Block> LOAM = BLOCKS.register("loam",
-            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD).sound(loamSoundType())));
     public static final RegistryObject<PrimordialLoamBlock> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
             () -> new PrimordialLoamBlock(BlockBehaviour.Properties.copy(Blocks.MUD).sound(primordialLoamSoundType())));
     public static final RegistryObject<PrimordialGrassBlock> PRIMORDIAL_GRASS = BLOCKS.register("primordial_grass",
@@ -1237,12 +1237,21 @@ public static final RegistryObject<Block> ROCKITE = BLOCKS.register("rockite",
         return new Block(BlockBehaviour.Properties.copy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
 
+    private static SoundType loamSoundType() {
+        return new SoundType(1.0F, 1.0F,
+                AntarchyForgeSounds.LOAM_PLACE.get(),
+                SoundType.MUD.getStepSound(),
+                AntarchyForgeSounds.LOAM_PLACE.get(),
+                SoundType.MUD.getHitSound(),
+                SoundType.MUD.getFallSound());
+    }
+
     private static SoundType primordialLoamSoundType() {
         return new SoundType(1.0F, 1.0F,
-                SoundType.MUD.getBreakSound(),
-                SoundType.MOSS.getStepSound(),
-                SoundType.MUD.getPlaceSound(),
-                SoundType.MUD.getHitSound(),
+                AntarchyForgeSounds.PRIMORDIAL_LOAM_PLACE.get(),
+                AntarchyForgeSounds.PRIMORDIAL_LOAM_STEP.get(),
+                AntarchyForgeSounds.PRIMORDIAL_LOAM_PLACE.get(),
+                AntarchyForgeSounds.PRIMORDIAL_LOAM_STEP.get(),
                 SoundType.MUD.getFallSound());
     }
 

@@ -71,12 +71,12 @@
     {
       "question": "What happens if you break one of the King's Decrees?",
       "answers": [
-        "Your hearts are halved for 30 seconds",
+        "Your hearts are halved for 15 seconds",
         "He heals fully",
         "He teleports away"
       ],
       "correct": 0,
-      "explanation": "Your hearts get cut in half for 30 seconds. So just do what he says."
+      "explanation": "He warns you once. Do it again and your hearts get cut in half for 15 seconds. So just do what he says."
     },
     {
       "question": "What makes a royal hatchling grow?",

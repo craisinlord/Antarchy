@@ -10,10 +10,15 @@ public final class ComeNoCloserDecree implements RoyalDecree {
     }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) { }
     @Override public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
-        return target.distanceToSqr(king) <= 256.0D ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
+        double radius = king.comeNoCloserRadius();
+        return target.distanceToSqr(king) <= radius * radius ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
     @Override
     public int contextWeight(KingEntity king, LivingEntity target) {
         return 4 + king.behaviorScore(KingEntity.Behavior.HUGGING);
+    }
+    @Override
+    public int durationTicks() {
+        return 240;
     }
 }

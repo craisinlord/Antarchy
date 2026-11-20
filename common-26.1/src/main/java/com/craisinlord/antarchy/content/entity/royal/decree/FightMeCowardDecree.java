@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class FightMeCowardDecree implements RoyalDecree {
     private static final long APPROACH_TICKS = 80L;
+    private static final long WARNED_APPROACH_TICKS = 60L;
     private static final int EXIT_GRACE_TICKS = 40;
     private static final int PULL_INTERVAL_TICKS = 10;
     private static final double REQUIRED_RANGE_SQR = 784.0D;
@@ -60,6 +61,12 @@ public final class FightMeCowardDecree implements RoyalDecree {
     @Override
     public void onKingDisplaced(LivingEntity target) {
         this.outsideTicks.remove(target.getUUID());
+    }
+
+    @Override
+    public void onWarned(ServerLevel level, KingEntity king, LivingEntity target) {
+        this.outsideTicks.remove(target.getUUID());
+        this.deadlines.put(target.getUUID(), level.getGameTime() + WARNED_APPROACH_TICKS);
     }
 
     @Override

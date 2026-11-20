@@ -955,7 +955,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<AntigravelBlock> ANTIGRAVEL = BLOCKS.register("antigravel",
             id -> new AntigravelBlock(copyOf(id, Blocks.GRAVEL)));
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
-            id -> new Block(copyOf(id, Blocks.MUD)));
+            id -> new Block(copyOf(id, Blocks.MUD).sound(loamSoundType())));
     public static final DeferredBlock<PrimordialLoamBlock> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
             id -> new PrimordialLoamBlock(copyOf(id, Blocks.MUD).sound(primordialLoamSoundType())));
     public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
@@ -1217,12 +1217,21 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
         return new Block(copyOf(id, copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
 
+    private static SoundType loamSoundType() {
+        return new SoundType(1.0F, 1.0F,
+                AntarchyNeoforgeSounds.LOAM_PLACE.get(),
+                SoundType.MUD.getStepSound(),
+                AntarchyNeoforgeSounds.LOAM_PLACE.get(),
+                SoundType.MUD.getHitSound(),
+                SoundType.MUD.getFallSound());
+    }
+
     private static SoundType primordialLoamSoundType() {
         return new SoundType(1.0F, 1.0F,
-                SoundType.MUD.getBreakSound(),
-                SoundType.MOSS.getStepSound(),
-                SoundType.MUD.getPlaceSound(),
-                SoundType.MUD.getHitSound(),
+                AntarchyNeoforgeSounds.PRIMORDIAL_LOAM_PLACE.get(),
+                AntarchyNeoforgeSounds.PRIMORDIAL_LOAM_STEP.get(),
+                AntarchyNeoforgeSounds.PRIMORDIAL_LOAM_PLACE.get(),
+                AntarchyNeoforgeSounds.PRIMORDIAL_LOAM_STEP.get(),
                 SoundType.MUD.getFallSound());
     }
 
