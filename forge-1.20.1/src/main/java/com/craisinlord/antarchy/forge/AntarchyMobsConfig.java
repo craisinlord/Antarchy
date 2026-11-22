@@ -38,6 +38,8 @@ public final class AntarchyMobsConfig {
 
     private static final ForgeConfigSpec.BooleanValue EASTER_BUNNY_ENABLED;
     private static final ForgeConfigSpec.IntValue     EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT;
+    private static final ForgeConfigSpec.IntValue     EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS;
+    private static final ForgeConfigSpec.IntValue     EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS;
 
     private static final ForgeConfigSpec.DoubleValue WASP_HEALTH;
     private static final ForgeConfigSpec.DoubleValue WASP_ATTACK_DAMAGE;
@@ -481,9 +483,15 @@ public final class AntarchyMobsConfig {
         EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT = b
                 .comment(
                     "Percent chance a naturally spawned rabbit is replaced by an Easter Bunny.",
-                    "Only applies to natural and chunk-generation spawns, not breeding."
+                    "Only applies to natural and chunk-generation spawns. Easter Bunnies cannot be bred."
                 )
                 .defineInRange("naturalSpawnChancePercent", 1, 0, 100);
+        EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS = b
+                .comment("Minimum seconds between spawn eggs laid by an adult Easter Bunny.")
+                .defineInRange("minLayCooldownSeconds", 180, 1, 86400);
+        EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS = b
+                .comment("Maximum seconds between spawn eggs laid by an adult Easter Bunny. Values below the minimum use the minimum.")
+                .defineInRange("maxLayCooldownSeconds", 360, 1, 86400);
         b.pop();
 
         b.push("wasp");
@@ -1124,6 +1132,8 @@ public final class AntarchyMobsConfig {
 
     static boolean easterBunnyEnabled()                     { return EASTER_BUNNY_ENABLED.get(); }
     static int     easterBunnyNaturalSpawnChancePercent()   { return EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT.get(); }
+    static int     easterBunnyMinLayCooldownSeconds()       { return EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS.get(); }
+    static int     easterBunnyMaxLayCooldownSeconds()       { return EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS.get(); }
 
     static double  waspHealth()                             { return WASP_HEALTH.get(); }
     static double  waspAttackDamage()                       { return WASP_ATTACK_DAMAGE.get(); }

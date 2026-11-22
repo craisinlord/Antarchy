@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -113,8 +114,9 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity, GlimmerEch
     }
 
     private void impact(ServerLevel level) {
-        DamageSource source = this.damageSources().magic();
         Entity owner = this.ownerId == null ? null : level.getEntity(this.ownerId);
+        DamageSource source = owner instanceof LivingEntity livingOwner && !(owner instanceof Player)
+                ? this.damageSources().source(DamageTypes.MOB_ATTACK, this, livingOwner) : this.damageSources().magic();
         if (this.ownerId != null && owner == null) {
             return;
         }

@@ -1792,7 +1792,7 @@
   "guide.antarchy.entry.easter_bunny.title": "Easter Bunny",
   "guide.antarchy.entry.easter_bunny.subtitle": "Entity record",
   "guide.antarchy.entry.easter_bunny.description": "The Easter Bunny lays spawn eggs for all sorts of creatures! Life is like an easter egg, you never know what you're gonna get.",
-  "guide.antarchy.entry.easter_bunny.description2": "Feed them carrots, golden carrots, or dandelions.",
+  "guide.antarchy.entry.easter_bunny.description2": "They won't breed. Every so often one lays an egg with another Easter Bunny in it.",
   "guide.antarchy.entry.duplicator_tree.title": "Duplicator Tree",
   "guide.antarchy.entry.duplicator_tree.subtitle": "Block record",
   "guide.antarchy.entry.duplicator_tree.description": "A mature Duplicator Tree copies a nearby solid block into an empty, supported space next to it.",

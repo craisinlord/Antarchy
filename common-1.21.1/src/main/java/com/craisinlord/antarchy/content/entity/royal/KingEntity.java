@@ -125,6 +125,8 @@ public class KingEntity extends RoyalBossEntity {
     private static final double ROYAL_CHARGE_SPEED = 2.35D;
     private static final double ROYAL_CHARGE_MIN_RANGE = 10.0D;
     private static final double ROYAL_CHARGE_MAX_RANGE = 50.0D;
+    private static final float ROYAL_CHARGE_DAMAGE_SCALE = 0.75F;
+    private static final float WING_GUST_DAMAGE_SCALE = 0.3F;
     private static final int CHAIN_LIGHTNING_INTERVAL = 12;
     private static final int CHAIN_LIGHTNING_JUMPS = 4;
     private static final double CHAIN_LIGHTNING_JUMP_RANGE = 9.0D;
@@ -155,6 +157,9 @@ public class KingEntity extends RoyalBossEntity {
     private static final int STAGGERED_VOLLEY_COOLDOWN_TICKS = 240;
     private static final int STAGGERED_VOLLEY_WINDUP_TICKS = 10;
     private static final int STAGGERED_VOLLEY_INTERVAL_TICKS = 15;
+    private static final String STAGGERED_VOLLEY_HIT_WINDOW = "staggered_volley";
+    private static final int STAGGERED_VOLLEY_HIT_WINDOW_TICKS = 80;
+    private static final double JUDGMENT_DAMAGE = 4.0D;
     private static final double STAGGERED_VOLLEY_MIN_RANGE = 14.0D;
     private static final double STAGGERED_VOLLEY_MAX_RANGE = 48.0D;
     private static final int COME_NO_CLOSER_PARTICLE_INTERVAL = 4;
@@ -665,6 +670,7 @@ public class KingEntity extends RoyalBossEntity {
                 break;
             }
             struck.add(next.getUUID());
+            boolean canHurt = this.royalHitWindowOpen(BEAM_HIT_WINDOW, next);
             if (this.isGlimmerEcho()) {
                 sendGlimmerLightning(level, next.getX(), next.getY(), next.getZ());
             } else {
@@ -675,7 +681,9 @@ public class KingEntity extends RoyalBossEntity {
                     level.addFreshEntity(bolt);
                 }
             }
-            next.hurt(this.damageSources().lightningBolt(), damage);
+            if (canHurt && next.hurt(this.damageSources().source(DamageTypes.LIGHTNING_BOLT, this), damage)) {
+                this.claimRoyalHitWindow(BEAM_HIT_WINDOW, next, AntarchySettings.kingBeamDurationTicks());
+            }
             from = next.position().add(0.0D, next.getBbHeight() * 0.5D, 0.0D);
             if (isConductive(next)) {
                 jump--;
@@ -2048,7 +2056,7 @@ public class KingEntity extends RoyalBossEntity {
             if (lateral.lengthSqr() > laneReach * laneReach || !this.royalChargeHitTargets.add(living.getUUID())) {
                 continue;
             }
-            living.hurt(this.damageSources().mobAttack(this), this.scaleRoyalDamage(12.0D));
+            living.hurt(this.damageSources().mobAttack(this), this.royalAttackDamage() * ROYAL_CHARGE_DAMAGE_SCALE);
             Vec3 lift = GravityRotationUtil.vecPlayerToWorld(
                     0.0D, 0.45D, 0.0D, GravityApi.getGravityDirection(living));
             this.addGravityAwareImpulse(living, this.royalChargeDirection.scale(2.1D).add(lift));
@@ -2191,6 +2199,7 @@ public class KingEntity extends RoyalBossEntity {
             bolt.setElement(RoyalBeamElement.KING_GOLD);
             bolt.setPos(origin.x, origin.y, origin.z);
             bolt.shoot(direction.x, direction.y, direction.z, 1.55F, 1.0F);
+            bolt.setRoyalHitWindow(STAGGERED_VOLLEY_HIT_WINDOW, STAGGERED_VOLLEY_HIT_WINDOW_TICKS);
             GlimmerEchoes.markSummon(this, bolt);
             level.addFreshEntity(bolt);
             this.playRoyalSound(AntarchySoundEvents.KING_BEAM_SHOOT.get(), 1.15F);
@@ -2198,7 +2207,9 @@ public class KingEntity extends RoyalBossEntity {
         }
         RoyalBeamElement element = slot == RoyalHead.Slot.LEFT ? RoyalBeamElement.FIRE : RoyalBeamElement.ICE;
         Vec3 direction = RoyalElementalProjectileEntity.aimDirection(origin, target, element);
-        level.addFreshEntity(RoyalElementalProjectileEntity.create(level, this, element, origin, direction));
+        RoyalElementalProjectileEntity projectile = RoyalElementalProjectileEntity.create(level, this, element, origin, direction);
+        projectile.setRoyalHitWindow(STAGGERED_VOLLEY_HIT_WINDOW, STAGGERED_VOLLEY_HIT_WINDOW_TICKS);
+        level.addFreshEntity(projectile);
         this.playRoyalSound(slot == RoyalHead.Slot.LEFT
                 ? AntarchySoundEvents.KING_FIREBALL_SHOOT.get() : AntarchySoundEvents.KING_BEAM_SHOOT.get(), 0.6F);
     }
@@ -2419,7 +2430,7 @@ public class KingEntity extends RoyalBossEntity {
             living.hasImpulse = true;
             living.hurtMarked = true;
             this.markDecreeDisplaced(living);
-            living.hurt(this.damageSources().mobAttack(this), this.scaleRoyalDamage(6.0D));
+            living.hurt(this.damageSources().mobAttack(this), this.royalAttackDamage() * WING_GUST_DAMAGE_SCALE);
         }
         this.spawnKingWingPressure(level, forward);
         level.sendParticles(this.royalParticle(ParticleTypes.SWEEP_ATTACK), this.getX() + forward.x * 6.0D, this.getY() + 4.0D, this.getZ() + forward.z * 6.0D, 12, 4.0D, 2.0D, 4.0D, 0.0D);
@@ -2642,7 +2653,7 @@ public class KingEntity extends RoyalBossEntity {
         if (this.level() instanceof ServerLevel level) {
             this.activeDecree.onWarned(level, this, player);
         }
-        player.hurt(this.damageSources().magic(), (float) this.scaleRoyalDamage(Math.max(0.0D, AntarchySettings.royalDecreeWarningDamage())));
+        player.hurt(this.damageSources().indirectMagic(this, this), (float) this.scaleRoyalDamage(Math.max(0.0D, AntarchySettings.royalDecreeWarningDamage())));
         player.playNotifySound(SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 1.0F, 0.6F);
         player.connection.send(new ClientboundSetTitlesAnimationPacket(3, 30, 8));
         player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("decree.antarchy.warned")
@@ -2901,8 +2912,8 @@ public class KingEntity extends RoyalBossEntity {
                                     AntarchyNetwork.sendToPlayer(player, new KingJudgmentFlashPayload(12));
                                     player.playNotifySound(SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 0.8F, 1.65F);
                                 }
-                                target.hurt(KingEntity.this.damageSources().magic(),
-                                        KingEntity.this.scaleRoyalDamage(6.0D));
+                                target.hurt(KingEntity.this.damageSources().indirectMagic(KingEntity.this, KingEntity.this),
+                                        KingEntity.this.scaleRoyalDamage(JUDGMENT_DAMAGE));
                             }
                         }
                         if (elapsedTicks % 4 == 0 && target.isAlive() && target.level() == level) {
@@ -2964,7 +2975,7 @@ public class KingEntity extends RoyalBossEntity {
 
     private void setActiveDecree(@Nullable RoyalDecree decree) {
         this.activeDecree = decree;
-        if (decree instanceof NoRespiteDecree) {
+        if (decree instanceof NoRespiteDecree && !this.level().isClientSide) {
             NO_RESPITE_KINGS.add(this);
         } else {
             NO_RESPITE_KINGS.remove(this);
@@ -2996,7 +3007,7 @@ public class KingEntity extends RoyalBossEntity {
         if (this.judgmentCooldowns.getOrDefault(target.getUUID(), 0L) <= now) {
             this.judgmentCooldowns.put(target.getUUID(), now + this.scaledRoyalCooldown(20));
             this.projectRoyalSound(AntarchySoundEvents.KING_JUDGEMENT.get(), 1.1F, 1.0F, target);
-            target.hurt(this.damageSources().magic(), this.scaleRoyalDamage(6.0D));
+            target.hurt(this.damageSources().indirectMagic(this, this), this.scaleRoyalDamage(JUDGMENT_DAMAGE));
         }
     }
 

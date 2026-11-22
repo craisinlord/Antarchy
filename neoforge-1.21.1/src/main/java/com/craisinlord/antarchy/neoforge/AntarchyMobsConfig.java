@@ -38,6 +38,8 @@ public final class AntarchyMobsConfig {
 
     private static final ModConfigSpec.BooleanValue EASTER_BUNNY_ENABLED;
     private static final ModConfigSpec.IntValue     EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT;
+    private static final ModConfigSpec.IntValue     EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS;
+    private static final ModConfigSpec.IntValue     EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS;
 
     private static final ModConfigSpec.DoubleValue WASP_HEALTH;
     private static final ModConfigSpec.DoubleValue WASP_ATTACK_DAMAGE;
@@ -481,9 +483,15 @@ public final class AntarchyMobsConfig {
         EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT = b
                 .comment(
                     "Percent chance a naturally spawned rabbit is replaced by an Easter Bunny.",
-                    "Only applies to natural and chunk-generation spawns, not breeding."
+                    "Only applies to natural and chunk-generation spawns. Easter Bunnies cannot be bred."
                 )
                 .defineInRange("naturalSpawnChancePercent", 1, 0, 100);
+        EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS = b
+                .comment("Minimum seconds between spawn eggs laid by an adult Easter Bunny.")
+                .defineInRange("minLayCooldownSeconds", 180, 1, 86400);
+        EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS = b
+                .comment("Maximum seconds between spawn eggs laid by an adult Easter Bunny. Values below the minimum use the minimum.")
+                .defineInRange("maxLayCooldownSeconds", 360, 1, 86400);
         b.pop();
 
         b.push("wasp");
@@ -546,7 +554,7 @@ public final class AntarchyMobsConfig {
 
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
-        KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     45.0D,  0.0D, 1024.0D);
+        KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     10.0D,  0.0D, 1024.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
@@ -568,8 +576,8 @@ public final class AntarchyMobsConfig {
         b.push("royalBosses");
         KING_HEALTH = b.comment("Base max health for the King.").defineInRange("kingHealth", 3400.0D, 1.0D, 32768.0D);
         QUEEN_HEALTH = b.comment("Base max health for the Queen.").defineInRange("queenHealth", 4300.0D, 1.0D, 32768.0D);
-        KING_ATTACK_DAMAGE = b.comment("Base attack damage for the King.").defineInRange("kingAttackDamage", 50.0D, 0.0D, 1024.0D);
-        QUEEN_ATTACK_DAMAGE = b.comment("Base attack damage for the Queen.").defineInRange("queenAttackDamage", 45.0D, 0.0D, 1024.0D);
+        KING_ATTACK_DAMAGE = b.comment("Base attack damage for the King.").defineInRange("kingAttackDamage", 8.0D, 0.0D, 1024.0D);
+        QUEEN_ATTACK_DAMAGE = b.comment("Base attack damage for the Queen.").defineInRange("queenAttackDamage", 9.0D, 0.0D, 1024.0D);
         ROYAL_BOSS_ARMOR = b.comment("Base armor value shared by King and Queen.").defineInRange("armor", 20.0D, 0.0D, 1024.0D);
         KING_ARMOR = b.defineInRange("kingArmor", 30.0D, 0.0D, 1024.0D);
         ROYAL_BOSS_FOLLOW_RANGE = b.comment("Target acquisition range shared by King and Queen.").defineInRange("followRange", 128.0D, 1.0D, 256.0D);
@@ -584,11 +592,11 @@ public final class AntarchyMobsConfig {
         ROYAL_BOSS_MULTIPLAYER_SCALING_ENABLED = b.define("multiplayerScalingEnabled", true);
         ROYAL_BOSS_SCALING_MAX_PLAYERS = b.defineInRange("scalingMaxPlayers", 4, 1, 32);
         ROYAL_BOSS_HEALTH_PER_ADDITIONAL_PLAYER = b.defineInRange("healthPerAdditionalPlayer", 0.35D, 0.0D, 4.0D);
-        ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER = b.defineInRange("damagePerAdditionalPlayer", 0.10D, 0.0D, 2.0D);
+        ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER = b.defineInRange("damagePerAdditionalPlayer", 0.0D, 0.0D, 2.0D);
         ROYAL_BOUNDARY_RADIUS = b.defineInRange("royalBoundaryRadius", 192.0D, 32.0D, 1024.0D);
         ROYAL_BOUNDARY_WARNING_RADIUS = b.defineInRange("royalBoundaryWarningRadius", 160.0D, 16.0D, 1024.0D);
         ROYAL_BOUNDARY_GRACE_TICKS = b.defineInRange("royalBoundaryGraceTicks", 60, 0, 2400);
-        QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 45.0D, 0.0D, 1024.0D);
+        QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 14.0D, 0.0D, 1024.0D);
         QUEEN_BEAM_RANGE = b.defineInRange("queenBeamRange", 100.0D, 1.0D, 256.0D);
         QUEEN_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the Queen before she may begin or maintain a beam.").defineInRange("queenBeamMinimumRange", 22.0D, 0.0D, 256.0D);
         QUEEN_BEAM_DURATION_TICKS = b.defineInRange("queenBeamDurationTicks", 30, 1, 1200);
@@ -603,7 +611,7 @@ public final class AntarchyMobsConfig {
         QUEEN_BEAM_PHASE_TWO_CAP = b.comment("Maximum simultaneous Queen beams in phase two.").defineInRange("queenBeamPhaseTwoCap", 2, 1, 3);
         QUEEN_BEAM_PHASE_THREE_CAP = b.comment("Maximum simultaneous Queen beams when phase three rolls a full volley.").defineInRange("queenBeamPhaseThreeCap", 3, 1, 3);
         QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE = b.comment("Chance that a new phase-three Queen beam volley may use its full configured cap; otherwise it is limited to two beams.").defineInRange("queenBeamPhaseThreeMaxVolleyChance", 0.2D, 0.0D, 1.0D);
-        KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 50.0D, 0.0D, 1024.0D);
+        KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 10.0D, 0.0D, 1024.0D);
         KING_BEAM_RANGE = b.defineInRange("kingBeamRange", 100.0D, 1.0D, 256.0D);
         KING_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the King before he may begin or maintain a beam.").defineInRange("kingBeamMinimumRange", 32.0D, 0.0D, 256.0D);
         KING_BEAM_DURATION_TICKS = b.defineInRange("kingBeamDurationTicks", 30, 1, 1200);
@@ -634,13 +642,13 @@ public final class AntarchyMobsConfig {
         QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.comment("Active duration for Royal Assailant axe black holes. Queen black holes always follow their 20.125-second animation.").defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
         QUEEN_BLACK_HOLE_PULL_STRENGTH = b.defineInRange("queenBlackHolePullStrength", 0.16D, 0.0D, 2.0D);
         QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP = b.comment("Maximum terrain blocks a single Queen black hole may pull into itself.").defineInRange("queenBlackHoleBlockSuctionCap", 160, 0, 4096);
-        KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 48.0D, 0.0D, 1024.0D);
+        KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 10.0D, 0.0D, 1024.0D);
         KING_FIREBALL_RADIUS = b.defineInRange("kingFireballRadius", 4.5D, 0.5D, 32.0D);
         KING_FIREBALL_COOLDOWN_TICKS = b.defineInRange("kingFireballCooldownTicks", 150, 1, 2400);
-        KING_ICEBALL_DAMAGE = b.defineInRange("kingIceballDamage", 18.0D, 0.0D, 1024.0D);
+        KING_ICEBALL_DAMAGE = b.defineInRange("kingIceballDamage", 12.0D, 0.0D, 1024.0D);
         KING_ICEBALL_RADIUS = b.defineInRange("kingIceballRadius", 5.0D, 0.5D, 32.0D);
         KING_ICEBALL_COOLDOWN_TICKS = b.defineInRange("kingIceballCooldownTicks", 190, 1, 2400);
-        KING_ICE_SPIKE_DAMAGE = b.defineInRange("kingIceSpikeDamage", 24.0D, 0.0D, 1024.0D);
+        KING_ICE_SPIKE_DAMAGE = b.defineInRange("kingIceSpikeDamage", 12.0D, 0.0D, 1024.0D);
         KING_ICE_SPIKE_COOLDOWN_TICKS = b.defineInRange("kingIceSpikeCooldownTicks", 240, 1, 2400);
         KING_ELEMENTAL_TERRAIN_CAP = b.defineInRange("kingElementalTerrainCap", 256, 0, 4096);
         ROYAL_BOSS_SOUND_VOLUME = b.comment("Volume multiplier for large King and Queen presence, movement, and attack sounds.").defineInRange("royalBossSoundVolume", 4.5D, 0.5D, 16.0D);
@@ -1126,6 +1134,8 @@ public final class AntarchyMobsConfig {
 
     static boolean easterBunnyEnabled()                     { return EASTER_BUNNY_ENABLED.get(); }
     static int     easterBunnyNaturalSpawnChancePercent()   { return EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT.get(); }
+    static int     easterBunnyMinLayCooldownSeconds()       { return EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS.get(); }
+    static int     easterBunnyMaxLayCooldownSeconds()       { return EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS.get(); }
 
     static double  waspHealth()                             { return WASP_HEALTH.get(); }
     static double  waspAttackDamage()                       { return WASP_ATTACK_DAMAGE.get(); }

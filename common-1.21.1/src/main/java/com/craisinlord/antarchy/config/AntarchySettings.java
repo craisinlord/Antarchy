@@ -12,6 +12,8 @@ public final class AntarchySettings {
     private static boolean disableInfinityBookPortalCreation = true;
     private static boolean easterBunnyEnabled = true;
     private static int easterBunnyNaturalSpawnChancePercent = 1;
+    private static int easterBunnyMinLayCooldownSeconds = 180;
+    private static int easterBunnyMaxLayCooldownSeconds = 360;
     private static boolean rainbowAntsLeadToInfinityDimensions = true;
     private static double rainbowAntInfinityEasterEggChance = 0.01D;
     private static boolean brownAntRequiresReagent = false;
@@ -132,7 +134,7 @@ public final class AntarchySettings {
     private static ResourceKey<Level> termiteDestinationDimension = dimensionKey("antarchy:cavaryn");
     private static ResourceKey<Level> rainbowAntNonInfinityFallbackDimension = dimensionKey("antarchy:elythia");
     private static double krakenHealth = 1800.0D;
-    private static double krakenAttackDamage = 45.0D;
+    private static double krakenAttackDamage = 10.0D;
     private static double octopusBombHealth = 100.0D;
     private static double octopusBombAttackDamage = 16.0D;
     private static double brutalflyHealth = 500.0D;
@@ -292,8 +294,8 @@ public final class AntarchySettings {
     private static double princessFollowRange = 48.0D;
     private static double kingHealth = 3400.0D;
     private static double queenHealth = 4300.0D;
-    private static double kingAttackDamage = 50.0D;
-    private static double queenAttackDamage = 45.0D;
+    private static double kingAttackDamage = 8.0D;
+    private static double queenAttackDamage = 9.0D;
     private static double royalBossSoundVolume = 4.5D;
     private static double queenBlackHoleRadius = 14.0D;
     private static int queenBlackHoleActiveTicks = 120;
@@ -303,13 +305,13 @@ public final class AntarchySettings {
     private static int axeBlackHoleActiveTicks = 120;
     private static double axeBlackHolePullStrength = 0.16D;
     private static int axeBlackHoleBlockSuctionCap = 160;
-    private static double kingFireballDamage = 48.0D;
+    private static double kingFireballDamage = 10.0D;
     private static double kingFireballRadius = 4.5D;
     private static int kingFireballCooldownTicks = 150;
-    private static double kingIceballDamage = 18.0D;
+    private static double kingIceballDamage = 12.0D;
     private static double kingIceballRadius = 5.0D;
     private static int kingIceballCooldownTicks = 190;
-    private static double kingIceSpikeDamage = 24.0D;
+    private static double kingIceSpikeDamage = 12.0D;
     private static int kingIceSpikeCooldownTicks = 240;
     private static int kingElementalTerrainCap = 256;
     private static double royalBossArmor = 20.0D;
@@ -326,7 +328,7 @@ public final class AntarchySettings {
     private static boolean royalBossMultiplayerScalingEnabled = true;
     private static int royalBossScalingMaxPlayers = 4;
     private static double royalBossHealthPerAdditionalPlayer = 0.35D;
-    private static double royalBossDamagePerAdditionalPlayer = 0.10D;
+    private static double royalBossDamagePerAdditionalPlayer = 0.0D;
     private static double royalBoundaryRadius = 192.0D;
     private static double royalBoundaryWarningRadius = 160.0D;
     private static int royalBoundaryGraceTicks = 60;
@@ -676,7 +678,7 @@ public final class AntarchySettings {
     private static int queenManticoreSummonCooldownTicks = 800;
     private static int queenManticoreSummonCount = 2;
     private static double queenManticoreSummonRange = 24.0D;
-    private static double queenBeamDamage = 45.0D;
+    private static double queenBeamDamage = 14.0D;
     private static double queenBeamRange = 100.0D;
     private static double queenBeamMinimumRange = 22.0D;
     private static int queenBeamDurationTicks = 30;
@@ -690,7 +692,7 @@ public final class AntarchySettings {
     private static int queenBeamPhaseTwoCap = 2;
     private static int queenBeamPhaseThreeCap = 3;
     private static double queenBeamPhaseThreeMaxVolleyChance = 0.2D;
-    private static double kingBeamDamage = 50.0D;
+    private static double kingBeamDamage = 10.0D;
     private static double kingBeamRange = 100.0D;
     private static double kingBeamMinimumRange = 32.0D;
     private static int kingBeamDurationTicks = 30;
@@ -769,6 +771,14 @@ public final class AntarchySettings {
 
     public static int easterBunnyNaturalSpawnChancePercent() {
         return easterBunnyNaturalSpawnChancePercent;
+    }
+
+    public static int easterBunnyMinLayCooldownSeconds() {
+        return easterBunnyMinLayCooldownSeconds;
+    }
+
+    public static int easterBunnyMaxLayCooldownSeconds() {
+        return Math.max(easterBunnyMinLayCooldownSeconds, easterBunnyMaxLayCooldownSeconds);
     }
 
     public static boolean rainbowAntsLeadToInfinityDimensions() {
@@ -1396,6 +1406,11 @@ public final class AntarchySettings {
 
     public static void setEasterBunnyNaturalSpawnChancePercent(int value) {
         easterBunnyNaturalSpawnChancePercent = value;
+    }
+
+    public static void setEasterBunnyLayCooldownSeconds(int min, int max) {
+        easterBunnyMinLayCooldownSeconds = Math.max(1, min);
+        easterBunnyMaxLayCooldownSeconds = Math.max(easterBunnyMinLayCooldownSeconds, max);
     }
 
     public static void setRainbowAntsLeadToInfinityDimensions(boolean value) {

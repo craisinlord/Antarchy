@@ -19,6 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -33,8 +34,17 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile implements Glimme
     private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
             SynchedEntityData.defineId(RoyalBoltEntity.class, EntityDataSerializers.BOOLEAN);
 
+    @Nullable
+    private String royalHitWindow;
+    private int royalHitWindowTicks;
+
     public RoyalBoltEntity(EntityType<? extends RoyalBoltEntity> entityType, Level level) {
         super(entityType, level);
+    }
+
+    public void setRoyalHitWindow(String window, int ticks) {
+        this.royalHitWindow = window;
+        this.royalHitWindowTicks = ticks;
     }
 
     @Override
@@ -139,7 +149,15 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile implements Glimme
             damage *= mount.projectileDamageMultiplier();
         }
         damage *= GlimmerEchoes.damageMultiplier(owner);
-        target.hurt(this.damageSources().mobProjectile(this, owner instanceof LivingEntity le ? le : null), damage);
+        RoyalBossEntity windowOwner = this.royalHitWindow != null && owner instanceof RoyalBossEntity royalBoss
+                && target instanceof LivingEntity ? royalBoss : null;
+        if (windowOwner != null && !windowOwner.royalHitWindowOpen(this.royalHitWindow, (LivingEntity) target)) {
+            return;
+        }
+        if (target.hurt(this.damageSources().mobProjectile(this, owner instanceof LivingEntity le ? le : null), damage)
+                && windowOwner != null) {
+            windowOwner.claimRoyalHitWindow(this.royalHitWindow, (LivingEntity) target, this.royalHitWindowTicks);
+        }
         if (target instanceof LivingEntity living) {
             living.knockback(0.35D, this.getX() - target.getX(), this.getZ() - target.getZ());
             switch (this.getElement()) {

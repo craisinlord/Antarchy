@@ -12,6 +12,8 @@ public final class AntarchySettings {
     private static boolean disableInfinityBookPortalCreation = true;
     private static boolean easterBunnyEnabled = true;
     private static int easterBunnyNaturalSpawnChancePercent = 1;
+    private static int easterBunnyMinLayCooldownSeconds = 180;
+    private static int easterBunnyMaxLayCooldownSeconds = 360;
     private static boolean rainbowAntsLeadToInfinityDimensions = true;
     private static boolean brownAntDescent = true;
     private static boolean redAntFlip = true;
@@ -737,6 +739,14 @@ public final class AntarchySettings {
         return easterBunnyNaturalSpawnChancePercent;
     }
 
+    public static int easterBunnyMinLayCooldownSeconds() {
+        return easterBunnyMinLayCooldownSeconds;
+    }
+
+    public static int easterBunnyMaxLayCooldownSeconds() {
+        return Math.max(easterBunnyMinLayCooldownSeconds, easterBunnyMaxLayCooldownSeconds);
+    }
+
     public static boolean brownAntDescent() { return brownAntDescent; }
     public static void setBrownAntDescent(boolean value) { brownAntDescent = value; }
     public static boolean redAntFlip() { return redAntFlip; }
@@ -1373,6 +1383,11 @@ public final class AntarchySettings {
 
     public static void setEasterBunnyNaturalSpawnChancePercent(int value) {
         easterBunnyNaturalSpawnChancePercent = value;
+    }
+
+    public static void setEasterBunnyLayCooldownSeconds(int min, int max) {
+        easterBunnyMinLayCooldownSeconds = Math.max(1, min);
+        easterBunnyMaxLayCooldownSeconds = Math.max(easterBunnyMinLayCooldownSeconds, max);
     }
 
     public static void setRainbowAntsLeadToInfinityDimensions(boolean value) {

@@ -27,6 +27,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -79,9 +80,9 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
     private static final Map<ServerPlayer, PendingPush> PENDING_PUSHES = new WeakHashMap<>();
     private static final double PLAYER_MAX_PULL_SPEED = 1.4D;
     private static final double COLUMN_DANGER_RADIUS = 5.0D;
-    private static final int COLUMN_DAMAGE_INTERVAL_TICKS = 10;
-    private static final double COLUMN_DAMAGE = 16.0D;
-    private static final double COLLAPSE_MAX_DAMAGE = 44.0D;
+    private static final int COLUMN_DAMAGE_INTERVAL_TICKS = 20;
+    private static final double COLUMN_DAMAGE = 6.0D;
+    private static final double COLLAPSE_MAX_DAMAGE = 19.0D;
     private static final double COLLAPSE_MIN_FALLOFF = 0.35D;
     private static final double COLLAPSE_BELOW_ANCHOR = 8.0D;
     private static final int RING_INTERVAL_TICKS = 10;
@@ -411,7 +412,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
     private DamageSource holeDamageSource() {
         LivingEntity owner = this.ownerEntity();
         if (owner instanceof RoyalBossEntity) {
-            return this.damageSources().indirectMagic(this, owner);
+            return this.damageSources().source(DamageTypes.MOB_ATTACK, this, owner);
         }
         return owner != null ? this.damageSources().mobAttack(owner) : this.damageSources().magic();
     }

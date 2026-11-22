@@ -80,6 +80,7 @@ public final class AntarchyConfigModuleNeoforge {
 
         AntarchySettings.setEasterBunnyEnabled(AntarchyMobsConfig.easterBunnyEnabled());
         AntarchySettings.setEasterBunnyNaturalSpawnChancePercent(AntarchyMobsConfig.easterBunnyNaturalSpawnChancePercent());
+        AntarchySettings.setEasterBunnyLayCooldownSeconds(AntarchyMobsConfig.easterBunnyMinLayCooldownSeconds(), AntarchyMobsConfig.easterBunnyMaxLayCooldownSeconds());
 
         AntarchySettings.setWaspHealth(AntarchyMobsConfig.waspHealth());
         AntarchySettings.setWaspAttackDamage(AntarchyMobsConfig.waspAttackDamage());
