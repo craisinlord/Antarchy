@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -33,6 +34,7 @@ public final class RoyalIndicatorRenderer {
         if (commanded) {
             ring(lines, pose, radius, spin, 0.95F, 0.63F, 0.10F, 0.95F, 36);
             crownTexture(poseStack, buffers, LightTexture.FULL_BRIGHT, radius, spin);
+            lines = buffers.getBuffer(RenderType.lines());
         }
         if (judged) {
             float markY = commanded ? -0.13F : 0.08F;
@@ -76,15 +78,15 @@ public final class RoyalIndicatorRenderer {
 
     private static void quad(VertexConsumer out, PoseStack.Pose pose, float left, float bottom,
             float right, float top, float depth, int packedLight) {
-        out.addVertex(pose, left, bottom, depth).setUv(0.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
-        out.addVertex(pose, right, bottom, depth).setUv(1.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
-        out.addVertex(pose, right, top, depth).setUv(1.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
-        out.addVertex(pose, left, top, depth).setUv(0.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
+        out.addVertex(pose, left, bottom, depth).setColor(255, 255, 255, 255).setUv(0.0F, 1.0F).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
+        out.addVertex(pose, right, bottom, depth).setColor(255, 255, 255, 255).setUv(1.0F, 1.0F).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
+        out.addVertex(pose, right, top, depth).setColor(255, 255, 255, 255).setUv(1.0F, 0.0F).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
+        out.addVertex(pose, left, top, depth).setColor(255, 255, 255, 255).setUv(0.0F, 0.0F).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
 
-        out.addVertex(pose, left, top, depth).setUv(0.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
-        out.addVertex(pose, right, top, depth).setUv(1.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
-        out.addVertex(pose, right, bottom, depth).setUv(1.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
-        out.addVertex(pose, left, bottom, depth).setUv(0.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
+        out.addVertex(pose, left, top, depth).setColor(255, 255, 255, 255).setUv(0.0F, 0.0F).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
+        out.addVertex(pose, right, top, depth).setColor(255, 255, 255, 255).setUv(1.0F, 0.0F).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
+        out.addVertex(pose, right, bottom, depth).setColor(255, 255, 255, 255).setUv(1.0F, 1.0F).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
+        out.addVertex(pose, left, bottom, depth).setColor(255, 255, 255, 255).setUv(0.0F, 1.0F).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
     }
 
     private static void brackets(VertexConsumer out, PoseStack.Pose pose, float radius, float rotation) {

@@ -91,6 +91,23 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setBomberExplosionDamage(AntarchyMobsConfig.bomberExplosionDamage());
         AntarchySettings.setBomberExplosionRadius(AntarchyMobsConfig.bomberExplosionRadius());
 
+        AntarchySettings.setMobGearScalingEnabled(AntarchyMobsConfig.mobGearScalingEnabled());
+        AntarchySettings.setMobGearSlotChance(AntarchyMobsConfig.mobGearSlotChance());
+        AntarchySettings.setMobGearHelmetChance(AntarchyMobsConfig.mobGearHelmetChance());
+        AntarchySettings.setMobGearLowerTierChance(AntarchyMobsConfig.mobGearLowerTierChance());
+        AntarchySettings.setMobGearWeaponChance(AntarchyMobsConfig.mobGearWeaponChance());
+        AntarchySettings.setMobGearUltimateEnchanted(AntarchyMobsConfig.mobGearUltimateEnchanted());
+        AntarchySettings.setMobGearEasyChanceMultiplier(AntarchyMobsConfig.mobGearEasyChanceMultiplier());
+        AntarchySettings.setMobGearHardChanceMultiplier(AntarchyMobsConfig.mobGearHardChanceMultiplier());
+        AntarchySettings.setMobGearExtremeChanceMultiplier(AntarchyMobsConfig.mobGearExtremeChanceMultiplier());
+        AntarchySettings.setMobGearHardHigherTierChance(AntarchyMobsConfig.mobGearHardHigherTierChance());
+        AntarchySettings.setMobGearExtremeHigherTierChance(AntarchyMobsConfig.mobGearExtremeHigherTierChance());
+        AntarchySettings.setMobGearPlayerRange(AntarchyMobsConfig.mobGearPlayerRange());
+        AntarchySettings.setMobGearIronScore(AntarchyMobsConfig.mobGearIronScore());
+        AntarchySettings.setMobGearDiamondScore(AntarchyMobsConfig.mobGearDiamondScore());
+        AntarchySettings.setMobGearNetheriteScore(AntarchyMobsConfig.mobGearNetheriteScore());
+        AntarchySettings.setMobGearUltimateScore(AntarchyMobsConfig.mobGearUltimateScore());
+
         AntarchySettings.setSpringbugHealth(AntarchyMobsConfig.springbugHealth());
         AntarchySettings.setSpringbugPounceDamage(AntarchyMobsConfig.springbugPounceDamage());
         AntarchySettings.setSpringbugCamouflageAlpha(AntarchyMobsConfig.springbugCamouflageAlpha());

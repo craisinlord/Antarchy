@@ -440,6 +440,22 @@ public final class AntarchySettings {
     private static double bedBugAttackDamage = 4.0D;
     private static double bedBugMovementSpeed = 0.24D;
     private static double bedBugArmor = 2.0D;
+    private static boolean mobGearScalingEnabled = true;
+    private static double mobGearSlotChance = 0.6D;
+    private static double mobGearHelmetChance = 0.3D;
+    private static double mobGearLowerTierChance = 0.25D;
+    private static double mobGearWeaponChance = 0.25D;
+    private static boolean mobGearUltimateEnchanted = true;
+    private static double mobGearEasyChanceMultiplier = 0.5D;
+    private static double mobGearHardChanceMultiplier = 1.25D;
+    private static double mobGearExtremeChanceMultiplier = 1.5D;
+    private static double mobGearHardHigherTierChance = 0.1D;
+    private static double mobGearExtremeHigherTierChance = 0.25D;
+    private static double mobGearPlayerRange = 64.0D;
+    private static double mobGearIronScore = 10.0D;
+    private static double mobGearDiamondScore = 22.0D;
+    private static double mobGearNetheriteScore = 30.0D;
+    private static double mobGearUltimateScore = 35.0D;
     private static double springbugHealth = 100.0D;
     private static double springbugPounceDamage = 12.0D;
     private static double springbugCamouflageAlpha = 0.18D;
@@ -2852,6 +2868,54 @@ public final class AntarchySettings {
 
     public static double bedBugArmor() { return bedBugArmor; }
     public static void setBedBugArmor(double value) { bedBugArmor = value; }
+
+    public static boolean mobGearScalingEnabled() { return mobGearScalingEnabled; }
+    public static void setMobGearScalingEnabled(boolean value) { mobGearScalingEnabled = value; }
+
+    public static double mobGearSlotChance() { return mobGearSlotChance; }
+    public static void setMobGearSlotChance(double value) { mobGearSlotChance = value; }
+
+    public static double mobGearHelmetChance() { return mobGearHelmetChance; }
+    public static void setMobGearHelmetChance(double value) { mobGearHelmetChance = value; }
+
+    public static double mobGearLowerTierChance() { return mobGearLowerTierChance; }
+    public static void setMobGearLowerTierChance(double value) { mobGearLowerTierChance = value; }
+
+    public static double mobGearWeaponChance() { return mobGearWeaponChance; }
+    public static void setMobGearWeaponChance(double value) { mobGearWeaponChance = value; }
+
+    public static boolean mobGearUltimateEnchanted() { return mobGearUltimateEnchanted; }
+    public static void setMobGearUltimateEnchanted(boolean value) { mobGearUltimateEnchanted = value; }
+
+    public static double mobGearEasyChanceMultiplier() { return mobGearEasyChanceMultiplier; }
+    public static void setMobGearEasyChanceMultiplier(double value) { mobGearEasyChanceMultiplier = value; }
+
+    public static double mobGearHardChanceMultiplier() { return mobGearHardChanceMultiplier; }
+    public static void setMobGearHardChanceMultiplier(double value) { mobGearHardChanceMultiplier = value; }
+
+    public static double mobGearExtremeChanceMultiplier() { return mobGearExtremeChanceMultiplier; }
+    public static void setMobGearExtremeChanceMultiplier(double value) { mobGearExtremeChanceMultiplier = value; }
+
+    public static double mobGearHardHigherTierChance() { return mobGearHardHigherTierChance; }
+    public static void setMobGearHardHigherTierChance(double value) { mobGearHardHigherTierChance = value; }
+
+    public static double mobGearExtremeHigherTierChance() { return mobGearExtremeHigherTierChance; }
+    public static void setMobGearExtremeHigherTierChance(double value) { mobGearExtremeHigherTierChance = value; }
+
+    public static double mobGearPlayerRange() { return mobGearPlayerRange; }
+    public static void setMobGearPlayerRange(double value) { mobGearPlayerRange = value; }
+
+    public static double mobGearIronScore() { return mobGearIronScore; }
+    public static void setMobGearIronScore(double value) { mobGearIronScore = value; }
+
+    public static double mobGearDiamondScore() { return mobGearDiamondScore; }
+    public static void setMobGearDiamondScore(double value) { mobGearDiamondScore = value; }
+
+    public static double mobGearNetheriteScore() { return mobGearNetheriteScore; }
+    public static void setMobGearNetheriteScore(double value) { mobGearNetheriteScore = value; }
+
+    public static double mobGearUltimateScore() { return mobGearUltimateScore; }
+    public static void setMobGearUltimateScore(double value) { mobGearUltimateScore = value; }
 
     public static double springbugHealth() { return springbugHealth; }
     public static void setSpringbugHealth(double value) { springbugHealth = value; }

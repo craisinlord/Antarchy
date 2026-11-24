@@ -50,6 +50,22 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_DAMAGE;
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
+    private static final ModConfigSpec.BooleanValue MOB_GEAR_SCALING_ENABLED;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_SLOT_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_HELMET_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_LOWER_TIER_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_WEAPON_CHANCE;
+    private static final ModConfigSpec.BooleanValue MOB_GEAR_ULTIMATE_ENCHANTED;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_EASY_CHANCE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_HARD_CHANCE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_EXTREME_CHANCE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_HARD_HIGHER_TIER_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_EXTREME_HIGHER_TIER_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_PLAYER_RANGE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_IRON_SCORE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_DIAMOND_SCORE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_NETHERITE_SCORE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_ULTIMATE_SCORE;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_HEALTH;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_POUNCE_DAMAGE;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_CAMOUFLAGE_ALPHA;
@@ -988,6 +1004,25 @@ public final class AntarchyMobsConfig {
         WATER_BOMB_KNOCKBACK               = b.comment("Knockback strength when a Water Bomb hits an entity.").defineInRange("waterBombKnockback", 1.2D, 0.0D, 10.0D);
         b.pop();
 
+        b.push("mobGear");
+        MOB_GEAR_SCALING_ENABLED = b.comment("If true, zombies and skeletons spawn with iron, diamond, netherite or Ultimate gear to match the armor of nearby players.").define("scalingEnabled", true);
+        MOB_GEAR_SLOT_CHANCE = b.comment("Chance for each of the chestplate, leggings and boots slots to be filled. Rolled per slot.").defineInRange("slotChance", 0.6D, 0.0D, 1.0D);
+        MOB_GEAR_HELMET_CHANCE = b.comment("Chance for the helmet slot to be filled. Kept lower because helmets stop undead burning in daylight.").defineInRange("helmetChance", 0.3D, 0.0D, 1.0D);
+        MOB_GEAR_LOWER_TIER_CHANCE = b.comment("Chance for each piece to be one tier below the players' tier.").defineInRange("lowerTierChance", 0.25D, 0.0D, 1.0D);
+        MOB_GEAR_WEAPON_CHANCE = b.comment("Chance for an unarmed zombie to spawn with a sword of the same tier. Never better than netherite.").defineInRange("weaponChance", 0.25D, 0.0D, 1.0D);
+        MOB_GEAR_ULTIMATE_ENCHANTED = b.comment("If true, Ultimate Armor on mobs has the same innate Protection as the player's. Does nothing if ultimateArmor.comesEnchanted is off.").define("ultimateEnchanted", true);
+        MOB_GEAR_EASY_CHANCE_MULTIPLIER = b.comment("Multiplies every mob gear chance on Easy.").defineInRange("easyChanceMultiplier", 0.5D, 0.0D, 10.0D);
+        MOB_GEAR_HARD_CHANCE_MULTIPLIER = b.comment("Multiplies every mob gear chance on Hard.").defineInRange("hardChanceMultiplier", 1.25D, 0.0D, 10.0D);
+        MOB_GEAR_EXTREME_CHANCE_MULTIPLIER = b.comment("Multiplies every mob gear chance when an addon sets a difficulty above Hard.").defineInRange("extremeChanceMultiplier", 1.5D, 0.0D, 10.0D);
+        MOB_GEAR_HARD_HIGHER_TIER_CHANCE = b.comment("Chance on Hard for each piece to be one tier above the players' tier.").defineInRange("hardHigherTierChance", 0.1D, 0.0D, 1.0D);
+        MOB_GEAR_EXTREME_HIGHER_TIER_CHANCE = b.comment("Chance for each piece to be one tier above the players' tier when an addon sets a difficulty above Hard.").defineInRange("extremeHigherTierChance", 0.25D, 0.0D, 1.0D);
+        MOB_GEAR_PLAYER_RANGE = b.comment("Players within this many blocks count. The least armored one sets the tier.").defineInRange("playerRange", 64.0D, 1.0D, 256.0D);
+        MOB_GEAR_IRON_SCORE = b.comment("Player armor plus armor toughness needed for iron gear. A full iron set is 15.").defineInRange("ironScore", 10.0D, 0.0D, 4096.0D);
+        MOB_GEAR_DIAMOND_SCORE = b.comment("Player armor plus armor toughness needed for diamond gear. A full diamond set is 28.").defineInRange("diamondScore", 22.0D, 0.0D, 4096.0D);
+        MOB_GEAR_NETHERITE_SCORE = b.comment("Player armor plus armor toughness needed for netherite gear. A full netherite set is 32.").defineInRange("netheriteScore", 30.0D, 0.0D, 4096.0D);
+        MOB_GEAR_ULTIMATE_SCORE = b.comment("Player armor plus armor toughness needed for Ultimate gear. A full Ultimate set is 36.").defineInRange("ultimateScore", 35.0D, 0.0D, 4096.0D);
+        b.pop();
+
         SPEC = b.build();
     }
 
@@ -1146,6 +1181,22 @@ public final class AntarchyMobsConfig {
     static double  bomberExplosionDamage()                  { return BOMBER_EXPLOSION_DAMAGE.get(); }
     static double  bomberExplosionRadius()                  { return BOMBER_EXPLOSION_RADIUS.get(); }
 
+    static boolean mobGearScalingEnabled() { return MOB_GEAR_SCALING_ENABLED.get(); }
+    static double mobGearSlotChance() { return MOB_GEAR_SLOT_CHANCE.get(); }
+    static double mobGearHelmetChance() { return MOB_GEAR_HELMET_CHANCE.get(); }
+    static double mobGearLowerTierChance() { return MOB_GEAR_LOWER_TIER_CHANCE.get(); }
+    static double mobGearWeaponChance() { return MOB_GEAR_WEAPON_CHANCE.get(); }
+    static boolean mobGearUltimateEnchanted() { return MOB_GEAR_ULTIMATE_ENCHANTED.get(); }
+    static double mobGearEasyChanceMultiplier() { return MOB_GEAR_EASY_CHANCE_MULTIPLIER.get(); }
+    static double mobGearHardChanceMultiplier() { return MOB_GEAR_HARD_CHANCE_MULTIPLIER.get(); }
+    static double mobGearExtremeChanceMultiplier() { return MOB_GEAR_EXTREME_CHANCE_MULTIPLIER.get(); }
+    static double mobGearHardHigherTierChance() { return MOB_GEAR_HARD_HIGHER_TIER_CHANCE.get(); }
+    static double mobGearExtremeHigherTierChance() { return MOB_GEAR_EXTREME_HIGHER_TIER_CHANCE.get(); }
+    static double mobGearPlayerRange() { return MOB_GEAR_PLAYER_RANGE.get(); }
+    static double mobGearIronScore() { return MOB_GEAR_IRON_SCORE.get(); }
+    static double mobGearDiamondScore() { return MOB_GEAR_DIAMOND_SCORE.get(); }
+    static double mobGearNetheriteScore() { return MOB_GEAR_NETHERITE_SCORE.get(); }
+    static double mobGearUltimateScore() { return MOB_GEAR_ULTIMATE_SCORE.get(); }
     static double  springbugHealth()                         { return SPRINGBUG_HEALTH.get(); }
     static double  springbugPounceDamage()                   { return SPRINGBUG_POUNCE_DAMAGE.get(); }
     static double  springbugCamouflageAlpha()                { return SPRINGBUG_CAMOUFLAGE_ALPHA.get(); }

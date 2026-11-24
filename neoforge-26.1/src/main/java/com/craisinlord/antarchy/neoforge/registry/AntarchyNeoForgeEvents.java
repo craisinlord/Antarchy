@@ -1019,7 +1019,8 @@ public final class AntarchyNeoForgeEvents {
     }
 
     static void handlePortalGunLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        if (!(event.getEntity().getMainHandItem().getItem() instanceof PortalGunItem)) {
+        if (!(event.getEntity().getMainHandItem().getItem() instanceof PortalGunItem)
+                && !(event.getEntity().getOffhandItem().getItem() instanceof PortalGunItem)) {
             return;
         }
         event.setCanceled(true);

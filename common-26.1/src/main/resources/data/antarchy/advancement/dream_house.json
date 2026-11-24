@@ -1,0 +1,41 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "discover_jens_house": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "antarchy:jens_house"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.dream_house.description"
+    },
+    "frame": "task",
+    "icon": {
+      "id": "antarchy:dream_lantern"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.dream_house.title"
+    }
+  },
+  "requirements": [
+    [
+      "discover_jens_house"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

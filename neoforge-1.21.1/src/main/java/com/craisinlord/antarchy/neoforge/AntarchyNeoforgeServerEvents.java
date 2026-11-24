@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.DimensionResetCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
 import com.craisinlord.antarchy.content.command.ElythiaCommand;
+import com.craisinlord.antarchy.content.command.MobGearCommand;
 import com.craisinlord.antarchy.content.command.PortalGunCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.command.RoyalCommand;
@@ -30,6 +31,7 @@ public final class AntarchyNeoforgeServerEvents {
         RoyalCommand.register(event.getDispatcher());
         PortalGunCommand.register(event.getDispatcher());
         ElythiaCommand.register(event.getDispatcher());
+        MobGearCommand.register(event.getDispatcher());
         ThoraxisCommand.register(event.getDispatcher());
         DimensionResetCommand.register(event.getDispatcher());
     }
