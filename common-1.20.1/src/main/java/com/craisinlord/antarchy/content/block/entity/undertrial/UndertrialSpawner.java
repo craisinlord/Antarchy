@@ -189,7 +189,8 @@ public final class UndertrialSpawner {
         int size = posList.size();
         double x = size >= 1 ? posList.getDouble(0)
                 : pos.getX() + (random.nextDouble() - random.nextDouble()) * this.getConfig().spawnRange() + 0.5D;
-        double y = size >= 2 ? posList.getDouble(1) : pos.getY() + random.nextInt(3) - 1;
+        double y = size >= 2 ? posList.getDouble(1)
+                : pos.getY() + 1.0D - 1.0E-3D - type.get().getHeight() - Math.max(0, random.nextInt(3) - 1);
         double z = size >= 3 ? posList.getDouble(2)
                 : pos.getZ() + (random.nextDouble() - random.nextDouble()) * this.getConfig().spawnRange() + 0.5D;
         if (!level.noCollision(type.get().getAABB(x, y, z))) {

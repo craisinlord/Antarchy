@@ -71,7 +71,7 @@
             "charge": 0.7
           },
           "antarchy:manticore": {
-            "energy_budget": 0.12,
+            "energy_budget": 0.214,
             "charge": 1.0
           }
         },
@@ -85,6 +85,11 @@
                 "min_inclusive": 2,
                 "max_inclusive": 5
               }
+            },
+            {
+              "type": "antarchy:emperor_scorpion",
+              "weight": 3,
+              "count": 1
             },
             {
               "type": "antarchy:manticore",

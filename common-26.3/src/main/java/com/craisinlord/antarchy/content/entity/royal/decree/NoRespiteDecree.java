@@ -9,4 +9,8 @@ public final class NoRespiteDecree implements RoyalDecree {
         return "decree.antarchy.no_respite";
     }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) { }
+    @Override
+    public int durationTicks() {
+        return 240;
+    }
 }

@@ -5,18 +5,33 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class ShowNoMercyDecree implements RoyalDecree {
-    private static final long IDLE_DAMAGE_LIMIT_TICKS = 80L;
+    private static final long IDLE_DAMAGE_LIMIT_TICKS = 120L;
+
     public String translationKey() {
         return "decree.antarchy.show_no_mercy";
     }
+
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) {
     }
-    @Override public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
+
+    @Override
+    public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
         return king.ticksSincePlayerDamage(target) > IDLE_DAMAGE_LIMIT_TICKS
                 ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
+
     @Override
     public int countdownTicks(KingEntity king, LivingEntity target) {
         return (int) Math.max(0L, IDLE_DAMAGE_LIMIT_TICKS - king.ticksSincePlayerDamage(target));
+    }
+
+    @Override
+    public int durationTicks() {
+        return 240;
+    }
+
+    @Override
+    public void onWarned(ServerLevel level, KingEntity king, LivingEntity target) {
+        king.resetDecreeDamageClock(target);
     }
 }

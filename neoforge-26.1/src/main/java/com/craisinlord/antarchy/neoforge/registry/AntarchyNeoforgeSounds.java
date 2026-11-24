@@ -220,6 +220,9 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_PLACE = registerSoundEvent("antimetal_place");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_STEP = registerSoundEvent("antimetal_step");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_SCAFFOLD = registerSoundEvent("antimetal_scaffold");
+    public static final DeferredHolder<SoundEvent, SoundEvent> LOAM_PLACE = registerSoundEvent("loam_place");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRIMORDIAL_LOAM_PLACE = registerSoundEvent("primordial_loam_place");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRIMORDIAL_LOAM_STEP = registerSoundEvent("primordial_loam_step");
     public static final DeferredHolder<SoundEvent, SoundEvent> UNDERTRIAL_DETECT_PLAYER1 = registerSoundEvent("undertrial_detect_player1");
     public static final DeferredHolder<SoundEvent, SoundEvent> UNDERTRIAL_DETECT_PLAYER2 = registerSoundEvent("undertrial_detect_player2");
 

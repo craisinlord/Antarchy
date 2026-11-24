@@ -872,6 +872,8 @@
     "advancements.antarchy.fallen_kingdom_castle.description":  "몰락한 왕국의 성을 발견하세요.",
     "advancements.antarchy.a_lovely_world.title":  "어디서 많이 본 집인데?",
     "advancements.antarchy.a_lovely_world.description":  "엘리시아에서 이상하리만치 익숙한 집을 발견했습니다.",
+    "advancements.antarchy.dream_house.title":  "꿈의 집",
+    "advancements.antarchy.dream_house.description":  "엘리시아에 남겨진 분홍 창문 집을 발견했습니다.",
     "advancements.antarchy.cops_n_robbers.title":  "경찰과 도둑!",
     "advancements.antarchy.cops_n_robbers.description":  "추억의 구조물일 뿐이며, Sky와는 관계가 없습니다 :)",
     "advancements.antarchy.fallen_king_crown.title":  "내가 명하면 청크가 불러와졌지..",
@@ -1481,14 +1483,14 @@
     "block.antarchy.gorevine":  "핏빛 덩굴"
     ,"decree.antarchy.the_sky_is_mine": "하늘은 나의 것이다"
     ,"decree.antarchy.the_sky_is_mine.subtitle": "땅에 가만히 계십시오."
-    ,"decree.antarchy.do_not_run": "달리지 마라"
-    ,"decree.antarchy.do_not_run.subtitle": "달리기를 즉시 멈추십시오.."
+    ,"decree.antarchy.do_not_flee": "도망치지 마라"
+    ,"decree.antarchy.do_not_flee.subtitle": "더 킹에게서 멀어지며 달리지 마십시오."
     ,"decree.antarchy.kneel": "무릎을 꿇어라"
     ,"decree.antarchy.kneel.subtitle": "5초 이내에 움웅크리십시오."
     ,"decree.antarchy.close_quarters": "근접전이다"
-    ,"decree.antarchy.close_quarters.subtitle": "6초 이내에 더 킹의 16블록 원 안으로 진입하십시오. 투사체 사용은 금지됩니다."
+    ,"decree.antarchy.close_quarters.subtitle": "8초 이내에 더 킹의 황금 원 안으로 진입하십시오. 투사체 사용은 금지됩니다."
     ,"decree.antarchy.violated": "칙령 위반"
-    ,"decree.antarchy.violated.subtitle": "30초 동안 체력이 절반으로 감소합니다. 더 킹의 심판을 받으십시오."
+    ,"decree.antarchy.violated.subtitle": "%s초 동안 체력이 절반으로 감소합니다. 더 킹의 심판을 받으십시오."
     ,"effect.antarchy.royal_vitality_penalty": "왕가의 생명력 약화"
     ,"decree.antarchy.come_no_closer": "더 이상 접근하지 마라"
     ,"decree.antarchy.come_no_closer.subtitle": "더 킹의 내부 반경에 들어가지 마십시오."
@@ -1496,10 +1498,12 @@
     ,"decree.antarchy.fight_me_coward.subtitle": "더 킹에게 접근하십시오."
     ,"decree.antarchy.no_respite": "휴식은 없다"
     ,"decree.antarchy.no_respite.subtitle": "치유가 봉인됩니다."
-    ,"decree.antarchy.stand_tall": "당당히 서라"
-    ,"decree.antarchy.stand_tall.subtitle": "더 킹 앞에서 웅크리지 마십시오"
     ,"decree.antarchy.stand_your_ground": "자리를 지켜라"
     ,"decree.antarchy.stand_your_ground.subtitle": "지금 서 있는 위치에서 벗어나지 마십시오."
+    ,"decree.antarchy.warned": "경고"
+    ,"decree.antarchy.warned.subtitle": "더 킹은 두 번 경고하지 않습니다."
+    ,"decree.antarchy.favor": "왕의 총애"
+    ,"decree.antarchy.favor.subtitle": "복종에 대한 보상입니다. 더 킹에게 가하는 공격이 강해집니다."
     ,"decree.antarchy.hands_off_the_crown": "왕관에 손대지 마라"
     ,"decree.antarchy.hands_off_the_crown.subtitle": "더 킹을 공격하고 심판을 받으십시오."
     ,"decree.antarchy.show_no_mercy": "자비를 베풀지 마라"
@@ -1617,7 +1621,6 @@
     ,"guide.antarchy.entry.easter_bunny.title": "이스터 토끼"
     ,"guide.antarchy.entry.easter_bunny.subtitle": "엔티티 기록"
     ,"guide.antarchy.entry.easter_bunny.description": "이스터 토끼는 온갖 생물들의 생성 알을 낳습니다! 인생은 이스터 에그와 같아서, 무엇이 나올지 전혀 알 수 없죠."
-    ,"guide.antarchy.entry.easter_bunny.description2": "당근, 황금 당근, 또는 민들레를 먹이로 주어 보세요."
     ,"guide.antarchy.entry.duplicator_tree.title": "복제나무"
     ,"guide.antarchy.entry.duplicator_tree.subtitle": "블록 기록"
     ,"guide.antarchy.entry.duplicator_tree.description": "다 자란 복제나무는 옆에 비어 있고 지지되는 공간이 있으면 근처의 고체 블록을 복제합니다."
@@ -1633,8 +1636,8 @@
     ,"guide.antarchy.entry.king.subtitle": "엘리시아 왕가 기록"
     ,"guide.antarchy.entry.king.description": "더 킹은 한때 자신의 반려와 함께 엘리시아를 통치했으나, 어느 날 그녀를 베어버리고 추방했습니다. 그날 이후 그는 아래 좌표에 위치한 그들의 왕가 나무 곁에 홀로 남아 있습니다."
     ,"guide.antarchy.entry.king.description2": "그에게 남은 것은 법과 질서뿐이며, 그는 그것에 집착하고 있습니다. 그는 무뎌지고 가혹해졌으며, 그에게 유일한 위안을 주는 것은 타인을 고통스럽게 하는 것뿐입니다. 그는 공격적이고, 이기적이며, 가학적이고, 강력합니다."
-    ,"guide.antarchy.entry.king.description3": "시야에 들어오는 즉시 공격해 오며 당신을 장난감처럼 다룰 것입니다. 전투 중에 칙령을 내립니다: 무릎을 꿇어라, 달리지 마라, 더 이상 접근하지 마라, 자비를 베풀지 마라. 그의 말은 곧 법이며, 즉시 복종하기를 기대합니다."
-    ,"guide.antarchy.entry.king.description4": "칙령을 위반하면 심판을 받는 30초 동안 체력이 절반으로 감소합니다. 그는 뇌전, 빙결, 화염의 원소 힘을 다루어 심판을 집행합니다."
+    ,"guide.antarchy.entry.king.description3": "시야에 들어오는 즉시 공격해 오며 당신을 장난감처럼 다룰 것입니다. 전투 중에 칙령을 내립니다: 무릎을 꿇어라, 도망치지 마라, 더 이상 접근하지 마라, 자비를 베풀지 마라. 그의 말은 곧 법이며, 즉시 복종하기를 기대합니다."
+    ,"guide.antarchy.entry.king.description4": "더 킹은 한 번 경고합니다. 칙령을 다시 위반하면 심판을 받는 15초 동안 체력이 절반으로 감소합니다. 그는 뇌전, 빙결, 화염의 원소 힘을 다루어 심판을 집행합니다."
     ,"guide.antarchy.entry.king.description5": "그는 자신의 반쪽만큼 강력하진 않지만, 제대로 준비하지 않는다면 당신을 갈갈이 찢어놓을 것입니다."
     ,"guide.antarchy.disk.queen.title": "더 퀸의 참화 흔적 야외 관찰 기록"
     ,"guide.antarchy.entry.queen.title": "더 퀸"

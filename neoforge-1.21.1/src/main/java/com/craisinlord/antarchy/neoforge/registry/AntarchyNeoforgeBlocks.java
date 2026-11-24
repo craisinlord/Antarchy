@@ -29,7 +29,7 @@ import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeGrowers;
 import com.craisinlord.antarchy.neoforge.AntarchyWoodTypes;
-import com.craisinlord.antarchy.neoforge.content.block.WildCornBlock;
+import com.craisinlord.antarchy.content.block.WildCornBlock;
 import com.mojang.serialization.MapCodec;
 import java.util.List;
 import net.minecraft.core.Direction;
@@ -1016,7 +1016,7 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
     public static final DeferredBlock<AntigravelBlock> ANTIGRAVEL = BLOCKS.register("antigravel",
             () -> new AntigravelBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)));
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
-            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)));
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD).sound(loamSoundType())));
     public static final DeferredBlock<PrimordialLoamBlock> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
             () -> new PrimordialLoamBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD).sound(primordialLoamSoundType())));
     public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
@@ -1274,12 +1274,21 @@ public static final DeferredBlock<Block> ROCKITE = BLOCKS.register("rockite",
         return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
 
+    private static SoundType loamSoundType() {
+        return new SoundType(1.0F, 1.0F,
+                AntarchyNeoforgeSounds.LOAM_PLACE.get(),
+                SoundType.MUD.getStepSound(),
+                AntarchyNeoforgeSounds.LOAM_PLACE.get(),
+                SoundType.MUD.getHitSound(),
+                SoundType.MUD.getFallSound());
+    }
+
     private static SoundType primordialLoamSoundType() {
         return new SoundType(1.0F, 1.0F,
-                SoundType.MUD.getBreakSound(),
-                SoundType.MOSS.getStepSound(),
-                SoundType.MUD.getPlaceSound(),
-                SoundType.MUD.getHitSound(),
+                AntarchyNeoforgeSounds.PRIMORDIAL_LOAM_PLACE.get(),
+                AntarchyNeoforgeSounds.PRIMORDIAL_LOAM_STEP.get(),
+                AntarchyNeoforgeSounds.PRIMORDIAL_LOAM_PLACE.get(),
+                AntarchyNeoforgeSounds.PRIMORDIAL_LOAM_STEP.get(),
                 SoundType.MUD.getFallSound());
     }
 

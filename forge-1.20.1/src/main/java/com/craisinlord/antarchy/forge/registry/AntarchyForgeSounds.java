@@ -219,6 +219,9 @@ public final class AntarchyForgeSounds {
     public static final RegistryObject<SoundEvent> ANTIMETAL_PLACE = registerSoundEvent("antimetal_place");
     public static final RegistryObject<SoundEvent> ANTIMETAL_STEP = registerSoundEvent("antimetal_step");
     public static final RegistryObject<SoundEvent> ANTIMETAL_SCAFFOLD = registerSoundEvent("antimetal_scaffold");
+    public static final RegistryObject<SoundEvent> LOAM_PLACE = registerSoundEvent("loam_place");
+    public static final RegistryObject<SoundEvent> PRIMORDIAL_LOAM_PLACE = registerSoundEvent("primordial_loam_place");
+    public static final RegistryObject<SoundEvent> PRIMORDIAL_LOAM_STEP = registerSoundEvent("primordial_loam_step");
     public static final RegistryObject<SoundEvent> UNDERTRIAL_DETECT_PLAYER1 = registerSoundEvent("undertrial_detect_player1");
     public static final RegistryObject<SoundEvent> UNDERTRIAL_DETECT_PLAYER2 = registerSoundEvent("undertrial_detect_player2");
 

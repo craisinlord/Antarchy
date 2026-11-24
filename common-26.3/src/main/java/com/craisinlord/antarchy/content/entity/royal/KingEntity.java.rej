@@ -1,0 +1,32 @@
+--- common-26.3/src/main/java/com/craisinlord/antarchy/content/entity/royal/KingEntity.java
++++ common-26.3/src/main/java/com/craisinlord/antarchy/content/entity/royal/KingEntity.java
+@@ -2996,17 +3137,27 @@ public class KingEntity extends RoyalBossEntity {
+             if (attacker instanceof ServerPlayer player && this.activeDecree != null
+                     && this.decreeRecipients.contains(player.getUUID())
+                     && !this.decreeObedient.contains(player.getUUID())
+-                    && this.decreeResponseGraceTicks <= 0) {
++                    && this.decreeResponseGraceTicks <= 0
++                    && this.decreeAnnouncementTicks <= 0
++                    && !this.isDecreeExemptHit(source, gameTime)) {
+                 if (this.activeDecree instanceof CloseQuartersDecree && projectile
+                         || this.activeDecree instanceof ComeNoCloserDecree && !projectile
+                         || this.activeDecree instanceof HandsOffTheCrownDecree) {
+-                    this.violateDecree(player);
++                    this.breachDecree(player);
+                 }
+             }
+         }
+         return super.hurt(source, amount);
+     }
+ 
++    private boolean isDecreeExemptHit(DamageSource source, long gameTime) {
++        if (source.is(DamageTypes.THORNS)) {
++            return true;
++        }
++        return source.getDirectEntity() instanceof Projectile shot
++                && gameTime - shot.tickCount < this.decreeInForceGameTime;
++    }
++
+     @Override
+     public void addAdditionalSaveData(CompoundTag tag) {
+         super.addAdditionalSaveData(tag);

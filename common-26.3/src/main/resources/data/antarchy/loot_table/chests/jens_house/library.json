@@ -1,0 +1,175 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 18,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 2,
+              "max": 5
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:paper",
+          "weight": 14,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 4,
+              "max": 12
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bookshelf",
+          "weight": 8,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 3
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:ink_sac",
+          "weight": 10,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 4
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:writable_book",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 14,
+          "modifier": {
+            "type": "minecraft:enchant_with_levels",
+            "levels": {
+              "type": "minecraft:uniform",
+              "min": 12,
+              "max": 25
+            },
+            "options": "#minecraft:on_random_loot"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:lapis_lazuli",
+          "weight": 12,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 4,
+              "max": 10
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:experience_bottle",
+          "weight": 10,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 2,
+              "max": 6
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:candle",
+          "weight": 8,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 4
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:map",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:duct_tape",
+          "weight": 4,
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 3
+            }
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 4,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "antos:floppy_disk": "antarchy:elythia"
+            }
+          }
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 4.0,
+        "max": 7.0
+      }
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:faded_memory",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 2
+            }
+          }
+        }
+      ],
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.35
+      }
+    }
+  ],
+  "random_sequence": "antarchy:chests/jens_house/library"
+}

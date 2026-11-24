@@ -7,6 +7,7 @@ import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.DimensionResetCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
 import com.craisinlord.antarchy.content.command.ElythiaCommand;
+import com.craisinlord.antarchy.content.command.MobGearCommand;
 import com.craisinlord.antarchy.content.command.PortalGunCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.command.RoyalCommand;
@@ -116,6 +117,7 @@ public final class AntarchyFabricEvents {
             RoyalCommand.register(dispatcher);
             PortalGunCommand.register(dispatcher);
             ElythiaCommand.register(dispatcher);
+            MobGearCommand.register(dispatcher);
             ThoraxisCommand.register(dispatcher);
             DimensionResetCommand.register(dispatcher);
         });
@@ -215,7 +217,8 @@ public final class AntarchyFabricEvents {
             return InteractionResult.PASS;
         });
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
-            if (player.getItemInHand(hand).getItem() instanceof PortalGunItem) {
+            if (player.getMainHandItem().getItem() instanceof PortalGunItem
+                    || player.getOffhandItem().getItem() instanceof PortalGunItem) {
                 return InteractionResult.FAIL;
             }
             return InteractionResult.PASS;

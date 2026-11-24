@@ -76,6 +76,7 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -171,6 +172,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity, Glimmer
     private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "entities/emperor_scorpion_glimmer"));
 
+    private static final double NATURAL_SPAWN_SEPARATION = 128.0D;
     private static final ResourceKey<Level> THORAXIS_KEY =
             ResourceKey.create(Registries.DIMENSION,
                     Identifier.fromNamespaceAndPath(Antarchy.MODID, "thoraxis"));
@@ -510,6 +512,12 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity, Glimmer
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
             return false;
         }
+        return isValidSpawnSpot(entityType, level, spawnReason, pos, random)
+                && (spawnReason != EntitySpawnReason.NATURAL || !hasNearbyEmperor(level, pos));
+    }
+
+    private static boolean isValidSpawnSpot(EntityType<EmperorScorpionEntity> entityType, ServerLevelAccessor level,
+                                            EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         if (ThoraxisUndersideManager.isUndersideCeilingSpawn(entityType, level, pos)) {
             return true;
         }
@@ -518,6 +526,17 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity, Glimmer
             return !below.is(Blocks.BEDROCK) && below.isFaceSturdy(level, pos.below(), Direction.UP);
         }
         return Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
+    }
+
+    private static boolean hasNearbyEmperor(ServerLevelAccessor level, BlockPos pos) {
+        Vec3 center = Vec3.atCenterOf(pos);
+        return !level.getLevel().getEntitiesOfClass(
+                EmperorScorpionEntity.class,
+                new AABB(pos).inflate(NATURAL_SPAWN_SEPARATION),
+                emperor -> emperor.isAlive()
+                        && !emperor.isGlimmerEcho()
+                        && emperor.distanceToSqr(center) < NATURAL_SPAWN_SEPARATION * NATURAL_SPAWN_SEPARATION
+        ).isEmpty();
     }
 
     @Override

@@ -31,10 +31,6 @@
     }
   },
   "spawn_costs": {
-    "antarchy:emperor_scorpion": {
-      "energy_budget": 0.18,
-      "charge": 1.4
-    },
     "antarchy:vortex": {
       "energy_budget": 0.9,
       "charge": 12.0

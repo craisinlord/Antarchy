@@ -78,6 +78,7 @@
     "RoyalGuardianSwordCombatMixin",
     "RoyalJudgmentCombatMixin",
     "RoyalLootItemGlowMixin",
+    "BossLootDropGlowMixin",
     "RoyalNoRespiteMixin",
     "ServerPlayerGameModeMixin",
     "ServerPlayerRoyalBoundaryMixin",

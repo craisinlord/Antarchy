@@ -149,7 +149,7 @@ public class QueenEntity extends RoyalBossEntity {
     private static final int GLIMMER_MANTICORE_SUMMON_BONUS = 1;
     private static final int GLIMMER_MANTICORE_CAP_BONUS = 2;
     private static final double QUEEN_BITE_SCALE = 1.33D;
-    private static final double GRAVITY_STOMP_DAMAGE = 48.0D;
+    private static final double GRAVITY_STOMP_DAMAGE = 19.0D;
     private static final double GRAVITY_STOMP_RADIUS = 24.0D;
     private static final int STOMP_CLIP_LEAD_TICKS = 6;
     private static final int SHOOT_CLIP_LEAD_TICKS = 10;
@@ -158,14 +158,16 @@ public class QueenEntity extends RoyalBossEntity {
     private static final double CRUSHING_PLAYER_MAX_SPEED = 2.0D;
     private static final int[] FROZEN_VOLLEY_FIRE_TICKS = {15, 35, 55};
     private static final int FROZEN_VOLLEY_RELEASE_DELAY_TICKS = 10;
-    private static final float DEBRIS_CYCLONE_HIT_DAMAGE = 40.0F;
-    private static final float GRAVITIC_UPHEAVAL_HIT_DAMAGE = 48.0F;
-    private static final float GRAVITY_SLAM_HIT_DAMAGE = 70.0F;
+    private static final float DEBRIS_CYCLONE_HIT_DAMAGE = 16.0F;
+    private static final float GRAVITIC_UPHEAVAL_HIT_DAMAGE = 18.0F;
+    private static final float GRAVITY_SLAM_HIT_DAMAGE = 19.0F;
+    private static final String DEBRIS_HIT_WINDOW = "debris";
+    private static final int DEBRIS_HIT_WINDOW_TICKS = 60;
     private static final double DEBRIS_HIT_INFLATE = 0.6D;
     private static final double DEBRIS_HIT_SCAN_RANGE = 96.0D;
     private static final double INVERTED_DEBRIS_ACCELERATION = 0.04D;
     private static final double GRAVITY_SLAM_SPEED = 1.3D;
-    private static final double GRAVITY_SLAM_SHOCK_DAMAGE = 60.0D;
+    private static final double GRAVITY_SLAM_SHOCK_DAMAGE = 19.0D;
 
     private int manticoreSummonCooldownTicks;
     private int gravityStompCooldownTicks;
@@ -1108,10 +1110,25 @@ public class QueenEntity extends RoyalBossEntity {
             this.getMoveControl().setWantedPosition(wx, wy, wz, 0.7D);
             return;
         }
+        BlockPos summonHome = this.summonHome();
+        double originX = this.getX();
+        double originZ = this.getZ();
+        if (summonHome != null) {
+            double dx = summonHome.getX() + 0.5D - this.getX();
+            double dz = summonHome.getZ() + 0.5D - this.getZ();
+            if (dx * dx + dz * dz > 32.0D * 32.0D) {
+                double hx = summonHome.getX() + 0.5D;
+                double hz = summonHome.getZ() + 0.5D;
+                this.getMoveControl().setWantedPosition(hx, this.groundYBelow(hx, hz), hz, 1.0D);
+                return;
+            }
+            originX = summonHome.getX() + 0.5D;
+            originZ = summonHome.getZ() + 0.5D;
+        }
         double angle = this.random.nextDouble() * Mth.TWO_PI;
         double radius = 6.0D + this.random.nextDouble() * 14.0D;
-        double wx = this.getX() + Math.cos(angle) * radius;
-        double wz = this.getZ() + Math.sin(angle) * radius;
+        double wx = originX + Math.cos(angle) * radius;
+        double wz = originZ + Math.sin(angle) * radius;
         this.getMoveControl().setWantedPosition(wx, this.groundYBelow(wx, wz), wz, 0.7D);
     }
 
@@ -2029,8 +2046,10 @@ public class QueenEntity extends RoyalBossEntity {
             }
             AABB box = block.getBoundingBox().expandTowards(block.getDeltaMovement()).inflate(DEBRIS_HIT_INFLATE);
             for (LivingEntity living : candidates) {
-                if (living.isAlive() && box.intersects(living.getBoundingBox())) {
-                    living.hurt(source, this.scaleRoyalDamage(entry.getValue()));
+                if (living.isAlive() && box.intersects(living.getBoundingBox())
+                        && this.royalHitWindowOpen(DEBRIS_HIT_WINDOW, living)
+                        && living.hurt(source, this.scaleRoyalDamage(entry.getValue()))) {
+                    this.claimRoyalHitWindow(DEBRIS_HIT_WINDOW, living, DEBRIS_HIT_WINDOW_TICKS);
                 }
             }
             if (block.isNoGravity()) {

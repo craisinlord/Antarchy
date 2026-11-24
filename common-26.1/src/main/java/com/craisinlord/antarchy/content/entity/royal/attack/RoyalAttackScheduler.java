@@ -121,6 +121,10 @@ public final class RoyalAttackScheduler {
         return cooldowns.getOrDefault(id, 0);
     }
 
+    public void delayCooldown(String id, int ticks) {
+        cooldowns.merge(id, Math.max(0, ticks), Math::max);
+    }
+
     public void resetCooldown(String id) {
         cooldowns.remove(id);
     }

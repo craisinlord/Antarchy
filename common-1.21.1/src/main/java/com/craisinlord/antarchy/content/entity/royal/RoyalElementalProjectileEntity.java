@@ -24,6 +24,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -58,6 +59,9 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
     private static final double PROJECTILE_INERTIA = 0.985D;
     private static final float DREAM_FIREBALL_INERTIA = 0.96F;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    @Nullable
+    private String royalHitWindow;
+    private int royalHitWindowTicks;
 
     public RoyalElementalProjectileEntity(EntityType<? extends RoyalElementalProjectileEntity> type, Level level) {
         super(type, level);
@@ -77,6 +81,24 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         projectile.shoot(direction.x, direction.y, direction.z, speed, 0.0F);
         GlimmerEchoes.markSummon(owner, projectile);
         return projectile;
+    }
+
+    public void setRoyalHitWindow(String window, int ticks) {
+        this.royalHitWindow = window;
+        this.royalHitWindowTicks = ticks;
+    }
+
+    private void hurtWithinRoyalHitWindow(LivingEntity living, DamageSource source, double damage) {
+        if (this.getOwner() instanceof RoyalBossEntity royalBoss) {
+            if (this.royalHitWindow != null && !royalBoss.royalHitWindowOpen(this.royalHitWindow, living)) {
+                return;
+            }
+            if (living.hurt(source, royalBoss.scaleRoyalDamage(damage)) && this.royalHitWindow != null) {
+                royalBoss.claimRoyalHitWindow(this.royalHitWindow, living, this.royalHitWindowTicks);
+            }
+            return;
+        }
+        living.hurt(source, (float) damage);
     }
 
     public static Vec3 aimDirection(Vec3 origin, LivingEntity target, RoyalBeamElement element) {
@@ -211,9 +233,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
                 this::canDamageWithImpact)) {
             double distance = Math.max(0.5D, living.position().distanceTo(center));
             float falloff = (float) Math.max(0.25D, 1.0D - distance / 5.0D);
-            double damage = AntarchySettings.kingFireballDamage() * falloff;
-            living.hurt(source, this.getOwner() instanceof RoyalBossEntity royalBoss
-                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
+            this.hurtWithinRoyalHitWindow(living, source, AntarchySettings.kingFireballDamage() * falloff);
             living.setRemainingFireTicks(Math.max(living.getRemainingFireTicks(), 120));
         }
         if (!this.isGlimmerEcho() && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
@@ -252,9 +272,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         DamageSource source = this.damageSources().mobProjectile(this, this.getOwner() instanceof LivingEntity living ? living : null);
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, new AABB(center, center).inflate(5.0D),
                 this::canDamageWithImpact)) {
-            double damage = AntarchySettings.kingIceballDamage();
-            living.hurt(source, this.getOwner() instanceof RoyalBossEntity royalBoss
-                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
+            this.hurtWithinRoyalHitWindow(living, source, AntarchySettings.kingIceballDamage());
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 80, living.getTicksFrozen() + 180));
             living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 3));
         }

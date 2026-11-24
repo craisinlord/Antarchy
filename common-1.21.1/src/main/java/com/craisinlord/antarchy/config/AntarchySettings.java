@@ -12,6 +12,8 @@ public final class AntarchySettings {
     private static boolean disableInfinityBookPortalCreation = true;
     private static boolean easterBunnyEnabled = true;
     private static int easterBunnyNaturalSpawnChancePercent = 1;
+    private static int easterBunnyMinLayCooldownSeconds = 180;
+    private static int easterBunnyMaxLayCooldownSeconds = 360;
     private static boolean rainbowAntsLeadToInfinityDimensions = true;
     private static double rainbowAntInfinityEasterEggChance = 0.01D;
     private static boolean brownAntRequiresReagent = false;
@@ -132,7 +134,7 @@ public final class AntarchySettings {
     private static ResourceKey<Level> termiteDestinationDimension = dimensionKey("antarchy:cavaryn");
     private static ResourceKey<Level> rainbowAntNonInfinityFallbackDimension = dimensionKey("antarchy:elythia");
     private static double krakenHealth = 1800.0D;
-    private static double krakenAttackDamage = 45.0D;
+    private static double krakenAttackDamage = 10.0D;
     private static double octopusBombHealth = 100.0D;
     private static double octopusBombAttackDamage = 16.0D;
     private static double brutalflyHealth = 500.0D;
@@ -292,8 +294,8 @@ public final class AntarchySettings {
     private static double princessFollowRange = 48.0D;
     private static double kingHealth = 3400.0D;
     private static double queenHealth = 4300.0D;
-    private static double kingAttackDamage = 50.0D;
-    private static double queenAttackDamage = 45.0D;
+    private static double kingAttackDamage = 8.0D;
+    private static double queenAttackDamage = 9.0D;
     private static double royalBossSoundVolume = 4.5D;
     private static double queenBlackHoleRadius = 14.0D;
     private static int queenBlackHoleActiveTicks = 120;
@@ -303,13 +305,13 @@ public final class AntarchySettings {
     private static int axeBlackHoleActiveTicks = 120;
     private static double axeBlackHolePullStrength = 0.16D;
     private static int axeBlackHoleBlockSuctionCap = 160;
-    private static double kingFireballDamage = 48.0D;
+    private static double kingFireballDamage = 10.0D;
     private static double kingFireballRadius = 4.5D;
     private static int kingFireballCooldownTicks = 150;
-    private static double kingIceballDamage = 18.0D;
+    private static double kingIceballDamage = 12.0D;
     private static double kingIceballRadius = 5.0D;
     private static int kingIceballCooldownTicks = 190;
-    private static double kingIceSpikeDamage = 24.0D;
+    private static double kingIceSpikeDamage = 12.0D;
     private static int kingIceSpikeCooldownTicks = 240;
     private static int kingElementalTerrainCap = 256;
     private static double royalBossArmor = 20.0D;
@@ -326,7 +328,7 @@ public final class AntarchySettings {
     private static boolean royalBossMultiplayerScalingEnabled = true;
     private static int royalBossScalingMaxPlayers = 4;
     private static double royalBossHealthPerAdditionalPlayer = 0.35D;
-    private static double royalBossDamagePerAdditionalPlayer = 0.10D;
+    private static double royalBossDamagePerAdditionalPlayer = 0.0D;
     private static double royalBoundaryRadius = 192.0D;
     private static double royalBoundaryWarningRadius = 160.0D;
     private static int royalBoundaryGraceTicks = 60;
@@ -438,6 +440,22 @@ public final class AntarchySettings {
     private static double bedBugAttackDamage = 4.0D;
     private static double bedBugMovementSpeed = 0.24D;
     private static double bedBugArmor = 2.0D;
+    private static boolean mobGearScalingEnabled = true;
+    private static double mobGearSlotChance = 0.6D;
+    private static double mobGearHelmetChance = 0.3D;
+    private static double mobGearLowerTierChance = 0.25D;
+    private static double mobGearWeaponChance = 0.25D;
+    private static boolean mobGearUltimateEnchanted = true;
+    private static double mobGearEasyChanceMultiplier = 0.5D;
+    private static double mobGearHardChanceMultiplier = 1.25D;
+    private static double mobGearExtremeChanceMultiplier = 1.5D;
+    private static double mobGearHardHigherTierChance = 0.1D;
+    private static double mobGearExtremeHigherTierChance = 0.25D;
+    private static double mobGearPlayerRange = 64.0D;
+    private static double mobGearIronScore = 10.0D;
+    private static double mobGearDiamondScore = 22.0D;
+    private static double mobGearNetheriteScore = 30.0D;
+    private static double mobGearUltimateScore = 35.0D;
     private static double springbugHealth = 100.0D;
     private static double springbugPounceDamage = 12.0D;
     private static double springbugCamouflageAlpha = 0.18D;
@@ -676,7 +694,7 @@ public final class AntarchySettings {
     private static int queenManticoreSummonCooldownTicks = 800;
     private static int queenManticoreSummonCount = 2;
     private static double queenManticoreSummonRange = 24.0D;
-    private static double queenBeamDamage = 45.0D;
+    private static double queenBeamDamage = 14.0D;
     private static double queenBeamRange = 100.0D;
     private static double queenBeamMinimumRange = 22.0D;
     private static int queenBeamDurationTicks = 30;
@@ -690,7 +708,7 @@ public final class AntarchySettings {
     private static int queenBeamPhaseTwoCap = 2;
     private static int queenBeamPhaseThreeCap = 3;
     private static double queenBeamPhaseThreeMaxVolleyChance = 0.2D;
-    private static double kingBeamDamage = 50.0D;
+    private static double kingBeamDamage = 10.0D;
     private static double kingBeamRange = 100.0D;
     private static double kingBeamMinimumRange = 32.0D;
     private static int kingBeamDurationTicks = 30;
@@ -703,6 +721,16 @@ public final class AntarchySettings {
     private static double kingBeamTerrainRadius = 5.0D;
     private static int kingBeamTerrainCap = 192;
     private static int royalDecreeCooldownTicks = 700;
+    private static int royalDecreeViolationPenaltyTicks = 300;
+    private static double royalDecreeWarningDamage = 4.0D;
+    private static int royalFavorTicks = 160;
+    private static double royalFavorDamageMultiplier = 1.25D;
+    private static int kingStompWindupTicks = 22;
+    private static double kingStompRadius = 18.0D;
+    private static double royalDecreeDurationMultiplier = 1.0D;
+    private static double royalCloseQuartersRadius = 22.0D;
+    private static double royalComeNoCloserRadius = 16.0D;
+    private static double royalStandYourGroundDrift = 10.0D;
     private static int kingRoyalMusterCooldownTicks = 500;
     private static int kingRoyalMusterWindupTicks = 30;
     private static int kingRoyalMusterDurationTicks = 600;
@@ -759,6 +787,14 @@ public final class AntarchySettings {
 
     public static int easterBunnyNaturalSpawnChancePercent() {
         return easterBunnyNaturalSpawnChancePercent;
+    }
+
+    public static int easterBunnyMinLayCooldownSeconds() {
+        return easterBunnyMinLayCooldownSeconds;
+    }
+
+    public static int easterBunnyMaxLayCooldownSeconds() {
+        return Math.max(easterBunnyMinLayCooldownSeconds, easterBunnyMaxLayCooldownSeconds);
     }
 
     public static boolean rainbowAntsLeadToInfinityDimensions() {
@@ -1386,6 +1422,11 @@ public final class AntarchySettings {
 
     public static void setEasterBunnyNaturalSpawnChancePercent(int value) {
         easterBunnyNaturalSpawnChancePercent = value;
+    }
+
+    public static void setEasterBunnyLayCooldownSeconds(int min, int max) {
+        easterBunnyMinLayCooldownSeconds = Math.max(1, min);
+        easterBunnyMaxLayCooldownSeconds = Math.max(easterBunnyMinLayCooldownSeconds, max);
     }
 
     public static void setRainbowAntsLeadToInfinityDimensions(boolean value) {
@@ -2828,6 +2869,54 @@ public final class AntarchySettings {
     public static double bedBugArmor() { return bedBugArmor; }
     public static void setBedBugArmor(double value) { bedBugArmor = value; }
 
+    public static boolean mobGearScalingEnabled() { return mobGearScalingEnabled; }
+    public static void setMobGearScalingEnabled(boolean value) { mobGearScalingEnabled = value; }
+
+    public static double mobGearSlotChance() { return mobGearSlotChance; }
+    public static void setMobGearSlotChance(double value) { mobGearSlotChance = value; }
+
+    public static double mobGearHelmetChance() { return mobGearHelmetChance; }
+    public static void setMobGearHelmetChance(double value) { mobGearHelmetChance = value; }
+
+    public static double mobGearLowerTierChance() { return mobGearLowerTierChance; }
+    public static void setMobGearLowerTierChance(double value) { mobGearLowerTierChance = value; }
+
+    public static double mobGearWeaponChance() { return mobGearWeaponChance; }
+    public static void setMobGearWeaponChance(double value) { mobGearWeaponChance = value; }
+
+    public static boolean mobGearUltimateEnchanted() { return mobGearUltimateEnchanted; }
+    public static void setMobGearUltimateEnchanted(boolean value) { mobGearUltimateEnchanted = value; }
+
+    public static double mobGearEasyChanceMultiplier() { return mobGearEasyChanceMultiplier; }
+    public static void setMobGearEasyChanceMultiplier(double value) { mobGearEasyChanceMultiplier = value; }
+
+    public static double mobGearHardChanceMultiplier() { return mobGearHardChanceMultiplier; }
+    public static void setMobGearHardChanceMultiplier(double value) { mobGearHardChanceMultiplier = value; }
+
+    public static double mobGearExtremeChanceMultiplier() { return mobGearExtremeChanceMultiplier; }
+    public static void setMobGearExtremeChanceMultiplier(double value) { mobGearExtremeChanceMultiplier = value; }
+
+    public static double mobGearHardHigherTierChance() { return mobGearHardHigherTierChance; }
+    public static void setMobGearHardHigherTierChance(double value) { mobGearHardHigherTierChance = value; }
+
+    public static double mobGearExtremeHigherTierChance() { return mobGearExtremeHigherTierChance; }
+    public static void setMobGearExtremeHigherTierChance(double value) { mobGearExtremeHigherTierChance = value; }
+
+    public static double mobGearPlayerRange() { return mobGearPlayerRange; }
+    public static void setMobGearPlayerRange(double value) { mobGearPlayerRange = value; }
+
+    public static double mobGearIronScore() { return mobGearIronScore; }
+    public static void setMobGearIronScore(double value) { mobGearIronScore = value; }
+
+    public static double mobGearDiamondScore() { return mobGearDiamondScore; }
+    public static void setMobGearDiamondScore(double value) { mobGearDiamondScore = value; }
+
+    public static double mobGearNetheriteScore() { return mobGearNetheriteScore; }
+    public static void setMobGearNetheriteScore(double value) { mobGearNetheriteScore = value; }
+
+    public static double mobGearUltimateScore() { return mobGearUltimateScore; }
+    public static void setMobGearUltimateScore(double value) { mobGearUltimateScore = value; }
+
     public static double springbugHealth() { return springbugHealth; }
     public static void setSpringbugHealth(double value) { springbugHealth = value; }
 
@@ -3403,6 +3492,26 @@ public final class AntarchySettings {
     public static void setKingBeamTerrainCap(int v) { kingBeamTerrainCap = v; }
     public static int royalDecreeCooldownTicks() { return royalDecreeCooldownTicks; }
     public static void setRoyalDecreeCooldownTicks(int v) { royalDecreeCooldownTicks = v; }
+    public static int royalDecreeViolationPenaltyTicks() { return royalDecreeViolationPenaltyTicks; }
+    public static void setRoyalDecreeViolationPenaltyTicks(int v) { royalDecreeViolationPenaltyTicks = v; }
+    public static double royalDecreeWarningDamage() { return royalDecreeWarningDamage; }
+    public static void setRoyalDecreeWarningDamage(double v) { royalDecreeWarningDamage = v; }
+    public static int royalFavorTicks() { return royalFavorTicks; }
+    public static void setRoyalFavorTicks(int v) { royalFavorTicks = v; }
+    public static double royalFavorDamageMultiplier() { return royalFavorDamageMultiplier; }
+    public static void setRoyalFavorDamageMultiplier(double v) { royalFavorDamageMultiplier = v; }
+    public static int kingStompWindupTicks() { return kingStompWindupTicks; }
+    public static void setKingStompWindupTicks(int v) { kingStompWindupTicks = v; }
+    public static double kingStompRadius() { return kingStompRadius; }
+    public static void setKingStompRadius(double v) { kingStompRadius = v; }
+    public static double royalDecreeDurationMultiplier() { return royalDecreeDurationMultiplier; }
+    public static void setRoyalDecreeDurationMultiplier(double v) { royalDecreeDurationMultiplier = v; }
+    public static double royalCloseQuartersRadius() { return royalCloseQuartersRadius; }
+    public static void setRoyalCloseQuartersRadius(double v) { royalCloseQuartersRadius = v; }
+    public static double royalComeNoCloserRadius() { return royalComeNoCloserRadius; }
+    public static void setRoyalComeNoCloserRadius(double v) { royalComeNoCloserRadius = v; }
+    public static double royalStandYourGroundDrift() { return royalStandYourGroundDrift; }
+    public static void setRoyalStandYourGroundDrift(double v) { royalStandYourGroundDrift = v; }
     public static int kingRoyalMusterCooldownTicks() { return kingRoyalMusterCooldownTicks; }
     public static void setKingRoyalMusterCooldownTicks(int v) { kingRoyalMusterCooldownTicks = v; }
     public static int kingRoyalMusterWindupTicks() { return kingRoyalMusterWindupTicks; }

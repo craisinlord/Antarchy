@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.block.entity;
 
+import net.minecraft.core.BlockPos;
+
 public final class UndertrialSpawnContext implements AutoCloseable {
     private static final ThreadLocal<Integer> DEPTH = ThreadLocal.withInitial(() -> 0);
 
@@ -15,6 +17,10 @@ public final class UndertrialSpawnContext implements AutoCloseable {
 
     public static boolean isActive() {
         return DEPTH.get() > 0;
+    }
+
+    public static double ceilingFeetY(BlockPos pos, double y, double height) {
+        return pos.getY() + 1.0D - 1.0E-3D - height - Math.max(0.0D, y - pos.getY());
     }
 
     @Override

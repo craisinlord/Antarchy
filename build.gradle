@@ -91,6 +91,9 @@ def forge1201Wrapper = providers.systemProperty('os.name').get().toLowerCase().c
         group = 'forge-1.20.1'
         description = "Runs ':${name}' inside the forge-1.20.1 build"
         workingDir = forge1201Dir
+        // The nested wrapper needs its own Java; hand it a provisioned JDK 17 so no system JAVA_HOME is required.
+        def forgeJdk = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
+        doFirst { environment 'JAVA_HOME', forgeJdk.get().metadata.installationPath.asFile.absolutePath }
         commandLine forge1201Wrapper.absolutePath, name
     }
 }

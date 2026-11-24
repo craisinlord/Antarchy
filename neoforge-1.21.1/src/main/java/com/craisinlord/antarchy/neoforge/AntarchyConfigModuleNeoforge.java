@@ -80,6 +80,7 @@ public final class AntarchyConfigModuleNeoforge {
 
         AntarchySettings.setEasterBunnyEnabled(AntarchyMobsConfig.easterBunnyEnabled());
         AntarchySettings.setEasterBunnyNaturalSpawnChancePercent(AntarchyMobsConfig.easterBunnyNaturalSpawnChancePercent());
+        AntarchySettings.setEasterBunnyLayCooldownSeconds(AntarchyMobsConfig.easterBunnyMinLayCooldownSeconds(), AntarchyMobsConfig.easterBunnyMaxLayCooldownSeconds());
 
         AntarchySettings.setWaspHealth(AntarchyMobsConfig.waspHealth());
         AntarchySettings.setWaspAttackDamage(AntarchyMobsConfig.waspAttackDamage());
@@ -89,6 +90,23 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setBomberAttackDamage(AntarchyMobsConfig.bomberAttackDamage());
         AntarchySettings.setBomberExplosionDamage(AntarchyMobsConfig.bomberExplosionDamage());
         AntarchySettings.setBomberExplosionRadius(AntarchyMobsConfig.bomberExplosionRadius());
+
+        AntarchySettings.setMobGearScalingEnabled(AntarchyMobsConfig.mobGearScalingEnabled());
+        AntarchySettings.setMobGearSlotChance(AntarchyMobsConfig.mobGearSlotChance());
+        AntarchySettings.setMobGearHelmetChance(AntarchyMobsConfig.mobGearHelmetChance());
+        AntarchySettings.setMobGearLowerTierChance(AntarchyMobsConfig.mobGearLowerTierChance());
+        AntarchySettings.setMobGearWeaponChance(AntarchyMobsConfig.mobGearWeaponChance());
+        AntarchySettings.setMobGearUltimateEnchanted(AntarchyMobsConfig.mobGearUltimateEnchanted());
+        AntarchySettings.setMobGearEasyChanceMultiplier(AntarchyMobsConfig.mobGearEasyChanceMultiplier());
+        AntarchySettings.setMobGearHardChanceMultiplier(AntarchyMobsConfig.mobGearHardChanceMultiplier());
+        AntarchySettings.setMobGearExtremeChanceMultiplier(AntarchyMobsConfig.mobGearExtremeChanceMultiplier());
+        AntarchySettings.setMobGearHardHigherTierChance(AntarchyMobsConfig.mobGearHardHigherTierChance());
+        AntarchySettings.setMobGearExtremeHigherTierChance(AntarchyMobsConfig.mobGearExtremeHigherTierChance());
+        AntarchySettings.setMobGearPlayerRange(AntarchyMobsConfig.mobGearPlayerRange());
+        AntarchySettings.setMobGearIronScore(AntarchyMobsConfig.mobGearIronScore());
+        AntarchySettings.setMobGearDiamondScore(AntarchyMobsConfig.mobGearDiamondScore());
+        AntarchySettings.setMobGearNetheriteScore(AntarchyMobsConfig.mobGearNetheriteScore());
+        AntarchySettings.setMobGearUltimateScore(AntarchyMobsConfig.mobGearUltimateScore());
 
         AntarchySettings.setSpringbugHealth(AntarchyMobsConfig.springbugHealth());
         AntarchySettings.setSpringbugPounceDamage(AntarchyMobsConfig.springbugPounceDamage());
@@ -187,6 +205,16 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKingBeamTerrainRadius(AntarchyMobsConfig.kingBeamTerrainRadius());
         AntarchySettings.setKingBeamTerrainCap(AntarchyMobsConfig.kingBeamTerrainCap());
         AntarchySettings.setRoyalDecreeCooldownTicks(AntarchyMobsConfig.royalDecreeCooldownTicks());
+        AntarchySettings.setRoyalDecreeViolationPenaltyTicks(AntarchyMobsConfig.royalDecreeViolationPenaltyTicks());
+        AntarchySettings.setRoyalDecreeWarningDamage(AntarchyMobsConfig.royalDecreeWarningDamage());
+        AntarchySettings.setRoyalFavorTicks(AntarchyMobsConfig.royalFavorTicks());
+        AntarchySettings.setRoyalFavorDamageMultiplier(AntarchyMobsConfig.royalFavorDamageMultiplier());
+        AntarchySettings.setKingStompWindupTicks(AntarchyMobsConfig.kingStompWindupTicks());
+        AntarchySettings.setKingStompRadius(AntarchyMobsConfig.kingStompRadius());
+        AntarchySettings.setRoyalDecreeDurationMultiplier(AntarchyMobsConfig.royalDecreeDurationMultiplier());
+        AntarchySettings.setRoyalCloseQuartersRadius(AntarchyMobsConfig.royalCloseQuartersRadius());
+        AntarchySettings.setRoyalComeNoCloserRadius(AntarchyMobsConfig.royalComeNoCloserRadius());
+        AntarchySettings.setRoyalStandYourGroundDrift(AntarchyMobsConfig.royalStandYourGroundDrift());
         AntarchySettings.setKingRoyalMusterCooldownTicks(AntarchyMobsConfig.kingRoyalMusterCooldownTicks());
         AntarchySettings.setKingRoyalMusterWindupTicks(AntarchyMobsConfig.kingRoyalMusterWindupTicks());
         AntarchySettings.setKingRoyalMusterDurationTicks(AntarchyMobsConfig.kingRoyalMusterDurationTicks());

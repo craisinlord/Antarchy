@@ -38,6 +38,8 @@ public final class AntarchyMobsConfig {
 
     private static final ModConfigSpec.BooleanValue EASTER_BUNNY_ENABLED;
     private static final ModConfigSpec.IntValue     EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT;
+    private static final ModConfigSpec.IntValue     EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS;
+    private static final ModConfigSpec.IntValue     EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS;
 
     private static final ModConfigSpec.DoubleValue WASP_HEALTH;
     private static final ModConfigSpec.DoubleValue WASP_ATTACK_DAMAGE;
@@ -48,6 +50,22 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_DAMAGE;
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
+    private static final ModConfigSpec.BooleanValue MOB_GEAR_SCALING_ENABLED;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_SLOT_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_HELMET_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_LOWER_TIER_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_WEAPON_CHANCE;
+    private static final ModConfigSpec.BooleanValue MOB_GEAR_ULTIMATE_ENCHANTED;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_EASY_CHANCE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_HARD_CHANCE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_EXTREME_CHANCE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_HARD_HIGHER_TIER_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_EXTREME_HIGHER_TIER_CHANCE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_PLAYER_RANGE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_IRON_SCORE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_DIAMOND_SCORE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_NETHERITE_SCORE;
+    private static final ModConfigSpec.DoubleValue MOB_GEAR_ULTIMATE_SCORE;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_HEALTH;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_POUNCE_DAMAGE;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_CAMOUFLAGE_ALPHA;
@@ -123,6 +141,16 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_MINIMUM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
     private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_VOLLEY_GAP_TICKS, KING_BEAM_TERRAIN_CAP, QUEEN_BEAM_VOLLEY_GAP_TICKS;
     private static final ModConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
+    private static final ModConfigSpec.IntValue ROYAL_DECREE_VIOLATION_PENALTY_TICKS;
+    private static final ModConfigSpec.DoubleValue ROYAL_DECREE_WARNING_DAMAGE;
+    private static final ModConfigSpec.IntValue ROYAL_FAVOR_TICKS;
+    private static final ModConfigSpec.DoubleValue ROYAL_FAVOR_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.IntValue KING_STOMP_WINDUP_TICKS;
+    private static final ModConfigSpec.DoubleValue KING_STOMP_RADIUS;
+    private static final ModConfigSpec.DoubleValue ROYAL_DECREE_DURATION_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue ROYAL_CLOSE_QUARTERS_RADIUS;
+    private static final ModConfigSpec.DoubleValue ROYAL_COME_NO_CLOSER_RADIUS;
+    private static final ModConfigSpec.DoubleValue ROYAL_STAND_YOUR_GROUND_DRIFT;
     private static final ModConfigSpec.DoubleValue KING_ROYAL_MUSTER_RADIUS;
     private static final ModConfigSpec.IntValue KING_ROYAL_MUSTER_COOLDOWN_TICKS, KING_ROYAL_MUSTER_WINDUP_TICKS,
             KING_ROYAL_MUSTER_DURATION_TICKS, KING_ROYAL_MUSTER_CAP;
@@ -471,9 +499,15 @@ public final class AntarchyMobsConfig {
         EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT = b
                 .comment(
                     "Percent chance a naturally spawned rabbit is replaced by an Easter Bunny.",
-                    "Only applies to natural and chunk-generation spawns, not breeding."
+                    "Only applies to natural and chunk-generation spawns. Easter Bunnies cannot be bred."
                 )
                 .defineInRange("naturalSpawnChancePercent", 1, 0, 100);
+        EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS = b
+                .comment("Minimum seconds between spawn eggs laid by an adult Easter Bunny.")
+                .defineInRange("minLayCooldownSeconds", 180, 1, 86400);
+        EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS = b
+                .comment("Maximum seconds between spawn eggs laid by an adult Easter Bunny. Values below the minimum use the minimum.")
+                .defineInRange("maxLayCooldownSeconds", 360, 1, 86400);
         b.pop();
 
         b.push("wasp");
@@ -536,7 +570,7 @@ public final class AntarchyMobsConfig {
 
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
-        KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     45.0D,  0.0D, 1024.0D);
+        KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     10.0D,  0.0D, 1024.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
@@ -558,8 +592,8 @@ public final class AntarchyMobsConfig {
         b.push("royalBosses");
         KING_HEALTH = b.comment("Base max health for the King.").defineInRange("kingHealth", 3400.0D, 1.0D, 32768.0D);
         QUEEN_HEALTH = b.comment("Base max health for the Queen.").defineInRange("queenHealth", 4300.0D, 1.0D, 32768.0D);
-        KING_ATTACK_DAMAGE = b.comment("Base attack damage for the King.").defineInRange("kingAttackDamage", 50.0D, 0.0D, 1024.0D);
-        QUEEN_ATTACK_DAMAGE = b.comment("Base attack damage for the Queen.").defineInRange("queenAttackDamage", 45.0D, 0.0D, 1024.0D);
+        KING_ATTACK_DAMAGE = b.comment("Base attack damage for the King.").defineInRange("kingAttackDamage", 8.0D, 0.0D, 1024.0D);
+        QUEEN_ATTACK_DAMAGE = b.comment("Base attack damage for the Queen.").defineInRange("queenAttackDamage", 9.0D, 0.0D, 1024.0D);
         ROYAL_BOSS_ARMOR = b.comment("Base armor value shared by King and Queen.").defineInRange("armor", 20.0D, 0.0D, 1024.0D);
         KING_ARMOR = b.defineInRange("kingArmor", 30.0D, 0.0D, 1024.0D);
         ROYAL_BOSS_FOLLOW_RANGE = b.comment("Target acquisition range shared by King and Queen.").defineInRange("followRange", 128.0D, 1.0D, 256.0D);
@@ -574,11 +608,11 @@ public final class AntarchyMobsConfig {
         ROYAL_BOSS_MULTIPLAYER_SCALING_ENABLED = b.define("multiplayerScalingEnabled", true);
         ROYAL_BOSS_SCALING_MAX_PLAYERS = b.defineInRange("scalingMaxPlayers", 4, 1, 32);
         ROYAL_BOSS_HEALTH_PER_ADDITIONAL_PLAYER = b.defineInRange("healthPerAdditionalPlayer", 0.35D, 0.0D, 4.0D);
-        ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER = b.defineInRange("damagePerAdditionalPlayer", 0.10D, 0.0D, 2.0D);
+        ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER = b.defineInRange("damagePerAdditionalPlayer", 0.0D, 0.0D, 2.0D);
         ROYAL_BOUNDARY_RADIUS = b.defineInRange("royalBoundaryRadius", 192.0D, 32.0D, 1024.0D);
         ROYAL_BOUNDARY_WARNING_RADIUS = b.defineInRange("royalBoundaryWarningRadius", 160.0D, 16.0D, 1024.0D);
         ROYAL_BOUNDARY_GRACE_TICKS = b.defineInRange("royalBoundaryGraceTicks", 60, 0, 2400);
-        QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 45.0D, 0.0D, 1024.0D);
+        QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 14.0D, 0.0D, 1024.0D);
         QUEEN_BEAM_RANGE = b.defineInRange("queenBeamRange", 100.0D, 1.0D, 256.0D);
         QUEEN_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the Queen before she may begin or maintain a beam.").defineInRange("queenBeamMinimumRange", 22.0D, 0.0D, 256.0D);
         QUEEN_BEAM_DURATION_TICKS = b.defineInRange("queenBeamDurationTicks", 30, 1, 1200);
@@ -593,7 +627,7 @@ public final class AntarchyMobsConfig {
         QUEEN_BEAM_PHASE_TWO_CAP = b.comment("Maximum simultaneous Queen beams in phase two.").defineInRange("queenBeamPhaseTwoCap", 2, 1, 3);
         QUEEN_BEAM_PHASE_THREE_CAP = b.comment("Maximum simultaneous Queen beams when phase three rolls a full volley.").defineInRange("queenBeamPhaseThreeCap", 3, 1, 3);
         QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE = b.comment("Chance that a new phase-three Queen beam volley may use its full configured cap; otherwise it is limited to two beams.").defineInRange("queenBeamPhaseThreeMaxVolleyChance", 0.2D, 0.0D, 1.0D);
-        KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 50.0D, 0.0D, 1024.0D);
+        KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 10.0D, 0.0D, 1024.0D);
         KING_BEAM_RANGE = b.defineInRange("kingBeamRange", 100.0D, 1.0D, 256.0D);
         KING_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the King before he may begin or maintain a beam.").defineInRange("kingBeamMinimumRange", 32.0D, 0.0D, 256.0D);
         KING_BEAM_DURATION_TICKS = b.defineInRange("kingBeamDurationTicks", 30, 1, 1200);
@@ -605,6 +639,16 @@ public final class AntarchyMobsConfig {
         KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
         ROYAL_DECREE_COOLDOWN_TICKS = b.comment("Cooldown in ticks between the end of one King decree and the next.").defineInRange("royalDecreeCooldownTicks", 700, 1, 72000);
+        ROYAL_DECREE_VIOLATION_PENALTY_TICKS = b.comment("Ticks a second decree breach halves the player's max health.").defineInRange("royalDecreeViolationPenaltyTicks", 300, 20, 72000);
+        ROYAL_DECREE_WARNING_DAMAGE = b.comment("Magic damage dealt by the warning on a first decree breach, before royal damage scaling.").defineInRange("royalDecreeWarningDamage", 4.0D, 0.0D, 100.0D);
+        ROYAL_FAVOR_TICKS = b.comment("Ticks of Royal Favor granted to players who finish a decree without a breach.").defineInRange("royalFavorTicks", 160, 0, 72000);
+        ROYAL_FAVOR_DAMAGE_MULTIPLIER = b.comment("Damage multiplier against the King while a player has Royal Favor.").defineInRange("royalFavorDamageMultiplier", 1.25D, 1.0D, 10.0D);
+        KING_STOMP_WINDUP_TICKS = b.comment("Ticks between the King's stomp telegraph and impact.").defineInRange("kingStompWindupTicks", 22, 1, 100);
+        KING_STOMP_RADIUS = b.comment("Radius in blocks of the King's stomp shockwave. Airborne players are not hit.").defineInRange("kingStompRadius", 18.0D, 4.0D, 64.0D);
+        ROYAL_DECREE_DURATION_MULTIPLIER = b.comment("Multiplier on each King decree's active duration.").defineInRange("royalDecreeDurationMultiplier", 1.0D, 0.25D, 4.0D);
+        ROYAL_CLOSE_QUARTERS_RADIUS = b.comment("Radius in blocks of the circle players must reach during Close Quarters.").defineInRange("royalCloseQuartersRadius", 22.0D, 8.0D, 64.0D);
+        ROYAL_COME_NO_CLOSER_RADIUS = b.comment("Radius in blocks players must stay outside during Come No Closer.").defineInRange("royalComeNoCloserRadius", 16.0D, 4.0D, 64.0D);
+        ROYAL_STAND_YOUR_GROUND_DRIFT = b.comment("Blocks a player may drift from their anchor during Stand Your Ground.").defineInRange("royalStandYourGroundDrift", 10.0D, 2.0D, 64.0D);
         KING_ROYAL_MUSTER_COOLDOWN_TICKS = b.comment("Cooldown in ticks between King's command pulses.").defineInRange("kingRoyalMusterCooldownTicks", 500, 1, 72000);
         KING_ROYAL_MUSTER_WINDUP_TICKS = b.comment("Warning time before the King commands nearby hostile mobs.").defineInRange("kingRoyalMusterWindupTicks", 30, 0, 1200);
         KING_ROYAL_MUSTER_DURATION_TICKS = b.comment("Duration of Commanded applied by the King's muster.").defineInRange("kingRoyalMusterDurationTicks", 600, 1, 72000);
@@ -614,13 +658,13 @@ public final class AntarchyMobsConfig {
         QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.comment("Active duration for Royal Assailant axe black holes. Queen black holes always follow their 20.125-second animation.").defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
         QUEEN_BLACK_HOLE_PULL_STRENGTH = b.defineInRange("queenBlackHolePullStrength", 0.16D, 0.0D, 2.0D);
         QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP = b.comment("Maximum terrain blocks a single Queen black hole may pull into itself.").defineInRange("queenBlackHoleBlockSuctionCap", 160, 0, 4096);
-        KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 48.0D, 0.0D, 1024.0D);
+        KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 10.0D, 0.0D, 1024.0D);
         KING_FIREBALL_RADIUS = b.defineInRange("kingFireballRadius", 4.5D, 0.5D, 32.0D);
         KING_FIREBALL_COOLDOWN_TICKS = b.defineInRange("kingFireballCooldownTicks", 150, 1, 2400);
-        KING_ICEBALL_DAMAGE = b.defineInRange("kingIceballDamage", 18.0D, 0.0D, 1024.0D);
+        KING_ICEBALL_DAMAGE = b.defineInRange("kingIceballDamage", 12.0D, 0.0D, 1024.0D);
         KING_ICEBALL_RADIUS = b.defineInRange("kingIceballRadius", 5.0D, 0.5D, 32.0D);
         KING_ICEBALL_COOLDOWN_TICKS = b.defineInRange("kingIceballCooldownTicks", 190, 1, 2400);
-        KING_ICE_SPIKE_DAMAGE = b.defineInRange("kingIceSpikeDamage", 24.0D, 0.0D, 1024.0D);
+        KING_ICE_SPIKE_DAMAGE = b.defineInRange("kingIceSpikeDamage", 12.0D, 0.0D, 1024.0D);
         KING_ICE_SPIKE_COOLDOWN_TICKS = b.defineInRange("kingIceSpikeCooldownTicks", 240, 1, 2400);
         KING_ELEMENTAL_TERRAIN_CAP = b.defineInRange("kingElementalTerrainCap", 256, 0, 4096);
         ROYAL_BOSS_SOUND_VOLUME = b.comment("Volume multiplier for large King and Queen presence, movement, and attack sounds.").defineInRange("royalBossSoundVolume", 4.5D, 0.5D, 16.0D);
@@ -960,6 +1004,25 @@ public final class AntarchyMobsConfig {
         WATER_BOMB_KNOCKBACK               = b.comment("Knockback strength when a Water Bomb hits an entity.").defineInRange("waterBombKnockback", 1.2D, 0.0D, 10.0D);
         b.pop();
 
+        b.push("mobGear");
+        MOB_GEAR_SCALING_ENABLED = b.comment("If true, zombies and skeletons spawn with iron, diamond, netherite or Ultimate gear to match the armor of nearby players.").define("scalingEnabled", true);
+        MOB_GEAR_SLOT_CHANCE = b.comment("Chance for each of the chestplate, leggings and boots slots to be filled. Rolled per slot.").defineInRange("slotChance", 0.6D, 0.0D, 1.0D);
+        MOB_GEAR_HELMET_CHANCE = b.comment("Chance for the helmet slot to be filled. Kept lower because helmets stop undead burning in daylight.").defineInRange("helmetChance", 0.3D, 0.0D, 1.0D);
+        MOB_GEAR_LOWER_TIER_CHANCE = b.comment("Chance for each piece to be one tier below the players' tier.").defineInRange("lowerTierChance", 0.25D, 0.0D, 1.0D);
+        MOB_GEAR_WEAPON_CHANCE = b.comment("Chance for an unarmed zombie to spawn with a sword of the same tier. Never better than netherite.").defineInRange("weaponChance", 0.25D, 0.0D, 1.0D);
+        MOB_GEAR_ULTIMATE_ENCHANTED = b.comment("If true, Ultimate Armor on mobs has the same innate Protection as the player's. Does nothing if ultimateArmor.comesEnchanted is off.").define("ultimateEnchanted", true);
+        MOB_GEAR_EASY_CHANCE_MULTIPLIER = b.comment("Multiplies every mob gear chance on Easy.").defineInRange("easyChanceMultiplier", 0.5D, 0.0D, 10.0D);
+        MOB_GEAR_HARD_CHANCE_MULTIPLIER = b.comment("Multiplies every mob gear chance on Hard.").defineInRange("hardChanceMultiplier", 1.25D, 0.0D, 10.0D);
+        MOB_GEAR_EXTREME_CHANCE_MULTIPLIER = b.comment("Multiplies every mob gear chance when an addon sets a difficulty above Hard.").defineInRange("extremeChanceMultiplier", 1.5D, 0.0D, 10.0D);
+        MOB_GEAR_HARD_HIGHER_TIER_CHANCE = b.comment("Chance on Hard for each piece to be one tier above the players' tier.").defineInRange("hardHigherTierChance", 0.1D, 0.0D, 1.0D);
+        MOB_GEAR_EXTREME_HIGHER_TIER_CHANCE = b.comment("Chance for each piece to be one tier above the players' tier when an addon sets a difficulty above Hard.").defineInRange("extremeHigherTierChance", 0.25D, 0.0D, 1.0D);
+        MOB_GEAR_PLAYER_RANGE = b.comment("Players within this many blocks count. The least armored one sets the tier.").defineInRange("playerRange", 64.0D, 1.0D, 256.0D);
+        MOB_GEAR_IRON_SCORE = b.comment("Player armor plus armor toughness needed for iron gear. A full iron set is 15.").defineInRange("ironScore", 10.0D, 0.0D, 4096.0D);
+        MOB_GEAR_DIAMOND_SCORE = b.comment("Player armor plus armor toughness needed for diamond gear. A full diamond set is 28.").defineInRange("diamondScore", 22.0D, 0.0D, 4096.0D);
+        MOB_GEAR_NETHERITE_SCORE = b.comment("Player armor plus armor toughness needed for netherite gear. A full netherite set is 32.").defineInRange("netheriteScore", 30.0D, 0.0D, 4096.0D);
+        MOB_GEAR_ULTIMATE_SCORE = b.comment("Player armor plus armor toughness needed for Ultimate gear. A full Ultimate set is 36.").defineInRange("ultimateScore", 35.0D, 0.0D, 4096.0D);
+        b.pop();
+
         SPEC = b.build();
     }
 
@@ -1106,6 +1169,8 @@ public final class AntarchyMobsConfig {
 
     static boolean easterBunnyEnabled()                     { return EASTER_BUNNY_ENABLED.get(); }
     static int     easterBunnyNaturalSpawnChancePercent()   { return EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT.get(); }
+    static int     easterBunnyMinLayCooldownSeconds()       { return EASTER_BUNNY_MIN_LAY_COOLDOWN_SECONDS.get(); }
+    static int     easterBunnyMaxLayCooldownSeconds()       { return EASTER_BUNNY_MAX_LAY_COOLDOWN_SECONDS.get(); }
 
     static double  waspHealth()                             { return WASP_HEALTH.get(); }
     static double  waspAttackDamage()                       { return WASP_ATTACK_DAMAGE.get(); }
@@ -1116,6 +1181,22 @@ public final class AntarchyMobsConfig {
     static double  bomberExplosionDamage()                  { return BOMBER_EXPLOSION_DAMAGE.get(); }
     static double  bomberExplosionRadius()                  { return BOMBER_EXPLOSION_RADIUS.get(); }
 
+    static boolean mobGearScalingEnabled() { return MOB_GEAR_SCALING_ENABLED.get(); }
+    static double mobGearSlotChance() { return MOB_GEAR_SLOT_CHANCE.get(); }
+    static double mobGearHelmetChance() { return MOB_GEAR_HELMET_CHANCE.get(); }
+    static double mobGearLowerTierChance() { return MOB_GEAR_LOWER_TIER_CHANCE.get(); }
+    static double mobGearWeaponChance() { return MOB_GEAR_WEAPON_CHANCE.get(); }
+    static boolean mobGearUltimateEnchanted() { return MOB_GEAR_ULTIMATE_ENCHANTED.get(); }
+    static double mobGearEasyChanceMultiplier() { return MOB_GEAR_EASY_CHANCE_MULTIPLIER.get(); }
+    static double mobGearHardChanceMultiplier() { return MOB_GEAR_HARD_CHANCE_MULTIPLIER.get(); }
+    static double mobGearExtremeChanceMultiplier() { return MOB_GEAR_EXTREME_CHANCE_MULTIPLIER.get(); }
+    static double mobGearHardHigherTierChance() { return MOB_GEAR_HARD_HIGHER_TIER_CHANCE.get(); }
+    static double mobGearExtremeHigherTierChance() { return MOB_GEAR_EXTREME_HIGHER_TIER_CHANCE.get(); }
+    static double mobGearPlayerRange() { return MOB_GEAR_PLAYER_RANGE.get(); }
+    static double mobGearIronScore() { return MOB_GEAR_IRON_SCORE.get(); }
+    static double mobGearDiamondScore() { return MOB_GEAR_DIAMOND_SCORE.get(); }
+    static double mobGearNetheriteScore() { return MOB_GEAR_NETHERITE_SCORE.get(); }
+    static double mobGearUltimateScore() { return MOB_GEAR_ULTIMATE_SCORE.get(); }
     static double  springbugHealth()                         { return SPRINGBUG_HEALTH.get(); }
     static double  springbugPounceDamage()                   { return SPRINGBUG_POUNCE_DAMAGE.get(); }
     static double  springbugCamouflageAlpha()                { return SPRINGBUG_CAMOUFLAGE_ALPHA.get(); }
@@ -1213,6 +1294,16 @@ public final class AntarchyMobsConfig {
     static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
     static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
     static int     royalDecreeCooldownTicks()                { return ROYAL_DECREE_COOLDOWN_TICKS.get(); }
+    static int     royalDecreeViolationPenaltyTicks()        { return ROYAL_DECREE_VIOLATION_PENALTY_TICKS.get(); }
+    static double  royalDecreeWarningDamage()                { return ROYAL_DECREE_WARNING_DAMAGE.get(); }
+    static int     royalFavorTicks()                         { return ROYAL_FAVOR_TICKS.get(); }
+    static double  royalFavorDamageMultiplier()              { return ROYAL_FAVOR_DAMAGE_MULTIPLIER.get(); }
+    static int     kingStompWindupTicks()                   { return KING_STOMP_WINDUP_TICKS.get(); }
+    static double  kingStompRadius()                        { return KING_STOMP_RADIUS.get(); }
+    static double  royalDecreeDurationMultiplier()          { return ROYAL_DECREE_DURATION_MULTIPLIER.get(); }
+    static double  royalCloseQuartersRadius()               { return ROYAL_CLOSE_QUARTERS_RADIUS.get(); }
+    static double  royalComeNoCloserRadius()                { return ROYAL_COME_NO_CLOSER_RADIUS.get(); }
+    static double  royalStandYourGroundDrift()              { return ROYAL_STAND_YOUR_GROUND_DRIFT.get(); }
     static int     kingRoyalMusterCooldownTicks()             { return KING_ROYAL_MUSTER_COOLDOWN_TICKS.get(); }
     static int     kingRoyalMusterWindupTicks()                { return KING_ROYAL_MUSTER_WINDUP_TICKS.get(); }
     static int     kingRoyalMusterDurationTicks()              { return KING_ROYAL_MUSTER_DURATION_TICKS.get(); }

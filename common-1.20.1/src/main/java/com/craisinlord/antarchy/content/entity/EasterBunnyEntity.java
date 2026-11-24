@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,8 +33,6 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class EasterBunnyEntity extends Rabbit implements GeoEntity {
-    private static final int MIN_LAY_COOLDOWN = 20 * 45;
-    private static final int MAX_LAY_COOLDOWN = 20 * 120;
     private static final int LAY_ANIMATION_TICKS = 40;
     private static final String MAIN_CONTROLLER = "main_controller";
     private static final String LAY_CONTROLLER = "lay_controller";
@@ -93,8 +91,18 @@ public class EasterBunnyEntity extends Rabbit implements GeoEntity {
     }
 
     @Override
+    public boolean canFallInLove() {
+        return false;
+    }
+
+    @Override
+    public boolean canMate(Animal otherAnimal) {
+        return false;
+    }
+
+    @Override
     public Rabbit getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return AntarchyObjects.EASTER_BUNNY.get().create(level);
+        return null;
     }
 
     @Override
@@ -175,6 +183,8 @@ public class EasterBunnyEntity extends Rabbit implements GeoEntity {
     }
 
     private int createLayCooldown() {
-        return MIN_LAY_COOLDOWN + this.random.nextInt(MAX_LAY_COOLDOWN - MIN_LAY_COOLDOWN + 1);
+        int min = AntarchySettings.easterBunnyMinLayCooldownSeconds() * 20;
+        int max = AntarchySettings.easterBunnyMaxLayCooldownSeconds() * 20;
+        return min + this.random.nextInt(max - min + 1);
     }
 }

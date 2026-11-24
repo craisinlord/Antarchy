@@ -86,10 +86,6 @@ public class CornCropBlock extends CropBlock {
         return state.is(Blocks.FARMLAND);
     }
 
-    protected boolean hasValidSoil(BlockState state, LevelReader level, BlockPos pos) {
-        return super.canSurvive(state, level, pos);
-    }
-
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         DoubleBlockHalf half = state.getValue(HALF);
@@ -99,7 +95,7 @@ public class CornCropBlock extends CropBlock {
             return below.is(this) && below.getValue(HALF) == DoubleBlockHalf.LOWER && below.getValue(AGE) >= TALL_AGE;
         }
 
-        if (!this.hasValidSoil(state, level, pos)) {
+        if (!super.canSurvive(state, level, pos)) {
             return false;
         }
 
@@ -130,7 +126,7 @@ public class CornCropBlock extends CropBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (level.getRawBrightness(pos, 0) < 9 || random.nextInt(5) != 0) {
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER || level.getRawBrightness(pos, 0) < 9 || random.nextInt(5) != 0) {
             return;
         }
 
@@ -165,7 +161,7 @@ public class CornCropBlock extends CropBlock {
 
     private void grow(ServerLevel level, BlockPos lowerPos, BlockState lowerState) {
         int age = lowerState.getValue(AGE);
-        if (age >= MAX_AGE) {
+        if (lowerState.getValue(HALF) == DoubleBlockHalf.UPPER || age >= MAX_AGE) {
             return;
         }
 
