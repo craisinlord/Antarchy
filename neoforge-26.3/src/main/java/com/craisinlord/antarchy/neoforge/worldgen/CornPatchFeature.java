@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.neoforge.worldgen;
 
-import com.craisinlord.antarchy.content.block.CornCropBlock;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -8,8 +7,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -44,15 +42,7 @@ public record CornPatchFeature() implements Feature {
                 continue;
             }
 
-            BlockState lowerState = wildCorn.defaultBlockState()
-                    .setValue(CornCropBlock.AGE, 3)
-                    .setValue(CornCropBlock.HALF, DoubleBlockHalf.LOWER);
-            BlockState upperState = wildCorn.defaultBlockState()
-                    .setValue(CornCropBlock.AGE, 3)
-                    .setValue(CornCropBlock.HALF, DoubleBlockHalf.UPPER);
-
-            level.setBlock(lowerPos, lowerState, 2);
-            level.setBlock(upperPos, upperState, 2);
+            DoublePlantBlock.placeAt(level, wildCorn.defaultBlockState(), lowerPos, 2);
             placed++;
         }
 

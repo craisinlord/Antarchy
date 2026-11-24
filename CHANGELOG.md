@@ -31,5 +31,8 @@ Elythia generates new terrain. Already-explored areas keep their old terrain, an
 ### Fixes
 
 - Fixed Undertrial Spawners never spawning Nightmares and often getting stuck on Manticores.
+- Fixed Emperor Scorpions and Manticores almost never spawning in Thoraxis. Emperor Scorpions keep at least 128 blocks apart and can now spawn in Dream Peaks.
+- Fixed wild corn giving infinite corn with Quark's right-click harvesting.
+- Fixed Mystical Agriculture watering cans breaking corn and leaving floating tops.
 - Fixed a memory leak that could fill a server's RAM within minutes while generating Elythia with C2ME installed.
 - The Squidzooka and RPO Launcher can be enchanted at the enchanting table. They take Unbreaking, Mending and Multishot, plus any other mod's enchantments meant for items with durability.

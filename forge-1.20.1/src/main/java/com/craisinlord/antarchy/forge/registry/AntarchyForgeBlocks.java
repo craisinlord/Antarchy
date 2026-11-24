@@ -29,7 +29,7 @@ import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeGrowers;
 import com.craisinlord.antarchy.forge.AntarchyWoodTypes;
-import com.craisinlord.antarchy.forge.content.block.WildCornBlock;
+import com.craisinlord.antarchy.content.block.WildCornBlock;
 import java.util.List;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;

@@ -36,12 +36,8 @@
       "charge": 0.7
     },
     "antarchy:manticore": {
-      "energy_budget": 0.12,
+      "energy_budget": 0.214,
       "charge": 1.0
-    },
-    "antarchy:emperor_scorpion": {
-      "energy_budget": 0.12,
-      "charge": 2.0
     }
   },
   "carvers": {
