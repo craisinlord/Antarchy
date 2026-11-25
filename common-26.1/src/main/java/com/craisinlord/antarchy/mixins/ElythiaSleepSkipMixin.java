@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ServerLevel.class)
 public abstract class ElythiaSleepSkipMixin {
     @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;areEnoughSleeping(I)Z"))
-    private boolean antarchy$noSleepSkip(SleepStatus status, int percentage, Operation<Boolean> original) {
+    private boolean antarchy$noDaytimeSkip(SleepStatus status, int percentage, Operation<Boolean> original) {
         ServerLevel level = (ServerLevel) (Object) this;
-        if (AntarchySettings.elythiaAlreadyDreaming() && level.dimension().equals(ThrowbackZones.ELYTHIA)) {
+        if (AntarchySettings.elythiaAlreadyDreaming() && level.dimension().equals(ThrowbackZones.ELYTHIA) && !level.isDarkOutside()) {
             return false;
         }
         return original.call(status, percentage);

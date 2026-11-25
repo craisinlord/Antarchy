@@ -26,13 +26,18 @@ Elythia generates new terrain. Already-explored areas keep their old terrain, an
 
 - New Elythia structure: a pink-windowed house with a collapsing roof, guarded by Trial Spawners. It also generates in Peach Forests.
 - Hoverboards no longer burn in fire or lava when dropped, like Netherite gear.
+- The End poem is now a conversation between two ants. Set `antEndPoem` to false to turn it off.
+- Alex's Caves support, with Alex's Caves as an optional mod. Toxic Caves and Forlorn Hollows generate in Cavaryn and Magnetic Caves in Thoraxis. Elythia gets Primordial Caves and Candy Cavity underground, plus a surface biome for each. The caves still generate in the Overworld. Set `alexsCavesBiomes` to false to turn it off.
 - Zombies and skeletons can spawn in iron, diamond, netherite or Ultimate armor to match nearby players, including from Trial and Undertrial Spawners. Harder difficulties make it more likely. Their gear never drops. Operators can check it with `/mobgear` and `/mobgear spawn`. Configurable in the `mobGear` section.
 
 ### Fixes
 
 - Fixed Undertrial Spawners never spawning Nightmares and often getting stuck on Manticores.
 - Fixed Emperor Scorpions and Manticores almost never spawning in Thoraxis. Emperor Scorpions keep at least 128 blocks apart and can now spawn in Dream Peaks.
+- Fixed sleeping in Elythia never passing the night. Morning comes in Elythia and the Overworld together.
 - Fixed wild corn giving infinite corn with Quark's right-click harvesting.
+- Fixed the game freezing in Cavaryn with the Alex's Caves Unofficial Port installed.
 - Fixed Mystical Agriculture watering cans breaking corn and leaving floating tops.
 - Fixed a memory leak that could fill a server's RAM within minutes while generating Elythia with C2ME installed.
 - The Squidzooka and RPO Launcher can be enchanted at the enchanting table. They take Unbreaking, Mending and Multishot, plus any other mod's enchantments meant for items with durability.
+- Fixed a Minecraft 26.3 crash when placing a Critter Cage with a captured mob inside. Worlds and servers that crashed on join because of a placed cage load again.

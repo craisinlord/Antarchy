@@ -149,6 +149,7 @@
     "client.LivingEntityRenderStateMixin",
     "client.LivingEntityRenderStateExtractMixin",
     "client.SplashManagerMixin",
+    "client.WinScreenMixin",
     "client.ThoraxisFogMixin",
     "client.ThoraxisBlindSkyLightMixin",
     "client.TigerEyeArmorHideMixin",

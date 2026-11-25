@@ -62,7 +62,7 @@ public final class CavarynCavityFunction implements DensityFunction, CavarynColu
 
     @Override
     public double compute(FunctionContext context) {
-        if (this.grid == null) {
+        if (this.grid == null || !this.kind.enabled()) {
             return 1.0D;
         }
         return CavarynColumn.density(this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), CavarynColumn.FLOOR));
@@ -75,7 +75,10 @@ public final class CavarynCavityFunction implements DensityFunction, CavarynColu
 
     @Override
     public CavarynColumn newColumn() {
-        return this.grid == null ? null : this.grid.newColumn();
+        if (this.grid == null) {
+            return null;
+        }
+        return this.kind.enabled() ? this.grid.newColumn() : CavarynColumn.EMPTY;
     }
 
     @Override

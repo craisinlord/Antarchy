@@ -6,6 +6,31 @@ import org.jetbrains.annotations.Nullable;
 interface CavarynColumn {
     double SCALE = 0.35D;
     double FLOOR = -1.0D / SCALE - 1.0E-9D;
+    CavarynColumn EMPTY = new CavarynColumn() {
+        @Override
+        public void load(int qx, int qz) {
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @Override
+        public double minY() {
+            return Double.MAX_VALUE;
+        }
+
+        @Override
+        public double maxY() {
+            return -Double.MAX_VALUE;
+        }
+
+        @Override
+        public double signedDistance(int x, int y, int z, double floor) {
+            return Double.MAX_VALUE;
+        }
+    };
 
     void load(int qx, int qz);
 

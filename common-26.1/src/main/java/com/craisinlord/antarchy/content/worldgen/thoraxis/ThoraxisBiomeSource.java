@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
@@ -64,7 +66,8 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             Codec.INT.optionalFieldOf("umbral_hills_max_y", 160).forGetter(ThoraxisBiomeSource::umbralHillsMaxY),
             Codec.INT.optionalFieldOf("lucid_pools_min_y", 116).forGetter(ThoraxisBiomeSource::lucidPoolsMinY),
             Codec.INT.optionalFieldOf("nadir_forest_min_y", 128).forGetter(ThoraxisBiomeSource::nadirForestMinY),
-            RegionalBiomeOverlay.CODEC.listOf().optionalFieldOf("regional_overlays", List.of()).forGetter(ThoraxisBiomeSource::regionalOverlays)
+            RegionalBiomeOverlay.CODEC.listOf().optionalFieldOf("regional_overlays", List.of()).forGetter(ThoraxisBiomeSource::regionalOverlays),
+            RegistryOps.<Biome, ThoraxisBiomeSource>retrieveGetter(Registries.BIOME)
     ).apply(instance, ThoraxisBiomeSource::new));
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
@@ -86,9 +89,9 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private Holder<Biome> umbralHillsBiome;
     private Holder<Biome> lucidPoolsBiome;
     private Holder<Biome> nadirForestBiome;
-    private List<ResolvedRegionalBiomeOverlay> resolvedRegionalOverlays = List.of();
+    private final List<ResolvedRegionalBiomeOverlay> resolvedRegionalOverlays;
 
-    public ThoraxisBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int dreamDunesMaxY, int umbralHillsMaxY, int lucidPoolsMinY, int nadirForestMinY, List<RegionalBiomeOverlay> regionalOverlays) {
+    public ThoraxisBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int dreamDunesMaxY, int umbralHillsMaxY, int lucidPoolsMinY, int nadirForestMinY, List<RegionalBiomeOverlay> regionalOverlays, HolderGetter<Biome> biomes) {
         this.parameters = parameters;
         this.delegate = MultiNoiseBiomeSource.createFromList(parameters);
         this.dreamDunesMaxY = dreamDunesMaxY;
@@ -96,6 +99,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
         this.lucidPoolsMinY = lucidPoolsMinY;
         this.nadirForestMinY = nadirForestMinY;
         this.regionalOverlays = regionalOverlays;
+        this.resolvedRegionalOverlays = resolveRegionalOverlays(regionalOverlays, biomes);
         this.dreamDunesMaxQuartY = QuartPos.fromBlock(dreamDunesMaxY);
         this.umbralHillsMaxQuartY = QuartPos.fromBlock(umbralHillsMaxY);
         this.lucidPoolsMinQuartY = QuartPos.fromBlock(lucidPoolsMinY);
@@ -117,7 +121,6 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             this.umbralHillsBiome = this.findBiome(UMBRAL_HILLS);
             this.lucidPoolsBiome = this.findBiome(LUCID_POOLS);
             this.nadirForestBiome = this.findBiome(NADIR_FOREST);
-            this.resolvedRegionalOverlays = this.resolveRegionalOverlays();
             this.biomesResolved = true;
         }
     }
@@ -153,7 +156,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
 
     @Override
     protected Stream<Holder<Biome>> collectPossibleBiomes() {
-        return this.delegate.possibleBiomes().stream();
+        return Stream.concat(
+                this.delegate.possibleBiomes().stream(),
+                this.resolvedRegionalOverlays.stream().map(ResolvedRegionalBiomeOverlay::biome)
+        ).distinct();
     }
 
     @Override
@@ -222,19 +228,9 @@ public final class ThoraxisBiomeSource extends BiomeSource {
                 .orElse(null);
     }
 
-    private Holder<Biome> findBiome(Identifier location) {
-        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, location);
-        return this.findBiome(key);
-    }
-
-    private List<ResolvedRegionalBiomeOverlay> resolveRegionalOverlays() {
-        return this.regionalOverlays.stream().map(overlay -> {
-            Holder<Biome> biome = this.findBiome(overlay.biome());
-            if (biome == null) {
-                throw new IllegalStateException("Thoraxis regional overlay biome " + overlay.biome() + " must be listed in the biome source parameters");
-            }
-            return new ResolvedRegionalBiomeOverlay(biome, overlay.minNoise(), overlay.maxNoise());
-        }).toList();
+    private static List<ResolvedRegionalBiomeOverlay> resolveRegionalOverlays(List<RegionalBiomeOverlay> overlays, HolderGetter<Biome> biomes) {
+        return overlays.stream().flatMap(overlay -> biomes.get(ResourceKey.create(Registries.BIOME, overlay.biome()))
+                .map(holder -> new ResolvedRegionalBiomeOverlay(holder, overlay.minNoise(), overlay.maxNoise())).stream()).toList();
     }
 
     public record RegionalBiomeOverlay(Identifier biome, double minNoise, double maxNoise) {

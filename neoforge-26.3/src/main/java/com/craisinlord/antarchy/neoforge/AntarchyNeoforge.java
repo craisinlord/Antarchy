@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
 import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.neoforge.compat.AlexsCavesPack;
 import com.craisinlord.antarchy.neoforge.registry.*;
 import com.craisinlord.anthology.effect.AnthologyEffects;
 import net.minecraft.core.registries.Registries;
@@ -25,6 +26,7 @@ public class AntarchyNeoforge {
     public AntarchyNeoforge(IEventBus modEventBus, ModContainer modContainer) {
         modEventBusTempHolder = modEventBus;
         modEventBus.addListener(AntarchyNeoforge::registerAdvancementTriggers);
+        modEventBus.addListener(AlexsCavesPack::addPack);
         modEventBus.addListener(AntarchyNeoforge::registerGameRules);
         AntarchyConfigModuleNeoforge.init(modContainer);
         AntarchySoundEvents.bind(

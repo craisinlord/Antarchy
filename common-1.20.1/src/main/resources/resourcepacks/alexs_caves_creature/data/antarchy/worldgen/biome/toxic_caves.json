@@ -1,0 +1,193 @@
+{
+  "carvers": {},
+  "downfall": 0.4,
+  "has_precipitation": true,
+  "effects": {
+    "ambient_sound": "alexscaves:toxic_caves_ambience",
+    "additions_sound": {
+      "sound": "alexscaves:toxic_caves_ambience_additions",
+      "tick_chance": 0.0111
+    },
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "alexscaves:toxic_caves_ambience_mood",
+      "tick_delay": 6000
+    },
+    "music": {
+      "max_delay": 24000,
+      "min_delay": 12000,
+      "replace_current_music": false,
+      "sound": "alexscaves:toxic_caves_music"
+    },
+    "particle": {
+      "options": {
+        "type": "alexscaves:fallout"
+      },
+      "probability": 0.001
+    },
+    "fog_color": 8781312,
+    "sky_color": 582913,
+    "water_color": 4944498,
+    "water_fog_color": 4944498
+  },
+  "features": [
+    [],
+    [
+      "alexscaves:acid_lake",
+      "alexscaves:toxic_ruins"
+    ],
+    [
+      "minecraft:amethyst_geode"
+    ],
+    [
+      "antarchy:cavaryn_worm_bore_dressing",
+      "antarchy:cavaryn_brood_nest_dressing",
+      "antarchy:cavaryn_brood_gallery_dressing",
+      "antarchy:cavaryn_glowcap_grotto_dressing",
+      "antarchy:cavaryn_moleworm_warren_dressing",
+      "antarchy:cavaryn_carapace_rift_dressing",
+      "antarchy:cavaryn_biowart_gut_dressing",
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [],
+    [],
+    [
+      "alexscaves:metal_swarf_replace_mud",
+      "alexscaves:unrefined_waste_replace_mud",
+      "alexscaves:radrock_uranium_ore"
+    ],
+    [],
+    [
+      "minecraft:spring_water",
+      "minecraft:spring_lava",
+      "alexscaves:spring_acid",
+      "alexscaves:acid_vent",
+      "antarchy:termite_nest_cavaryn"
+    ],
+    [
+      "alexscaves:underweed",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal"
+    ],
+    [
+      "alexscaves:sulfur_stack",
+      "alexscaves:nuclear_siren"
+    ]
+  ],
+  "spawn_costs": {},
+  "creature_spawn_probability": 0.01,
+  "spawners": {
+    "ambient": [
+      {
+        "type": "alexscaves:gammaroach",
+        "maxCount": 8,
+        "minCount": 8,
+        "weight": 55
+      },
+      {
+        "type": "minecraft:bat",
+        "maxCount": 8,
+        "minCount": 8,
+        "weight": 10
+      }
+    ],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "alexscaves:raycat",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 10
+      }
+    ],
+    "misc": [],
+    "monster": [
+      {
+        "type": "alexscaves:brainiac",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 160
+      },
+      {
+        "type": "alexscaves:nucleeper",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 45
+      },
+      {
+        "type": "minecraft:spider",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "minecraft:zombie",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 95
+      },
+      {
+        "type": "minecraft:zombie_villager",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 5
+      },
+      {
+        "type": "minecraft:skeleton",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "minecraft:creeper",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "minecraft:slime",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "minecraft:enderman",
+        "maxCount": 4,
+        "minCount": 1,
+        "weight": 10
+      },
+      {
+        "type": "minecraft:witch",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 5
+      },
+      {
+        "type": "minecraft:drowned",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 95
+      }
+    ],
+    "underground_water_creature": [
+      {
+        "type": "minecraft:glow_squid",
+        "maxCount": 6,
+        "minCount": 4,
+        "weight": 10
+      }
+    ],
+    "water_ambient": [
+      {
+        "type": "alexscaves:radgill",
+        "maxCount": 3,
+        "minCount": 1,
+        "weight": 10
+      }
+    ],
+    "water_creature": []
+  },
+  "temperature": 0.5
+}

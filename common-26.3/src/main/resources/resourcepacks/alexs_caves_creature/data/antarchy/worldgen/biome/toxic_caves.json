@@ -1,0 +1,205 @@
+{
+  "carvers": [],
+  "downfall": 0.4,
+  "has_precipitation": true,
+  "features": [
+    [],
+    [
+      "alexscaves:acid_lake",
+      "alexscaves:toxic_ruins"
+    ],
+    [
+      "minecraft:amethyst_geode"
+    ],
+    [
+      "antarchy:cavaryn_worm_bore_dressing",
+      "antarchy:cavaryn_brood_nest_dressing",
+      "antarchy:cavaryn_brood_gallery_dressing",
+      "antarchy:cavaryn_glowcap_grotto_dressing",
+      "antarchy:cavaryn_moleworm_warren_dressing",
+      "antarchy:cavaryn_carapace_rift_dressing",
+      "antarchy:cavaryn_biowart_gut_dressing",
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [],
+    [],
+    [
+      "alexscaves:metal_swarf_replace_mud",
+      "alexscaves:unrefined_waste_replace_mud",
+      "alexscaves:radrock_uranium_ore"
+    ],
+    [],
+    [
+      "minecraft:spring_water",
+      "minecraft:spring_lava",
+      "alexscaves:spring_acid",
+      "alexscaves:acid_vent",
+      "antarchy:termite_nest_cavaryn"
+    ],
+    [
+      "alexscaves:underweed",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal"
+    ],
+    [
+      "alexscaves:sulfur_stack",
+      "alexscaves:nuclear_siren"
+    ]
+  ],
+  "temperature": 0.5,
+  "effects": {
+    "water_color": 4944498
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": 8781312,
+    "minecraft:visual/sky_color": 582913,
+    "minecraft:visual/water_fog_color": 4944498,
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "replace_current_music": false,
+        "sound": "alexscaves:toxic_caves_music"
+      }
+    },
+    "minecraft:audio/ambient_sounds": {
+      "loop": "alexscaves:toxic_caves_ambience",
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "alexscaves:toxic_caves_ambience_mood",
+        "tick_delay": 6000
+      },
+      "additions": [
+        {
+          "sound": "alexscaves:toxic_caves_ambience_additions",
+          "tick_chance": 0.0111
+        }
+      ]
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "alexscaves:fallout"
+        },
+        "probability": 0.001
+      }
+    ],
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "ambient": [
+            {
+              "type": "alexscaves:gammaroach",
+              "weight": 55,
+              "count": 8
+            },
+            {
+              "type": "minecraft:bat",
+              "weight": 10,
+              "count": 8
+            }
+          ],
+          "creature": [
+            {
+              "type": "alexscaves:raycat",
+              "weight": 10,
+              "count": 1
+            }
+          ],
+          "monster": [
+            {
+              "type": "alexscaves:brainiac",
+              "weight": 160,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
+            },
+            {
+              "type": "alexscaves:nucleeper",
+              "weight": 45,
+              "count": 1
+            },
+            {
+              "type": "minecraft:spider",
+              "weight": 100,
+              "count": 4
+            },
+            {
+              "type": "minecraft:zombie",
+              "weight": 95,
+              "count": 4
+            },
+            {
+              "type": "minecraft:zombie_villager",
+              "weight": 5,
+              "count": 1
+            },
+            {
+              "type": "minecraft:skeleton",
+              "weight": 100,
+              "count": 4
+            },
+            {
+              "type": "minecraft:creeper",
+              "weight": 100,
+              "count": 4
+            },
+            {
+              "type": "minecraft:slime",
+              "weight": 100,
+              "count": 4
+            },
+            {
+              "type": "minecraft:enderman",
+              "weight": 10,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              }
+            },
+            {
+              "type": "minecraft:witch",
+              "weight": 5,
+              "count": 1
+            },
+            {
+              "type": "minecraft:drowned",
+              "weight": 95,
+              "count": 4
+            }
+          ],
+          "underground_water_creature": [
+            {
+              "type": "minecraft:glow_squid",
+              "weight": 10,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 4,
+                "max_inclusive": 6
+              }
+            }
+          ],
+          "water_ambient": [
+            {
+              "type": "alexscaves:radgill",
+              "weight": 10,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 3
+              }
+            }
+          ]
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.01
+  }
+}

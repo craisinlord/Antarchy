@@ -1,0 +1,193 @@
+{
+  "carvers": [],
+  "downfall": 0.4,
+  "has_precipitation": true,
+  "features": [
+    [],
+    [],
+    [
+      "minecraft:amethyst_geode"
+    ],
+    [
+      "alexscaves:magnetic_ruins",
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [
+      "alexscaves:floating_galena_orb"
+    ],
+    [
+      "alexscaves:galena_hexagon_floor"
+    ],
+    [
+      "antarchy:alexs_caves/galena_iron_ore",
+      "alexscaves:metal_swarf",
+      "antarchy:thoraxis_ichor_lake"
+    ],
+    [],
+    [
+      "alexscaves:scarlet_magnetic_node",
+      "alexscaves:azure_magnetic_node"
+    ],
+    [
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal",
+      "alexscaves:tesla_bulb"
+    ]
+  ],
+  "spawn_costs": {
+    "alexscaves:magnetron": {
+      "charge": 1.0,
+      "energy_budget": 0.1
+    }
+  },
+  "spawners": {
+    "ambient": [
+      {
+        "type": "alexscaves:notor",
+        "maxCount": 4,
+        "minCount": 1,
+        "weight": 20
+      },
+      {
+        "type": "minecraft:bat",
+        "maxCount": 8,
+        "minCount": 8,
+        "weight": 10
+      }
+    ],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [
+      {
+        "type": "alexscaves:magnetron",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 80
+      },
+      {
+        "type": "alexscaves:teletor",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 225
+      },
+      {
+        "type": "alexscaves:boundroid",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 350
+      },
+      {
+        "type": "alexscaves:ferrouslime",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 200
+      },
+      {
+        "type": "minecraft:spider",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "minecraft:zombie",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 95
+      },
+      {
+        "type": "minecraft:zombie_villager",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 5
+      },
+      {
+        "type": "minecraft:skeleton",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 20
+      },
+      {
+        "type": "minecraft:creeper",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "minecraft:slime",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "minecraft:enderman",
+        "maxCount": 4,
+        "minCount": 1,
+        "weight": 10
+      },
+      {
+        "type": "minecraft:witch",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 5
+      },
+      {
+        "type": "minecraft:drowned",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 95
+      }
+    ],
+    "underground_water_creature": [
+      {
+        "type": "minecraft:glow_squid",
+        "maxCount": 6,
+        "minCount": 4,
+        "weight": 10
+      }
+    ],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.6,
+  "effects": {
+    "water_color": 6320065
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": 1315096,
+    "minecraft:visual/sky_color": 5063513,
+    "minecraft:visual/water_fog_color": 4811680,
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "replace_current_music": false,
+        "sound": "alexscaves:magnetic_caves_music"
+      }
+    },
+    "minecraft:audio/ambient_sounds": {
+      "loop": "alexscaves:magnetic_caves_ambience",
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "alexscaves:magnetic_caves_ambience_mood",
+        "tick_delay": 6000
+      },
+      "additions": [
+        {
+          "sound": "alexscaves:magnetic_caves_ambience_additions",
+          "tick_chance": 0.0111
+        }
+      ]
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "alexscaves:magnetic_caves_ambient"
+        },
+        "probability": 0.0005
+      }
+    ]
+  }
+}

@@ -96,6 +96,13 @@ displayTest="MATCH_VERSION"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="alexscaves"
+    mandatory=false
+    versionRange="[2.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="configured"
     mandatory=false
     versionRange="*"

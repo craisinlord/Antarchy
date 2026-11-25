@@ -1,12 +1,14 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.client.AlexsCavesFog;
 import com.craisinlord.antarchy.content.client.ElythiaFog;
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +35,8 @@ public abstract class ElythiaFogMixin {
             return;
         }
 
-        RenderSystem.setShaderFogStart(ElythiaFog.start(level, renderDistance, partialTick));
-        RenderSystem.setShaderFogEnd(ElythiaFog.end(level, renderDistance, partialTick));
+        float caves = AlexsCavesFog.amount(level, camera);
+        RenderSystem.setShaderFogStart(Mth.lerp(caves, ElythiaFog.start(level, renderDistance, partialTick), RenderSystem.getShaderFogStart()));
+        RenderSystem.setShaderFogEnd(Mth.lerp(caves, ElythiaFog.end(level, renderDistance, partialTick), RenderSystem.getShaderFogEnd()));
     }
 }

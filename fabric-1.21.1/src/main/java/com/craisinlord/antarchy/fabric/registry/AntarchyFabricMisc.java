@@ -27,6 +27,7 @@ import com.craisinlord.antarchy.content.recipe.AmericanizeRecipe;
 import com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe;
 import com.craisinlord.antarchy.content.recipe.FossilCookingRecipes;
 import com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe;
+import com.craisinlord.antarchy.content.worldgen.OptionalBlockRule;
 import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
@@ -804,6 +805,8 @@ public final class AntarchyFabricMisc {
             () -> ElythiaHydrology.CODEC);
     public static final DeferredHolder<MapCodec<? extends SurfaceRules.RuleSource>, MapCodec<ElythiaBiomeDispatchRule.Source>> ELYTHIA_BIOME_DISPATCH = MATERIAL_RULES.register("elythia_biome_dispatch",
             () -> ElythiaBiomeDispatchRule.Source.CODEC);
+    public static final DeferredHolder<MapCodec<? extends SurfaceRules.RuleSource>, MapCodec<OptionalBlockRule.Source>> OPTIONAL_BLOCK = MATERIAL_RULES.register("optional_block",
+            () -> OptionalBlockRule.Source.CODEC);
     public static final DeferredHolder<MapCodec<? extends SurfaceRules.RuleSource>, MapCodec<ElythiaSurfaceBuilder.Root>> ELYTHIA_SURFACE_ROOT = MATERIAL_RULES.register("elythia_surface_root",
             () -> ElythiaSurfaceBuilder.Root.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaShared>> ELYTHIA_SHARED = DENSITY_FUNCTION_TYPES.register("elythia_shared",

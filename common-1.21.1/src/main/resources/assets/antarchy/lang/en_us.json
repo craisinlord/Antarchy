@@ -1954,5 +1954,19 @@
   "options.antarchy.grass_quality.tooltip": "Detail and density of Dynamic Grass at a distance. Lower settings suit weaker graphics cards.",
   "options.antarchy.grass_quality.low": "Low",
   "options.antarchy.grass_quality.medium": "Medium",
-  "options.antarchy.grass_quality.high": "High"
+  "options.antarchy.grass_quality.high": "High",
+  "biome.antarchy.cavaryn": "Cavaryn",
+  "biome.antarchy.brooding_tunnels": "Brooding Tunnels",
+  "biome.antarchy.forlorn_hollows": "Forlorn Hollows",
+  "biome.antarchy.candy_surface": "Candy Surface",
+  "biome.antarchy.magnetic_caves": "Magnetic Caves",
+  "biome.antarchy.primordial_surface": "Primordial Surface",
+  "biome.antarchy.toxic_caves": "Toxic Caves",
+  "biome.antarchy.rolly_caves": "Rolly Caves",
+  "biome.antarchy.nadir_forest": "Nadir Forest",
+  "biome.antarchy.elythia_beach": "Elythian Beach",
+  "biome.antarchy.elythia_river": "Elythian River",
+  "biome.antarchy.elythia_coral_spikes": "Elythian Coral Spikes",
+  "biome.antarchy.elythia_lush_caves": "Elythian Lush Caves",
+  "biome.antarchy.sparse_ouranwood_forest": "Sparse Ouranwood Forest"
 }

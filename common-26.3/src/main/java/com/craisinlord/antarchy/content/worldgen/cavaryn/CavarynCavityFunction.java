@@ -51,7 +51,7 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
                     ? CavarynBiomeTable.isOnly(biome, h, w, d)
                     : CavarynBiomeTable.isAmongBest(biome, h, w, d);
         });
-        return new Sampler(grid);
+        return new Sampler(grid, this.kind.enabled());
     }
 
     @Override
@@ -74,10 +74,10 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
         return CODEC;
     }
 
-    private record Sampler(CavarynCavityGrid grid) implements DensitySampler, CavarynColumn.Source {
+    private record Sampler(CavarynCavityGrid grid, boolean enabled) implements DensitySampler, CavarynColumn.Source {
         @Override
         public CavarynColumn newColumn() {
-            return this.grid.newColumn();
+            return this.enabled ? this.grid.newColumn() : CavarynColumn.EMPTY;
         }
 
         @Override
@@ -87,7 +87,7 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
 
         @Override
         public float sampleValue(SamplerContext context, int blockX, int blockY, int blockZ) {
-            return (float) CavarynColumn.density(this.grid.signedDistance(blockX, blockY, blockZ, CavarynColumn.FLOOR));
+            return !this.enabled ? 1.0F : (float) CavarynColumn.density(this.grid.signedDistance(blockX, blockY, blockZ, CavarynColumn.FLOOR));
         }
     }
 }

@@ -1,0 +1,152 @@
+{
+  "carvers": [],
+  "downfall": 0.2,
+  "has_precipitation": true,
+  "features": [
+    [],
+    [
+      "minecraft:lake_lava_underground",
+      "minecraft:lake_lava_surface"
+    ],
+    [
+      "alexscaves:forlorn_posts"
+    ],
+    [
+      "antarchy:cavaryn_worm_bore_dressing",
+      "antarchy:cavaryn_brood_nest_dressing",
+      "antarchy:cavaryn_brood_gallery_dressing",
+      "antarchy:cavaryn_glowcap_grotto_dressing",
+      "antarchy:cavaryn_moleworm_warren_dressing",
+      "antarchy:cavaryn_carapace_rift_dressing",
+      "antarchy:cavaryn_biowart_gut_dressing",
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [
+      "alexscaves:guano_pile"
+    ],
+    [
+      "alexscaves:thornwood_tree_with_branches"
+    ],
+    [
+      "alexscaves:dirt_replace_packed_mud",
+      "alexscaves:coprolith_coal_ore",
+      "alexscaves:guanostone_redstone_ore",
+      "alexscaves:peering_coprolith"
+    ],
+    [],
+    [
+      "minecraft:spring_water",
+      "minecraft:spring_lava",
+      "antarchy:termite_nest_cavaryn"
+    ],
+    [
+      "alexscaves:underweed",
+      "alexscaves:thornwood_roots",
+      "alexscaves:forlorn_hollows_brown_mushroom",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal"
+    ],
+    [
+      "alexscaves:forlorn_ruins"
+    ]
+  ],
+  "temperature": 0.7,
+  "effects": {
+    "water_color": 6122116
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": 2103829,
+    "minecraft:visual/sky_color": 2629914,
+    "minecraft:visual/water_fog_color": 27552,
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "replace_current_music": false,
+        "sound": "alexscaves:forlorn_hollows_music"
+      }
+    },
+    "minecraft:audio/ambient_sounds": {
+      "loop": "alexscaves:forlorn_hollows_ambience",
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "alexscaves:forlorn_hollows_ambience_mood",
+        "tick_delay": 6000
+      },
+      "additions": [
+        {
+          "sound": "alexscaves:forlorn_hollows_ambience_additions",
+          "tick_chance": 0.0111
+        }
+      ]
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "alexscaves:falling_guano"
+        },
+        "probability": 0.005
+      }
+    ],
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {
+          "alexscaves:underzealot": {
+            "charge": 0.4,
+            "energy_budget": 0.1
+          },
+          "alexscaves:corrodent": {
+            "charge": 0.4,
+            "energy_budget": 0.1
+          },
+          "alexscaves:vesper": {
+            "charge": 0.25,
+            "energy_budget": 0.1
+          }
+        },
+        "spawns_by_category": {
+          "ambient": [
+            {
+              "type": "alexscaves:gloomoth",
+              "weight": 20,
+              "count": 4
+            },
+            {
+              "type": "minecraft:bat",
+              "weight": 10,
+              "count": 8
+            }
+          ],
+          "monster": [
+            {
+              "type": "alexscaves:underzealot",
+              "weight": 100,
+              "count": 1
+            },
+            {
+              "type": "alexscaves:corrodent",
+              "weight": 90,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 3,
+                "max_inclusive": 4
+              }
+            },
+            {
+              "type": "alexscaves:vesper",
+              "weight": 60,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 2,
+                "max_inclusive": 3
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

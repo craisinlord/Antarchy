@@ -5,6 +5,13 @@
     "settings": "antarchy:thoraxis",
     "biome_source": {
       "type": "antarchy:thoraxis_biome_source",
+      "regional_overlays": [
+        {
+          "biome": "antarchy:magnetic_caves",
+          "min_noise": 0.86,
+          "max_noise": 1.0
+        }
+      ],
       "dream_dunes_max_y": 24,
       "umbral_hills_max_y": 100,
       "lucid_pools_min_y": 116,

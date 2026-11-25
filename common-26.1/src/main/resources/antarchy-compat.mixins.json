@@ -4,7 +4,11 @@
   "plugin": "com.craisinlord.antarchy.mixins.AntarchyMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ThoraxisBubbleParticlesMixin"
+    "ThoraxisBubbleParticlesMixin",
+    "compat.alexscaves.AlexsCavesCaveStructureMixin",
+    "compat.alexscaves.AlexsCavesForlornBridgeMixin",
+    "compat.alexscaves.AlexsCavesAcidPitPieceMixin",
+    "compat.alexscaves.AlexsCavesRelicheirusChunkLoadMixin"
   ],
   "client": [
     "client.PrimordialGrassSodiumMeshingMixin",

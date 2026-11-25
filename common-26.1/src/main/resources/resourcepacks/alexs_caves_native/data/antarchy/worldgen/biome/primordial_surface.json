@@ -1,0 +1,169 @@
+{
+  "carvers": [],
+  "downfall": 0.4,
+  "has_precipitation": true,
+  "features": [
+    [],
+    [],
+    [],
+    [
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [
+      "antarchy:alexs_caves/primordial_subterranodon_roost"
+    ],
+    [
+      "antarchy:alexs_caves/primordial_caves_lake",
+      "antarchy:alexs_caves/primordial_caveman_house"
+    ],
+    [
+      "antarchy:elythia_geology",
+      "antarchy:alexs_caves/primordial_ambersol",
+      "antarchy:alexs_caves/primordial_rock",
+      "antarchy:alexs_caves/primordial_volcano_boulder",
+      "antarchy:alexs_caves/primordial_packed_mud_replace_dirt",
+      "antarchy:alexs_caves/primordial_moss_replace_grass",
+      "antarchy:alexs_caves/primordial_cycad",
+      "antarchy:elythia_ore_coal_upper",
+      "antarchy:elythia_ore_coal_lower",
+      "antarchy:elythia_ore_iron_upper",
+      "antarchy:elythia_ore_iron_middle",
+      "antarchy:elythia_ore_iron_small",
+      "antarchy:elythia_ore_gold",
+      "antarchy:elythia_ore_gold_lower",
+      "antarchy:elythia_ore_redstone",
+      "antarchy:elythia_ore_redstone_lower",
+      "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
+      "antarchy:elythia_ore_diamond_large",
+      "antarchy:elythia_ore_diamond_buried",
+      "antarchy:elythia_ore_lapis",
+      "antarchy:elythia_ore_lapis_buried",
+      "minecraft:underwater_magma",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel",
+      "antarchy:elythia_ore_copper",
+      "antarchy:alexs_caves/primordial_caves_grass",
+      "antarchy:alexs_caves/primordial_flytrap"
+    ],
+    [
+      "antarchy:elythia_underground",
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
+    ],
+    [
+      "antarchy:alexs_caves/primordial_amber_monolith"
+    ],
+    [
+      "antarchy:elythia_brown_ant_nests",
+      "antarchy:elythia_rainbow_ant_nests",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal",
+      "antarchy:throwback_nerd_pole",
+      "antarchy:alexs_caves/primordial_pewen_tree",
+      "antarchy:alexs_caves/primordial_ancient_tree",
+      "antarchy:alexs_caves/primordial_giant_ancient_tree",
+      "antarchy:alexs_caves/primordial_archaic_vine"
+    ]
+  ],
+  "spawn_costs": {},
+  "creature_spawn_probability": 0.07,
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:frog",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 7
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "alexscaves:trilocaris",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 15
+      }
+    ],
+    "water_creature": [],
+    "alexscaves:cave_creature": [
+      {
+        "type": "alexscaves:subterranodon",
+        "maxCount": 5,
+        "minCount": 3,
+        "weight": 6
+      },
+      {
+        "type": "alexscaves:vallumraptor",
+        "maxCount": 7,
+        "minCount": 6,
+        "weight": 6
+      },
+      {
+        "type": "alexscaves:grottoceratops",
+        "maxCount": 4,
+        "minCount": 2,
+        "weight": 27
+      },
+      {
+        "type": "alexscaves:tremorsaurus",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 5
+      },
+      {
+        "type": "alexscaves:relicheirus",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 13
+      },
+      {
+        "type": "alexscaves:atlatitan",
+        "maxCount": 3,
+        "minCount": 2,
+        "weight": 10
+      }
+    ]
+  },
+  "temperature": 0.95,
+  "effects": {
+    "water_color": 370073,
+    "grass_color": 11785728,
+    "foliage_color": 10601538
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": 15915104,
+    "minecraft:visual/sky_color": 15845747,
+    "minecraft:visual/water_fog_color": 370073,
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "replace_current_music": false,
+        "sound": "alexscaves:primordial_caves_music"
+      }
+    },
+    "minecraft:audio/ambient_sounds": {
+      "loop": "alexscaves:primordial_caves_ambience",
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "alexscaves:primordial_caves_ambience_mood",
+        "tick_delay": 6000
+      },
+      "additions": [
+        {
+          "sound": "alexscaves:primordial_caves_ambience_additions",
+          "tick_chance": 0.0111
+        }
+      ]
+    }
+  }
+}

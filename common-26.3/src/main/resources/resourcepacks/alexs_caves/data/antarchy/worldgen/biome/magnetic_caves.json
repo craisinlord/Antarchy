@@ -1,0 +1,197 @@
+{
+  "carvers": [],
+  "downfall": 0.4,
+  "has_precipitation": true,
+  "features": [
+    [],
+    [],
+    [
+      "minecraft:amethyst_geode"
+    ],
+    [
+      "alexscaves:magnetic_ruins",
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [
+      "alexscaves:floating_galena_orb"
+    ],
+    [
+      "alexscaves:galena_hexagon_floor"
+    ],
+    [
+      "antarchy:alexs_caves/galena_iron_ore",
+      "alexscaves:metal_swarf",
+      "antarchy:thoraxis_ichor_lake"
+    ],
+    [],
+    [
+      "alexscaves:scarlet_magnetic_node",
+      "alexscaves:azure_magnetic_node"
+    ],
+    [
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal",
+      "alexscaves:tesla_bulb"
+    ]
+  ],
+  "temperature": 0.6,
+  "effects": {
+    "water_color": 6320065
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": 1315096,
+    "minecraft:visual/sky_color": 5063513,
+    "minecraft:visual/water_fog_color": 4811680,
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "replace_current_music": false,
+        "sound": "alexscaves:magnetic_caves_music"
+      }
+    },
+    "minecraft:audio/ambient_sounds": {
+      "loop": "alexscaves:magnetic_caves_ambience",
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "alexscaves:magnetic_caves_ambience_mood",
+        "tick_delay": 6000
+      },
+      "additions": [
+        {
+          "sound": "alexscaves:magnetic_caves_ambience_additions",
+          "tick_chance": 0.0111
+        }
+      ]
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "alexscaves:magnetic_caves_ambient"
+        },
+        "probability": 0.0005
+      }
+    ],
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {
+          "alexscaves:magnetron": {
+            "charge": 1.0,
+            "energy_budget": 0.1
+          }
+        },
+        "spawns_by_category": {
+          "ambient": [
+            {
+              "type": "alexscaves:notor",
+              "weight": 20,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              }
+            },
+            {
+              "type": "minecraft:bat",
+              "weight": 10,
+              "count": 8
+            }
+          ],
+          "monster": [
+            {
+              "type": "alexscaves:magnetron",
+              "weight": 80,
+              "count": 1
+            },
+            {
+              "type": "alexscaves:teletor",
+              "weight": 225,
+              "count": 1
+            },
+            {
+              "type": "alexscaves:boundroid",
+              "weight": 350,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
+            },
+            {
+              "type": "alexscaves:ferrouslime",
+              "weight": 200,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
+            },
+            {
+              "type": "minecraft:spider",
+              "weight": 100,
+              "count": 4
+            },
+            {
+              "type": "minecraft:zombie",
+              "weight": 95,
+              "count": 4
+            },
+            {
+              "type": "minecraft:zombie_villager",
+              "weight": 5,
+              "count": 1
+            },
+            {
+              "type": "minecraft:skeleton",
+              "weight": 20,
+              "count": 4
+            },
+            {
+              "type": "minecraft:creeper",
+              "weight": 100,
+              "count": 4
+            },
+            {
+              "type": "minecraft:slime",
+              "weight": 100,
+              "count": 4
+            },
+            {
+              "type": "minecraft:enderman",
+              "weight": 10,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              }
+            },
+            {
+              "type": "minecraft:witch",
+              "weight": 5,
+              "count": 1
+            },
+            {
+              "type": "minecraft:drowned",
+              "weight": 95,
+              "count": 4
+            }
+          ],
+          "underground_water_creature": [
+            {
+              "type": "minecraft:glow_squid",
+              "weight": 10,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 4,
+                "max_inclusive": 6
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -50,6 +50,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
@@ -347,6 +348,9 @@ public class WormEntity extends Monster implements GeoEntity {
     }
 
     private boolean placeFloorMucus(BlockPos pos) {
+        if (!(this.level() instanceof ServerLevel griefLevel) || !griefLevel.getGameRules().get(GameRules.MOB_GRIEFING)) {
+            return false;
+        }
         if (cachedMucusBlock == null) {
             cachedMucusBlock = BuiltInRegistries.BLOCK.getOptional(MUCUS_ID).orElse(null);
         }

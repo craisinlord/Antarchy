@@ -760,6 +760,8 @@ public final class AntarchyConfigModuleForge {
         AntarchySettings.setFossilEntityBlacklist(AntarchyMiscConfig.fossilEntityBlacklist());
         AntarchySettings.setGlowVinesUnderLeaves(AntarchyMiscConfig.glowVinesUnderLeaves());
         AntarchySettings.setSwingThroughGrassEnabled(AntarchyMiscConfig.swingThroughGrassEnabled());
+        AntarchySettings.setAntEndPoem(AntarchyMiscConfig.antEndPoem());
+        AntarchySettings.setAlexsCavesBiomes(AntarchyMiscConfig.alexsCavesBiomes());
         AntarchySettings.setFabricKeybindingConflictFixEnabled(AntarchyMiscConfig.fabricKeybindingConflictFixEnabled());
         AntarchySettings.setExperimentalSettingsPopupDisabled(AntarchyMiscConfig.experimentalSettingsPopupDisabled());
         AntarchySettings.setEntitySpecificFireOverlayEnabled(AntarchyMiscConfig.entitySpecificFireOverlayEnabled());

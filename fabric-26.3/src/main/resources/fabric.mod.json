@@ -22,6 +22,9 @@
     "client": [
       "com.craisinlord.antarchy.fabric.client.AntarchyFabricClient"
     ],
+    "server": [
+      "com.craisinlord.antarchy.fabric.AntarchyFabricServer"
+    ],
     "modmenu": [
       "com.craisinlord.antarchy.fabric.client.AntarchyModMenuIntegration"
     ],

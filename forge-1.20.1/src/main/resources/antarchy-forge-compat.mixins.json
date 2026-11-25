@@ -7,6 +7,10 @@
   "mixins": [
     "infinity.InfinityBiomeCheckPatchMixin",
     "infinity.InfinityVillageSpacingMixin",
+    "compat.AlexsCavesCaveStructureMixin",
+    "compat.AlexsCavesForlornBridgeMixin",
+    "compat.AlexsCavesAcidPitPieceMixin",
+    "compat.AlexsCavesRelicheirusChunkLoadMixin",
     "compat.DroneFakePlayerConstructionMixin",
     "compat.SablePhysicsColliderBlockGetterMixin",
     "infinity.AmendmentRareOresMixin",
@@ -17,6 +21,7 @@
   ],
   "client": [
     "infinity.ShaderPayloadRepeatSkipMixin",
+    "compat.AlexsCavesBiomeLookMixin",
     "compat.AppleSkinOverlayMixin"
   ],
   "injectors": {

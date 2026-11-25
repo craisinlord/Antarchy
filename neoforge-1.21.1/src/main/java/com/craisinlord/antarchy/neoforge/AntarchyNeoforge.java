@@ -10,6 +10,7 @@ import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
 import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.neoforge.compat.AlexsCavesPack;
 import com.craisinlord.antarchy.neoforge.registry.*;
 import com.craisinlord.anthology.effect.AnthologyEffects;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +33,7 @@ public class AntarchyNeoforge {
         com.craisinlord.antarchy.neoforge.dev.DimFuzz.initIfEnabled();
         com.craisinlord.antarchy.neoforge.dev.StructureUpgrade.initIfEnabled();
         modEventBus.addListener(AntarchyNeoforge::registerAdvancementTriggers);
+        modEventBus.addListener(AlexsCavesPack::addPack);
         bootstrapGameRules();
         AntarchyConfigModuleNeoforge.init(modContainer);
         AntarchySoundEvents.bind(

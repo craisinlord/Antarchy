@@ -1,0 +1,63 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "discard_chance_on_air_exposure": 0.0,
+    "size": 56,
+    "targets": [
+      {
+        "state": {
+          "Name": "alexscaves:block_of_frosted_chocolate"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:grass_block"
+        }
+      },
+      {
+        "state": {
+          "Name": "alexscaves:block_of_frosted_chocolate"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:moss_block"
+        }
+      },
+      {
+        "state": {
+          "Name": "alexscaves:block_of_frosted_chocolate"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "antarchy:blush_moss_block"
+        }
+      },
+      {
+        "state": {
+          "Name": "alexscaves:block_of_chocolate"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:dirt"
+        }
+      },
+      {
+        "state": {
+          "Name": "alexscaves:block_of_chocolate"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:rooted_dirt"
+        }
+      },
+      {
+        "state": {
+          "Name": "alexscaves:block_of_polished_chocolate"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "antarchy:rockite"
+        }
+      }
+    ]
+  }
+}

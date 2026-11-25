@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.fabric.client;
 
+import com.craisinlord.antarchy.fabric.compat.AlexsCavesPack;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyAnthologyHooks;
 import com.craisinlord.antarchy.content.client.QueenMusicHandler;
@@ -18,6 +19,7 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 public final class AntarchyFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        AlexsCavesPack.register();
         Antarchy.physicalClient = true;
         AntarchyAnthologyHooks.registerClient();
         ClientTickEvents.END_CLIENT_TICK.register(client -> QueenMusicHandler.tick(client, AntarchyFabricSounds.THE_QUEEN));

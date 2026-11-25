@@ -6,7 +6,12 @@
   "mixins": [
     "infinity.InfinityBiomeCheckMixin",
     "infinity.InfinityVillageSpacingMixin",
+    "compat.AlexsCavesAcidPitPieceMixin",
     "compat.AlexsCavesCabinMapTradeThreadMixin",
+    "compat.AlexsCavesCaveStructureMixin",
+    "compat.AlexsCavesForlornBridgeMixin",
+    "compat.AlexsCavesRelicheirusChunkLoadMixin",
+    "compat.AlexsCavesSpawnGuardMixin",
     "compat.SablePhysicsColliderBlockGetterMixin",
     "compat.TimeVortexSettingsCheckAsyncMixin",
     "infinity.AmendmentRareOresMixin",
@@ -18,6 +23,7 @@
   ],
   "client": [
     "infinity.ShaderPayloadRepeatSkipMixin",
+    "compat.AlexsCavesBiomeLookMixin",
     "compat.AppleSkinOverlayMixin"
   ],
   "injectors": {

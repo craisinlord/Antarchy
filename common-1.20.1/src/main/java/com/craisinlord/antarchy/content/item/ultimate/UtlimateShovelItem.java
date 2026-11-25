@@ -1,15 +1,12 @@
 package com.craisinlord.antarchy.content.item.ultimate;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.item.WeaponAttributes;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.google.common.collect.Multimap;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -62,15 +59,6 @@ public class UtlimateShovelItem extends ShovelItem {
                 stack,
                 state,
                 vanillaSpeed
-        );
-
-        Antarchy.LOGGER.info(
-                "Ultimate shovel speed block={} vanillaSpeed={} finalSpeed={} tierSpeed={} mineableWithShovel={}",
-                BuiltInRegistries.BLOCK.getKey(state.getBlock()),
-                vanillaSpeed,
-                finalSpeed,
-                this.tier.getSpeed(),
-                state.is(BlockTags.MINEABLE_WITH_SHOVEL)
         );
 
         return finalSpeed;

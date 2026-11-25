@@ -35,6 +35,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
@@ -335,6 +336,9 @@ public class WormEntity extends Monster implements GeoEntity {
     }
 
     private boolean placeFloorMucus(BlockPos pos) {
+        if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            return false;
+        }
         if (cachedMucusBlock == null) {
             cachedMucusBlock = BuiltInRegistries.BLOCK.getOptional(MUCUS_ID).orElse(null);
         }

@@ -29,6 +29,8 @@ public final class AntarchySettings {
     private static boolean duplicatorTreeEnabled = true;
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
+    private static boolean antEndPoem = true;
+    private static boolean alexsCavesBiomes = true;
     private static boolean boatsClimbWaterSteps = true;
     private static double boatWaterStepMaxHeight = 1.0D;
     private static boolean fabricKeybindingConflictFixEnabled = true;
@@ -799,6 +801,18 @@ public final class AntarchySettings {
         return glowVinesUnderLeaves;
     }
 
+    public static boolean alexsCavesBiomes() {
+        return alexsCavesBiomes;
+    }
+
+    public static void setAlexsCavesBiomes(boolean value) {
+        alexsCavesBiomes = value;
+    }
+
+    public static boolean antEndPoem() {
+        return antEndPoem;
+    }
+
     public static boolean swingThroughGrassEnabled() {
         return swingThroughGrassEnabled;
     }
@@ -1531,6 +1545,10 @@ public final class AntarchySettings {
 
     public static void setGlowVinesUnderLeaves(boolean value) {
         glowVinesUnderLeaves = value;
+    }
+
+    public static void setAntEndPoem(boolean value) {
+        antEndPoem = value;
     }
 
     public static void setSwingThroughGrassEnabled(boolean value) {

@@ -33,6 +33,8 @@ public final class AntarchySettings {
     private static List<String> fossilEntityBlacklistEntries = parseEntryList(DEFAULT_FOSSIL_ENTITY_BLACKLIST);
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
+    private static boolean antEndPoem = true;
+    private static boolean alexsCavesBiomes = true;
     private static boolean fabricKeybindingConflictFixEnabled = true;
     private static boolean experimentalSettingsPopupDisabled = true;
     private static boolean unlockAllArchives = true;
@@ -869,6 +871,18 @@ public final class AntarchySettings {
         return glowVinesUnderLeaves;
     }
 
+    public static boolean alexsCavesBiomes() {
+        return alexsCavesBiomes;
+    }
+
+    public static void setAlexsCavesBiomes(boolean value) {
+        alexsCavesBiomes = value;
+    }
+
+    public static boolean antEndPoem() {
+        return antEndPoem;
+    }
+
     public static boolean swingThroughGrassEnabled() {
         return swingThroughGrassEnabled;
     }
@@ -1594,6 +1608,10 @@ public final class AntarchySettings {
 
     public static void setGlowVinesUnderLeaves(boolean value) {
         glowVinesUnderLeaves = value;
+    }
+
+    public static void setAntEndPoem(boolean value) {
+        antEndPoem = value;
     }
 
     public static void setSwingThroughGrassEnabled(boolean value) {

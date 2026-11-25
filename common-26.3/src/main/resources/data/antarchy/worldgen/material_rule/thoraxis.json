@@ -523,6 +523,91 @@
       }
     },
     {
+      "type": "antarchy:optional_biome",
+      "biome": "antarchy:magnetic_caves",
+      "then_run": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:stone_depth",
+              "add_surface_depth": true,
+              "offset": 0,
+              "secondary_depth_range": 0,
+              "surface_type": "floor"
+            },
+            "then_run": {
+              "type": "minecraft:sequence",
+              "sequence": [
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "noise": "minecraft:nether_state_selector",
+                    "min_threshold": -1.0,
+                    "max_threshold": -0.35
+                  },
+                  "then_run": {
+                    "type": "antarchy:optional_block",
+                    "block": "alexscaves:energized_galena_scarlet"
+                  }
+                },
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "noise": "minecraft:nether_state_selector",
+                    "min_threshold": 0.35,
+                    "max_threshold": 1.0
+                  },
+                  "then_run": {
+                    "type": "antarchy:optional_block",
+                    "block": "alexscaves:energized_galena_azure"
+                  }
+                },
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "noise": "minecraft:nether_state_selector",
+                    "min_threshold": -0.2,
+                    "max_threshold": 0.2
+                  },
+                  "then_run": {
+                    "type": "antarchy:optional_block",
+                    "block": "alexscaves:energized_galena_neutral"
+                  }
+                },
+                {
+                  "type": "antarchy:optional_block",
+                  "block": "alexscaves:galena"
+                }
+              ]
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:stone_depth",
+              "add_surface_depth": false,
+              "offset": 0,
+              "secondary_depth_range": 0,
+              "surface_type": "floor"
+            },
+            "then_run": {
+              "type": "antarchy:optional_block",
+              "block": "alexscaves:galena"
+            }
+          },
+          {
+            "type": "antarchy:optional_block",
+            "block": "alexscaves:galena"
+          }
+        ]
+      }
+    },
+    {
       "type": "minecraft:condition",
       "if_true": {
         "type": "minecraft:stone_depth",

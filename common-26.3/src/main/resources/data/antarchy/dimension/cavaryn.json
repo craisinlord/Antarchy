@@ -4,7 +4,33 @@
     "type": "minecraft:noise",
     "settings": "antarchy:cavaryn",
     "biome_source": {
-      "type": "minecraft:multi_noise",
+      "type": "antarchy:cavaryn_biome_source",
+      "overlays": [
+        {
+          "biome": "antarchy:toxic_caves",
+          "replaces": [
+            "antarchy:cavaryn"
+          ],
+          "humidity": [
+            -2.0,
+            -0.2
+          ]
+        },
+        {
+          "biome": "antarchy:forlorn_hollows",
+          "replaces": [
+            "antarchy:brooding_tunnels"
+          ],
+          "humidity": [
+            -0.06,
+            0.14
+          ],
+          "weirdness": [
+            -0.7,
+            0.95
+          ]
+        }
+      ],
       "biomes": [
         {
           "parameters": {

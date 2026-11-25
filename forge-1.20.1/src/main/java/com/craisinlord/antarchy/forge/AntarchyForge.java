@@ -12,6 +12,7 @@ import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
 import com.craisinlord.antarchy.content.network.AntarchyNetwork;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.forge.compat.AlexsCavesPack;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkBridge;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 import com.craisinlord.antarchy.forge.registry.*;
@@ -29,6 +30,7 @@ public class AntarchyForge {
     public AntarchyForge() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBusTempHolder = modEventBus;
+        modEventBus.addListener(AlexsCavesPack::addPack);
         AntarchyAdvancementTriggers.register();
         bootstrapGameRules();
         AntarchyConfigModuleForge.init();

@@ -27,6 +27,7 @@ import com.craisinlord.antarchy.content.recipe.AmericanizeRecipe;
 import com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe;
 import com.craisinlord.antarchy.content.recipe.FossilCookingRecipes;
 import com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe;
+import com.craisinlord.antarchy.content.worldgen.OptionalBlockRule;
 import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
@@ -532,6 +533,8 @@ public final class AntarchyForgeMisc {
             () -> ElythiaHydrology.KEY_CODEC.codec());
     public static final RegistryObject<Codec<ElythiaBiomeDispatchRule.Source>> ELYTHIA_BIOME_DISPATCH = MATERIAL_RULES.register("elythia_biome_dispatch",
             () -> ElythiaBiomeDispatchRule.Source.KEY_CODEC.codec());
+    public static final RegistryObject<Codec<OptionalBlockRule.Source>> OPTIONAL_BLOCK = MATERIAL_RULES.register("optional_block",
+            () -> OptionalBlockRule.Source.KEY_CODEC.codec());
     public static final RegistryObject<Codec<ElythiaSurfaceBuilder.Root>> ELYTHIA_SURFACE_ROOT = MATERIAL_RULES.register("elythia_surface_root",
             () -> ElythiaSurfaceBuilder.Root.KEY_CODEC.codec());
     public static final RegistryObject<Codec<ElythiaShared>> ELYTHIA_SHARED = DENSITY_FUNCTION_TYPES.register("elythia_shared",

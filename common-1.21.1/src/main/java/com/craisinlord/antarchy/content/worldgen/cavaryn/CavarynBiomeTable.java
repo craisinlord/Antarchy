@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
+import com.craisinlord.antarchy.compat.alexscaves.AlexsCavesIntegration;
 import java.util.List;
 
 public final class CavarynBiomeTable {
@@ -9,6 +10,13 @@ public final class CavarynBiomeTable {
     public static final String MOLEWORM_CAVES = "antarchy:cavaryn_moleworm_caves";
     public static final String WORMY_CAVES = "antarchy:wormy_caves";
     public static final String BROODING_TUNNELS = "antarchy:brooding_tunnels";
+    public static final String TOXIC_CAVES = "antarchy:toxic_caves";
+    public static final String FORLORN_HOLLOWS = "antarchy:forlorn_hollows";
+    public static final double TOXIC_MAX_HUMIDITY = -0.2D;
+    public static final double FORLORN_MIN_HUMIDITY = -0.06D;
+    public static final double FORLORN_MAX_HUMIDITY = 0.14D;
+    public static final double FORLORN_MIN_WEIRDNESS = -0.7D;
+    public static final double FORLORN_MAX_WEIRDNESS = 0.95D;
 
     public static final List<String> BIOMES = List.of(CAVARYN, GLOWCAP_CAVES, BIOWART_CAVES, MOLEWORM_CAVES, WORMY_CAVES, BROODING_TUNNELS);
 
@@ -27,6 +35,34 @@ public final class CavarynBiomeTable {
     }
 
     public static String winner(double humidity, double weirdness, double depth) {
+        String best = baseWinner(humidity, weirdness, depth);
+        return AlexsCavesIntegration.enabled() ? overlay(best, humidity, weirdness) : best;
+    }
+
+    public static String overlay(String base, double humidity, double weirdness) {
+        if (CAVARYN.equals(base) && inToxic(humidity)) {
+            return TOXIC_CAVES;
+        }
+        if (BROODING_TUNNELS.equals(base) && inForlorn(humidity, weirdness)) {
+            return FORLORN_HOLLOWS;
+        }
+        return base;
+    }
+
+    private static boolean inToxic(double humidity) {
+        return humidity <= TOXIC_MAX_HUMIDITY;
+    }
+
+    private static boolean inForlorn(double humidity, double weirdness) {
+        return humidity >= FORLORN_MIN_HUMIDITY && humidity <= FORLORN_MAX_HUMIDITY
+                && weirdness >= FORLORN_MIN_WEIRDNESS && weirdness <= FORLORN_MAX_WEIRDNESS;
+    }
+
+    private static boolean isOverlay(String biome) {
+        return TOXIC_CAVES.equals(biome) || FORLORN_HOLLOWS.equals(biome);
+    }
+
+    private static String baseWinner(double humidity, double weirdness, double depth) {
         String best = null;
         double bestFitness = Double.MAX_VALUE;
         for (Entry entry : ENTRIES) {
@@ -40,6 +76,12 @@ public final class CavarynBiomeTable {
     }
 
     public static boolean isAmongBest(String biome, double humidity, double weirdness, double depth) {
+        if (isOverlay(biome)) {
+            return biome.equals(winner(humidity, weirdness, depth));
+        }
+        if (AlexsCavesIntegration.enabled() && isOverlay(winner(humidity, weirdness, depth))) {
+            return false;
+        }
         double own = Double.MAX_VALUE;
         double other = Double.MAX_VALUE;
         for (Entry entry : ENTRIES) {
@@ -54,6 +96,12 @@ public final class CavarynBiomeTable {
     }
 
     public static boolean isOnly(String biome, double humidity, double weirdness, double depth) {
+        if (isOverlay(biome)) {
+            return biome.equals(winner(humidity, weirdness, depth));
+        }
+        if (AlexsCavesIntegration.enabled() && isOverlay(winner(humidity, weirdness, depth))) {
+            return false;
+        }
         double own = Double.MAX_VALUE;
         double other = Double.MAX_VALUE;
         for (Entry entry : ENTRIES) {
@@ -68,6 +116,12 @@ public final class CavarynBiomeTable {
     }
 
     public static boolean excludedByClimate(String biome, double humidity, double weirdness) {
+        if (TOXIC_CAVES.equals(biome)) {
+            return !AlexsCavesIntegration.enabled() || !inToxic(humidity);
+        }
+        if (FORLORN_HOLLOWS.equals(biome)) {
+            return !AlexsCavesIntegration.enabled() || !inForlorn(humidity, weirdness);
+        }
         for (Entry own : ENTRIES) {
             if (own.biome().equals(biome) && !beatenInDepthBand(own, biome, humidity, weirdness)) {
                 return false;

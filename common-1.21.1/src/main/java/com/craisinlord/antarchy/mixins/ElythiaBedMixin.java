@@ -34,10 +34,8 @@ public abstract class ElythiaBedMixin {
             player.awardStat(Stats.SLEEP_IN_BED);
             CriteriaTriggers.SLEPT_IN_BED.trigger(player);
             player.serverLevel().updateSleepingPlayerList();
-            result = Either.right(Unit.INSTANCE);
-        }
-        if (result.right().isPresent()) {
             player.displayClientMessage(Component.translatable("message.antarchy.already_dreaming"), true);
+            return Either.right(Unit.INSTANCE);
         }
         return result;
     }

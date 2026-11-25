@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
+import com.craisinlord.antarchy.compat.alexscaves.AlexsCavesIntegration;
 import com.mojang.serialization.Codec;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -190,6 +191,10 @@ public final class CavarynCavityGrid {
                     builder.gut(start[0], start[1], start[2]);
                 } else if (kind == Kind.CRUST_SHAFT) {
                     builder.shaft(start[0], start[1], start[2]);
+                } else if (kind == Kind.TOXIC_PIT) {
+                    builder.toxicPit(start[0], start[1], start[2]);
+                } else if (kind == Kind.FORLORN_HOLLOW) {
+                    builder.forlornHollow(start[0], start[1], start[2]);
                 } else {
                     builder.nest(start[0], start[1], start[2]);
                 }
@@ -260,7 +265,9 @@ public final class CavarynCavityGrid {
         MOLEWORM_WARREN("moleworm_warren", CavarynBiomeTable.MOLEWORM_CAVES, false, 160, 3, 1, 0.5F, 40.0D, 184.0D, 66.0D, 92.0D),
         CARAPACE_RIFT("carapace_rift", CavarynBiomeTable.CAVARYN, true, 160, 4, 2, 0.5F, 100.0D, 186.0D, 130.0D, 156.0D),
         BIOWART_GUT("biowart_gut", CavarynBiomeTable.BIOWART_CAVES, true, 160, 3, 1, 0.6F, 100.0D, 186.0D, 112.0D, 170.0D),
-        CRUST_SHAFT("crust_shaft", null, false, 96, 1, 2, 0.5F, 120.0D, 346.0D, 326.0D, 334.0D);
+        CRUST_SHAFT("crust_shaft", null, false, 96, 1, 2, 0.5F, 120.0D, 346.0D, 326.0D, 334.0D),
+        TOXIC_PIT("toxic_pit", CavarynBiomeTable.TOXIC_CAVES, true, 144, 1, 0, 0.8F, 100.0D, 188.0D, 112.0D, 158.0D),
+        FORLORN_HOLLOW("forlorn_hollow", CavarynBiomeTable.FORLORN_HOLLOWS, true, 176, 1, 0, 0.75F, 14.0D, 106.0D, 38.0D, 62.0D);
 
         public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -296,6 +303,10 @@ public final class CavarynCavityGrid {
 
         public boolean strict() {
             return this.strict;
+        }
+
+        public boolean enabled() {
+            return this != TOXIC_PIT && this != FORLORN_HOLLOW || AlexsCavesIntegration.enabled();
         }
 
         @Override
@@ -558,6 +569,68 @@ public final class CavarynCavityGrid {
                 z = nz;
             }
             this.shapes.add(new Tube(x, y, z, x + 0.01D, y - 6.0D, z, radius * 1.4D, 1.0D));
+        }
+
+        void toxicPit(double x, double y, double z) {
+            XoroshiroRandomSource random = this.random;
+            double radius = 16.0D + random.nextDouble() * 8.0D;
+            double up = 9.0D + random.nextDouble() * 5.0D;
+            double down = 5.0D + random.nextDouble() * 3.0D;
+            this.boundedChamber(x, y, z, radius, up, down);
+            int satellites = 2 + random.nextInt(3);
+            double baseAngle = random.nextDouble() * Math.PI * 2.0D;
+            for (int i = 0; i < satellites; i++) {
+                double angle = baseAngle + i * Math.PI * 2.0D / satellites + (random.nextDouble() - 0.5D) * 0.8D;
+                double distance = radius * (0.85D + random.nextDouble() * 0.45D);
+                double sx = x + Math.cos(angle) * distance;
+                double sz = z + Math.sin(angle) * distance;
+                double sy = y + (random.nextDouble() - 0.5D) * 6.0D;
+                this.boundedChamber(sx, sy, sz, 8.0D + random.nextDouble() * 5.0D, up * 0.7D, down * 0.8D);
+                this.shapes.add(new Tube(x, y - down * 0.3D, z, sx, sy - down * 0.3D, sz, 3.5D + random.nextDouble() * 1.5D, 1.0D));
+            }
+            double ventTop = Math.min(y + up + 14.0D + random.nextDouble() * 10.0D, this.kind.maxY - 6.0D);
+            this.shapes.add(new Tube(x, y + up * 0.6D, z, x + (random.nextDouble() - 0.5D) * 10.0D, ventTop, z + (random.nextDouble() - 0.5D) * 10.0D,
+                    2.5D + random.nextDouble() * 1.5D, 1.0D));
+            this.exitTunnel(x, y, z, radius, 3.0D + random.nextDouble() * 1.5D);
+        }
+
+        void forlornHollow(double x, double y, double z) {
+            XoroshiroRandomSource random = this.random;
+            double radius = 20.0D + random.nextDouble() * 10.0D;
+            double up = 22.0D + random.nextDouble() * 14.0D;
+            this.boundedChamber(x, y, z, radius, up, 6.0D + random.nextDouble() * 4.0D);
+            double domeY = Math.min(y + up * 0.7D, this.kind.maxY - up * 0.5D - 4.0D);
+            this.boundedChamber(x + (random.nextDouble() - 0.5D) * radius * 0.6D, domeY, z + (random.nextDouble() - 0.5D) * radius * 0.6D,
+                    radius * 0.6D, up * 0.5D, 6.0D);
+            int alcoves = 1 + random.nextInt(2);
+            for (int i = 0; i < alcoves; i++) {
+                double angle = random.nextDouble() * Math.PI * 2.0D;
+                double distance = radius * (0.8D + random.nextDouble() * 0.2D);
+                this.boundedChamber(x + Math.cos(angle) * distance, y + random.nextDouble() * 6.0D, z + Math.sin(angle) * distance,
+                        9.0D + random.nextDouble() * 4.0D, 10.0D + random.nextDouble() * 6.0D, 4.0D);
+            }
+            int tunnels = 2 + random.nextInt(2);
+            for (int i = 0; i < tunnels; i++) {
+                this.exitTunnel(x, y, z, radius, 4.0D + random.nextDouble() * 2.0D);
+            }
+        }
+
+        private void exitTunnel(double x, double y, double z, double radius, double tubeRadius) {
+            XoroshiroRandomSource random = this.random;
+            double angle = random.nextDouble() * Math.PI * 2.0D;
+            double length = radius + 28.0D + random.nextDouble() * 22.0D;
+            double ey = Mth.clamp(y + (random.nextDouble() - 0.4D) * 20.0D, this.kind.minY + tubeRadius + 2.0D, this.kind.maxY - tubeRadius - 2.0D);
+            double mx = x + Math.cos(angle + 0.35D) * length * 0.55D;
+            double mz = z + Math.sin(angle + 0.35D) * length * 0.55D;
+            double my = (y + ey) * 0.5D + (random.nextDouble() - 0.5D) * 6.0D;
+            this.shapes.add(new Tube(x, y, z, mx, my, mz, tubeRadius, 1.0D));
+            this.shapes.add(new Tube(mx, my, mz, x + Math.cos(angle) * length, ey, z + Math.sin(angle) * length, tubeRadius * 0.85D, 1.0D));
+        }
+
+        private void boundedChamber(double x, double y, double z, double radius, double up, double down) {
+            double height = Math.max(2.0D, Math.min(y + up, this.kind.maxY) - y);
+            double depth = Math.max(2.0D, y - Math.max(y - down, this.kind.minY));
+            this.chamber(x, y, z, radius, height, depth);
         }
 
         private double[] moleTunnel(double x, double y, double z, double yaw, int segments) {

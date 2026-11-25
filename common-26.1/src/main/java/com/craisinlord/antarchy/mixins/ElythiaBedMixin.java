@@ -31,7 +31,7 @@ public abstract class ElythiaBedMixin {
     private Either<Player.BedSleepingProblem, Unit> antarchy$alreadyDreaming(Either<Player.BedSleepingProblem, Unit> result) {
         ServerPlayer player = (ServerPlayer) (Object) this;
         if (AntarchySettings.elythiaAlreadyDreaming() && player.level().dimension().equals(ThrowbackZones.ELYTHIA)
-                && result.right().isPresent()) {
+                && !player.level().isDarkOutside() && result.right().isPresent()) {
             player.sendOverlayMessage(Component.translatable("message.antarchy.already_dreaming"));
         }
         return result;

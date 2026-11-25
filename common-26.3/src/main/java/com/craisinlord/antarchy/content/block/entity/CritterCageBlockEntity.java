@@ -19,6 +19,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -135,7 +136,7 @@ public class CritterCageBlockEntity extends BlockEntity {
         CompoundTag savedData = this.entityData.copy();
         savedData.putString("id", this.entityTypeId.toString());
 
-        Entity entity = EntityType.loadEntityRecursive(savedData, level, new EntitySpawnRequest(EntitySpawnReason.LOAD, false), loaded -> loaded);
+        Entity entity = EntityType.loadEntityRecursive(savedData, level, new EntitySpawnRequest(EntitySpawnReason.LOAD, false), BaseSpawner.SET_DISPLAY_ENTITY_ID);
         if (entity == null) {
             return null;
         }

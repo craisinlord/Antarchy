@@ -5,6 +5,89 @@
     "settings": "antarchy:elythia",
     "biome_source": {
       "type": "antarchy:elythia_biome_source",
+      "overlays": [
+        {
+          "biome": "antarchy:primordial_surface",
+          "replaces": [
+            "antarchy:ouranwood_forest"
+          ],
+          "continentalness": [
+            0.05,
+            0.36
+          ],
+          "weirdness": [
+            -2.0,
+            -0.68
+          ]
+        },
+        {
+          "biome": "antarchy:candy_surface",
+          "replaces": [
+            "antarchy:peach_forest"
+          ],
+          "continentalness": [
+            0.68,
+            1.5
+          ],
+          "weirdness": [
+            -2.0,
+            -0.4
+          ]
+        }
+      ],
+      "cave_overlay_max_y": 96,
+      "cave_overlays": [
+        {
+          "biome": "alexscaves:primordial_caves",
+          "requires": "antarchy:primordial_surface",
+          "under": [
+            "antarchy:primordial_surface"
+          ]
+        },
+        {
+          "biome": "alexscaves:candy_cavity",
+          "requires": "antarchy:candy_surface",
+          "under": [
+            "antarchy:candy_surface"
+          ]
+        },
+        {
+          "biome": "alexscaves:candy_cavity",
+          "requires": "antarchy:candy_surface",
+          "not_under": [
+            "antarchy:elythia_ocean",
+            "antarchy:elythia_coral_spikes",
+            "antarchy:elythia_beach",
+            "antarchy:elythia_river",
+            "antarchy:fungal_reserve",
+            "antarchy:conglomerate_shore",
+            "antarchy:arkrose_strand",
+            "antarchy:tidestone_lagoon",
+            "antarchy:zebra_scarps",
+            "antarchy:sky_isles",
+            "antarchy:sky_isles_royal_grove"
+          ],
+          "min_region": 0.66
+        },
+        {
+          "biome": "alexscaves:primordial_caves",
+          "requires": "antarchy:primordial_surface",
+          "not_under": [
+            "antarchy:elythia_ocean",
+            "antarchy:elythia_coral_spikes",
+            "antarchy:elythia_beach",
+            "antarchy:elythia_river",
+            "antarchy:fungal_reserve",
+            "antarchy:conglomerate_shore",
+            "antarchy:arkrose_strand",
+            "antarchy:tidestone_lagoon",
+            "antarchy:zebra_scarps",
+            "antarchy:sky_isles",
+            "antarchy:sky_isles_royal_grove"
+          ],
+          "max_region": 0.36
+        }
+      ],
       "biomes": [
         {
           "biome": "antarchy:elythia_ocean",

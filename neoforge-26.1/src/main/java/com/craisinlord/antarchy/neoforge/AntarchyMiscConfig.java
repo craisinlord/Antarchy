@@ -92,6 +92,8 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.ConfigValue<List<? extends String>> FOSSIL_ENTITY_BLACKLIST;
     private static final ModConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
     private static final ModConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
+    private static final ModConfigSpec.BooleanValue ANT_END_POEM;
+    private static final ModConfigSpec.BooleanValue ALEXS_CAVES_BIOMES;
     private static final ModConfigSpec.BooleanValue FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED;
     private static final ModConfigSpec.BooleanValue EXPERIMENTAL_SETTINGS_POPUP_DISABLED;
     private static final ModConfigSpec.BooleanValue ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED;
@@ -129,7 +131,7 @@ public final class AntarchyMiscConfig {
                 .comment("Strength of the Elythia lavender shadow tint, from 0.0 to 1.0.")
                 .defineInRange("dreamShadowsStrength", 1.0D, 0.0D, 1.0D);
         ELYTHIA_ALREADY_DREAMING = b
-                .comment("Whether beds in Elythia set your spawn and let you lie down at any time, but never skip the night.")
+                .comment("Whether beds in Elythia set your spawn and let you lie down during the day. Lying down by day never skips time; sleeping at night does.")
                 .define("alreadyDreaming", true);
         ELYTHIA_CLEAR_WATER = b
                 .comment("Whether water in Elythia is clearer and tinted turquoise. Client-side visual only.")
@@ -290,6 +292,8 @@ public final class AntarchyMiscConfig {
                 .defineListAllowEmpty("fossilEntityBlacklist", () -> List.of(AntarchySettings.defaultFossilEntityBlacklist().split(",")), entry -> entry instanceof String);
         GLOW_VINES_UNDER_LEAVES              = b.comment("Whether glow vines can be placed and survive when attached under leaf blocks.")       .define("glowVinesUnderLeaves",             true);
         SWING_THROUGH_GRASS_ENABLED          = b.comment("If true, empty collision plants like grass do not block melee target picking.")      .define("swingThroughGrassEnabled",         true);
+        ANT_END_POEM = b.comment("If true, the End poem is a conversation between two ants.").define("antEndPoem", true);
+        ALEXS_CAVES_BIOMES = b.comment("If true and Alex's Caves is installed, its biomes also generate in Antarchy's dimensions.").define("alexsCavesBiomes", true);
         FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED = b.define("fabricKeybindingConflictFixEnabled", true);
         EXPERIMENTAL_SETTINGS_POPUP_DISABLED = b.define("experimentalSettingsPopupDisabled", true);
         ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED = b.comment("If true, burning entities use soul fire / dream fire overlays where appropriate.")   .define("entitySpecificFireOverlayEnabled", true);
@@ -368,6 +372,8 @@ public final class AntarchyMiscConfig {
     static String  fossilEntityBlacklist()               { return String.join(",", FOSSIL_ENTITY_BLACKLIST.get()); }
     static boolean glowVinesUnderLeaves()                { return GLOW_VINES_UNDER_LEAVES.get(); }
     static boolean swingThroughGrassEnabled()            { return SWING_THROUGH_GRASS_ENABLED.get(); }
+    static boolean antEndPoem() { return ANT_END_POEM.get(); }
+    static boolean alexsCavesBiomes() { return ALEXS_CAVES_BIOMES.get(); }
     static boolean fabricKeybindingConflictFixEnabled()  { return FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED.get(); }
     static boolean experimentalSettingsPopupDisabled()   { return EXPERIMENTAL_SETTINGS_POPUP_DISABLED.get(); }
     static boolean entitySpecificFireOverlayEnabled()    { return ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED.get(); }

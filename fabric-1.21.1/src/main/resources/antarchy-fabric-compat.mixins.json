@@ -4,6 +4,11 @@
   "refmap": "antarchy.mixins.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "compat.AlexsCavesCaveStructureMixin",
+    "compat.AlexsCavesForlornBridgeMixin",
+    "compat.AlexsCavesAcidPitPieceMixin",
+    "compat.AlexsCavesRelicheirusChunkLoadMixin",
+    "compat.AlexsCavesSpawnGuardMixin",
     "infinity.InfinityBiomeCheckMixin",
     "infinity.InfinityVillageSpacingMixin",
     "infinity.PortalCreatorMixin",
@@ -11,6 +16,7 @@
     "infinity.AmendmentRareOresMixin"
   ],
   "client": [
+    "compat.AlexsCavesBiomeLookMixin",
     "client.SodiumOuranwoodLeavesCullingMixin",
     "client.AppleSkinOverlayMixin"
   ],

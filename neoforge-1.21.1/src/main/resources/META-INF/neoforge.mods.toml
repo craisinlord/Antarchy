@@ -98,6 +98,14 @@ modId="antos"
     reason="Antarchy already includes Hoverboards. Remove the standalone Hoverboards mod."
 
 [[dependencies.antarchy]]
+    modId="alexscaves"
+    type="optional"
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"
+    reason="Adds Alex's Caves biomes to Antarchy's dimensions; Antarchy works fully without it."
+
+[[dependencies.antarchy]]
     modId="configured"
     type="optional"
     versionRange="*"

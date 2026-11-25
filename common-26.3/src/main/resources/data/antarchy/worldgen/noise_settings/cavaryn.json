@@ -65,7 +65,9 @@
             "antarchy:cavaryn_glowcap_grottos",
             "antarchy:cavaryn_moleworm_warrens",
             "antarchy:cavaryn_carapace_rifts",
-            "antarchy:cavaryn_biowart_guts"
+            "antarchy:cavaryn_biowart_guts",
+            "antarchy:cavaryn_toxic_pits",
+            "antarchy:cavaryn_forlorn_hollows"
           ]
         }
       }

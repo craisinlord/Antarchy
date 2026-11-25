@@ -141,6 +141,7 @@
     "client.GlimmeringTranslucencyMixin",
     "client.HoverboardRiderPoseMixin",
     "client.SplashManagerMixin",
+    "client.WinScreenMixin",
     "client.ThoraxisFogMixin",
     "client.ThoraxisRainMixin",
     "client.ThoraxisEventRenderMixin",

@@ -1,0 +1,11 @@
+data data/alexscaves/worldgen/biome/forlorn_hollows.json
+data data/alexscaves/worldgen/biome/magnetic_caves.json
+data data/alexscaves/worldgen/biome/toxic_caves.json
+data data/alexscaves/worldgen/structure/acid_pit.json
+data data/alexscaves/worldgen/structure/ferrocave.json
+data data/alexscaves/worldgen/structure/forlorn_bridge.json
+data data/alexscaves/worldgen/structure/forlorn_canyon.json
+structure_type alexscaves:acid_pit
+structure_type alexscaves:ferrocave
+structure_type alexscaves:forlorn_bridge
+structure_type alexscaves:forlorn_canyon

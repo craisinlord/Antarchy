@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.mixins.client;
 
+import com.craisinlord.antarchy.content.client.AlexsCavesFog;
 import com.craisinlord.antarchy.content.client.ThoraxisEventClient;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -8,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.FogType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,9 +41,10 @@ public abstract class ThoraxisFogMixin {
             return;
         }
 
-        fogRed = FOG_RED;
-        fogGreen = FOG_GREEN;
-        fogBlue = FOG_BLUE;
+        float caves = AlexsCavesFog.amount(level, camera);
+        fogRed = Mth.lerp(caves, FOG_RED, fogRed);
+        fogGreen = Mth.lerp(caves, FOG_GREEN, fogGreen);
+        fogBlue = Mth.lerp(caves, FOG_BLUE, fogBlue);
         float[] eventColor = ThoraxisEventClient.fogColor(fogRed, fogGreen, fogBlue, partialTick);
         if (eventColor != null) {
             fogRed = eventColor[0];

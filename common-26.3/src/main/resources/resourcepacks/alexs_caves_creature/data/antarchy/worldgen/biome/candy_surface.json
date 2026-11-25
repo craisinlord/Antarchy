@@ -1,0 +1,205 @@
+{
+  "carvers": [],
+  "downfall": 0.0,
+  "has_precipitation": true,
+  "features": [
+    [],
+    [],
+    [
+      "antarchy:alexs_caves/candy_ruins",
+      "antarchy:alexs_caves/candy_gobstopper_geode"
+    ],
+    [
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [
+      "antarchy:alexs_caves/candy_chocolate_ice_cream_scoop",
+      "antarchy:alexs_caves/candy_vanilla_ice_cream_scoop",
+      "antarchy:alexs_caves/candy_sweetberry_ice_cream_scoop",
+      "antarchy:alexs_caves/candy_ceiling_ice_cream_cone"
+    ],
+    [
+      "antarchy:alexs_caves/candy_cookie_shelf",
+      "antarchy:alexs_caves/candy_lollipops",
+      "antarchy:alexs_caves/candy_licoroot_trees",
+      "antarchy:alexs_caves/candy_floating_gummy_ring"
+    ],
+    [
+      "antarchy:elythia_geology",
+      "antarchy:alexs_caves/candy_surface_terrain",
+      "antarchy:elythia_ore_coal_upper",
+      "antarchy:elythia_ore_coal_lower",
+      "antarchy:elythia_ore_iron_upper",
+      "antarchy:elythia_ore_iron_middle",
+      "antarchy:elythia_ore_iron_small",
+      "antarchy:elythia_ore_gold",
+      "antarchy:elythia_ore_gold_lower",
+      "antarchy:elythia_ore_redstone",
+      "antarchy:elythia_ore_redstone_lower",
+      "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
+      "antarchy:elythia_ore_diamond_large",
+      "antarchy:elythia_ore_diamond_buried",
+      "antarchy:elythia_ore_lapis",
+      "antarchy:elythia_ore_lapis_buried",
+      "minecraft:underwater_magma",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel",
+      "antarchy:elythia_ore_copper",
+      "antarchy:alexs_caves/candy_peppermint_patches",
+      "antarchy:alexs_caves/candy_sprinkles",
+      "antarchy:alexs_caves/candy_sweet_puffs",
+      "antarchy:alexs_caves/candy_sundrops"
+    ],
+    [
+      "antarchy:elythia_underground",
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
+    ],
+    [],
+    [
+      "antarchy:elythia_brown_ant_nests",
+      "antarchy:elythia_rainbow_ant_nests",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal",
+      "antarchy:throwback_nerd_pole",
+      "antarchy:alexs_caves/candy_canes",
+      "antarchy:alexs_caves/candy_encrusted_peppermint",
+      "antarchy:alexs_caves/candy_spilled_icecream"
+    ],
+    [
+      "antarchy:alexs_caves/candy_ceiling_frostmint"
+    ]
+  ],
+  "temperature": 0.7,
+  "effects": {
+    "water_color": 16402936,
+    "grass_color": 16748219,
+    "foliage_color": 15877048
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": 16171727,
+    "minecraft:visual/sky_color": 15696819,
+    "minecraft:visual/water_fog_color": 16402936,
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "replace_current_music": false,
+        "sound": "alexscaves:candy_cavity_music"
+      }
+    },
+    "minecraft:audio/ambient_sounds": {
+      "loop": "alexscaves:candy_cavity_ambience",
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "alexscaves:candy_cavity_ambience_mood",
+        "tick_delay": 6000
+      },
+      "additions": [
+        {
+          "sound": "alexscaves:candy_cavity_ambience_additions",
+          "tick_chance": 0.0111
+        }
+      ]
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "alexscaves:sugar_flake"
+        },
+        "probability": 0.0015
+      }
+    ],
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {
+          "alexscaves:caniac": {
+            "charge": 1.1,
+            "energy_budget": 0.3
+          },
+          "alexscaves:gumbeeper": {
+            "charge": 1.0,
+            "energy_budget": 0.3
+          },
+          "alexscaves:gum_worm": {
+            "charge": 1.2,
+            "energy_budget": 0.2
+          },
+          "alexscaves:caramel_cube": {
+            "charge": 0.9,
+            "energy_budget": 0.15
+          }
+        },
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "alexscaves:candicorn",
+              "weight": 180,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 6,
+                "max_inclusive": 10
+              }
+            },
+            {
+              "type": "alexscaves:gummy_bear",
+              "weight": 100,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 3
+              }
+            }
+          ],
+          "monster": [
+            {
+              "type": "alexscaves:caniac",
+              "weight": 100,
+              "count": 1
+            },
+            {
+              "type": "alexscaves:gumbeeper",
+              "weight": 100,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
+            },
+            {
+              "type": "alexscaves:gum_worm",
+              "weight": 80,
+              "count": 1
+            },
+            {
+              "type": "alexscaves:caramel_cube",
+              "weight": 40,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 2,
+                "max_inclusive": 3
+              }
+            }
+          ],
+          "water_ambient": [
+            {
+              "type": "alexscaves:sweetish_fish",
+              "weight": 10,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 3
+              }
+            }
+          ]
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.04
+  }
+}

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.fabric.client;
 
+import com.craisinlord.antarchy.fabric.compat.AlexsCavesPack;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyAnthologyHooks;
 import com.craisinlord.antarchy.content.client.QueenMusicHandler;
@@ -23,6 +24,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 public final class AntarchyFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        AlexsCavesPack.register();
         Antarchy.physicalClient = true;
         AntarchyAnthologyHooks.registerClient();
         ModelLoadingPlugin.register(plugin -> plugin.addModels(SeparateLargeItemModels.all()));
